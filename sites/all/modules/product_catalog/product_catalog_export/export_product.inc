@@ -310,7 +310,7 @@ function _product_for_export_test($nid=NULL){
              );
         }		
 		$product['counters'] = $counter;
-
+dsm('hoh');
 		$nonUsage = array();
 		$subscribe = array();
 		$subscribe['connection_fee'] = array(
