@@ -303,7 +303,8 @@ function _product_for_export_test($nid=NULL){
 		
 		foreach($view->result as $item){
 			$treeNodeCounter = node_load($item->nid);
-            dsm($treeNodeCounter,'treenodecounter');
+            $mainOrAccumulated = taxonomy_term_load($treeNodeCounter->field_main_or_accumulated['und'][0]['tid']);
+            dsm($mainOrAccumulated,'$mainOrAccumulated');
             $realCounter = node_load($treeNodeCounter->field_ref_counter['und'][0]['nid']);
 			
             $counter[] = array(
