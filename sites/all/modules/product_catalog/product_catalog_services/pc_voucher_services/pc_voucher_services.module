@@ -1,0 +1,44 @@
+<?php
+/**
+ * Implementation of hook_services_resources().
+ */
+function pc_voucher_services_services_resources() {
+  $resources['voucher'] = array();
+
+  $resources['voucher']['retrieve'] = array(
+    'help' => 'Retrieves a voucher',
+    'callback' => 'pc_voucher_services_retrieve',
+    'access callback' => 'pc_voucher_services_access',
+    'args' => array(
+        array(
+            'name' => 'nid',
+            'optional' => FALSE,
+            'source' => array('path' => 0),
+            'type' => 'int',
+            'description' => 'The voucher id to get',
+        ),
+    ),
+  );
+  return $resources;
+}
+
+/**
+ * Check the access permission to a given views.
+ *
+ * @param $op
+ *  String. The operation that's going to be performed.
+ * @param $args
+ *  Array. The arguments that will be passed to the callback.
+ * @return
+ */
+function pc_voucher_services_access() {
+   return TRUE;
+}
+
+function pc_voucher_services_retrieve($nid) {
+
+	$retArray = _array_voucher_cardtype($nid);
+	return $retArray[0];
+}
+
+?>

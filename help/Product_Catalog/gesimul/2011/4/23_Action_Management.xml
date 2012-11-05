@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<content collectionGUID="038BFC3F-B964-4771-B08F-D78DBA34C276">
+  <lastEdited clientType="local-build-20110426" date="2011-04-26 13:21:03 +0900"/>
+  <textBox id="generic-header-attribute" dynamic="no" visible="yes">
+    <richText>Action management</richText>
+  </textBox>
+  <textBox id="generic-title-attributes" dynamic="no" visible="yes">
+    <richText>Action Management</richText>
+  </textBox>
+  <textBox id="generic-datefield-attributes" dynamic="no" visible="yes">
+    <richText>2011. 4. 23.</richText>
+  </textBox>
+  <image id="generic-picture-attributes" dynamic="no" visible="yes" src="23_Action_Management_files/shapeimage_1.png" left="0px" top="0px" width="214px" height="180px"/>
+  <textBox id="generic-body-attributes" dynamic="no" visible="yes">
+    <richText></richText>
+  </textBox>
+</content>

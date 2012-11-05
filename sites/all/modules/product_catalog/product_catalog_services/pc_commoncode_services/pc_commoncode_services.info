@@ -1,0 +1,7 @@
+package = Product Catalog Services
+name = Product Catalog CommonCode Services
+description = "Product Catalog CommonCode Services"
+core = 7.x
+
+; Providers.
+files[] = pc_commoncode_services.module

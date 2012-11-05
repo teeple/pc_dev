@@ -1,0 +1,58 @@
+<?php
+module_load_include('inc', 'product_catalog_export');
+module_load_include('inc', 'product_catalog_export', 'export_product');
+module_load_include('inc', 'product_catalog_export', 'export_numberingplan_domestic');
+module_load_include('inc', 'product_catalog_export', 'export_numberingplan_idd');
+module_load_include('inc', 'product_catalog_export', 'export_area_code');
+module_load_include('inc', 'product_catalog_export', 'export_country_code');
+module_load_include('inc', 'product_catalog_export', 'export_timetablefactors');
+module_load_include('inc', 'product_catalog_export', 'export_counter');
+module_load_include('inc', 'product_catalog_export', 'export_content_rateid');
+module_load_include('inc', 'product_catalog_export', 'export_voucher_cardtype');
+module_load_include('inc', 'product_catalog_export', 'export_number_special');
+module_load_include('inc', 'product_catalog_export', 'create_export_data');
+module_load_include('inc', 'product_catalog_export', 'create_export_meta_data');
+module_load_include('inc', 'product_catalog_export', 'gura_export_all');
+
+function export_product($nid=NULL){
+    $data = _product_for_export($nid);
+	return json_encode($data);
+}
+
+function export_counter($nid=NULL){
+    return _json_counter($nid);
+}
+
+function export_numberingplan_domestic($nid=NULL){
+	return _json_numberingplan_domestic($nid);
+}
+
+function export_numberingplan_idd($nid=NULL){
+	return _json_numberingplan_idd($nid);
+}
+
+function export_area_code(){
+	return _json_area_code();
+}
+
+function export_country_code(){
+	return _json_country_code();
+}
+
+function export_timetablefactors(){
+	return _json_timetablefactors();
+}
+
+function export_content_rateid(){
+	return _json_content_rateid();
+}
+
+function export_voucher_cardtype(){
+	return _json_voucher_cardtype();
+}
+
+function export_number_special(){
+	return _json_number_special();
+}
+
+?>

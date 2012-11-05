@@ -1,0 +1,99 @@
+<?php
+module_load_include('inc', 'product_catalog_tree');
+   
+function product_catalog_tree_init() { 
+    drupal_add_library('system', 'ui.dialog');
+}
+  
+function product_catalog_tree_form($form, &$form_state) {
+  
+    // drupal_clear_js_cache();
+    ctools_include('ajax');
+    ctools_include('modal');  
+     
+    // Add CTools' javascript to the page.
+    ctools_modal_add_js();
+
+    $form['dummyLink'] = array(
+   		'#type' => 'markup',
+   		'#markup' => '<div id="dummy-link"></div>'
+    );
+
+	$js_added = drupal_static( __FUNCTION__, FALSE);
+    if ( !$js_added ) {
+        $js_added = TRUE;
+        load_required_js_css_before_ajax_load();        
+    }
+
+	$form['tree'] = array(
+		'#type' => 'markup',
+        '#markup' => '<div style="height:680px;overflow:scroll" class="product_catalog_tree"></div>',
+	);
+
+    $form['dialog'] = array(
+        '#type' => 'markup',
+        '#markup' => '<div id="dialog" title="Basic dialog"></div>',
+    );
+    $form['tree_node_title'] = array(
+    	'#type' => 'markup',
+        '#markup' => '<input id="tree_node_op" type="hidden"/><input id="tree_node_title" type="hidden"/>',
+    );
+    
+	$jsonData = array();
+
+	$settings = array(
+        'product_catalog_tree_data' =>  array( 0 => array("data" => 'Loading..', "attr" => array('root_nid' => $form_state['root_nid']))),
+		'product_catalog_tree_type' => $form_state['tree_type'], 
+        // 'product_catalog_tree_data' =>  $results,
+        'themes_dir' => base_path().libraries_get_path('jstree').'/themes/',
+		'add-item-modal-style' => array(
+	      'modalSize' => array(
+        	'type' => 'fixed',
+        	'width' => 1200,
+        	'height' => 800,
+        	'addWidth' => 20,
+       		'addHeight' => 15,
+      	  ),
+	      'modalOptions' => array(
+	        'opacity' => .5,
+	        'background-color' => '#000',
+	      ),
+	      //'modalTheme' => 'CToolsSampleModal',
+	      'animation' => 'fadeIn',
+	      'throbber' => theme('image', array('path' => ctools_image_path('ajax-loader.gif', 'ctools_ajax_sample'), 'alt' => t('Loading...'), 'title' => t('Loading'))),
+    	),
+    );
+
+ 	drupal_add_js( $settings, 'setting');
+	//ctools_add_js('ctools-ajax-sample', 'ctools_ajax_sample');
+ 	//ctools_add_css('ctools-ajax-sample', 'ctools_ajax_sample');
+	return $form;
+}
+
+function product_catalog_tree_wrapper_form($rootNid,$treeType){
+	$output='';
+	
+	//tree
+	$formName = 'product_catalog_tree_form';
+	$form_state = array();
+	$form_state['tree_type'] = $treeType;
+	$form_state['root_nid'] = $rootNid;	
+	
+	$form = drupal_build_form($formName, $form_state);
+	$output = drupal_render($form);
+	
+	return $output;	
+}
+
+function product_catalog_tree_load_tree($rootNid, $treeTemplate) {
+	$vocabulary = taxonomy_vocabulary_machine_name_load($treeTemplate);
+	$tree = taxonomy_get_tree($vocabulary->vid);
+
+	$weightStep = -100;
+
+	$output_trees = array();
+
+	foreach($tree as $term) {
+	}
+
+}

@@ -1,0 +1,8 @@
+package = Product Catalog
+name = SJANG TEST
+description = "SJANG TEST"
+core = 7.x
+
+; Providers.
+files[] = sjang_test.inc
+files[] = sjang_test.module
