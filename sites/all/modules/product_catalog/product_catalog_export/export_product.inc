@@ -304,12 +304,10 @@ function _product_for_export_test($nid=NULL){
 		foreach($view->result as $item){
 			$treeNodeCounter = node_load($item->nid);
             $mainOrAccumulated = taxonomy_term_load($treeNodeCounter->field_main_or_accumulated['und'][0]['tid']);
-            
             //Main counter 일 경우에만..
             if($mainOrAccumulated->field_common_code['und'][0]['safe_value'] == 1){
                 $realCounter = node_load($treeNodeCounter->field_ref_counter['und'][0]['nid']);
-    			
-                $counter[] = array(
+    		    $counter[] = array(
                     'counter_id' => $realCounter->field_counter_id['und'][0]['value'],              
                 );
             }
