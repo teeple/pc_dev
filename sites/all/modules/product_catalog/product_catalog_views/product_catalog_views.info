@@ -1,0 +1,9 @@
+package = Product Catalog
+name = Product Catalog Views
+description = "Product Catalog Views"
+core = 7.x
+
+; Providers.
+files[] = product_catalog_views.inc
+files[] = product_catalog_views.module
+stylesheets[all][] = product_catalog_views.css

@@ -1,0 +1,233 @@
+<?php
+
+function product_catalog_selectable_init() { 
+    drupal_add_library('system', 'ui.selectable');
+}
+  
+function product_catalog_selectable_menu() {
+	$items['product_catalog_selectable/timetablefactorsslot/add'] = array(
+  		'title' => 'Add',
+  		'page callback' => 'timetable_selectable_add',
+  		'access callback' => TRUE,
+  		'type' => MENU_CALLBACK,
+    );
+	
+    return $items;
+}
+
+function timetable_selectable_add(){	
+	ctools_include('ajax');
+	ctools_add_js('ajax-responder');
+	global $user;
+
+	$timetableNid = $_POST['timetable_nid'];
+	$addTitle = $_POST['add_title'];
+	$selected = $_POST['selected'];
+	
+	$timeTableNode = node_load($timetableNid);
+	
+	$titleView = views_get_view('list_timetablefactors');
+	$titleView->set_display('panel_pane_5');
+	$titleView->set_arguments(array('0' => $timetableNid, '1' => $addTitle));
+	$titleView->execute();
+	
+	if(count($titleView->result) > 0){
+		$timeTableFactorsNode = node_load($titleView->result[0]->node_field_data_field_ref_timetablefactors_nid);
+	}else{	
+		$timeTableFactorsNode = new StdClass();
+		$timeTableFactorsNode->type = 'timetablefactors';
+		$timeTableFactorsNode->language= 'und';
+		$timeTableFactorsNode->uid = $user->uid;
+		$timeTableFactorsNode->title = $addTitle;
+		
+		$colorArray = array();
+		foreach($timeTableNode->field_ref_timetablefactors['und'] as $item){
+			$tmpTimeTableFactorsNode = node_load($item);
+			$colorArray[] = isset($tmpTimeTableFactorsNode->field_css_order['und'][0]['value'])?$tmpTimeTableFactorsNode->field_css_order['und'][0]['value']:0;
+		}
+		$maxColor = 10;
+		
+		for($i=0;$i<$maxColor;$i++){
+			if(!in_array($i,$colorArray)){
+				$color = $i;
+				break;
+			}
+			if($i == $maxColor){
+				$color = $i;
+			}
+		}		
+		
+		$timeTableFactorsNode->field_css_order['und'][0]['value'] = $color;
+		node_save($timeTableFactorsNode);
+	}
+	
+	$timeTableNode->field_ref_timetablefactors['und'][] = array('nid' => $timeTableFactorsNode->nid);
+	node_save($timeTableNode);
+	
+	foreach($selected as $item){
+		_change_timeslotfactors($item,$timeTableFactorsNode->nid);
+	}
+		
+	_cleanup_timetablefactors($timeTableNode->nid);
+	
+	$redirect_url = 'common/timetable/'.$timeTableNode->nid.'/timetablefactors';
+	$commands[] = ctools_ajax_command_redirect($redirect_url);
+	print ajax_render($commands);
+	exit;
+}
+
+function _cleanup_timetablefactors($timeTableNodeNid){
+	$timeTableNode = node_load($timeTableNodeNid);
+	$searchTargets = $timeTableNode->field_ref_timetablefactors['und'];
+	$tmpCount = count($searchTargets);
+	if($tmpCount > 0){
+		for($i = 0; $i < $tmpCount; $i++){
+			$tmpTimeTableFactorsNode = node_load($searchTargets[$i]['nid']);
+			if(!isset($tmpTimeTableFactorsNode->field_ref_timetablefactorsslot['und'][0]['nid'])){
+				unset($searchTargets[$i]);
+				node_delete($tmpTimeTableFactorsNode->nid);
+			}
+		}
+		$timeTableNode->field_ref_timetablefactors['und'] = $searchTargets;
+		node_save($timeTableNode);
+	}	
+}
+
+function _change_timeslotfactors($slotNodeNid,$timeTableFactorsNodeNid){
+	$slotNode = node_load($slotNodeNid);
+	$timeTableFactorsNode = node_load($timeTableFactorsNodeNid);
+	if(isset($slotNode->field_ref_timetablefactors['und'][0]['nid'])){
+		$tmpTimeTableFactorNode = node_load($slotNode->field_ref_timetablefactors['und'][0]['nid']);
+		$searchTargets = $tmpTimeTableFactorNode->field_ref_timetablefactorsslot['und'];
+		$tmpCount = count($searchTargets);
+		if($tmpCount > 0){
+			for($i = 0; $i < $tmpCount; $i++){
+				if($searchTargets[$i]['nid'] == $slotNode->nid){
+					unset($searchTargets[$i]);
+					break;
+				}
+			}
+			$tmpTimeTableFactorNode->field_ref_timetablefactorsslot['und'] = $searchTargets;
+			node_save($tmpTimeTableFactorNode);
+		}		
+	}
+	
+	$slotNode->field_ref_timetablefactors['und'][0]['nid'] = $timeTableFactorsNode->nid;	
+	$timeTableFactorsNode->field_ref_timetablefactorsslot['und'][] = array('nid' => $slotNode->nid);	
+	node_save($slotNode);
+	node_save($timeTableFactorsNode);	
+}
+
+function timetable_selectable_form($form, &$form_state) {  
+    ctools_include('ajax');
+   
+    $js_added = drupal_static( __FUNCTION__, FALSE);
+    if ( !$js_added ) {
+    	$js_added = TRUE;  
+        $product_catalog_selectable_path = drupal_get_path('module', 'product_catalog_selectable');
+        drupal_add_js($product_catalog_selectable_path  . '/js/product_catalog_selectable.js');
+        $loadMaskPath = libraries_get_path('jquery-loadmask');
+        drupal_add_js($loadMaskPath . '/jquery.loadmask.min.js');
+        drupal_add_css($loadMaskPath . '/jquery.loadmask.css');
+    }
+	
+    $timetableNid = $form_state['param']['timetable_nid'];
+    
+    if($form_state['param']['editable'] != FALSE){
+    	$form['selectable_submit'] = array(
+	    	'#type' => 'fieldset',    		
+	    	'#title' => 'Save',
+	    	'#weight' => 0,
+	    );
+	    $form['selectable_submit']['add'] = array(
+	    	'#type' => 'markup',
+	    	'#markup' => '<div>Assign to 
+	    					<input id="selectable_add_title" size="30" maxlength="25" style="width: 200px"></input>
+	    					<input id="selectable_add_button" type="button" value="Save"/>
+	    					<input id="timetable_nid" type="hidden" value="'.$timetableNid.'"/>
+	    				  </div>',
+	    	'#weight' => 0
+	    );
+    }else{
+    	$timeTableNode = node_load($timetableNid);
+    	$form['selectable_title'] = array(
+    		'#type' => 'markup',
+    		'#markup' => '<div>'.$timeTableNode->title.'</div>',
+    		'#weight' => 0
+    	);
+    }
+	$form['selectable_item'] = array(
+		'#type' => 'markup',
+        '#markup' => '',
+		'#weight' => 1
+	);
+	
+	$timeTableFactorsSlotView = views_get_view('list_timetablefactorsslot');
+	$timeTableFactorsSlotView->set_display('panel_pane_1');
+	$timeTableFactorsSlotView->set_arguments(array('0' => $timetableNid));
+	$timeTableFactorsSlotView->execute();
+	$slotCount = count($timeTableFactorsSlotView->result);
+	
+	$selectable_item_markup = 
+		'<ul id="selectable">
+			<li class="selectable_exclude">HOUR</li>
+			<li class="selectable_exclude">Holiday</li>
+			<li class="selectable_exclude">MON</li>
+			<li class="selectable_exclude">TUE</li>
+			<li class="selectable_exclude">WED</li>
+			<li class="selectable_exclude">THU</li>
+			<li class="selectable_exclude">FRI</li>
+			<li class="selectable_exclude">SAT</li>
+			<li class="selectable_exclude">SUN</li>
+		';	
+	$rowNum = 0;
+	
+	for($i=0;$i<$slotCount;$i++){
+		$item = $timeTableFactorsSlotView->result[$i];
+		$itemCss = '';
+		if(isset($item->field_field_css_order[0]['raw']['value'])){
+			$itemCss = 'li_color_'.$item->field_field_css_order[0]['raw']['value'];
+		}
+		if((int)$i%8 == 0){
+			$selectable_item_markup .= '<li class="selectable_exclude">';
+			if($rowNum < 10){
+				if($rowNum == 9){
+					$selectable_item_markup .= '0'.strval($rowNum).' ~ ' . strval($rowNum + 1);
+				}else{
+					$selectable_item_markup .= '0'.strval($rowNum).' ~ ' . '0'.strval($rowNum + 1);	
+				}			
+			}else{
+				$selectable_item_markup .= strval($rowNum).' ~ ' . strval($rowNum + 1);
+			}
+			$selectable_item_markup .= '</li>';
+			//$selectable_item_markup .= '<li></li>';
+			$selectable_item_markup .= '<li nid="'.$item->nid.'" class="'.$itemCss.'">'.$item->node_field_data_field_ref_timetablefactors_title.'</li>';
+			$rowNum ++;
+		}else{
+			$selectable_item_markup .= '<li nid="'.$item->nid.'" class="'.$itemCss.'">'.$item->node_field_data_field_ref_timetablefactors_title.'</li>';
+		}
+	}
+	
+	$selectable_item_markup .= '</ul>';	
+	$form['selectable_item']['#markup'] = $selectable_item_markup;	
+	
+    $settings = array();
+
+ 	drupal_add_js( $settings, 'setting');	
+	return $form;
+}
+
+function product_catalog_selectable_wrapper_form($formName,$param=NULL){
+	load_required_js_css_before_ajax_load();
+
+	$output='';
+
+	//selectable
+	$form_state = array();
+	$form_state['param'] = $param;
+	
+	$form = drupal_build_form($formName, $form_state);
+	$output = drupal_render($form);
+
+	return $output;
+}

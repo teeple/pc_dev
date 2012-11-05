@@ -1,0 +1,23 @@
+diff --git a/implementations/draggableviews_handler_fieldapi.inc b/implementations/draggableviews_handler_fieldapi.inc
+index c14aaf1..ddd22d8 100644
+--- a/implementations/draggableviews_handler_fieldapi.inc
++++ b/implementations/draggableviews_handler_fieldapi.inc
+@@ -36,8 +36,17 @@ class draggableviews_handler_fieldapi extends draggableviews_handler {
+ 
+     // Differ between certain field types.
+     switch ($field_type) {
++      case 'node_reference_default':
+       case 'node_reference_plain':
+-        $field[$language][0]['nid'] = $value;
++      case 'node_reference_node':
++        // If there is a new value save it in the field.
++        if ($value != 0) {
++          $field['und'][0]['nid'] = $value;
++        }
++        // Check if the field contains a value that should be removed. 
++        elseif ($value == 0 && isset($field['und'][0]['nid']) && !empty($field['und'][0]['nid'])) {
++          $field = array();
++        }
+         break;
+ 
+       default:

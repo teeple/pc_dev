@@ -1,0 +1,88 @@
+<?php
+// module_load_include('inc', 'services', 'resources/node_resource');
+
+/**
+ * Implementation of hook_services_resources().
+ */
+function pc_commoncode_services_services_resources() {
+  $resources['commoncode'] = array();
+
+  return array(
+    'commoncode' => array(
+        'create' => array(
+            'help' => 'Create a commoncode',
+            'callback' => 'pc_commoncode_services_create',
+            'access callback' => 'pc_commoncode_services_access',
+            'args' => array(
+                array(
+                    'name' => 'vocabulary',
+                    'optional' => TRUE,
+                    'source' => array('param' => 'vocabulary'),
+                    'type' => 'string',
+                    'description' => 'The commoncode name(vocabulary) to update',
+                ),
+            ),
+        ),
+        'actions' => array(
+            'update_code' => array(
+                'help'   => t('Update Common Code.'),
+                'access callback' => 'pc_commoncode_services_access',
+                'args'     => array(
+                    array(
+                        'name'         => 'code_group',
+                        'type'         => 'string',
+                        'description'  => t('The code_group to update.'),
+                        'source'       => array('param' => 'code_group'),
+                        'optional'     => FALSE,
+                        ),
+                    ),
+                ),
+        ),
+    ),
+ );
+
+    /*
+  $resources['commoncode']['update'] = array(
+    'help' => 'Update a commoncode',
+    'callback' => 'pc_commoncode_services_update',
+    'access callback' => 'pc_commoncode_services_access',
+    'args' => array(
+        array(
+            'name' => 'vocabulary',
+            'optional' => FALSE,
+            'source' => array('path' => 0),
+            'type' => 'string',
+            'description' => 'The commoncode name(vocabulary) to update',
+        ),
+    ),
+  );
+  */
+
+  return $resources;
+}
+
+function pc_commoncode_services_access() {
+
+   return TRUE;
+}
+
+function pc_commoncode_services_create($vocabulary) {
+    $ret_array['test'] = 'hehehe';
+
+    return $ret_array;
+}
+
+function pc_commoncode_services_update($vocabulary) {
+
+    $ret_array['Model'] = 'hahaha';
+
+    return $ret_array;
+}
+
+function pc_commoncode_services_update_code($code_group) {
+
+    $ret_array['Model'] = 'update_code';
+
+    return $ret_array;
+}
+?>

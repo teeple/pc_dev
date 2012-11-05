@@ -1,0 +1,106 @@
+/* edit for draggable table*/
+.tabledrag-toggle-weight{
+	display: none;
+}
+
+/* edit for embeded view */
+.embeded-view-class thead{
+	display: none;
+}
+
+.embeded-view-class .odd{
+	background: transparent;
+}
+
+/* edit for custom table (taxonomy table) */
+.tableheader-processed{
+	border: 1px solid #BEBFB9;
+}
+
+.tableheader-processed th{
+	text-transform: uppercase;
+    background: #E1E2DC;
+    font-weight: normal;
+    border-width: 1px;
+    border-style: solid;
+    border-color: #BEBFB9;
+    padding: 3px 10px;
+}
+
+.tableheader-processed tr{
+	border-width: 0px 1px 0px 1px;
+    border-style: solid;
+    border-color: #BEBFB9;
+}
+
+/* product usage tree 
+#product-catalog-tree-form{
+	float: left;
+	width: 30%;
+}
+
+#tree_content_div{
+	float: left;
+	width: 70%;
+	padding: 0px 10px 0px 10px;
+}
+*/
+
+.myform .form-type-textfield .form-text {
+/*    left: clear; */
+    width: 150px;
+}
+ 
+.myform .form-select {
+    left: clear;
+    width: 200px;
+}
+
+.myform .form-type-textfield label, .myform .form-type-select label {
+    float: left;
+    width: 160px;
+    /* modified by khg98 */
+    /*padding: 10px 0px 0px 0px;*/
+    padding: 0px 0px 0px 0px;
+}
+
+/* views exposed filters */
+.myform .views-exposed-form .form-type-textfield .form-text ,
+.myform .views-exposed-form .form-select {
+    width: 100px;
+}
+
+
+/* date popup widget */
+.myform .form-type-date-popup .form-text {
+    width: 100%;
+}  
+
+.myform .form-type-date-popup .form-item.form-type-textfield {
+	float: left;
+}
+
+.myform .form-type-date-popup label {
+	display: none;
+	float: left;
+}
+
+.myform .date-no-float.container-inline-date {
+	float: left;
+	clear: none;
+	width: 200px;
+}
+
+.myform .form-type-date-popup {
+	padding: 0px;
+}
+
+.myform .form-type-date-popup .form-item.form-type-textfield label {
+	width: 40px;
+}
+
+#chart_show {
+	border: 0px;
+	background-color: white;
+	color: blue;
+}

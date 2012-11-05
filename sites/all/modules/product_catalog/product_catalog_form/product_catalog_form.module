@@ -1,0 +1,20 @@
+<?php
+module_load_include('inc', 'product_catalog_form');
+module_load_include('inc', 'product_catalog_form', 'alter_simpleproductoffering_node_form');
+module_load_include('inc', 'product_catalog_form', 'handler_redirect');
+module_load_include('inc', 'product_catalog_form', 'handler_submit');
+module_load_include('inc', 'product_catalog_form', 'handler_validate');
+module_load_include('inc', 'product_catalog_form', 'handler_delete');
+module_load_include('inc', 'product_catalog_form', 'handler_alter');
+module_load_include('inc', 'product_catalog_form', 'handler_theme');
+
+function product_catalog_form_init() {
+  if (($_GET['q'] == 'system/ajax' || strstr($_GET['q'], 'file/ajax/')) && preg_match('/^[a-z_]+_node_form/', $_POST['form_id'])) {
+    module_load_include('inc', 'node', 'node.pages');
+  }
+}
+
+function product_catalog_form_node_presave() {
+    //dsm($node);
+}
+?>

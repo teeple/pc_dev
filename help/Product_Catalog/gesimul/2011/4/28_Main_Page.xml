@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<content collectionGUID="038BFC3F-B964-4771-B08F-D78DBA34C276">
+  <lastEdited clientType="local-build-20110426" date="2011-04-26 13:20:54 +0900"/>
+  <textBox id="generic-header-attribute" dynamic="no" visible="yes">
+    <richText>MAIN PAGE</richText>
+  </textBox>
+  <textBox id="generic-title-attributes" dynamic="no" visible="yes">
+    <richText>Main Page</richText>
+  </textBox>
+  <textBox id="generic-datefield-attributes" dynamic="no" visible="yes">
+    <richText>2011. 4. 28.</richText>
+  </textBox>
+  <image id="generic-picture-attributes" dynamic="no" visible="yes" src="28_Main_Page_files/shapeimage_1.png" left="0px" top="0px" width="319px" height="194px"/>
+  <textBox id="generic-body-attributes" dynamic="no" visible="yes">
+    <richText>main screen consists of design canvas, views selection menu and views scaling &amp; adjust menu. And sub-side menu is changed according to upper main menu.</richText>
+  </textBox>
+</content>

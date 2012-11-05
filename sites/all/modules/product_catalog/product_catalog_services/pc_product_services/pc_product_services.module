@@ -1,0 +1,43 @@
+<?php
+/**
+ * Implementation of hook_services_resources().
+ */
+function pc_product_services_services_resources() {
+  $resources['product'] = array();
+
+  $resources['product']['retrieve'] = array(
+    'help' => 'Retrieves a product',
+    'callback' => 'pc_product_services_retrieve',
+    'access callback' => 'pc_product_services_access',
+    'args' => array(
+        array(
+            'name' => 'nid',
+            'optional' => FALSE,
+            'source' => array('path' => 0),
+            'type' => 'int',
+            'description' => 'The product id to get',
+        ),
+    ),
+  );
+  return $resources;
+}
+
+/**
+ * Check the access permission to a given views.
+ *
+ * @param $op
+ *  String. The operation that's going to be performed.
+ * @param $args
+ *  Array. The arguments that will be passed to the callback.
+ * @return
+ *  Boolean. TRUE if the user is allowed to load the given view.
+ */
+function pc_product_services_access() {
+   return TRUE;
+}
+
+function pc_product_services_retrieve($nid) {
+    $data = _product_for_export($nid);
+    return $data;
+}
+?>

@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<content collectionGUID="038BFC3F-B964-4771-B08F-D78DBA34C276">
+  <lastEdited clientType="local-build-20110426" date="2011-04-26 13:20:57 +0900"/>
+  <textBox id="generic-header-attribute" dynamic="no" visible="yes">
+    <richText>Design Product</richText>
+  </textBox>
+  <textBox id="generic-title-attributes" dynamic="no" visible="yes">
+    <richText>Design Product</richText>
+  </textBox>
+  <textBox id="generic-datefield-attributes" dynamic="no" visible="yes">
+    <richText>2011. 4. 27.</richText>
+  </textBox>
+  <image id="generic-picture-attributes" dynamic="no" visible="yes" src="27_Design_Product_files/shapeimage_1.png" left="0px" top="0px" width="339px" height="200px"/>
+  <textBox id="generic-body-attributes" dynamic="no" visible="yes">
+    <richText>First , just drag &#x2018;New product&#x2019; element in left side bar (accordion menu) into design canvas  (displayed as &#x2018;Drag Here&#x2019;). And new window pops up.  This new window represents attribute of new product. Attributes contains product name/code, description, type (basic, optional, promotional, packaged), devices and status(editing, requested, ... )</richText>
+  </textBox>
+</content>

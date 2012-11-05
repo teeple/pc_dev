@@ -1,0 +1,6 @@
+<?php
+module_load_include('inc', 'product_catalog');
+module_load_include('inc', 'product_catalog', 'util');
+
+?>
+

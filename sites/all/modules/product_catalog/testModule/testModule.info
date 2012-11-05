@@ -1,0 +1,6 @@
+name = Test Customization Module
+description = Customizing stuffs on the site...
+core = 7.x
+package = My modules
+
+scripts[] = js/testModule.behaviors.js

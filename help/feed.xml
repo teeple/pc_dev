@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+ <id>urn:iweb:35B73D53-7CAE-4390-AE6C-CC9BDD972E16</id>
+ <title>Page list Atom feed</title>
+ <updated>2011-04-26T13:20:53+09:00</updated>
+ <link rel="self" href="feed.xml"/>
+ <generator>iWeb</generator>
+ <author>
+  <name>iWeb</name>
+ </author>
+ <entry>
+  <id>urn:iweb:21B3DCCB-2677-4FD8-B5C7-6F2624D99B27</id>
+  <title>Product Catalog</title>
+  <title xmlns="urn:iweb:">Product Catalog</title>
+  <in-navbar xmlns="urn:iweb:">21B3DCCB-2677-4FD8-B5C7-6F2624D99B27</in-navbar>
+  <link rel="alternate" href="Product_Catalog/Product_Catalog.html"/>
+  <updated>2007-03-02T02:29:51+09:00</updated>
+  <content>Product Catalog</content>
+ </entry>
+ <entry>
+  <id>urn:iweb:2D5AC469-EA8D-44F4-A281-7C84BF833A44</id>
+  <title>Client Download &amp; Settings</title>
+  <title xmlns="urn:iweb:">Client Download &amp; Settings</title>
+  <in-navbar xmlns="urn:iweb:">2D5AC469-EA8D-44F4-A281-7C84BF833A44</in-navbar>
+  <link rel="alternate" href="Client_Download_%26_Settings.html"/>
+  <updated>2011-04-26T13:20:53.001+09:00</updated>
+  <content>Client Download &amp; Settings</content>
+ </entry>
+ <entry>
+  <id>urn:iweb:806CDEFF-C72C-421B-916F-70B47E80DC54</id>
+  <title>Server Configuration</title>
+  <title xmlns="urn:iweb:">Server Configuration</title>
+  <in-navbar xmlns="urn:iweb:">806CDEFF-C72C-421B-916F-70B47E80DC54</in-navbar>
+  <link rel="alternate" href="Server_Configuration.html"/>
+  <updated>2011-04-26T13:20:53.002+09:00</updated>
+  <content>Server Configuration</content>
+ </entry>
+</feed>

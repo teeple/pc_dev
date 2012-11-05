@@ -1,0 +1,139 @@
+<?php
+module_load_include('inc', 'product_catalog_ajax');
+
+// ---------------------------------------------------------------------------
+// Drupal hooks.
+
+/**
+ *  Implementation of hook_menu()
+ */
+function pc_code_menu() {
+  $items['pc/code/%/updated'] = array(
+      'title' => 'Update Code',
+      'page callback' => 'pc_code_update',
+      'page arguments' => array(2),
+      'access callback' => TRUE,
+      'type' => MENU_CALLBACK,
+  );
+
+  $items['common/commoncode/update/%'] = array(
+      'title' => 'Update Code From Views ',
+      'page callback' => 'pc_code_update_in_views',
+      'page arguments' => array(3),
+      'access callback' => TRUE,
+      'type' => MENU_CALLBACK,
+  );
+
+
+  return $items;
+}
+
+function pc_code_update_in_views($code_group) {
+
+    $result = drupal_http_request('http://211.238.176.44:8080/acube/openapi/code/'.$code_group);
+    $codes_list = json_decode($result->data);
+
+    if($code_group == 'all') {
+
+        $code_groups = array();
+        foreach($codes_list as $code) {
+            $code_groups[$code->codeGroup][] = $code;
+        }
+
+        foreach($code_groups as $key => $value) {
+
+            $ret = _commoncode_update_or_create($value, $key);
+        }
+
+    } else {
+
+        $ret = _commoncode_update_or_create($codes_list, $code_group);
+    }
+
+    drupal_goto('/common/commoncode/update');
+    return ;
+}
+
+function pc_code_update($code_group) {
+	global $user;
+
+    $retArray = array();
+    $retArray['data'] = 'TEST';
+    $retArray['result'] = 'TRUE';
+
+    print  json_encode($retArray);
+    exit;
+}
+
+function _commoncode_update_or_create($code_list, $code_group) {
+
+    // $voca_machine_name = str_replace(' ', '_', strtolower($code_group));
+	$voca_machine_name = strtolower($code_group);
+    $vocabulary = taxonomy_vocabulary_machine_name_load($voca_machine_name);
+
+    if($vocabulary == NULL) {
+        $vocabulary = new stdClass();
+        $vocabulary->name = $code_group;
+        $vocabulary->machine_name = strtolower($code_group);
+        taxonomy_vocabulary_save($vocabulary);
+
+        $field_instance = array(
+            'field_name' => 'field_common_code',
+            'entity_type' => 'taxonomy_term',
+            'bundle' => $vocabulary->machine_name,
+            'label' => t('Common Code'),
+            'description' => t('common code from CS code management.'),
+            'widget' => array(
+                'type' => 'text_textfield',
+            ),
+        );
+        field_create_instance($field_instance);
+    }
+
+    $terms = taxonomy_get_tree($vocabulary->vid);
+    $tids = array();
+    foreach($terms as $term) {
+        $tids[] = $term->tid;
+    }
+    $local_terms = taxonomy_term_load_multiple($tids);
+
+    foreach($code_list as $code) {
+        $foundFlag = FALSE;
+
+        if ($code->language != 'en') continue;
+
+        foreach($local_terms as $term) {
+
+			// dsm($term, 'term');
+			// dsm($code, 'code');
+
+            // Update existing field if Found 
+            //
+            if(!empty($term->field_common_code)
+                && ($term->field_common_code['und'][0]['value'] == $code->code)) {
+                $term->name = $code->meaning;
+                taxonomy_term_save($term);
+                $foundFlag = TRUE;
+                break;
+
+            // Update existing field code if Found 
+            } else if($term->name == $code->meaning) {
+                $term->field_common_code = array('und' => array( '0' => array('value' => $code->code)));
+                taxonomy_term_save($term);
+                $foundFlag = TRUE;
+                break;
+            }
+        }
+
+        // create new item
+        if($foundFlag == FALSE) {
+            $term = new stdClass();
+            $term->name = $code->meaning;
+            $term->vid = $vocabulary->vid;
+            $term->field_common_code['und'][0]['value'] = $code->code;
+
+            taxonomy_term_save($term);
+        }
+    }
+}
+

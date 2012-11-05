@@ -1,0 +1,8 @@
+package = Product Catalog
+name = Product Catalog Tree 
+description = "Product Catalog Tree"
+core = 7.x
+
+; Providers.
+files[] = product_catalog_tree.inc
+files[] = product_catalog_tree.module
