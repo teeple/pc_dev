@@ -295,6 +295,7 @@ function _product_for_export_test($nid=NULL){
 		$product['package_product'] = $packagedProducts;
 		
 		//Counter
+		dsm('hahaha');
 		$counter = array();
 		$view = views_get_view('list_product_child_node');
 		$view->set_display('panel_pane_2');
