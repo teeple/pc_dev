@@ -1,0 +1,261 @@
+/* Developed by khg98 */
+/*---------------------------------------------------------*
+  Defined for the follows.
+
+  views-exposed-form--list_simple_product_offering.tpl.php
+  views-view-table--list_simple_product_offering.tpl.php
+/*---------------------------------------------------------*/  
+.view{
+	width:90%;
+}
+
+div.ui-accordion-content .view {
+    width: 280px;
+}
+
+.ui-accordion .ui-accordion-content {
+    padding-left: 0px;
+    padding-right: 0px;
+}
+
+div.views-exposed-widgets {
+    margin-left: 40px;
+}
+
+div.item-list {
+    margin-top: 15px;
+}
+
+/*
+div#edit-field-ref-voucher-type-und, 
+*/
+div#edit-field-service-operator-und,
+div.form-checkboxes,
+div.form-radios
+/*
+div.form-item-field-used-for-subscription-thro-und,
+div#field-validfor-product-add-more-wrapper,
+*/
+{
+     margin-left: 140px;
+}
+
+#edit-title {
+    border: 1px solid #dcdcdc;
+}
+
+.view-list-simple-product-offering {
+    margin-left: 0px;
+    float: left;
+    /*background-color: #0ca2c6;*/
+}
+
+.ui-accordion-content {
+    margin-left: 0px;
+}
+
+.sidebar-menu table {
+    width: 290px;
+}
+
+.sidebar-menu thead th, .sidebar-menu tbody td {
+    font-size: 14px;
+    vertical-align: middle;
+    width: 200px;
+    height: 25px;
+    text-align: left;
+    border: 1px solid #efefef;
+}
+
+.sidebar-menu thead th {
+    color: #0ca2c6;
+    background: #efefef;
+    border-bottom:1px solid #dcdcdc;
+    padding-left: 3em;
+}
+
+.sidebar-menu tbody tr td {
+    border-bottom:1px solid #dcdcdc;
+}
+
+.sidebar-menu a {
+    margin-left: 3em;
+}
+
+.sidebar-menu a:focus,
+.sidebar-menu a:hover,
+.sidebar-menu a:active
+{ 
+    color: #31a0ed !important;
+}
+
+.view-footer a {
+    color: #31a0ed;
+}
+
+.panel-2col {
+    border: 1px solid #d0cfcf;
+}
+
+.panel-flexible.panels-flexible-217 {
+    border: 1px solid #d0cfcf;
+}
+
+div.region-content {
+    margin-left: 3em;
+}
+#quickset-mobile_products h3.ui-accordion-header a,
+#quickset-qtabs_common_data h3.ui-accordion-header a {
+    font-size: 15px;
+    color: #959595;
+}
+
+#quickset-mobile_products h3.ui-accordion-header a:focus, 
+#quickset-mobile_products h3.ui-accordion-header a:hover, 
+#quickset-mobile_products h3.ui-accordion-header a:active, 
+#quickset-qtabs_common_data h3.ui-accordion-header a:focus, 
+#quickset-qtabs_common_data h3.ui-accordion-header a:hover, 
+#quickset-qtabs_common_data h3.ui-accordion-header a:active
+{ 
+    color: #3cbbfc;
+}
+
+div.panel-display.panel-1col, div.panel-display.panel-2col {
+    width: 100%;
+}
+
+div.panel-panel.panel-col-first {
+    width: 35%;
+}
+
+div.panel-flexible.panels-flexible-217 #simpleproductoffering-node-form {
+    margin-left: 20px;
+    width: 700px;
+}
+
+div.product_catalog_tree.jstree.jstree-0.jstree-focused.jstree-default  {
+    background: #ffffff;
+}
+
+div.pagecontentContent h2 {
+    color:#ffffff;
+    margin-top:0.5em;
+}
+
+.table-in-general table {
+    width: 100%;
+}
+
+.table-in-general thead th, .table-in-general tbody td {
+    font-size: 14px;
+    border: 1px solid #cccfd5;
+    height: 10px;
+}
+
+.table-in-general thead th {
+    background: #ecedf2;
+}
+
+.table-in-general tbody tr.odd {
+    background: #ffffff;
+}
+
+.table-in-general tbody tr.even {
+    background: #f5f5f5;
+}
+
+/*
+.common-data-add-link-ratinggroup div.view-footer {
+    margin-right: 100px;
+}
+
+.common-data-add-link-areacode div.view-footer {
+    margin-right: 350px;
+}
+*/
+
+.table-in-panel table {
+    width: 100%;
+}
+
+.table-in-panel thead th, .table-in-panel tbody td {
+    font-size: 10px;
+    border: 1px solid #cccfd5;
+    height: 10px;
+}
+
+.table-in-panel thead th {
+    background: #ecedf2;
+}
+
+.table-in-panel tbody tr.odd {
+    background: #ffffff;
+}
+
+.table-in-panel tbody tr.even {
+    background: #f5f5f5;
+}
+
+input#edit-field-valid-for-und-0-value-datepicker-popup-0,
+input#edit-field-valid-for-und-0-value2-datepicker-popup-0,
+input#edit-field-valid-for-und-0-value-timeEntry-popup-1,
+input#edit-field-valid-for-und-0-value2-timeEntry-popup-1
+{
+    width: 100%;
+}
+
+.panels-flexible-region-first {
+    width: 35%;    
+}
+
+.panels-flexible-region-last {
+    width: 65%;
+ }
+
+.panel-col-last {
+    width: 65%;
+}
+
+div.panel-panel.panel-col-last {
+    width: 65%;
+}
+
+div#edit-actions {
+    text-align: middle;
+}
+
+div.add-link-in-rightpane {
+    float: right;
+}
+
+div.menu-block-wrapper ul.menu li a:hover,
+div.menu-block-wrapper ul.menu li a:active {
+    color: #31a0ed !important;
+}
+
+span.fieldset-legend {
+   font-weight: bold;
+}
+
+div.form-item.form-type-textfield.form-item-title {
+    width: 400px;
+}
+
+div#edit-actions {
+    width: 130px;
+}
+
+div#edit-title-wrapper {
+    width: 200px;
+}
+
+td.active {
+    background-color: #ffffff;
+}
+
+/*
+div.panel-pane.pane-custom.pane-1.numberplan-name-area {
+    width: 100%;
+    border: 3px solid #ff0000;
+}
+*/
