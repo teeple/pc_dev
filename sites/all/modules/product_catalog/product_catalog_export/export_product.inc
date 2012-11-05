@@ -304,39 +304,10 @@ function _product_for_export_test($nid=NULL){
 		foreach($view->result as $item){
 			$treeNodeCounter = node_load($item->nid);
             $realCounter = node_load($treeNodeCounter->field_ref_counter['und'][0]['nid']);
-			dsm($realCounter,'counter');
-		}
-		
-		$counter[] = array(
-				'counter_id' => 6542,
-				'main_or_accumulated' => array('codeGroup' => 'CounterMainOrAccu' , 'code' => '1' , 'meaning' => 'Main'),
-				'counter_type' => array('codeGroup' => 'CounterType' , 'code' => '1' , 'meaning' => 'Basic'),
-				'counter_name' => 'Free Remains',
-				'priority' => 1,
-				'condition_set' => array(
-						array('condtionwhaturlfactors' => array('www.twitter.com','www.daum.net'),'conditionwhendayfactors' => '2012-03-02'),
-						array('conditionwhatqos' => array('codeGroup'=>'Qos', 'code' => '1', 'meaning' => '1'),'conditionwhoprefix' => '22623')
-				)
-		);
-		$counter[] = array(
-				'counter_id' => 5643,
-				'main_or_accumulated' => array('codeGroup' => 'CounterMainOrAccu' , 'code' => '1' , 'meaning' => 'Main'),
-				'counter_type' => array('codeGroup' => 'CounterType' , 'code' => '2' , 'meaning' => 'Optional'),
-				'counter_name' => 'Optional_2',
-				'priority' => 2,
-				'condition_set' => array(
-						array('condtionwhaturlfactors' => array('www.twitter.com','www.daum.net'),'conditionwhendayfactors' => '2012-03-02'),
-						array('conditionwhatqos' => array('codeGroup'=>'Qos', 'code' => '1', 'meaning' => '1'),'conditionwhoprefix' => '22623')
-				)
-		);
-		$counter[] = array(
-				'counter_id' => 2363,
-				'main_or_accumulated' => array('codeGroup' => 'CounterMainOrAccu' , 'code' => '2' , 'meaning' => 'Accumulated'),
-				'counter_type' => array('codeGroup' => 'CounterType' , 'code' => '2' , 'meaning' => 'Optional'),
-				'counter_name' => 'Usage_Counter_2',
-				'using_condition' => array(
-				)
-		);
+			
+            $counter[] = $realCounter->field_counter_id['und'][0]['value'];                
+             
+        }		
 		$product['counters'] = $counter;
 
 		$nonUsage = array();
