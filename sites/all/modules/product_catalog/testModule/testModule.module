@@ -1,0 +1,54 @@
+<?php 
+/**
+ * Implements hook_node_insert()
+ * 
+ * @see http://api.drupal.org/api/drupal/modules!node!node.api.php/function/hook_node_insert/7
+ * @param object $node 
+ */
+function testModule_node_insert($node) {    
+    switch ($node->type) {
+        case 'tear':
+            $_SESSION['tear_just_inserted'] = microtime();
+            break;
+    }
+}
+
+/**
+ * Implements hook_node_update()
+ * 
+ * @see http://api.drupal.org/api/drupal/modules!node!node.api.php/function/hook_node_update/7
+ * @param object $node 
+ */
+function testModule_node_update($node) {
+    switch ($node->type) {
+        case 'tear':
+            $_SESSION['tear_just_inserted'] = microtime();
+            break;
+    }
+}
+
+/**
+ * Implements hook_node_view().
+ */
+function testModule_node_view($node, $view_mode, $langcode) {
+    switch ($node->type) {
+        case 'tear':
+            // we call doitnow() if it's needed (if "tear" content was added before)
+            if (isset($_SESSION['tear_just_inserted'])) {
+                drupal_add_js(array('testModule' => array('tear_just_added' => TRUE)), 'setting');
+                unset($_SESSION['tear_just_inserted']);
+            }
+
+            break;
+    }
+}
+
+/**
+ * Implements hook_overlay_child_initialize()
+ * @see http://api.drupal.org/api/drupal/modules!overlay!overlay.api.php/function/hook_overlay_child_initialize/7
+ */
+function testModule_overlay_child_initialize() {
+    // Add our custom JavaScript: we don't want the node/add/tear to appear on the overlay, because this way the JS setting doesn't get added properly
+    drupal_add_js(drupal_get_path('module', 'testModule') . '/js/testModule.overlay.behaviors.js');
+}
+

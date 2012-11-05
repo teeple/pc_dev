@@ -1,0 +1,7 @@
+package = Product Catalog
+name = Product Catalog Export
+description = "Product Catalog Export"
+core = 7.x
+
+; Providers.
+files[] = product_catalog_export.module

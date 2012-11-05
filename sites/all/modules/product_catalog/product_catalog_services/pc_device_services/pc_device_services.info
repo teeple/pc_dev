@@ -1,0 +1,7 @@
+package = Product Catalog Services
+name = Product Catalog Device Services
+description = "Product Catalog Device Services"
+core = 7.x
+
+; Providers.
+files[] = pc_device_services.module

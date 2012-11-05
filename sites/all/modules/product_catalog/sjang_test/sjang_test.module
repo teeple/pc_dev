@@ -1,0 +1,59 @@
+<?php
+function sjang_test_menu() {
+	$items['sjang_test/%ctools_js/edit/%'] = array(
+      'title' => 'Edit',
+      'page callback' => 'sjang_test_edit_content',
+      'page arguments' => array(1,3),
+      'access callback' => TRUE,
+      'type' => MENU_CALLBACK,
+	);
+	return $items;
+}
+
+function sjang_test_get_form(){
+	load_required_js_css_before_ajax_load();
+	
+	$output='';
+	
+	//tree
+	$formName = 'product_catalog_tree_form';
+	$form_state = array();
+	$form_state['tree_type'] = 'usage_custom_rule';
+	$form_state['node_type'] = 'usage';
+	$form_state['type'] = 'usage';
+	
+	$view = views_get_view('query_usage_by_product');
+	$view->set_arguments(array('0'=>'3963', '1' => 'VOICE'));
+	$view->execute();
+	
+	
+	if(count($view->result) > 0){										
+	  $form_state ['root_nid'] =$view->result[0]->node_field_data_field_ref_usage_nid;
+	  $form_state ['service_of_usage'] = '3977';
+	  $form = drupal_build_form($formName, $form_state);
+	  $output = drupal_render($form);
+	}
+	
+	return $output;	
+}
+
+function sjang_test_edit_content($js = NULL, $contentType, $nid){	
+	//ctools_include('node.pages', 'node', '');
+	module_load_include('inc','node','node.pages');
+	
+	//ctools_include('ajax');
+
+	$node = node_load($nid);
+
+	$form_state['build_info']['args'] = array($node);
+	$form = drupal_build_form($contentType . '_node_form', $form_state);
+
+    $formRender = drupal_render($form);
+    //drupal_theme_initialize();
+	$renderOutput = '<div id="tree_content_div">'.$formRender.'</div>';
+	$output[] = $renderOutput;
+	$output = ajax_render($output);    
+	print $output;
+    exit;    
+}
+

@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<content collectionGUID="038BFC3F-B964-4771-B08F-D78DBA34C276">
+  <lastEdited clientType="local-build-20110426" date="2011-04-26 13:20:55 +0900"/>
+  <textBox id="generic-header-attribute" dynamic="no" visible="yes">
+    <richText>Start &amp; Login</richText>
+  </textBox>
+  <textBox id="generic-title-attributes" dynamic="no" visible="yes">
+    <richText>Startup</richText>
+  </textBox>
+  <textBox id="generic-datefield-attributes" dynamic="no" visible="yes">
+    <richText>2011. 4. 29.</richText>
+  </textBox>
+  <image id="generic-picture-attributes" dynamic="no" visible="yes" src="29_Startup_files/shapeimage_1.png" left="0px" top="0px" width="326px" height="155px"/>
+  <textBox id="generic-body-attributes" dynamic="no" visible="yes">
+    <richText>When clicking the product catalog (client), product catalog connects with server and downloads design elements. Login window appears and operator can enter the product catalog as entering proper login id/password.</richText>
+  </textBox>
+</content>

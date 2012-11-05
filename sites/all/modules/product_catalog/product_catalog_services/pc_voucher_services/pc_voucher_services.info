@@ -1,0 +1,7 @@
+package = Product Catalog Services
+name = Product Catalog Voucher Services
+description = "Product Catalog Voucher Services"
+core = 7.x
+
+; Providers.
+files[] = pc_voucher_services.module

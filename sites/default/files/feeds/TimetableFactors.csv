@@ -1,0 +1,4 @@
+Name,Holiday,MON,TUE,WED,THU,FRI,SAT,SUN,From Hour,From Minutes,To Hour,To Minutes
+Timetable1,ALL,1,0,1,1,0,0,1,10,10,20,20
+Timetable2,HOLIDAY,0,0,0,1,0,0,0,5,15,17,25
+Timetable3,NOT HOLIDAY,1,0,0,0,1,1,0,22,0,23,45

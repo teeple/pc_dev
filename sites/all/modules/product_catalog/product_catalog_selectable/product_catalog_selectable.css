@@ -1,0 +1,90 @@
+/* submit filedset */
+#edit-selectable-submit{
+	width: 500px;
+}
+
+/* selectable item */
+#selectable .ui-selecting { 
+	background: #FECA40; 
+}
+
+#selectable .ui-selected { 
+	background: #F39814; 
+	color: white; 	
+}
+
+#selectable { 
+	list-style-type: none; 
+	margin: 0; 
+	padding: 0; 
+	width: 990px; 
+}
+
+#selectable li { 
+	margin: 3px; 
+	padding: 1px; 
+	float: left; 
+	width: 100px; 
+	height: 25px; 
+	font-size: 10px; 
+	text-align: center;
+	border: 1px solid; 
+}
+
+/* non selectable header, column */
+#selectable .ui-selecting.selectable_exclude { 
+	background: white; 
+	color: black;
+}
+
+#selectable .ui-selected.selectable_exclude { 
+	background: white; 		
+	color: black;
+}
+
+/* already mapped select items */
+.ui-selectee.li_color_0 { 
+	background: #7FFFD4; 
+	color: black; 	
+}
+.ui-selectee.li_color_1 { 
+	background: #F5F5DC; 
+	color: black; 	
+}
+.ui-selectee.li_color_2 { 
+	background: #ECF1EF; 
+	color: black; 	
+}
+.ui-selectee.li_color_3 { 
+	background: #98F5FF; 
+	color: black; 	
+}
+.ui-selectee.li_color_4 { 
+	background: #66CD00; 
+	color: black; 	
+}
+.ui-selectee.li_color_5 { 
+	background: #CD853F; 
+	color: black; 	
+}
+.ui-selectee.li_color_6 { 
+	background: #C6E2FF; 
+	color: black; 	
+}
+.ui-selectee.li_color_7 { 
+	background: #E066FF; 
+	color: black; 	
+}
+.ui-selectee.li_color_8 { 
+	background: #D6D6D6; 
+	color: black; 	
+}
+.ui-selectee.li_color_9 { 
+	background: #FF4500; 
+	color: black; 	
+}
+
+/* Disabled Opacity */
+.ui-selectable.ui-selectable-disabled.ui-state-disabled{
+	opacity: 1;
+}

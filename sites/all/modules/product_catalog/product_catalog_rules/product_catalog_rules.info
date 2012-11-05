@@ -1,0 +1,7 @@
+package = Product Catalog
+name = Product Catalog Rules
+description = "Product Catalog Rules"
+core = 7.x
+
+; Providers.
+files[] = product_catalog_rules.module
