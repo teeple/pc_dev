@@ -1,0 +1,54 @@
+diff --git a/cck_time.css b/cck_time.css
+index 88bea9a..52957b3 100644
+--- a/cck_time.css
++++ b/cck_time.css
+@@ -1,15 +1,23 @@
+ fieldset.cck-time {
+-	border: 0;
++  border: 0;
+ }
+ 
+ fieldset.cck-time legend {
+-	font-weight: bold;
+-	color: #336699;
++  font-weight: bold;
++  color: #336699;
++}
++
++
++.cck-time-element {
++  float:left;
+ }
+ 
+ .cck-time-element .form-item {
+-	padding:0;
+-	margin:0;
+-	float:left;
+-	margin-right:.5em;
+-	}
++  padding:0;
++  margin:0;
++  margin-right:.5em;
++}
++
++.cck-time-clearfix {
++  clear:both;
++}
+diff --git a/cck_time.module b/cck_time.module
+index 01e5e20..b941533 100644
+--- a/cck_time.module
++++ b/cck_time.module
+@@ -287,9 +287,12 @@ function cck_time_select_process($element, &$form_state, $form) {
+         '#required' => $required,
+         '#default_value' => isset($element['#value']['meridiem']) ? $element['#value']['meridiem'] : NULL,
+         '#prefix' => '<div class="cck-time-element">',
+-        '#suffix' => '</div>',    
++        '#suffix' => '</div>',
+     );
+   }
++  $element['clearfix'] = array (
++    '#markup' => '<div class="cck-time-clearfix"></div>',
++  );
+   return $element;
+ }
+ 

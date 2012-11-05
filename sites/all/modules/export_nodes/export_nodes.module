@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the export_nodes feature.
+ */
+
+include_once 'export_nodes.features.inc';

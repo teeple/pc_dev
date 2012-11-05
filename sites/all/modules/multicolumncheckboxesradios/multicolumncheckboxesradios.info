@@ -1,0 +1,11 @@
+name = "Multi-column checkboxes radios"
+description = "Extends checkboxes radios form element to have multi-column display option"
+package = User interface
+core = "7.x"
+
+; Information added by drupal.org packaging script on 2011-02-25
+version = "7.x-1.x-dev"
+core = "7.x"
+project = "multicolumncheckboxesradios"
+datestamp = "1298619685"
+

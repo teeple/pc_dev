@@ -1,0 +1,93 @@
+.menu-operations {
+      width: 70px;
+}
+
+.menu-enabled {
+      width: 70px;
+}
+
+.menu-enabled input {
+      margin-left:25px;
+}
+
+.region-content ul.operation-list {
+    list-style-type: none;
+    overflow: hidden;
+    margin: 0 0;
+    padding: 0 0;
+}
+
+ul.operation-list li {
+    float: left; 
+    margin: 0 1em 0 0; 
+}
+
+ul.action-links {
+    margin: 1em 0;
+    padding: 0 20px 0 20px; 
+    list-style-type: none;
+    overflow: hidden;
+}
+ul.action-links li {
+    float: left; 
+    margin: 0 1em 0 0; 
+}
+ul.action-links a {
+    padding-left: 15px; 
+    background: transparent url(images/add.png) no-repeat 0 center;
+    line-height: 30px; 
+}
+
+.column {
+    float: left;
+    margin: 0 1em 0 0; 
+}
+
+.space {
+    margin: 0 1em 0 0; 
+}
+
+.event-name {
+background: lightgray;
+}
+
+.borderless {
+border: 0 none;
+}
+
+.bd-top {
+    border-top: solid 1px;
+}
+
+.bd-top.dotted {
+    border-top: dotted 1px;
+}
+
+.bd-btm {
+    border-bottom: solid 1px;
+}
+
+.bd-btm.dotted {
+    border-bottom: dotted 1px;
+}
+
+.white-cell {
+    background-color: white;
+}
+
+.wide-width {
+      width: 100px;
+}
+
+
+/* form check box  */
+.ocs-form-list .form-checkboxes {
+    margin-left: 0px;
+    width: 150px;
+    text-align: left;
+}
+
+/* myform - input text field */
+.myform.form-text {
+    width: 300px;
+}
