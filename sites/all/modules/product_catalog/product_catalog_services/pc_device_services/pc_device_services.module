@@ -1,0 +1,85 @@
+<?php
+module_load_include('inc', 'services', 'resources/node_resource');
+
+/**
+ * Implementation of hook_services_resources().
+ */
+function pc_device_services_services_resources() {
+  $resources['device'] = array();
+
+  $resources['device']['create'] = array(
+    'help' => 'Create device type',
+    'callback' => 'pc_device_services_create',
+    'access callback' => 'pc_device_services_access',
+    'args' => array(
+        array(
+            'name' => 'model',
+            'optional' => FALSE,
+            'source' => 'data',
+            'description' => 'The node data to create',
+            'type' => 'array',
+        ),
+    ),
+  );
+
+  $resources['device']['retrieve'] = array(
+    'help' => 'Retrieves a device',
+    'callback' => 'pc_device_services_retrieve',
+    'access callback' => 'pc_device_services_access',
+    'args' => array(
+        array(
+            'name' => 'nid',
+            'optional' => FALSE,
+            'source' => array('path' => 0),
+            'type' => 'int',
+            'description' => 'The device id to get',
+        ),
+    ),
+  );
+
+  return $resources;
+}
+
+function pc_device_services_access() {
+   return TRUE;
+}
+
+function pc_device_services_retrieve($nid) {
+    $node = node_load($nid);
+
+    $ret_array = array();
+    $ret_array['ID'] = $node->nid;
+    $ret_array['Model'] = $node->title;
+
+    return $ret_array;
+}
+
+
+function pc_device_services_create($model) {
+  global $user;
+
+  $account = user_load(1);
+  $user = $account;
+
+  $device_model = _services_arg_value($model, 'Model');
+
+  $product_device = new StdClass();
+  $product_device->title = $device_model['Model'];
+  $product_device->status = 1;
+  $product_device->uid = 1;
+  $product_device->type = 'simpleproductoffering';
+  $product_device->language = 'und';
+  $product_device->field_id['und'][0]['value'] = $device_model['Model'];
+  $product_device->field_offering_status['und'][0]['tid'] = 19; //PLANNED status 
+  $product_device->field_product_type['und'][0]['tid'] = 528; // product type : DEVICE
+
+  node_save($product_device);
+
+  $ret_array = array();
+  $ret_array['ID'] = $product_device->nid;
+
+  return $ret_array;
+}
+
+
+?>

@@ -1,0 +1,111 @@
+<?php
+function product_catalog_form_views_pre_build(&$view) {
+//dsm($view);
+	switch($view->name){
+		case 'list_condition_level3_sub_factors':
+
+		$targetFilter = array();
+		$targetHandler = array();
+		$targetField = array();
+
+		$targetFilter[] = $view->filter['status'];
+		$targetHandler[] = $view->display_handler->handlers['filter']['status'];
+
+		$filterName = array();
+		$fieldName = array();
+
+	    $subfactorType = $view->args[2];
+
+	    switch($subfactorType){
+	    	//WHAT
+	    	//
+	        case 'conditionwhaturlgroupfactors':
+	        	$filterName = array('title', 'field_url_url');
+			break;
+			case 'conditionwhatcustomfactors':
+				$filterName = array('title','field_rating_factor_tid','field_rating_operation_tid','field_value_value');
+
+			break;
+
+			//WHEN
+			//
+			case 'conditionwhencustomfactors':
+				$filterName = array('title','field_rating_factor_tid','field_rating_operation_tid','field_value_value');
+			break;
+			case 'conditionwhendurationfactors':
+				$filterName = array('title','field_duration_value','field_duration_value2');
+				$fieldName = array('title','field_duration');
+				$temp = array();
+				$temp['title'] = $view->field['title'];
+				$temp['nid'] = $view->field['nid'];
+				$temp['field_duration'] = $view->field['field_duration'];
+				$temp['php'] = $view->field['php']; //edit button
+
+				$view->field = $temp;
+
+			break;
+            case 'conditionwhendayfactors':
+            	$filterName = array('title','field_custom_date_value');
+
+                $temp = array();
+                $temp['title'] = $view->field['nid'];
+				$temp['nid'] = $view->field['nid'];
+				$temp['field_custom_date'] = $view->field['field_custom_date'];
+				$temp['php'] = $view->field['php']; //edit button
+				$view->field = $temp;
+
+            break;
+
+            case 'conditionwhentimeslotfactors':
+            	$filterName = array('title','field_time_from_value','field_time_to_value');
+            break;
+
+            case 'conditionwhenweekfactors':
+            	$filterName = array('title','field_week_tid','field_is_holiday_value');
+            break;
+
+            // WHERE
+            //
+            case 'conditionwherecountryfactors':
+            	$filterName = array('title','field_ref_country_code_tid');
+            break;
+			case 'conditionwherecustomfactors':
+				$filterName = array('title','field_rating_factor_tid','field_rating_operation_tid','field_value_value');
+            break;
+            case 'conditionwherenetworkfactors':
+            	$filterName = array('title','field_ref_newtork_type_tid');
+            break;
+
+            //WHO
+            //
+            case 'conditionwhocustomfactors':
+            	$filterName = array('title','field_rating_factor_tid','field_rating_operation_tid','field_value_value');
+            break;
+            case 'conditionwhomemberfactors':
+            	$filterName = array('title','field_is_onnet_value','field_user_type_tid','field_age_value','field_age_operation_tid','field_gender_tid','field_target_user_tid');
+            break;
+            case 'conditionwhonumberfactors':
+            	$filterName = array('title','field_phone_number_value');
+            break;
+            case 'conditionwhoprefixfactors':
+            	$filterName = array('title','field_prefix_value');
+            break;
+	    }
+
+	    foreach($filterName as $item){
+	    	$targetFilter[] = $view->filter[$item];
+			$targetHandler[] = $view->display_handler->handlers['filter'][$item];
+	    }
+	    foreach($fieldName as $item){
+	    	$targetField[] = $view->field[$item];
+	    }
+
+		$view->filter = $targetFilter;
+		$view->display_handler->handlers['filter'] = $targetHandler;
+
+        //dsm($view);
+
+		break;
+	}
+}
+?>

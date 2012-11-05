@@ -1,0 +1,9 @@
+package = Product Catalog
+name = Product Catalog Form
+description = "Product Catalog Form"
+core = 7.x
+
+; Providers.
+files[] = product_catalog_form.inc
+files[] = product_catalog_form.module
+stylesheets[all][] = product_catalog_form.css

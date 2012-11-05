@@ -1,0 +1,7 @@
+package = Product Catalog Services
+name = Product Catalog Counter Services
+description = "Product Catalog Counter Services"
+core = 7.x
+
+; Providers.
+files[] = pc_counter_services.module

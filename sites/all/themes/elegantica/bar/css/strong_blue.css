@@ -1,0 +1,219 @@
+::selection { background: #0BA3CA; color: #fff; text-shadow: none; }
+body {	 
+	background:#ffffff  url('../../images/bg/backgroundPatternElegantica.png') !important;
+	color:#2a2b2c;
+	font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
+	font-size: 13px;
+	line-height: 1.65em;
+	letter-spacing: normal;
+}
+h1,h2,h3,h4,h5,h6, .blogpostcategory .posted-date p, .team .title{
+	font-family: PT Sans !important;
+	line-height: 110%;
+}
+
+h1 { 	
+	color:#2a2b2c;
+	font-size: 30px !important;
+	}
+	
+h2{ 	
+	color:#2a2b2c;
+	font-size: 22px !important;
+	}
+
+h3 { 	
+	color:#2a2b2c;
+	font-size: 20px !important;
+	}
+
+h4 { 	
+	color:#2a2b2c;
+	font-size: 16px !important;
+	}	
+	
+h5 { 	
+	color:#2a2b2c;
+	font-size: 14px !important;
+	}	
+
+h6 { 	
+	color:#2a2b2c;
+	font-size: 12px !important;
+	}		
+a:hover {color: #0BA3CA;}
+ul.pager li.pager-current,ul.pager li a:hover{
+    background-color: #0BA3CA;
+}
+/* ***********************
+--------------------------------------
+------------NIVO SLIDER----------
+--------------------------------------
+*********************** */
+.homeBox h2 a {color:#2a2b2c;}
+.nivo-caption { 
+	position:absolute; 
+	background-color: #0BA3CA;
+	background-color: rgba(11,163,202,0.5);
+	border: 1px solid #0BA3CA; 
+	color: #ffffff; 
+	font-size: 24px;
+	font-family: PT Sans !important;
+	text-shadow:0 1px 0 rgba(0,0,0,0.3);
+	letter-spacing: normal;
+	padding:5px 15px 5px 5px;
+	z-index:99;
+	top:50px;
+	left:0px;
+	text-align:center;
+	line-height:120%;
+}
+a.nivo-nextNav , a.nivo-prevNav {background: url(images/sponsorsArrowsForward.png) 3px 0  #0BA3CA;background: url(images/sponsorsArrowsForward.png) 3px 0  rgba(11,163,202,0.5);}
+a.nivo-prevNav {background: url(images/sponsorsArrowsBack.png) 2px 0  #0BA3CA;background: url(images/sponsorsArrowsBack.png) 2px 0  rgba(11,163,202,0.5);}
+
+.nivo-caption a { 
+	color: #ffffff;  
+	text-decoration: underline; 
+}	
+
+.caption-content { padding:0px 0px 200px 0px; color:; font-size: ; font-family: "Helvetica Neue", Arial, Helvetica, sans-serif; text-shadow: 1px 1px 0px black; filter:alpha(opacity=50);letter-spacing: normal;}
+.caption-content h1{width:250px !important; background: rgba(11,163,202,0.5);  padding:10px ;text-align:center;  line-height:120%;}
+.caption-content h2 {	color:!important;
+						font-size:!important;
+						text-shadow: 1px 1px 0px black;}
+.caption-content p{ }
+
+
+
+
+.caption-content h1{
+	color:!important;
+	font-size:!important;
+	text-shadow: 1px 1px 0px black;
+}
+
+.caption-content h2{
+	background: rgba(,,,0.5);  padding:10px ;text-align:center;  line-height:120%;
+}
+
+#headerwrap, .homeRacent h2 ,.advertise h2,.slider-category .anythingBase,#nslider img, h3#comments ,.related h3, .widget h3, .projectdescription h3, .portsingle .portfolio h3, .titleborderh, .menu-header{
+	background:#ffffff  url('../../images/bg/backgroundPatternElegantica.png') !important;
+	}
+
+/* ***********************
+--------------------------------------
+------------MAIN COLOR----------
+--------------------------------------
+*********************** */
+
+.catlinkhover,.item h3 a:hover, .item2 h3 a:hover, .item4 h3 a:hover,.homeRacent h3:hover,.catlink:hover,.infotext span, .homeRacent h3 a:hover,
+.blogpost .link:hover,.blogpost .postedin:hover ,.blogpost .postedin:hover, .blogpost .link a:hover,.blogpostcategory a.textlink:hover,
+.footer_widget .widget_links ul li a:hover, .footer_widget .widget_categories  ul li a:hover,  .footer_widget .widget_archive  ul li a:hover,
+#footerb .footernav ul li a:hover,.footer_widget  ul li a:hover,.tags span a:hover,.more-link:hover,.homeBox .one_third a,.showpostpostcontent h1 a:hover,
+.menu li ul li:hover a,.menu li a:hover strong,.menu li ul li:hover ul li a,.menu li ul li:hover ul li:hover a,.menu li ul li:hover ul li:hover ul li a,.menu li ul li:hover ul li:hover ul li:hover a,
+.menu > li.current-menu-item a strong,.menu > li.current-menu-ancestor a strong,.blogpostcategory .meta .written:hover a ,.blogpostcategory .meta .comments:hover a ,
+#wp-calendar a , .widgett a:hover ,.widget_categories li.current-cat a, .widget_categories li.current-cat, .blogpostcategory .meta .time a:hover,.homeRacent h2 span, .advertise h2 span, 
+.widget span ,h3#comments span, .related h3 span, .homeremove .catlink .sortingword:hover, .homeremove .catlinkhover .sortingword, .accordion a, .blogpost .datecomment  .link a,.projectdescription h3 span,
+.portsingle .portfolio h3 span,.titleborderh span, .textSlide .box, .textSlide .button a, a.recentmore, .blogpostcategory .blogmore
+,.block h2 span,#header ul.menu li a:hover,#header ul.menu li a.active{color:#0BA3CA !important;}
+
+.homeBox .boxdescwraper {border-color: #0BA3CA transparent #0BA3CA  transparent ;text-shadow:0 1px 0 rgba(0,0,0,0.3);}
+.open, .close {border-color: #0BA3CA #0BA3CA transparent #0BA3CA;}
+.homeRacent h3.category a, #portitems2 h3.category a, .blogpostcategory .meta .category a, .item4 h4 a,  .tags a, .blogpost .posted-date a, .blogpost .author a, .portcategories a{border-color: #0BA3CA #0BA3CA  #0BA3CA transparent;text-shadow:0 1px 0 rgba(0,0,0,0.3);}
+.blogpostcategory .comment-inside:after {border-color: #0BA3CA #0BA3CA transparent  transparent;}
+.blogFullWidth .postCategoryRibbon , .item4 h4 a, .blogpost .posted-date a{border-color: #0BA3CA transparent #0BA3CA  #0BA3CA ;}
+.advertise .bx-wrapper:hover .bx-next,.flex-direction-nav .flex-next{background: #0BA3CA url(images/sponsorsArrowsForward.png) no-repeat;margin-left:935px;}
+.advertise .bx-wrapper:hover .bx-prev,.flex-direction-nav .flex-prev {background: #0BA3CA url(images/sponsorsArrowsBack.png) no-repeat;margin-left:0px;}
+ .page .homeRacent .bx-next,.portprev {background: #0BA3CA url(images/sponsorsArrowsForward.png) no-repeat;}
+ .page .homeRacent .bx-prev,.portnext  {background: #0BA3CA url(images/sponsorsArrowsBack.png) no-repeat;}
+.blogsingleimage .nextbutton.port {background: #0BA3CA url(images/sponsorsArrowsForward.png) no-repeat 0px -2px;}
+.blogsingleimage .prevbutton.port {background: #0BA3CA url(images/sponsorsArrowsBack.png) no-repeat 0px -2px;}
+.homeRacent .overLowerDefault,#portitems2 .overLowerDefault , .item3 .overLowerDefault, .item4 .overLowerDefault {background: #0BA3CA url(images/magnifyingGlassOverIcon.png);  }
+/* ***********************
+--------------------------------------
+------------BOX COLOR----------
+--------------------------------------
+*********************** */
+#footer,.homeRacent h3, #homeRecent .one_fourth, .item3 h3, .item4 h3, .item3 h3 a, .item4 h3 a ,.homewrap .homesingleleft,.homewrap .homesingleright
+
+{ background:#ffffff}
+.homeRacent h3 a, .item4 h3, .item4 h3 a {color:#2a2b2c;}
+#remove a, #remove a span{color:#2a2b2c;font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;} 
+
+/* ***********************
+--------------------------------------
+------------MAIN COLOR BOXED----------
+--------------------------------------
+*********************** */
+#contactform  .contactbutton .contact-button:hover, .gototop ,.role, .team .icon img,.pagewrap, .blogpostcategory .posted-date .date-inside, #slider-wrapper,.portfolio .image, .recentimage,.errorpage, .content ol.commentlist li .reply a, .blogpostcategory .comment-inside 
+{background:#0BA3CA;}
+
+.form-submit,.wp-pagenavi a:hover, .wp-pagenavi span.current,#respond #commentform input#commentSubmit, #contactform  .contactbutton .contact-button, .blogpostcategory .comment-inside a, .blogpostcategory .date-inside  {color:#fff !important;background:#0BA3CA; text-shadow:0 1px 0 rgba(0,0,0,0.3);}
+/* ***********************
+--------------------------------------
+------------MAIN BORDER COLOR----------
+--------------------------------------
+*********************** */
+#logo a, .recentborder,.item4 .recentborder, .item3 .recentborder,.afterlinehome,.prelinehome{border-color:#0BA3CA !important;}
+
+
+/* ***********************
+--------------------------------------
+------------BODY COLOR----------
+--------------------------------------
+*********************** */
+
+.blogpost .link a,.datecomment span,.homesingleleft .tags a,.homesingleleft .postedin a,.blogpostcategory .category a,.blogpostcategory .comments a,
+.blogpostcategory a.textlink ,.written a, .blogpostcategory .meta .time a	
+{ color:#2a2b2c}
+
+
+/* ***********************
+--------------------------------------
+------------MENU----------
+--------------------------------------
+*********************** */
+
+.menu li:hover ul {border-bottom: 5px solid #0BA3CA;}
+.menu li ul li a{	font-family: "Helvetica Neue", Arial, Helvetica, sans-serif !important; }
+.menu > li a {	font-family: PT Sans !important; color:#2e2d2d !important;letter-spacing: normal;}
+.menu a span{ 	font-family: "Helvetica Neue", Arial, Helvetica, sans-serif; color:#aaa !important;letter-spacing: normal;}
+#2a2b2c
+/* ***********************
+--------------------------------------
+------------BLOG----------
+-----------------------------------*/
+.blogpostcategory h2 {line-height: 110% !important;}
+.wp-pagenavi span.pages {font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;}
+.wp-pagenavi a, .showpostpostcontent h1 a {color:#2a2b2c;}
+.wp-pagenavi a:hover, ul.tabs a.current, ul.tabs a:hover, h2.trigger:hover { color:#0BA3CA; }
+.blogpost .datecomment a, .related h4 a, .content ol.commentlist li .comment-author .fn a, .content ol.commentlist li .reply a {color:#2a2b2c;}
+.blogpost .datecomment a:hover, .tags a:hover, .related h4 a:hover, .content ol.commentlist li .comment-author .fn a:hover, .content ol.commentlist li .reply a:hover { color:#0BA3CA; }
+.comment-author .fn a{font-family: PT Sans !important;}
+.image-gallery, .gallery-item { border: 1px dashed #0BA3CA;}
+.blogpostcategory .posted-date p{font-family: "Helvetica Neue", Arial, Helvetica, sans-serif !important;text-shadow:0 1px 0 rgba(0,0,0,0.3);}
+.pagecontent h1, .pagecontent p, .content ol.commentlist li .reply a, .team .role {text-shadow:0 1px 0 rgba(0,0,0,0.3);}
+/* ***********************
+--------------------------------------
+------------Widget----------
+-----------------------------------*/
+.wttitle a {color:#2a2b2c;}
+
+.widgetline{}
+.widgett a:hover, .widget_nav_menu ul li a:hover{color:#0BA3CA !important;}
+.item3 h4, .item2 h4, .item4 h4{	font-family: "Helvetica Neue", Arial, Helvetica, sans-serif !important; }
+.related h4{	font-family: "Helvetica Neue", Arial, Helvetica, sans-serif !important; }
+.widget_search form div {	font-family: "Helvetica Neue", Arial, Helvetica, sans-serif !important;}
+.widgett a {	font-family: "Helvetica Neue", Arial, Helvetica, sans-serif !important;}
+.widget_tag_cloud a{	font-family: "Helvetica Neue", Arial, Helvetica, sans-serif !important;}
+
+
+/* ***********************
+--------------------------------------
+------------BUTTONS WITH SHORTCODES----------
+--------------------------------------
+*********************** */
+
+.button_purche_right_top,.button_download_right_top,.button_search_right_top {font-family: PT Sans !important;color:#2a2b2c;text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);}
+.button_purche:hover,.button_download:hover,.button_search:hover {color:#0BA3CA !important;}
+.ribbon_center_red a, .ribbon_center_blue a, .ribbon_center_white a, .ribbon_center_yellow a, .ribbon_center_green a {font-family: PT Sans !important;}

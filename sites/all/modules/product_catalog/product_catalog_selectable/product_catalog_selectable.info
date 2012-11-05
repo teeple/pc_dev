@@ -1,0 +1,8 @@
+package = Product Catalog
+name = Product Catalog Selectable
+description = "Product Catalog Selectable"
+core = 7.x
+
+; Providers.
+files[] = product_catalog_selectable.module
+stylesheets[all][] = product_catalog_selectable.css
