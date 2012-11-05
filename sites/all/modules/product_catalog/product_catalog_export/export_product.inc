@@ -305,8 +305,9 @@ function _product_for_export_test($nid=NULL){
 			$treeNodeCounter = node_load($item->nid);
             $realCounter = node_load($treeNodeCounter->field_ref_counter['und'][0]['nid']);
 			
-            $counter[] = $realCounter->field_counter_id['und'][0]['value'];                
-             
+            $counter[] = array(
+                'counter_id' => $realCounter->field_counter_id['und'][0]['value'],              
+             );
         }		
 		$product['counters'] = $counter;
 
