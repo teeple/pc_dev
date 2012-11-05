@@ -295,16 +295,16 @@ function _product_for_export_test($nid=NULL){
 		$product['package_product'] = $packagedProducts;
 		
 		//Counter
-		dsm('hahaha');
-		$counter = array();
+		$counter = array(); 
 		$view = views_get_view('list_product_child_node');
 		$view->set_display('panel_pane_2');
 		$view->set_arguments(array('0' => $node->nid, '1' => 'treenodecounter'));
 		$view->execute();
-		dsm($view->result);
+		
 		foreach($view->result as $item){
 			$treeNodeCounter = node_load($item->nid);
-			dsm($treeNodeCounter);
+            $realCounter = node_load($treeNodeCounter->field_ref_counter['und'][0]['nid']);
+			dsm($realCounter,'counter');
 		}
 		
 		$counter[] = array(
