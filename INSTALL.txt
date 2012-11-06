@@ -9,7 +9,7 @@ CONTENTS OF THIS FILE
  * Multisite configuration
  * More information
 
-AAA REQUIREMENTS AND NOTES
+CCCC REQUIREMENTS AND NOTES
 ----------------------
 
 Drupal requires:
