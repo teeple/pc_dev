@@ -22,7 +22,7 @@ function product_catalog_form_node_validate($node, $form, &$form_state){
 				form_set_error('Reference','FROM Hour(24) is not allowed');
 			}
 		case 'counter_node_form';
-			break;
+			break;        
 	}
 //dsm($form_state,'node validate formstate');
 }
