@@ -9,7 +9,11 @@ CONTENTS OF THIS FILE
  * Multisite configuration
  * More information
 
+<<<<<<< HEAD
 FFFF REQUIREMENTS AND NOTES
+=======
+cccc REQUIREMENTS AND NOTES
+>>>>>>> 4ed9637280256894274c3b81e392a9e6e3476db7
 ----------------------
 
 Drupal requires:
