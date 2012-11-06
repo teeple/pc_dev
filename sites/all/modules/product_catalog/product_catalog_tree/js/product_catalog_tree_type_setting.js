@@ -8,7 +8,8 @@
             	"simpleproductoffering": {
             		"valid_children" : ["mobile_attribute", "mobile_attribute_packaed", "mobile_counter", "mobile_nonusage", "mobile_usage"],
             		"icon" : {
-                		"image" : "/sites/default/files/applications.png"
+                		// "image" : "/sites/default/files/applications.png"
+                		"image" : "/sites/default/files/icons/service_domain_mobile.png"
                 	},
 				},
 				
@@ -39,14 +40,14 @@
 				"mobile_packaged_mandatory" : {
 					"valid_children" : ["prdattributepackaged"],
             		"icon" : {
-                		"image" : "/sites/default/files/icons4use/star.png"
+                		"image" : "/sites/default/files/icons/tick-octagon.png"
                 	},
 
 				},
 				"mobile_packaged_optional" : {
 					"valid_children" : ["prdattributepackaged"],
             		"icon" : {
-                		"image" : "/sites/default/files/icons4use/tick-octagon.png"
+                		"image" : "/sites/default/files/icons/octagon-plus.png"
                 	},
 				},
 				"mobile_packaged_hidden" : {
@@ -63,15 +64,23 @@
 				"mobile_counter" : {
 					"valid_children" : ['mobile_counter_main','mobile_counter_accumulated'],
             		"icon" : {
-                		"image" : "/sites/default/files/icons4use/user.png"
+                		"image" : "/sites/default/files/icons/battery.png"
                 	},
 
 				},
 				"mobile_counter_main" : {
                     "valid_children" : ["tree_node_counter_main_basic","tree_node_counter_main_optional"],
+									"icon" : {
+											"image" : "/sites/default/files/icons/inbox-document.png"
+										},
+                    		
                 },
-                "mobile_counter_accumulated": {
+         "mobile_counter_accumulated": {
                 	"valid_children" : ['tree_node_counter_accumulated_optional'],
+                	"icon" : {
+                			"image" : "/sites/default/files/icons/inbox-document.png"
+                		},
+                	
                 },
                 "tree_node_counter_main_basic" : {
 					"valid_children" : [ "conditioncommonand" ],
@@ -92,14 +101,26 @@
                     }
                 },
                 "conditioncommonand" : {
+                /*
                     "icon" : {
 						"image" : "/sites/default/files/inbox-document.png"
                     }
+                    */
                 },
                 
                 // NonUsage
+                
+                "mobile_nonusage" : {
+                	"icon" : {
+                	"image" : "/sites/default/files/icons/wheel.png"
+                	        }
+                },
+                
                 "mobile_nonusage_fee_recurring" : {
                 	"valid_children" : ["treenodedepositscheme"],
+                	"icon" : {
+                	"image" : "/sites/default/files/icons/money.png"
+                	        }
                 },
                 "mobile_nonusage_fee_onetime" : {
                 	"valid_children" : ["treenodedepositscheme"],
@@ -107,7 +128,8 @@
                 "mobile_nonusage_subscription_bonus" : {
                 	"valid_children" : ["treenodedepositscheme"],
             		"icon" : {
-                		"image" : "/sites/default/files/icons4use/present.png"
+                		// "image" : "/sites/default/files/icons4use/present.png"
+                		"image" : "/sites/default/files/icons/point.png"
                 	},
                 },
                 "mobile_nonusage_deposit" : {
@@ -135,17 +157,30 @@
 					"valid_children" : [ "actionpricecharge",
 							"actionpricediscount", "actionpriceallowance" ],
 					"icon" : {
-						"image" : "/sites/default/files/applications.png"
+						// "image" : "/sites/default/files/applications.png"
+								"image" : "/sites/default/files/icons/system-monitor.png"
 					}
 				},
                 "mobile_usage_voice" : {
                 	"valid_children" : ["treenodedepositscheme"],
+                	"icon" : {
+                		"image" : "/sites/default/files/icons/voice.png"
+                	}
+                	
                 },
                 "mobile_usage_sms" : {
                 	"valid_children" : ["treenodedepositscheme"],
+                	"icon" : {
+                		"image" : "/sites/default/files/icons/SMS.png"
+                	}
+                	
                 },
                 "mobile_usage_data" : {
                 	"valid_children" : ["treenodedepositscheme"],
+                	"icon" : {
+                		"image" : "/sites/default/files/icons/data.png"
+                	}
+                	
                 },
 				"actionpricecharge" : {
 					"valid_children" : [ "actionpricechargefactors" ],
