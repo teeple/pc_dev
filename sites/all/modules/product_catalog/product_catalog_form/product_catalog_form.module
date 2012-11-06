@@ -17,4 +17,41 @@ function product_catalog_form_init() {
 function product_catalog_form_node_presave() {
     //dsm($node);
 }
+
+function _create_test_product(){
+    global $user;
+    module_load_include('inc', 'node', 'node.pages');
+    $node = new StdClass();
+    $node->uid = $user->uid;
+    $node->type = 'simpleproductoffering';
+    $node->language = 'und';
+    
+    
+    //valid for
+    /*
+    $node->field_validfor_product['und'][0]['value'] = '2012-10-19 07:30:00';
+    $node->field_validfor_product['und'][0]['value2'] = '2012-10-19 07:30:00';
+    $node->field_validfor_product['und'][0]['timezone'] =  'Asia/Seoul';
+    $node->field_validfor_product['und'][0]['timezone_db'] = 'UTC';
+    $node->field_validfor_product['und'][0]['date_type'] = 'datetime';
+    */
+    
+    node_object_prepare($node);
+    
+    $formName = 'simpleproductoffering_node_form';
+    $form_state = array();
+    $form_state['build_info']['args'] = array($node);
+    $form_state['service_domain_tid'] = 406;
+    $form = drupal_build_form($formName, $form_state);
+        
+    //title
+    $form_state['values']['title'] = 'sjang test product';
+        
+    //billing type
+    //$form_state['field_billing_type']['und'][0]
+    dsm($form,'form');
+    dsm($form_state,'form_state');
+    node_form_submit($form, &$form_state);
+    //drupal_form_submit('simpleproductoffering_node_form', $form_state);
+}
 ?>
