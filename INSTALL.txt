@@ -9,7 +9,7 @@ CONTENTS OF THIS FILE
  * Multisite configuration
  * More information
 
-REQUIREMENTS AND NOTES
+bbb REQUIREMENTS AND NOTES
 ----------------------
 
 Drupal requires:
