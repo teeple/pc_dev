@@ -37,7 +37,7 @@ this directory (except for the initial commands that create that directory).
 
 OPTIONAL SERVER REQUIREMENTS
 ----------------------------
-
+- adfasdf
 - If you want to use Drupal's "Clean URLs" feature on an Apache web server, you
   will need the mod_rewrite module and the ability to use local .htaccess
   files. For Clean URLs support on IIS, see "Clean URLs with IIS"
