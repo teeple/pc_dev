@@ -1,4 +1,6 @@
 
+- test message
+
 CONTENTS OF THIS FILE
 ---------------------
 
