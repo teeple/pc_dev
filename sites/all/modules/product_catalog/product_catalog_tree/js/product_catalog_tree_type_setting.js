@@ -146,7 +146,7 @@
                 "mobile_nonusage_threshold" : {
                 	"valid_children" : ["treenodethresholdscheme"],
                 	"icon" : {
-                		"image" : "/sites/default/files/threshold.png"
+                		"image" : "/sites/default/files/icons/threshold.png"
                 	}
                 },
                 "treenodethresholdscheme" : {
