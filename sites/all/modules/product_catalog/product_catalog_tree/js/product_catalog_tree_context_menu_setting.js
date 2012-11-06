@@ -30,7 +30,7 @@
 				"_disabled" : true,
 			},
 		};
-	
+		
 		switch (treeType) {
 		case "product_tree":
 			var relType = obj.attr("rel");
