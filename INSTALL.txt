@@ -22,8 +22,6 @@ Drupal requires:
     compatible drop-in replacement for MySQL.
   - PostgreSQL 8.3 (or greater) (http://www.postgresql.org/).
   - SQLite 3.4.2 (or greater) (http://www.sqlite.org/).
-  - adfjaksdfjk
-  
 
 For more detailed information about Drupal requirements, including a list of
 PHP extensions and configurations that are required, see "System requirements"
