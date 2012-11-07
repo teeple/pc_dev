@@ -16,14 +16,14 @@ function _product_for_export($nid=NULL){
         
         //Basic Attributes
         $node = node_load($products[$i]->nid);
-dsm($node,'product');
+
         $billingTypeTerm = taxonomy_term_load($node->field_billing_type['und'][0]['tid']);
         //dsm($billingTypeTerm,'$billingTypeTerm');
 
         $product['type'] = 'product';
 
         $attribute = array();
-        $attribute['product_id'] = $node->nid;
+        $attribute['product_id'] = $node->field_product_id['und'][0]['safe_value'];
         $attribute['product_name'] = $node->title;
         
         $productTypeTerm = taxonomy_term_load($node->field_product_type['und'][0]['tid']);      
@@ -44,11 +44,27 @@ dsm($node,'product');
             $attribute['description'] = NULL;
         }
         if(!empty($node->field_parent_node_for_rp['und'][0]['nid'])){
-            $attribute['parent_product_id'] = $node->field_parent_node_for_rp['und'][0]['nid'];
+            $parentNode = node_load($node->field_parent_node_for_rp['und'][0]['nid']);
+            $attribute['parent_product_id'] = $parentNode->field_product_id['und'][0]['safe_value'];
         }else{
             $attribute['parent_product_id'] = NULL;
         }
-        
+
+        $attribute['version'] = $node->field_version['und'][0]['value'];
+        if(!empty($node->field_billing_cycle['und'][0]['value'])){
+            $attribute['billing_cycle'] = $node->field_billing_cycle['und'][0]['value'];
+        }else{
+            $attribute['billing_cycle'] = NULL;
+        }
+
+        $customerTypeTerm = taxonomy_term_load($node->field_customer_type['und'][0]['tid']);
+        $attribute['customer_type'] = _get_common_code($customerTypeTerm);
+
+        if(!empty($node->field_customer_group_type['und'])){
+            $customerGroupType = taxonomy_term_load($node->field_customer_group_type['und'][0]['tid']);
+            $attribute['customer_group_type'] = _get_common_code($customerGroupType);
+        }
+
         $view = views_get_view('list_product_child_node');
         $view->set_display('panel_pane_2');
         $view->set_arguments(array('0' => $node->nid, '1' => 'prdattributeprefixrangeallowed'));
@@ -61,17 +77,6 @@ dsm($node,'product');
             }
         }
         $attribute['prefix_allowed'] = $allowedPrefix;
-        
-        // Modified
-        // TODO: Customer Type 은 어디로????
-        //$attribute['customer_type'] = array('codeGroup' => 'Customer Type', 'code' => 'I', 'meaning' =>'Individual');
-        
-        $attribute['version'] = $node->field_version['und'][0]['value'];
-        if(!empty($node->field_billing_cycle['und'][0]['value'])){
-            $attribute['billing_cycle'] = $node->field_billing_cycle['und'][0]['value'];
-        }else{
-            $attribute['billing_cycle'] = NULL;
-        }
                 
         $operator = array();
         foreach($node->field_service_operator['und'] as $item){
