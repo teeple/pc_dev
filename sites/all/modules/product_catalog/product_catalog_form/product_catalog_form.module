@@ -21,13 +21,17 @@ function product_catalog_form_node_presave() {
 function _create_test_product(){
     global $user;	
 	module_load_include('inc', 'node', 'node.pages');
-	
-	$product_id_start = 1000;
-	$product_name_start = 'Mono_M_';
 	$customer_type_name = array('Ind','Cor','Hos','Apt','Hot');
-	$bill_type_name = array('Post','Pre','Hyb');
-	$bill_type_tid = array(679,678,680);
-	$cust_group_tid = array(1639,1640,1642,1641);
+    $bill_type_name = array('Post','Pre','Hyb');
+    $bill_type_tid = array(679,678,680);
+    $cust_group_tid = array(1639,1640,1642,1641);
+    
+    //Mobile 406, IPTV 673, BroadBand 530, VOIP 409, Satellite 531, Bundle 671
+    $service_domain_tid = 406;
+    $product_id_start = 1000;
+	$product_name_start = 'Mono_M_';
+    $is_bundle = FALSE;
+    
 	
 	for($i=0;$i<5;$i++){
 		for($j=0;$j<3;$j++){		
@@ -35,10 +39,14 @@ function _create_test_product(){
 		    $node->uid = $user->uid;
 		    $node->type = 'simpleproductoffering';
 		    $node->language = 'und';    
-			//Mobile
-			$node->field_service_type_of_provider['und'][0]['tid'] = 406;
+			$node->field_service_type_of_provider['und'][0]['tid'] = $service_domain_tid;
 			
-		    $node->title = $product_name_start.$customer_type_name[$i].'_'.$bill_type_name[$j];
+            if($is_bundle){
+              $node->title = $product_name_start.$customer_type_name[$i].'_'.$bill_type_name[$j].'_B';
+            }else{
+		      $node->title = $product_name_start.$customer_type_name[$i].'_'.$bill_type_name[$j];
+            }
+            
 			$node->field_product_id['und'][0]['value'] = (string)$product_id_start;
 			$product_id_start++;
 			
