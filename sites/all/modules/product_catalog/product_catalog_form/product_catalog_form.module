@@ -40,12 +40,13 @@ function _create_test_product(){
 		    $node->type = 'simpleproductoffering';
 		    $node->language = 'und';    
 			$node->field_service_type_of_provider['und'][0]['tid'] = $service_domain_tid;
-			
+			 
             if($is_bundle){
-              $node->title = $product_name_start.$customer_type_name[$i].'_'.$bill_type_name[$j].'_B';
+              $nodeTitle = $product_name_start.$customer_type_name[$i].'_'.$bill_type_name[$j].'_B';
             }else{
-		      $node->title = $product_name_start.$customer_type_name[$i].'_'.$bill_type_name[$j];
+		      $nodeTitle = $product_name_start.$customer_type_name[$i].'_'.$bill_type_name[$j];
             }
+            $node->title = $nodeTitle;
             
 			$node->field_product_id['und'][0]['value'] = (string)$product_id_start;
 			$product_id_start++;
@@ -77,6 +78,11 @@ function _create_test_product(){
 			// 자동으로 생성해주어야 하는 instance를 만들어준다. 
 			// default attribute instance create
 			_create_default_prdattributes($node, $voca_name);	
+            
+            
+            
+            //link bundled products
+            
 		}
 	}
 }
