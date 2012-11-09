@@ -64,8 +64,7 @@ function _create_test_product(){
 			
 			node_save($node);
 			
-			
-		    //billing type
+			//billing type
 		    $voca_name = _get_vocabulary_name('simpleproductoffering', $node);
 				
 			// vocabulary에서 'Main' counter에 해당하는 부분에 basic counter를 자동으로 생성하게 해준다. 
@@ -79,11 +78,39 @@ function _create_test_product(){
 			// default attribute instance create
 			_create_default_prdattributes($node, $voca_name);	
             
-            
-            
             //link bundled products
+            $nodeTitle = explode('_',$nodeTitle);
             
-		}
+            if($nodeTitle[0] != 'Mono'){
+                $targetDomains = $nodeTitle[1];
+                $targetDomains = str_split($targetDomains);
+                
+                $weight = 0;  
+                foreach($targetDomains as $item){
+                    $targetProductName = 'Mono_'.$item.'_'.$nodeTitle[2].'_'.$nodeTitle[3].'_B';
+                     
+                    $child = new StdClass();
+                    $child->uid = $user->uid;
+                    $child->language = 'und';
+                    $child->type = 'prdattributepackaged';
+                    $child->field_weight['und'][0]['value'] = $weight;
+                    $weight += 100;
+                    $child->field_ref_tree_tid['und'][0]['value'] = 1447;
+                    $child->field_ref_product['und'][0]['nid'] = $node->nid;
+                    $term = taxonomy_get_term_by_name('Mandatory_MarketOpen','prdrelationtype');
+                    $child->field_ref_prdrelationtype['und'][0]['tid'] = current($term)->tid;
+                    
+                    $view = views_get_view('list_simple_product_offering');
+                    $view->set_display('panel_pane_5');
+                    $view->set_arguments(array('0' => $targetProductName));   
+                    $view->execute();
+                    $referenceProductNid = $view->result[0]->nid;                                      
+                    $child->field_ref_connected_product['und'][0]['nid'] = $referenceProductNid;
+                    
+                    node_save($child);
+                }
+            }
+        }
 	}
 }
 ?>
