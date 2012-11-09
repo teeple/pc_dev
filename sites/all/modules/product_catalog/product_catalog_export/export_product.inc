@@ -25,7 +25,13 @@ function _product_for_export($nid=NULL){
         $attribute = array();
         $attribute['product_id'] = $node->field_product_id['und'][0]['safe_value'];
         $attribute['product_name'] = $node->title;
-        
+		
+		if(!empty($node->field_is_bundle)){
+        	$attribute['is_bundle'] = $node->field_is_bundle['und'][0]['value'];
+		}else{
+			$attribute['is_bundle'] = '0';
+		}
+		
         $productTypeTerm = taxonomy_term_load($node->field_product_type['und'][0]['tid']);      
         $attribute['product_type'] = _get_common_code($productTypeTerm);
         
