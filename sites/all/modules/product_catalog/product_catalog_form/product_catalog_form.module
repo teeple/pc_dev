@@ -19,39 +19,57 @@ function product_catalog_form_node_presave() {
 }
 
 function _create_test_product(){
-    global $user;
-    module_load_include('inc', 'node', 'node.pages');
-    $node = new StdClass();
-    $node->uid = $user->uid;
-    $node->type = 'simpleproductoffering';
-    $node->language = 'und';
-    
-    
-    //valid for
-    /*
-    $node->field_validfor_product['und'][0]['value'] = '2012-10-19 07:30:00';
-    $node->field_validfor_product['und'][0]['value2'] = '2012-10-19 07:30:00';
-    $node->field_validfor_product['und'][0]['timezone'] =  'Asia/Seoul';
-    $node->field_validfor_product['und'][0]['timezone_db'] = 'UTC';
-    $node->field_validfor_product['und'][0]['date_type'] = 'datetime';
-    */
-    
-    node_object_prepare($node);
-    
-    $formName = 'simpleproductoffering_node_form';
-    $form_state = array();
-    $form_state['build_info']['args'] = array($node);
-    $form_state['service_domain_tid'] = 406;
-    $form = drupal_build_form($formName, $form_state);
-        
-    //title
-    $form_state['values']['title'] = 'sjang test product';
-        
-    //billing type
-    //$form_state['field_billing_type']['und'][0]
-    dsm($form,'form');
-    dsm($form_state,'form_state');
-    node_form_submit($form, &$form_state);
-    //drupal_form_submit('simpleproductoffering_node_form', $form_state);
+    global $user;	
+	module_load_include('inc', 'node', 'node.pages');
+	
+	$product_id_start = 1000;
+	$product_name_start = 'Mono_M_';
+	$customer_type_name = array('Ind','Cor','Hos','Apt','Hot');
+	$bill_type_name = array('Post','Pre','Hyb');
+	$bill_type_tid = array(679,678,680);
+	$cust_group_tid = array(1639,1640,1642,1641);
+	
+	for($i=0;$i<5;$i++){
+		for($j=0;$j<3;$j++){		
+		    $node = new StdClass();
+		    $node->uid = $user->uid;
+		    $node->type = 'simpleproductoffering';
+		    $node->language = 'und';    
+			//Mobile
+			$node->field_service_type_of_provider['und'][0]['tid'] = 406;
+			
+		    $node->title = $product_name_start.$customer_type_name[$i].'_'.$bill_type_name[$j];
+			$node->field_product_id['und'][0]['value'] = (string)$product_id_start;
+			$product_id_start++;
+			
+			$node->field_is_bundle['und'][0]['value'] = 0;
+		    
+			$node->field_product_type['und'][0]['tid'] = 479;			
+			$node->field_billing_type['und'][0]['tid'] = $bill_type_tid[$j];
+			if($i == 0){
+				$node->field_customer_type['und'][0]['tid'] = 1636;
+			}else{
+				$node->field_customer_type['und'][0]['tid'] = 1637;
+				$node->field_customer_group_type['und'][0]['tid'] = $cust_group_tid[$i-1];
+			}
+			
+			node_save($node);
+			
+			
+		    //billing type
+		    $voca_name = _get_vocabulary_name('simpleproductoffering', $node);
+				
+			// vocabulary에서 'Main' counter에 해당하는 부분에 basic counter를 자동으로 생성하게 해준다. 
+			$mainTerm = taxonomy_get_term_by_name('Main', $voca_name);
+			
+			if(!empty($mainTerm)) {
+				_create_default_basic_counters($node->nid, current($mainTerm)->tid);
+			}
+			
+			// 자동으로 생성해주어야 하는 instance를 만들어준다. 
+			// default attribute instance create
+			_create_default_prdattributes($node, $voca_name);	
+		}
+	}
 }
 ?>
