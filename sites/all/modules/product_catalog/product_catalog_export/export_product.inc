@@ -190,8 +190,8 @@ function _product_for_export($nid=NULL){
     //if($nid==NULL) return $retData['products'][0];
     //else return $retData;
     
-    if($nid==NULL) return json_encode($retData['products'][0]);
-    else return json_encode($retData);
+    if($nid!=NULL) return $retData['products'][0];
+    else return $retData;
     
     /*
 	$retData = array();
