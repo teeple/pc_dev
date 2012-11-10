@@ -1,12 +1,15 @@
 <?php
 
 module_load_include( 'inc', 'ocs_admin', 'ocs_common');
-module_load_include( 'inc', 'ocs_admin', 'ocs_campaign');
 module_load_include( 'inc', 'ocs_admin', 'ocs_message');
 module_load_include( 'inc', 'ocs_admin', 'ocs_state');
+/*
+module_load_include( 'inc', 'ocs_admin', 'ocs_campaign');
 module_load_include( 'inc', 'ocs_admin', 'ocs_account');
 module_load_include( 'inc', 'ocs_admin', 'ocs_group');
 module_load_include( 'inc', 'ocs_admin', 'ocs_card');
+*/
+module_load_include( 'inc', 'ocs_admin', 'ocs_test_case');
 
 /**
 * Implement hook_help().
