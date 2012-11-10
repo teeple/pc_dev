@@ -2,14 +2,28 @@
   Drupal.behaviors.ocs_admin = {
 	attach: function(context, settings) {
 		console.log('testcase.js loaded');
-		$('#run-test-button').bind('click',$.fn.runTestHandler);
+		$('#run-test-ocs-button').bind('click',$.fn.runTestOcsHandler);
 	}
   };
 
-  $.fn.runTestHandler = function(event) {
+  $.fn.runTestOcsHandler = function(event) {
   	console.log('run test case');
-	var ts = $('.node_nid');
-	console.log( ts);
+	var ts = $('.testcase_status').each( function(index){
+        $(this).text( 'Requesting');
+
+        // get URL
+        var testOcsUrl = '/ajax/test/ocs/' + $(this).attr('node');
+        $('#run-test-ocs-result > ul').append( '<li>' + testOcsUrl + '</li>');
+
+        $.ajax({
+            url: testOcsUrl,
+            type: "get",
+            success: function(data) {
+                var output = data;
+                $('#run-test-ocs-result > ul').append( '<li>' + output + '</li>');
+            }
+        });
+    });
   };
 	
  })(jQuery);

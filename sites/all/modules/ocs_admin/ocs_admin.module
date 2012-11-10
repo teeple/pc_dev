@@ -36,7 +36,6 @@ function ocs_admin_menu() {
         'file' => 'ocs_admin.admin.inc',
     );
 
-    // for testing menu
     /*
     $items['helloworld'] = array(
         'title' => 'Hello World',
@@ -44,15 +43,17 @@ function ocs_admin_menu() {
         'page arguments' => array( 'ocs_account_add_form'),
         'access arguments' => array('access content'),
     );
+    */
 
-    $items['helloworld/%ctools_js/form'] = array(
-        'title' => 'AJAX World',
-        'page callback' => 'ocs_admin_modal',
-        'page arguments' => array(1),
+    // for ajax handling
+
+    $items['ajax/test/%/%'] = array(
+        'title' => 'AJAX handler for testing',
+        'page callback' => 'ocs_admin_run_testcase',
+        'page arguments' => array(2,3),
         'access arguments' => array('access content'),
         'type' => MENU_CALLBACK,
     );
-    */
 
     // menu items for event
     /*
@@ -413,41 +414,6 @@ function helloworld() {
         'product' => $block['product']['content'],
         */
     );
-}
-
-/*
-** tried to implement modal popup to select customer or product
-*/
-function ocs_admin_modal( $js = NULL)
-{
-    if ( $js) {
-        ctools_include('ajax');
-        ctools_include('modal');
-    }
-
-    $block = module_invoke( 'views', 'block_view', 'ocs_account-block');
-
-    $form = ocs_admin_modal_submit_form( 'ocs_admin_modal_submit_form');
-    $render = array(
-        'title' => array(
-            '#type' => 'markup',
-            '#markup' => '<h2>Select Customer</h2>',
-        ),
-
-        'view' => $block['content'],
-
-        'form' => $form,
-    );
-
-    if ( $js) {
-        $command = array();
-        $command = ctools_modal_form_render( $form_state, $render);
-        print ajax_render( $command);
-        exit;
-    }
-    else {
-        return $render;
-    }
 }
 
 function ocs_admin_modal_submit_form()
