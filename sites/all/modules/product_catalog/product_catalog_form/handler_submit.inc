@@ -217,7 +217,10 @@ function _offering_submit_handler(&$form, &$form_state){
 		// vocabulary에서 'Main' counter에 해당하는 부분에 basic counter를 자동으로 생성하게 해준다. 
 		$mainTerm = taxonomy_get_term_by_name('Main', $voca_name);
 		
-		if(!empty($mainTerm)) {
+		// main 상품을 생성하는 경우가 아니면 basic counter를 초기에 생성시켜줄 필요가 없다.
+		$prdTypeTerm = taxonomy_term_load($form_state['product_type_tid']);
+		
+		if(!empty($mainTerm) && ($prdTypeTerm->name == 'Main')) {
 			_create_default_basic_counters($offering->nid, current($mainTerm)->tid);
 		}
 		

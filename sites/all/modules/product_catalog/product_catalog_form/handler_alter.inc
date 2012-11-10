@@ -764,6 +764,9 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
         	$form['field_ref_product']['#type'] = 'hidden';
         	$form['field_ref_tree_tid']['#type'] = 'hidden';        	
         	break;
+        case 'lifecyclescheme_node_form':
+            _unset_menu_items($form,$form_id);
+            break;
         /*
         case 'views_form_list_numberingplan_domestic_for_product_default':
             unset($form['actions']['submit']['#submit']);
