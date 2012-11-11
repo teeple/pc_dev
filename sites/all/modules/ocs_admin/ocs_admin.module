@@ -55,6 +55,24 @@ function ocs_admin_menu() {
         'type' => MENU_CALLBACK,
     );
 
+    // for OCS API testing
+    $items['ocs/subscriber/%'] = array(
+        'title' => 'OCS API handler',
+        'page callback' => 'ocs_admin_run_api',
+        'page arguments' => array(2),
+        'access arguments' => array('access content'),
+        'type' => MENU_CALLBACK,
+    );
+
+    $items['ocs/subscriber/%/%'] = array(
+        'title' => 'OCS API handler',
+        'page callback' => 'ocs_admin_run_api',
+        'page arguments' => array(2,3),
+        'access arguments' => array('access content'),
+        'type' => MENU_CALLBACK,
+    );
+
+
     // menu items for event
     /*
     $items['ocs_admin/config/ocs/import'] = array(
