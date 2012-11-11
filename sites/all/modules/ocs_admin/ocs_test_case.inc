@@ -1,4 +1,11 @@
 <?php
+
+function ocs_admin_run_api( $param1, $param2)
+{
+    print '{"result":"success"}';
+}
+
+
 function ocs_admin_run_testcase( $type, $nid, $tc)
 {
     if ( $type == 'ocs') {
@@ -76,14 +83,21 @@ function ocs_run_testcase_http( $url, $ts_data, $field)
 
     }
 
-    $response = http_post_data( $url, ocs_json_encode($data), array("timeout"=>1), $info);
+    /*
+    $response = http_parse_message( http_post_data( $url, ocs_json_encode($data), array("timeout"=>1), $info));
 
-    // build output
     $output = array(
         'effective_url' => $info['effective_url'],
-        'response' => $info['response_code'],
+        'response' => $response->body,
+        'response_code' => $info['response_code'],
         'total_time' => $info['total_time']);
 
+    */
+    $response = drupal_http_request( $url, $data, array("timeout"=>1));
+
+    $output = array( 'response' => $response);
+
+    // build output
     return $output;
 }
 
