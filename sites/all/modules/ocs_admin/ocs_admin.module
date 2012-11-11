@@ -47,10 +47,10 @@ function ocs_admin_menu() {
 
     // for ajax handling
 
-    $items['ajax/test/%/%'] = array(
+    $items['ajax/test/%/%/%'] = array(
         'title' => 'AJAX handler for testing',
         'page callback' => 'ocs_admin_run_testcase',
-        'page arguments' => array(2,3),
+        'page arguments' => array(2,3,4),
         'access arguments' => array('access content'),
         'type' => MENU_CALLBACK,
     );
