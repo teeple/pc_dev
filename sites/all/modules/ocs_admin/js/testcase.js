@@ -27,7 +27,7 @@
             type: "get",
             success: function(data) {
                 var output = data;
-                $('#run-test-ocs-result > ul').append( '<li>' + output + '</li>');
+//                $('#run-test-ocs-result > ul').append( '<li>' + output + '</li>');
                 $.fn.runOcsTestCase(nid, data);
             },
             error: function() {
@@ -44,20 +44,23 @@
         console.log( 'test: ', testcase);
         for( var i=0; i< testcase.length; i++) {
             var testOcsUrl = '/ajax/test/ocs/' + nid + '/' + testcase[i].nid;
-            $('#run-test-ocs-result > ul').append( '<li>' + testOcsUrl + '</li>');
+//            $('#run-test-ocs-result > ul').append( '<li>' + testOcsUrl + '</li>');
 
             $('.testcase_status[node=' + nid + ']').append( '<li node="' + nid + ':' + testcase[i].nid + '"> REQ ' + testOcsUrl + '</li>');
             $.ajax({
                 url: testOcsUrl,
                 type: "get",
                 success: function(data) {
-                    var result = $.parseJSON(data);
+                    var r = $.parseJSON(data);
+                    /*
                     $('#run-test-ocs-result > ul').append( data);
-                    console.log( result);
+                    */
+                    console.log( r);
 
-                    $('li[node="' + result.nid + ':' + result.tc_nid + '"]').append( 
-                        '<ul><li> ' + result.nid  + ' : ' + result.effective_url + '</li>'  +
-                        '<li> RSP  : ' + result.response + ', TIME : ' + result.total_time + '</li></ul>'  );
+                    $('li[node="' + r.nid + ':' + r.tc_nid + '"]').append( 
+                        '<ul><li> ' + r.nid  + ' : ' + r.response.request + '</li>'  +
+                        '<li> RSP  : ' + r.response.code + r.response.status_message + '</li>' +
+                        '<li>' + r.response.data + '</li></ul>'  );
 
                 }
             });
