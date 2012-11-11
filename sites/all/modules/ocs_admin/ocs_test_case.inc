@@ -1,34 +1,92 @@
 <?php
-function ocs_admin_run_testcase( $type, $nid)
+function ocs_admin_run_testcase( $type, $nid, $tc)
 {
     if ( $type == 'ocs') {
-        print ocs_testcase_for_ocs( $nid);
+        if ( $nid == 'count') {
+            // ajax/test/ocs/count/[nid]
+            // return the number of test cases 
+            $node = node_load( $tc);
+            print json_encode( $node->field_ts_test_data['und']);
+        }
+        else {
+            // ajax/test/ocs/[nid]/[testcase nid]
+            if ( $tc == '0')
+                print ocs_run_all_testcase_for_ocs( $nid);
+            else
+                print ocs_run_one_testcase_for_ocs( $nid, $tc);
+        }
     }
 }
 
-function ocs_testcase_for_ocs( $nid)
+function ocs_run_one_testcase_for_ocs( $nid, $tc_nid)
 {
     // content type test_case_ocs
     $node = node_load( $nid);
 
     $url = 'http://' . $node->field_ts_host['und'][0]['value'] . $node->field_ts_api['und'][0]['value']; 
 
-    $output = '';
+    $ts_data = node_load( $tc_nid);
+    $field = &drupal_static( __FUNCTION__ . $ts_data->type);;
+    if ( empty($field)) {
+        $field = field_info_instances( 'node', $ts_data->type);
+    }
+
+    $output = ocs_run_testcase_http( $url, $ts_data, $field);
+    $output['url'] = current_path();
+    $output['nid'] = $nid;
+    $output['tc_nid'] = $tc_nid;
+
+    return json_encode($output);
+}
+
+
+function ocs_run_all_testcase_for_ocs( $nid)
+{
+    // content type test_case_ocs
+    $node = node_load( $nid);
+
+    $url = 'http://' . $node->field_ts_host['und'][0]['value'] . $node->field_ts_api['und'][0]['value']; 
+
+    $output = array();
     $field = NULL;
     // get test data
     foreach( $node->field_ts_test_data['und'] as $key => $value) {
         $ts_data = node_load( $value);
         if ( $field == NULL) $field = field_info_instances( 'node', $ts_data->type);
 
-        $data = ocs_build_ts_json( $ts_data, $field);
-        $response = http_post_data( $url, ocs_json_encode($data));
-        $output += $response;
-
-        dpm( $response);
+        $output[] = ocs_run_testcase_http( $url, $ts_data, $field);
     }
 
-    return $url . $output;
+    return json_encode($output);
 }
+
+
+function ocs_run_testcase_http( $url, $ts_data, $field)
+{
+    $data = ocs_build_ts_json( $ts_data, $field);
+
+    $pattern = '/\[(\w+)\]/';
+    while ( preg_match( $pattern, $url, $match)) {
+        // $match[0] == matched string, find in the value array
+        $key = substr( $match[0], 1, -1);
+        if ( array_key_exists( $key, $data)) {
+            // replace one the variable pattern found
+            $url = preg_replace( $pattern, $data[$key], $url, 1); 
+        }
+
+    }
+
+    $response = http_post_data( $url, ocs_json_encode($data), array("timeout"=>1), $info);
+
+    // build output
+    $output = array(
+        'effective_url' => $info['effective_url'],
+        'response' => $info['response_code'],
+        'total_time' => $info['total_time']);
+
+    return $output;
+}
+
 
 function ocs_test_case_json( $nid, $data)
 {
