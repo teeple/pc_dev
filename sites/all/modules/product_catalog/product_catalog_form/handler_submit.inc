@@ -129,7 +129,7 @@ function _offering_submit_characteristic_handler(&$form, &$form_state, &$spec_ch
 	if(!isset($form['nid']['#value'])) { //create
 		$productSpecification = new StdClass();
 	} else {
-		$productSpecification = node\load($form['#node']->field_r_productspecification['und'][0]['nid']);
+		$productSpecification = node_load($form['#node']->field_r_productspecification['und'][0]['nid']);
 		$charUseList = $productSpecification->field_r_productspeccharuse['und'];
 		$charUseNidList  = array();
 		foreach($charUseList as $value) {
