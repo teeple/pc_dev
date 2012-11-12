@@ -5,4 +5,5 @@ version = 7.0
 package = OCS Admin
 files[] = ocs_admin.test
 stylesheets[all][] = ocs_admin.css
+scripts[] = js/testcase.js
 //ocs_admin.module

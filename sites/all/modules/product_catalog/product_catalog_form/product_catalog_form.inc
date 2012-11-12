@@ -9,12 +9,14 @@ function _get_vocabulary_name($contentType, $productNode, $serviceType = NULL){
 			'simpleproductoffering' => array(
 					'Cross' => array(
 								'Main' => 	array(	'Postpaid' => 'tpl_default_tree_cross_main',
-													'Prepaid'  	=> 'tpl_default_tree_cross_main'
+													'Prepaid'  	=> 'tpl_default_tree_cross_main',
+													'Hybrid' => 'tpl_default_tree_corss_hybrid'
 											),
 								),
 					'IPTV' => array(
 								'Main' 		=> array(	'Postpaid' => 'tpl_default_tree_iptv_main_postpaid',
-														'Prepaid'  	=> 'tpl_default_tree_iptv_main_prepaid'
+														'Prepaid'  	=> 'tpl_default_tree_iptv_main_prepaid',
+														'Hybrid'     => 'tpl_default_tree_iptv_main_hybrid'
 											),
 								'Additional' => array(	'Postpaid' => 'tpl_default_tree_iptv_additional_postpaid',
 														'Prepaid'  	=> 'tpl_default_tree_iptv_additional_prepaid'
@@ -25,7 +27,8 @@ function _get_vocabulary_name($contentType, $productNode, $serviceType = NULL){
 								),
 					'Mobile' => array(
 								'Main' 		=> array(	'Postpaid' => 'tpl_default_tree_mobile_main_postpaid',
-														'Prepaid'  	=> 'tpl_default_tree_mobile_main_prepaid'
+														'Prepaid'  	=> 'tpl_default_tree_mobile_main_prepaid',
+														'Hybrid'     => 'tpl_default_tree_mobile_main_hybrid'
 											),
 								'Additional' => array(	'Postpaid' => 'tpl_default_tree_mobile_additional_postpaid',
 														'Prepaid'  	=> 'tpl_default_tree_mobile_additional_prepaid'
@@ -36,7 +39,8 @@ function _get_vocabulary_name($contentType, $productNode, $serviceType = NULL){
 								),
 					'Broadband' => array(
 								'Main' 		=> array(	'Postpaid' => 'tpl_default_tree_broadband_main_postpaid',
-														'Prepaid'  	=> 'tpl_default_tree_broadband_main_prepaid'
+														'Prepaid'  	=> 'tpl_default_tree_broadband_main_prepaid',
+														'Hybrid'     => 'tpl_default_tree_broadband_main_hybrid'
 											),
 								'Additional' => array(	'Postpaid' => 'tpl_default_tree_broadband_additional_postpaid',
 														'Prepaid'  	=> 'tpl_default_tree_broadband_additional_prepaid'
@@ -47,17 +51,20 @@ function _get_vocabulary_name($contentType, $productNode, $serviceType = NULL){
 								),
 					'VoIP' => array(
 								'Main' => array('Postpaid' => 'tpl_default_tree_voip_main_postpaid',
-												'Prepaid'  	=> 'tpl_default_tree_voip_main_prepaid'
+												'Prepaid'  	=> 'tpl_default_tree_voip_main_prepaid',
+												'Hybrid'   => 'tpl_default_tree_voip_main_hybrid'
 										),
 							),
 					'Satellite' => array(
 								'Main' => array('Postpaid' => 'tpl_default_tree_satellite_main_postpaid',
-												'Prepaid'  	=> 'tpl_default_tree_satellite_main_prepaid'
+												'Prepaid'  	=> 'tpl_default_tree_satellite_main_prepaid',
+												'Hybrid'   => 'tpl_default_tree_satellite_main_hybrid'
 										),
 							),
 					'Dummy' => array(
 								'Main' => array('Postpaid' => 'tpl_default_tree_dummy_main_postpaid',
-												'Prepaid'  	=> 'tpl_default_tree_dummy_main_prepaid'
+												'Prepaid'  	=> 'tpl_default_tree_dummy_main_prepaid',
+												'Hybrid'   => 'tpl_default_tree_dummy_main_hybrid'
 										),
 							),
 				),
