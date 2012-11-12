@@ -10,7 +10,7 @@ function _get_vocabulary_name($contentType, $productNode, $serviceType = NULL){
 					'Cross' => array(
 								'Main' => 	array(	'Postpaid' => 'tpl_default_tree_cross_main',
 													'Prepaid'  	=> 'tpl_default_tree_cross_main',
-													'Hybrid' => 'tpl_default_tree_corss_hybrid'
+													'Hybrid' => 'tpl_default_tree_cross_main'
 											),
 								),
 					'IPTV' => array(
