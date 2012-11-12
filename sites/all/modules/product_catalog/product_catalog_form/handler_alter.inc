@@ -137,7 +137,7 @@ function edit_pane_callback($form, &$form_state){
 
 function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 	// dsm('--- form alter --');
-	// dsm($form_id);
+	 //dsm($form_id);
 // dsm($form, 'form_alter: '.$form['#form_id']);
 // dsm($form_state, 'form_state');
     // error_log('form_id: '. $form_id);
@@ -395,7 +395,9 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			break;
 		case 'area_code_node_form':
 			_unset_menu_items($form,$form_id);
-			break;
+            //for select all carrier.
+            $form['field_ref_carrier_mobile']['und']['#options']['_none'] = 'All';
+            break;
 		case 'number_special_node_form':
 			$form['actions']['submit']['#submit'][] = '_number_special_submit_handler';			
 			_unset_menu_items($form,$form_id);
@@ -435,7 +437,6 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             unset($form['field_service_type_of_provider']);
             unset($form['field_service_type_of_carrier']);
 			_unset_menu_items($form,$form_id);
-
             break;
         case 'prefix_node_form':
             // only for create
@@ -494,7 +495,9 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
                 }
             }
             //unset($form['field_ref_numberingplan_idd']);
-        	_unset_menu_items($form,$form_id);
+        	_unset_menu_items($form,$form_id);            
+            //for selecting all carrier
+            $form['field_ref_carrier_mobile']['und']['#options']['_none'] = 'All';            
         	break;
         case 'basicrate_idd_node_form':
         	unset($form['title']);
@@ -542,6 +545,11 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             }
             //unset($form['field_ref_numberingplan_domestic']);
         	_unset_menu_items($form,$form_id);
+            //for select all carrier
+            $form['field_ref_carrier_mobile']['und']['#options']['_none'] = 'All';
+            //for select all area
+            $form['field_ref_area_code_from']['und']['#options']['_none'] = 'All';
+            $form['field_ref_area_code_to']['und']['#options']['_none'] = 'All';
         	break;
         case 'country_code_node_form':
         	$form['actions']['submit']['#submit'][] = 'product_catalog_form_form_redirect_handler';
@@ -758,7 +766,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
         case 'carrier_mobile_node_form':
         	_unset_menu_items($form,$form_id);
         	$form['actions']['submit']['#submit'][] = 'product_catalog_form_form_redirect_handler';
-        	break;
+           break;
         case 'treenodevouchercardforproduct_node_form':
         	_unset_menu_items($form,$form_id);
         	$form['field_ref_product']['#type'] = 'hidden';
