@@ -229,6 +229,7 @@ function _offering_submit_handler(&$form, &$form_state){
 		_create_default_prdattributes($offering, $voca_name);
 		// _create_default_prdattribute_relations($offering, $voca_name);
 		
+		_create_default_prdcounterlist($offering, $voca_name);
 		
 		// #quickset-mobile_products=0
 		$constUrlSuffix = array(
@@ -242,6 +243,22 @@ function _offering_submit_handler(&$form, &$form_state){
         $redirectUrl = 'http://' .$_SERVER['HTTP_HOST'].base_path().'product_designer/'.$form_state['service_domain_name'].'/'.$form_state['product_type_name'].'/edit/'.$offering->nid.$urlSuffix;
         drupal_goto($redirectUrl);
 	}
+}
+
+function _create_default_prdcounterlist($product, $voca_name) {
+	global $user;
+	
+	$node = new stdClass();
+	$node->uid = $user->uid;
+	$node->type = 'prdcounterlist';
+	$node->language = 'und';
+	$node->field_ref_product['und'][0]['nid'] = $offering->nid;
+	
+	$term = taxonomy_get_term_by_name('Counter', $voca_name);
+	$node->field_ref_tree_tid['und'][0]['value'] = $term->tid;
+	$node->field_ref_product['und'][0]['nid'] = $product->nid;
+	node_save($node);
+	
 }
 
 function _create_default_prdattribute_relations($product, $voca_name) {
