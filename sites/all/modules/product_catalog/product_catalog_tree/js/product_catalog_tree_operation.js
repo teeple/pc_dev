@@ -135,6 +135,7 @@
             case 'conditioncommonor':
             case 'conditioncommonand':
             case 'defaulttreenode':
+            case 'conditionwhatincomingcall':
             	needToLoadEdit = false;
             	needToLoadDetail = false;
             	break;
