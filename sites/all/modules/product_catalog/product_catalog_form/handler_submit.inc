@@ -2,31 +2,19 @@
 function product_catalog_form_node_submit($node, $form, &$form_state)
 {
 	//dsm('product_catalog_form_node_submit');
-	//dsm($form_state);
+	dsm($form, 'form');
+	dsm($form_state, 'form_state');
+	
 	global $user;
 	global $base_url;
 
 	$form_id = $form['form_id']['#value'];
-
-    //dsm($form, 'node_submit, form');
-    //dsm($form_state, 'node_submit, form_state');
-
+	
 	switch($form_id){
 		case 'prodoffernonusagesubitem_node_form':
 		case 'actionpricefactors_node_form':
 			$node->uid =  $user->uid;
 			break;
-		/*
-        case 'basicrate_idd_node_form':
-
-            $price_term = taxonomy_term_load($form_state['values']['field_price_units']['und'][0]['tid']);
-            $uom_term = taxonomy_term_load($form_state['values']['field_uom_units']['und'][0]['tid']);
-            $price = $form_state['input']['field_price_amount']['und'][0]['value'].$price_term->name;
-            $uom = $form_state['input']['field_uom_amount']['und'][0]['value'].$uom_term->name;
-            $form_state['values']['title'] = $price.'/'.$uom;
-
-            break;
-        */
 	}	
 }
 
@@ -141,7 +129,7 @@ function _offering_submit_characteristic_handler(&$form, &$form_state, &$spec_ch
 	if(!isset($form['nid']['#value'])) { //create
 		$productSpecification = new StdClass();
 	} else {
-		$productSpecification = node_load($form['#node']->field_r_productspecification['und'][0]['nid']);
+		$productSpecification = node\load($form['#node']->field_r_productspecification['und'][0]['nid']);
 		$charUseList = $productSpecification->field_r_productspeccharuse['und'];
 		$charUseNidList  = array();
 		foreach($charUseList as $value) {
@@ -252,13 +240,14 @@ function _create_default_prdcounterlist($product, $voca_name) {
 	$node->uid = $user->uid;
 	$node->type = 'prdcounterlist';
 	$node->language = 'und';
-	$node->field_ref_product['und'][0]['nid'] = $offering->nid;
 	
 	$term = taxonomy_get_term_by_name('Counter', $voca_name);
-	$node->field_ref_tree_tid['und'][0]['value'] = $term->tid;
+	
+	dsm($term, 'term');
+	
+	$node->field_ref_tree_tid['und'][0]['value'] = current($term)->tid;
 	$node->field_ref_product['und'][0]['nid'] = $product->nid;
 	node_save($node);
-	
 }
 
 function _create_default_prdattribute_relations($product, $voca_name) {
