@@ -27,12 +27,12 @@ function _create_test_product(){
     $cust_group_tid = array(1639,1640,1642,1641);
     
     //Mobile 406, IPTV 673, BroadBand 530, VOIP 409, Satellite 531, Bundle 671
-    $service_domain_tid = 406;
-    $product_id_start = 1000;
-	$product_name_start = 'Mono_M_';
+    $service_domain_tid = 671;
+    $product_id_start = 4200;
+	$product_name_start = 'Qps_BIVS_'; 
     $is_bundle = FALSE;
-    
-	
+    //$is_bundle = TRUE;
+	 
 	for($i=0;$i<5;$i++){
 		for($j=0;$j<3;$j++){		
 		    $node = new StdClass();
