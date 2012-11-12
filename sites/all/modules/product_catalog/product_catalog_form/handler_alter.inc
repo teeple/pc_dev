@@ -328,6 +328,8 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			unset($form['field_ref_number_sp_forbidden']);
 			unset($form['field_parent_node']);
 			unset($form['field_tpl_voca_machine_name']);
+			// unset($form['field_counter_list']);
+			dsm($form, 'form');
 			_unset_menu_items($form,$form_id);	
 			
 			// only for create
