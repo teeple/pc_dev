@@ -416,6 +416,12 @@ function load_required_js_css_before_ajax_load(){
 	//product catalog selectable
 	$product_catalog_selectable_path = drupal_get_path('module', 'product_catalog_selectable');
 	drupal_add_js($product_catalog_selectable_path . '/js/product_catalog_selectable.js');
+	
+	// module multiselect
+	$product_catalog_multiselect_path = drupal_get_path('module', 'multiselect');
+	drupal_add_js($product_catalog_multiselect_path . '/multiselect.js');
+	drupal_add_css($product_catalog_multiselect_path. '/multiselect.css');
+	
 }
 
 function _get_max_weight_in_children($parentNid){

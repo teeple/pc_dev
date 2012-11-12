@@ -363,6 +363,7 @@
 		Drupal.behaviors.ZZCToolsModal.attach(document);
 		Drupal.behaviors.editablefields_submit.attach(document);
 		Drupal.behaviors.CToolsAutoSubmit.attach(document);
+		Drupal.behaviors.multiselect.attach(document);
 		
         //Drupal.behaviors.bef_live_filter.attach(document);
 		Drupal.behaviors.states.attach(document,settings);		
