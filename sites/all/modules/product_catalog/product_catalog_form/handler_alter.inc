@@ -72,8 +72,10 @@ function _add_ajax_submit_callback($form_id,&$form){
         case 'loyaltypoint_node_form':        
         case 'actionbonustransfer_node_form':
         case 'conditionwhatcalltype_node_form':
-        case 'conditionwhatcounter_node_form':        	
-        	$change = TRUE;
+        case 'conditionwhatcounter_node_form':
+		case 'prdcounterlist_node_form':
+			
+		  	$change = TRUE;
         	break;
         	
         case 'views_form_list_treenodecounterforvoucher_panel_pane_1':
@@ -123,14 +125,14 @@ function edit_pane_callback($form, &$form_state){
 
     node_form_validate($form, $form_state);
 
-    if(!form_get_errors()) {
+    if(!form_get_errors()) {		
         node_form_submit($form, $form_state);
 
         foreach($form_state['ajax_actions'] as $functionName) {
             $evalString = $functionName.'($form, $form_state);';
             eval($evalString);
         }
-    } 
+    }
     $form_state['rebuild'] = TRUE;
     return $form;
 }
@@ -253,6 +255,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
         case 'prdattributebenefit_node_form':
         case 'prdattributeprefixrangenotallowe_node_form':
         case 'prdattributefeaturecode_node_form':
+		case 'prdcounterlist_node_form':
             $form['field_parent_node']['#type'] = 'hidden';
             unset($form['field_ref_product']);
             unset($form['field_ref_tree_tid']);
@@ -309,7 +312,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			$form['actions']['submit']['#submit'][] = '_common_counter_submit_handler';
 			$form['actions']['submit']['#submit'][] = 'product_catalog_form_form_redirect_handler';
             break;
-
+			
 		case 'simpleproductoffering_node_form':
 			if(isset($form['field_r_prodofferingrel']))unset($form['field_r_prodofferingrel']);
 			if(isset($form['field_r_productspecification']))unset($form['field_r_productspecification']);
@@ -329,7 +332,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			unset($form['field_parent_node']);
 			unset($form['field_tpl_voca_machine_name']);
 			// unset($form['field_counter_list']);
-			dsm($form, 'form');
+			// dsm($form, 'form');
 			_unset_menu_items($form,$form_id);	
 			
 			// only for create
