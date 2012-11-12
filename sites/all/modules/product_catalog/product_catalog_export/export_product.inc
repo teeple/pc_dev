@@ -35,7 +35,20 @@ function _product_for_export($nid=NULL){
         $productTypeTerm = taxonomy_term_load($node->field_product_type['und'][0]['tid']);      
         $attribute['product_type'] = _get_common_code($productTypeTerm);
         
-        $attribute['valid_for'] = $node->field_validfor_product['und'][0]['value'].' ~ '. $node->field_validfor_product['und'][0]['value2'];
+        $validForStr;
+        if(isset($node->field_validfor_product['und'][0]['value'])){
+            $validForStr = $node->field_validfor_product['und'][0]['value'];
+        }else{
+            $validForStr = '0000-01-01 00:00:00';
+        }
+        $validForStr .= ' ~ ';
+        if(isset($node->field_validfor_product['und'][0]['value2'])){
+            $validForStr .= $node->field_validfor_product['und'][0]['value2'];
+        }else{
+            $validForStr .= '9999-12-31 24:00:00';
+        }
+        
+        $attribute['valid_for'] = $validForStr;
 
         $serviceTypeTerm = taxonomy_term_load($node->field_service_type_of_provider['und'][0]['tid']);
         $attribute['service_domain'] = _get_common_code($serviceTypeTerm);
@@ -75,14 +88,16 @@ function _product_for_export($nid=NULL){
         $view->set_display('panel_pane_2');
         $view->set_arguments(array('0' => $node->nid, '1' => 'prdattributeprefixrangeallowed'));
         $view->execute();
-        $allowedPrefixNode = node_load(current($view->result)->nid);
-        $allowedPrefix = array();
-        if(!empty($allowedPrefixNode->field_prefix_single['und'])){
-            foreach($allowedPrefixNode->field_prefix_single['und'] as $item){
-                $allowedPrefix[] = $item['value'];
+        if(count($view->result) > 0){
+            $allowedPrefixNode = node_load(current($view->result)->nid);
+            $allowedPrefix = array();
+            if(!empty($allowedPrefixNode->field_prefix_single['und'])){
+                foreach($allowedPrefixNode->field_prefix_single['und'] as $item){
+                    $allowedPrefix[] = $item['value'];
+                }
             }
+            $attribute['prefix_allowed'] = $allowedPrefix;
         }
-        $attribute['prefix_allowed'] = $allowedPrefix;
                 
         $operator = array();
         foreach($node->field_service_operator['und'] as $item){
@@ -95,14 +110,15 @@ function _product_for_export($nid=NULL){
         $view->set_display('panel_pane_2');
         $view->set_arguments(array('0' => $node->nid, '1' => 'prdattributefeaturecode'));
         $view->execute();
-        $serviceFeatureCodeNode = node_load(current($view->result)->nid);
-        $serviceFeatureCodes = array();
-        foreach($serviceFeatureCodeNode->field_ref_featurecode['und'] as $item){
-            $codeTerm = taxonomy_term_load($item['tid']);   
-            $serviceFeatureCodes[] = _get_common_code($codeTerm);
+        if(count($view->result) > 0){
+            $serviceFeatureCodeNode = node_load(current($view->result)->nid);
+            $serviceFeatureCodes = array();
+            foreach($serviceFeatureCodeNode->field_ref_featurecode['und'] as $item){
+                $codeTerm = taxonomy_term_load($item['tid']);   
+                $serviceFeatureCodes[] = _get_common_code($codeTerm);
+            }
+            $attribute['service_feature_code'] = $serviceFeatureCodes;
         }
-        $attribute['service_feature_code'] = $serviceFeatureCodes;
-        
         $view = views_get_view('list_product_child_node');
         $view->set_display('panel_pane_2');
         $view->set_arguments(array('0' => $node->nid, '1' => 'prdattributebenefit'));
