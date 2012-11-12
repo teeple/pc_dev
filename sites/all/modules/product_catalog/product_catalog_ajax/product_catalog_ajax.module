@@ -309,18 +309,18 @@ function product_catalog_ajax_select_submit() {
       	$js_data['append_to'] = 'inside';
       	break;
       case 'cross_available_product':
-      		$child->type = 'prdattributepackaged';
-      		$child->field_weight['und'][0]['value'] = $weight;
-      		$child->field_ref_product['und'][0]['nid'] = $tmpProductNid[1];
-      		$child->field_ref_connected_product['und'][0]['nid'] = $childNid;
-      	
-      		// $term = taxonomy_term_load($tmpParentNid[1]);
-      		$term = taxonomy_get_term_by_name('Mandatory_MarketOpen','prdrelationtype');
-      		$child->field_ref_prdrelationtype['und'][0]['tid'] = current($term)->tid;
-      	
-      		node_save($child);
-      		$js_data['append_to'] = 'inside';
-      	break;
+  		$child->type = 'prdattributepackaged';
+  		$child->field_weight['und'][0]['value'] = $weight;
+  		$child->field_ref_product['und'][0]['nid'] = $tmpProductNid[1];
+  		$child->field_ref_connected_product['und'][0]['nid'] = $childNid;
+  	
+  		// $term = taxonomy_term_load($tmpParentNid[1]);
+  		$term = taxonomy_get_term_by_name('Mandatory_MarketOpen','prdrelationtype');
+  		$child->field_ref_prdrelationtype['und'][0]['tid'] = current($term)->tid;
+  	
+  		node_save($child);
+  		$js_data['append_to'] = 'inside';
+  	  break;
       case 'mobile_packaged_optional':
       	$child->type = 'prdattributepackaged';
       	$child->field_weight['und'][0]['value'] = $weight;
