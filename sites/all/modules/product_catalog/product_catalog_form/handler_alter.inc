@@ -74,6 +74,7 @@ function _add_ajax_submit_callback($form_id,&$form){
         case 'conditionwhatcalltype_node_form':
         case 'conditionwhatcounter_node_form':
 		case 'prdcounterlist_node_form':
+		case 'conditionwhensubscriptionday_node_form':
 		  	$change = TRUE;
         	break;
         	
@@ -203,7 +204,11 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             //dsm($form, 'form');
             unset($form['actions']);
             break;
-            
+        case 'conditionwhensubscriptionday_node_form';
+            _unset_menu_items($form,$form_id);
+			$form['field_weight']['#type'] = 'hidden';
+            $form['field_parent_node']['#type'] = 'hidden';
+            break; 
             
         case 'depositscheme_node_form':
         	// unset($form['field_service_domain']);
