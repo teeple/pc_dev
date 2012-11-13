@@ -69,7 +69,7 @@ function rating_rules_export_by_content_type($type_name, $nid=NULL, $vars = arra
 		$export_list = node_load_multiple(array(), array('type' => $type_name));
 		$export_item_cache[$type_name] = $export_list;
 	}
-	rating_rules_export_by_content_type_loaded($export_list , $nid, $vars, $export_item_cache);
+	return rating_rules_export_by_content_type_loaded($export_list , $nid, $vars, $export_item_cache);
 }
 
 function rating_rule_export($ruleset_template , $export_item,  $nid=NULL, $vars = array(), $export_item_cache = array())
