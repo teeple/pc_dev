@@ -74,7 +74,6 @@ function _add_ajax_submit_callback($form_id,&$form){
         case 'conditionwhatcalltype_node_form':
         case 'conditionwhatcounter_node_form':
 		case 'prdcounterlist_node_form':
-			
 		  	$change = TRUE;
         	break;
         	
@@ -95,9 +94,13 @@ function _add_ajax_submit_callback($form_id,&$form){
 	}
 
 	if($change){
+		
+// dsm($form, 'form_in_submitcallback');
+		
 		unset($form['actions']['submit']['#submit']);
 	    unset($form['#validate']);
-	    $form['actions']['submit']['#id'] = 'submit-in-ajax-callback';
+		unset($form['#action']);
+		$form['actions']['submit']['#id'] = 'submit-in-ajax-callback';
 	    $form['#prefix'] = '<div id="form_content">';
 	    $form['#suffix'] = '</div>';           
 	
@@ -120,13 +123,19 @@ function _add_ajax_submit_callback($form_id,&$form){
 
 function edit_pane_callback($form, &$form_state){
 
+// dsm($form, 'form_in_ajax');
+// dsm($form_state, 'formstate_in_ajax');
+
 	$newNode = node_load($form['nid']['#value']);
     $form_state['values']['changed'] = $newNode->changed;
-
+	
+	error_log('edit-pane_callback');
     node_form_validate($form, $form_state);
 
-    if(!form_get_errors()) {		
+    if(!form_get_errors()) {
         node_form_submit($form, $form_state);
+
+		error_log('node_form_submit');
 
         foreach($form_state['ajax_actions'] as $functionName) {
             $evalString = $functionName.'($form, $form_state);';
@@ -256,6 +265,11 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
         case 'prdattributeprefixrangenotallowe_node_form':
         case 'prdattributefeaturecode_node_form':
 		case 'prdcounterlist_node_form':
+			
+// dsm($form, 'form');
+// dsm($form_state, 'form_state');
+			dsm($form, 'form-in-pcataloglist_node_form');
+
             $form['field_parent_node']['#type'] = 'hidden';
             unset($form['field_ref_product']);
             unset($form['field_ref_tree_tid']);
@@ -314,6 +328,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             break;
 			
 		case 'simpleproductoffering_node_form':
+			
 			if(isset($form['field_r_prodofferingrel']))unset($form['field_r_prodofferingrel']);
 			if(isset($form['field_r_productspecification']))unset($form['field_r_productspecification']);
 			if(isset($form['field_r_prodspeccharvalueuse']))unset($form['field_r_prodspeccharvalueuse']);

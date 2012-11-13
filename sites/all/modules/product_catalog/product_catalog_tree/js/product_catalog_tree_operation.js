@@ -9,7 +9,9 @@
 			url : loadLink,
 			success : function(data) {
 				
-				//console.log(data);				
+				// console.log(data);
+				console.log('loadSelectForm');
+								
 				var output = $.parseJSON(data);
 				//console.log(output);
 				var settings = output[0].settings;
@@ -30,6 +32,9 @@
 	// select_load_form -> selectItemHandler
 	//
 	$.fn.selectItemHandler = function(event){
+		
+		console.log('selectItemHandler');
+				
 		var parent = event.data.node; 
         var rootId = event.data.rootId;
 		//jQuery('input[name=views_bulk_operations]:checked')		
@@ -112,6 +117,9 @@
 	};
 	
 	$.fn.loadForm = function(node,collapsedIndex){
+		
+		console.log('loadForm');
+		
 		var id = node.attr("id");
         var content_type = node.attr("node_type");
         var rel_type = node.attr("rel");
@@ -160,7 +168,8 @@
             	case 'voice_tariffplan_domestic':
             	case 'voice_tariffplan_international':   
             	case 'sms_tariffplan_domestic':
-            	case 'sms_tariffplan_international':   
+            	case 'sms_tariffplan_international': 
+            	case 'mobile_counter':
             		needToLoadEdit = false;
             		needToBindCustomSubmitButtons = true;
             		break;
@@ -241,7 +250,6 @@
     				if(collapsedIndex != null){
     					$.fn.setFocuseSelectedRegion(collapsedIndex);
     				}
-    				
     				
     				$(".product_catalog_tree").unmask();
     			} 
@@ -364,8 +372,6 @@
 		Drupal.behaviors.ZZCToolsModal.attach(document);
 		Drupal.behaviors.editablefields_submit.attach(document);
 		Drupal.behaviors.CToolsAutoSubmit.attach(document);
-		Drupal.behaviors.multiselect.attach(document);
-		
         //Drupal.behaviors.bef_live_filter.attach(document);
 		Drupal.behaviors.states.attach(document,settings);		
 		
@@ -373,6 +379,9 @@
         //Drupal.behaviors.qt_accordion.attach($('#tree_content_div'),settings);
         //Drupal.behaviors.qt_ui_tabs.attach(document,settings);
         
+        console.log('mutiselect_behavior set');
+		Drupal.behaviors.multiselect.attach(document);
+		
         $.fn.drawFlotLinkInit();
         
 	};
