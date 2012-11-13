@@ -22,7 +22,7 @@ function product_catalog_tree_form($form, &$form_state) {
 	$js_added = drupal_static( __FUNCTION__, FALSE);
     if ( !$js_added ) {
         $js_added = TRUE;
-        load_required_js_css_before_ajax_load();        
+		load_required_js_css_before_ajax_load();        
     }
 
 	$form['tree'] = array(
