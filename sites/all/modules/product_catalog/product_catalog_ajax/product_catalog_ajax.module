@@ -773,6 +773,8 @@ function product_catalog_ajax_add_content($js = NULL) {
     	case 'conditioncommonand':
         case 'conditionwhatincomingcall':
 		case 'conditionwhenfirstmonth':
+		case 'conditionwhencustomerbirthday':
+		case 'conditionwhencompanybirthday':
     		// create without popup
     		$child = new StdClass();
     		$child->uid = $user->uid;
