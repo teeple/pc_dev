@@ -1,16 +1,14 @@
 <?php
 function rating_rules_export_all()
 {
-	$jsonData = rating_rules_export_by_content_type('rating_rule_export');
+	$jsonData = rating_rules_export_by_content_type('rating_rule_export',  array());
 
     return json_encode($jsonData);
 }
 
-function rating_rules_export_by_content_type($type_name, $nid=NULL, $vars = array())
+function rating_rules_export_by_content_type_loaded($export_list, $nid=NULL, $vars = array(), $export_item_cache = array())
 {
 	$jsonData = array();
-
-    $export_list = node_load_multiple(array(), array('type' => $type_name));
     foreach($export_list as $export_item)
     {
         if(property_exists($export_item , "field_export_disabled") && count($export_item->field_export_disabled)>0)
@@ -21,7 +19,7 @@ function rating_rules_export_by_content_type($type_name, $nid=NULL, $vars = arra
         }
         if(property_exists($export_item, "field_source_view_name") && count($export_item->field_source_view_name)>0)
         {
-            $data = rating_rules_export_from_view_has_nid_reference($export_item->title, $export_item, $export_item->field_source_view_name['und'][0]['value'] , $export_item->field_source_display_name['und'][0]['value'] , $export_item->field_result_ruleset_name['und'][0]['value'], $vars);
+            $data = rating_rules_export_from_view_has_nid_reference($export_item->title, $export_item, $export_item->field_source_view_name['und'][0]['value'] , $export_item->field_source_display_name['und'][0]['value'] , $export_item->field_result_ruleset_name['und'][0]['value'], $vars, $export_item_cache);
             foreach($data as $d)
             {
                 if(array_key_exists('object_name', $d))
@@ -43,7 +41,7 @@ function rating_rules_export_by_content_type($type_name, $nid=NULL, $vars = arra
             {
                 $ruleset_name = $export_item->field_result_ruleset_name['und'][0]['value'];
             }
-            $d = rating_rule_export($ruleset_name, $export_item, $nid, $vars);
+            $d = rating_rule_export($ruleset_name, $export_item, $nid, $vars, $export_item_cache);
             if(array_key_exists('object_name', $d))
             {
                 $obj_name = $d["object_name"];
@@ -59,8 +57,22 @@ function rating_rules_export_by_content_type($type_name, $nid=NULL, $vars = arra
 
     return $jsonData;
 }
+function rating_rules_export_by_content_type($type_name, $nid=NULL, $vars = array(), $export_item_cache = array())
+{
 
-function rating_rule_export($ruleset_template , $export_item,  $nid=NULL, $vars = array())
+	if(array_key_exists($type_name , $export_item_cache))
+	{
+		$export_list = $export_item_cache[$type_name];
+	}
+	else
+	{
+		$export_list = node_load_multiple(array(), array('type' => $type_name));
+		$export_item_cache[$type_name] = $export_list;
+	}
+	rating_rules_export_by_content_type_loaded($export_list , $nid, $vars, $export_item_cache);
+}
+
+function rating_rule_export($ruleset_template , $export_item,  $nid=NULL, $vars = array(), $export_item_cache = array())
 {
     $ruleset_name = $ruleset_template;
     foreach($vars as $var_name => $value)
@@ -87,7 +99,7 @@ function rating_rule_export($ruleset_template , $export_item,  $nid=NULL, $vars 
             $jsonData[$var_name] = $value;
         }
         
-        $children = rating_rules_export_by_content_type($export_item->field_children_node_type['und'][0]['value'], $nid, $vars);
+        $children = rating_rules_export_by_content_type($export_item->field_children_node_type['und'][0]['value'], $nid, $vars, $export_item_cache);
         foreach($children as $title => $child)
         {
             $jsonData[$title] = $child;
@@ -111,7 +123,7 @@ function rating_rule_export($ruleset_template , $export_item,  $nid=NULL, $vars 
 }
 
 
-function rating_rules_export_from_view_has_nid_reference($title , $export_item , $source_view_name , $source_display_name , $ruleset_template, $vars = array())
+function rating_rules_export_from_view_has_nid_reference($title , $export_item , $source_view_name , $source_display_name , $ruleset_template, $vars = array(), $export_item_cache = array())
 {
     $ret = array();
     $view = views_get_view($source_view_name);
@@ -144,7 +156,7 @@ function rating_rules_export_from_view_has_nid_reference($title , $export_item ,
             $sub_vars[$field_name_map[$field_name]] = $value;
         }
 
-        $data = rating_rule_export($ruleset_template , $export_item , $nid, $sub_vars);
+        $data = rating_rule_export($ruleset_template , $export_item , $nid, $sub_vars, $export_item_cache);
         $ret[] = $data;
     }
     return $ret;
