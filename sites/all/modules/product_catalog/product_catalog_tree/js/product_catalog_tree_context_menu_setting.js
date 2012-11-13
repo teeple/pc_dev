@@ -589,38 +589,56 @@
 				menus.custom_delete.action = function(node) {
 					$.fn.deleteNode(node);
 				};
-				break;			
+				break;	
+			case 'conditionwhatincomingcall':
+				menus.custom_delete._disabled = false;
+				menus.custom_delete.action = function(node) {
+					$.fn.deleteNode(node);
+				};
+				break;		
+			case 'conditionwhensubscriptionday':
+				menus.custom_delete._disabled = false;
+				menus.custom_delete.action = function(node) {
+					$.fn.deleteNode(node);
+				};
+				break;
+			case 'conditionwhenfirstmonth':
+				menus.custom_delete._disabled = false;
+				menus.custom_delete.action = function(node) {
+					$.fn.deleteNode(node);
+				};
+				break;	
 			case "conditioncommonand":
 				menus.custom_create._disabled = false;
 				menus.custom_create.submenu = {
 					"what" : {
 						"label" : "WHAT",
 						"submenu" : {
-                "service_type" : {
-                    "label" : "ServiceType",
-                    "submenu" : {
-                        "VOICE": {
-                            "label" : "VOICE",
-                            action : function(node) {
-                                $.fn.addNode(node,{'childContentType': 'conditionwhatservicetypefactors','serviceType':'VOICE'});
-                            }
-                        },
-                        "SMS": {
-                            "label" : "SMS",
-                            action : function(node) {
-                                $.fn.addNode(node,{'childContentType': 'conditionwhatservicetypefactors','serviceType':'SMS'});
-                            }
-                        },
-                        "DATA": {
-                            "label" : "DATA",
-                            action : function(node) {
-                                $.fn.addNode(node,{'childContentType': 'conditionwhatservicetypefactors','serviceType':'DATA'});
-                            }
-                        },
-                    },
-                },
+			                "service_type" : {
+			                    "label" : "ServiceType",
+			                    "submenu" : {
+			                        "VOICE": {
+			                            "label" : "VOICE",
+			                            action : function(node) {
+			                                $.fn.addNode(node,{'childContentType': 'conditionwhatservicetypefactors','serviceType':'VOICE'});
+			                            }
+			                        },
+			                        "SMS": {
+			                            "label" : "SMS",
+			                            action : function(node) {
+			                                $.fn.addNode(node,{'childContentType': 'conditionwhatservicetypefactors','serviceType':'SMS'});
+			                            }
+			                        },
+			                        "DATA": {
+			                            "label" : "DATA",
+			                            action : function(node) {
+			                                $.fn.addNode(node,{'childContentType': 'conditionwhatservicetypefactors','serviceType':'DATA'});
+			                            }
+			                        },
+			                    },
+			                },
                    
-              "incomingcall" : {
+              				"incomingcall" : {
 								"label" : "Incoming Call",
 								action : function(node) {
 									$.fn.addNode(node,{'childContentType': 'conditionwhatincomingcall'});
@@ -668,6 +686,12 @@
 									$.fn.addNode(node,{'childContentType': 'conditionwhendayfactors'});
 								}
 							},
+							"subscription_day" : {
+								"label" : "Subscription Day",
+								action : function(node) {
+									$.fn.addNode(node,{'childContentType': 'conditionwhensubscriptionday'});
+								}
+							},
 							"duration" : {
 								"label" : "Duration",
 								action : function(node) {
@@ -690,6 +714,12 @@
 								"label" : "Week",
 								action : function(node) {
 									$.fn.addNode(node,{'childContentType': 'conditionwhenweekfactors'});
+								}
+							},
+							"firstmonth" : {
+								"label" : "First Month",
+								action : function(node) {
+									$.fn.addNode(node,{'childContentType': 'conditionwhenfirstmonth'});
 								}
 							},
 						}
