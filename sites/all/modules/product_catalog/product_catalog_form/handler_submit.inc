@@ -1,10 +1,6 @@
 <?php
 function product_catalog_form_node_submit($node, $form, &$form_state)
 {
-	//dsm('product_catalog_form_node_submit');
-	//dsm($form, 'form');
-	//dsm($form_state, 'form_state');
-	
 	global $user;
 	global $base_url;
 
@@ -36,7 +32,7 @@ function timetable_submit_handler(&$form, &$form_state){
 			$node->field_day_of_week['und'][0]['value'] = $i;
 			$node->field_hour_slot['und'][0]['value'] = $j;
 			$node->field_ref_timetable['und'][0]['nid'] = $timetableNid;
-			node_save($node);			
+			node_save($node);
 		}
 	}
 }
