@@ -6,7 +6,7 @@ function rating_rules_export_all()
     return json_encode($jsonData);
 }
 
-function rating_rules_export_by_content_type_loaded($export_list, $nid=NULL, $vars = array(), $export_item_cache = array())
+function rating_rules_export_by_content_type_loaded($export_list, $nid=NULL, $vars = array(), &$export_item_cache = array())
 {
 	$jsonData = array();
     foreach($export_list as $export_item)
@@ -57,7 +57,7 @@ function rating_rules_export_by_content_type_loaded($export_list, $nid=NULL, $va
 
     return $jsonData;
 }
-function rating_rules_export_by_content_type($type_name, $nid=NULL, $vars = array(), $export_item_cache = array())
+function rating_rules_export_by_content_type($type_name, $nid=NULL, $vars = array(), &$export_item_cache = array())
 {
 
 	if(array_key_exists($type_name , $export_item_cache))
@@ -72,7 +72,7 @@ function rating_rules_export_by_content_type($type_name, $nid=NULL, $vars = arra
 	return rating_rules_export_by_content_type_loaded($export_list , $nid, $vars, $export_item_cache);
 }
 
-function rating_rule_export($ruleset_template , $export_item,  $nid=NULL, $vars = array(), $export_item_cache = array())
+function rating_rule_export($ruleset_template , $export_item,  $nid=NULL, $vars = array(), &$export_item_cache = array())
 {
     $ruleset_name = $ruleset_template;
     foreach($vars as $var_name => $value)
@@ -123,7 +123,7 @@ function rating_rule_export($ruleset_template , $export_item,  $nid=NULL, $vars 
 }
 
 
-function rating_rules_export_from_view_has_nid_reference($title , $export_item , $source_view_name , $source_display_name , $ruleset_template, $vars = array(), $export_item_cache = array())
+function rating_rules_export_from_view_has_nid_reference($title , $export_item , $source_view_name , $source_display_name , $ruleset_template, $vars = array(), &$export_item_cache = array())
 {
     $ret = array();
     $view = views_get_view($source_view_name);
