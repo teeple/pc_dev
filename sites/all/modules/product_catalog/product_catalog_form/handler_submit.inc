@@ -2,8 +2,8 @@
 function product_catalog_form_node_submit($node, $form, &$form_state)
 {
 	//dsm('product_catalog_form_node_submit');
-	dsm($form, 'form');
-	dsm($form_state, 'form_state');
+	//dsm($form, 'form');
+	//dsm($form_state, 'form_state');
 	
 	global $user;
 	global $base_url;
