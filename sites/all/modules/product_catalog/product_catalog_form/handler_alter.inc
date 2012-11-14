@@ -278,9 +278,6 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
         
 		case 'prdcounterlist_node_form':
 			
-dsm($form, 'form');
-// dsm($form_state, 'form_state');
-
 			unset($form['actions']);
 			$form['field_parent_node']['#type'] = 'hidden';
 			
@@ -292,6 +289,31 @@ dsm($form, 'form');
 			unset($form['field_ref_product']);
             unset($form['field_ref_tree_tid']);
             _unset_menu_items($form,$form_id);
+			
+			// service domain과 billing type에 맞는 counter list만을 가져온다.
+			// $form['field_counter_list']['und']['#options'] = 'aaa';
+			// 
+			// $counterList = _get_available_counter_list($form_state['product_nid'], array_values($form_state['build_info']['args'][0]->field_counter_list['und']));
+			$counterList = _get_available_counter_list($form_state['product_nid']);
+			
+			$options = $counterList;
+			$element = $form['field_counter_list']['und'];
+			
+			$items = $form_state['build_info']['args'][0]->field_counter_list['und'];
+			
+			$widget = _multiselect_build_widget_code($options, $items, $element, NULL);
+			$form['field_counter_list']['und']['#prefix'] = $widget['prefix_pre'] . $widget['prefix_options'] . $widget['prefix_post'];
+			$form['field_counter_list']['und']['#options'] = $counterList;
+			
+			/*
+			unset($form['field_counter_list']['und']['#options']);
+			
+			foreach($counterList as $key => $value) {
+				$form['field_counter_list']['und']['#options'][$key] = $value;
+			}
+			*/
+			
+					
             break;
             
         case 'treenodecounter_node_form':
@@ -832,6 +854,39 @@ dsm($form, 'form');
 	return $form;
 }
 
+function _get_available_counter_list($productNid, $existingCounterNids) {
+	$product = node_load($productNid);
+	
+	$tids = array();
+	$tids[0] = $product->field_service_type_of_provider['und'][0]['tid'];
+	$tids[1] = $product->field_billing_type['und'][0]['tid'];
+	
+	$terms = taxonomy_term_load_multiple($tids);
+	$counterTypeName = 'Optional';
+	$serviceDomainName = $terms[0]->name;
+	
+	if($terms[1]->name == 'Hybrid') {
+		$counterBillingTypeName = 'Prepaid+Postpaid';
+	} else {
+		$counterBillingTypeName = $terms[1]->name;
+	}
+		
+	$view = views_get_view('list_counter');
+	$view->set_display('panel_pane_1');
+	// $view->set_arguments(array('0' => $counterTypeName, '1' => $serviceDomainName, '2' => $counterBillingTypeName, '3' => join('+', $existingCounterNids)));
+	$view->set_arguments(array('0' => $counterTypeName, '1' => $serviceDomainName, '2' => $counterBillingTypeName));
+	$view->execute();
+	
+	$retArray = array();
+	foreach($view->result as $record) {
+		$retArray[$record->nid] = $record->node_title;
+	}
+	
+	dsm($retArray, 'retArray');
+	
+	return $retArray;
+}
+
 function ajax_example_add_more_add_one($form, $form_state) {
     return $form['names_fieldset'];
 }
@@ -927,4 +982,3 @@ function _alter_field_action_price_factors(&$form,&$form_state) {
 	*/
     unset($form['field_action_price_factor_type']);
 }
-
