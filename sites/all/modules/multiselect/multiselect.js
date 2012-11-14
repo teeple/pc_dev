@@ -2,42 +2,26 @@
 /**
  * The JavaScript behavior that goes with the Multiselect form element.
  */
-/*
 (function ($) {
   Drupal.behaviors.multiselect = {
     attach: function(context) {
     	
-      console.log('inside multiselect');
-    	
       // Remove the items that haven't been selected from the select box.
-      // $('select.multiselect_unsel:not(.multiselect-processed)', context).addClass('multiselect-processed').each(function() {
-      $('select.multiselect_unsel').once('multiselect-processed', function() {
-      	$('select.multiselect_unsel').each(function() {
+	  $('select.multiselect_unsel:not(.multiselect-processed)', context).addClass('multiselect-processed').each(function() {
       		unselclass = '.' + this.id + '_unsel';
         	selclass = '.' + this.id + '_sel';
         	$(unselclass).removeContentsFrom($(selclass));
-     	});
       });
   
       // Note: Doesn't matter what sort of submit button it is really (preview or submit)
       // Selects all the items in the selected box (so they are actually selected) when submitted
-      //$('input.form-submit:not(.multiselect-processed)', context).addClass('multiselect-processed').click(function() {
-        //$('select.multiselect_sel').selectAll();
-      //});
+      $('input.form-submit:not(.multiselect-processed)', context).addClass('multiselect-processed').click( $.fn.eventSetSelectAll );
       
-      $('input.form-submit').once('multiselect-unique', function() {
-      	$('input.form-submit').bind('click', function() {
-      		$('select.multiselect_sel').selectAll();
-      	});
-      });
-      
-//    $('#submit-in-ajax-callback.mutiselect-processed').click(function() {
-//     	$('select.multiselect_sel').selectAll();
-//    });
-      
+      $('#multiselect_custom_button').click($.fn.eventSetSelectAll);
+            
       // Moves selection if it's double clicked to selected box
       $('select.multiselect_unsel:not(.multiselect-unsel-processed)', context).addClass('multiselect-unsel-processed').dblclick(function() {
-              unselclass = '.' + this.id + '_unsel';
+        unselclass = '.' + this.id + '_unsel';
         selclass = '.' + this.id + '_sel';
         $(unselclass).moveSelectionTo($(selclass));
       });
@@ -65,73 +49,40 @@
     }
   };
 })(jQuery);
-*/
 
-(function ($) {
-  Drupal.behaviors.multiselect = {
-    attach: function(context) {
-    	
-      console.log('inside multiselect');
-    	
-      // Remove the items that haven't been selected from the select box.
-      $('select.multiselect_unsel').once('multiselect-processed', function() {
-      	$('select.multiselect_unsel').each(function() {
-      		unselclass = '.' + this.id + '_unsel';
-        	selclass = '.' + this.id + '_sel';
-        	$(unselclass).removeContentsFrom($(selclass));
-     	});
-      });
-  
-      // Note: Doesn't matter what sort of submit button it is really (preview or submit)
-      // Selects all the items in the selected box (so they are actually selected) when submitted
-      $('input.form-submit').once('multiselect-unique', function() {
-      	$('input.form-submit').bind('click', function() {
-      		$('select.multiselect_sel').selectAll();
-      	});
-      });
-      
-      // Moves selection if it's double clicked to selected box
-      //$('select.multiselect_unsel:not(.multiselect-unsel-processed)', context).addClass('multiselect-unsel-processed').dblclick(function() {
-      $('select.multiselect_unsel').once('multiselect-unsel', function() {
-      	$('select.multiselect_unsel').bind('dbclick', function() {
-	      	unselclass = '.' + this.id + '_unsel';
-    	    selclass = '.' + this.id + '_sel';
-        	$(unselclass).moveSelectionTo($(selclass));	
-      	});
-      });
-  
-      // Moves selection if it's double clicked to unselected box
-      // $('select.multiselect_sel:not(.multiselect-sel-processed)', context).addClass('multiselect-sel-processed').dblclick(function() {
-      $('select.multiselect_sel').once('multiselect-sel', function() {
-      	$('select.multiselect_sel').bind('dbclick', function() {
-      		unselclass = '.' + this.id + '_unsel';
-        	selclass = '.' + this.id + '_sel';
-        	$(selclass).moveSelectionTo($(unselclass));	
-      	});
-      });
-  
-      // Moves selection if add is clicked to selected box
-      // $('li.multiselect_add:not(.multiselect-add-processed)', context).addClass('multiselect-add-processed').click(function() {
-      $('li.multiselect_add').once('mutiselect-add', function() {
-      	$('li.multiselect_add').bind('click', function() {
-        	unselclass = '.' + this.id + '_unsel';
-        	selclass = '.' + this.id + '_sel';
-        	$(unselclass).moveSelectionTo($(selclass));
-       });
-      });
-  
-      // Moves selection if remove is clicked to selected box
-      // $('li.multiselect_remove:not(.multiselect-remove-processed)', context).addClass('multiselect-remove-processed').click(function() {
-     $('li.multiselect_remove').once('multiselect-remove', function() {
-     	$('li.multiselect_remove').bind('click', function() {
-        	unselclass = '.' + this.id + '_unsel';
-        	selclass = '.' + this.id + '_sel';
-        	$(selclass).moveSelectionTo($(unselclass));
-      });
-    });
-   }
-  }
-})(jQuery);
+jQuery.fn.eventSetSelectAll = function() {
+	jQuery('select.multiselect_sel').selectAll();
+	
+	$(".product_catalog_tree").mask("Adding...");
+			$.ajax({
+				url : selectItemUrl,
+				type: "post",
+		        data: {'product_nid': rootId, 'parent_nid': parent.attr('id'), 'child_nid': selectedItemNid, 'rel_type': parent.attr('rel'),'max_weight':max_weight, 'min_weight':min_weight,'parent_title':parent.children('a').text()},
+				success : function(data) {
+					var output = $.parseJSON(data);
+					
+					var product_catalog_ajax_result = output[0].settings.product_catalog_ajax_result;
+					
+					// 만약 기존에 달려있는 children을 지워주어야 할 경우에는 
+					if(product_catalog_ajax_result.data.replace_or_append == 'replace') {
+						var parentObj = $('.product_catalog_tree').jstree('get_json', parent)[0];
+						var children = $.fn.getChildrenNotSelf(parentObj);
+						for(var i=0;i<children.length;i++){
+							$('.product_catalog_tree').jstree('delete_node', $('#'+children[i]));
+						}
+					}
+					
+					$.fn.addUnNestedMultipleChildren(product_catalog_ajax_result);
+					
+					var message = '<div style="display:block;"><div class="messages status"><h2 class="element-invisible">Status message</h2>'
+						+ product_catalog_ajax_result.data.parent_title + ' has been changed.</div></div>';
+					
+					$.fn.clearTreeContentDiv(message);
+					$(".product_catalog_tree").unmask();
+				}
+			});
+			
+}
 
 // Selects all the items in the select box it is called from.
 // usage $('nameofselectbox').selectAll();

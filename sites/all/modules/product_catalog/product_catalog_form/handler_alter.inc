@@ -73,7 +73,6 @@ function _add_ajax_submit_callback($form_id,&$form){
         case 'actionbonustransfer_node_form':
         case 'conditionwhatcalltype_node_form':
         case 'conditionwhatcounter_node_form':
-		case 'prdcounterlist_node_form':
 		case 'conditionwhensubscriptionday_node_form':
 		  	$change = TRUE;
         	break;
@@ -135,7 +134,6 @@ function edit_pane_callback($form, &$form_state){
 
     if(!form_get_errors()) {
         node_form_submit($form, $form_state);
-
 		error_log('node_form_submit');
 
         foreach($form_state['ajax_actions'] as $functionName) {
@@ -144,7 +142,7 @@ function edit_pane_callback($form, &$form_state){
         }
     }
     $form_state['rebuild'] = TRUE;
-    return $form;
+	return $form;
 }
 
 function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
@@ -269,14 +267,29 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
         case 'prdattributebenefit_node_form':
         case 'prdattributeprefixrangenotallowe_node_form':
         case 'prdattributefeaturecode_node_form':
-		case 'prdcounterlist_node_form':
 			
 // dsm($form, 'form');
 // dsm($form_state, 'form_state');
-			dsm($form, 'form-in-pcataloglist_node_form');
-
-            $form['field_parent_node']['#type'] = 'hidden';
+			$form['field_parent_node']['#type'] = 'hidden';
             unset($form['field_ref_product']);
+            unset($form['field_ref_tree_tid']);
+            _unset_menu_items($form,$form_id);
+            break;
+        
+		case 'prdcounterlist_node_form':
+			
+dsm($form, 'form');
+// dsm($form_state, 'form_state');
+
+			unset($form['actions']);
+			$form['field_parent_node']['#type'] = 'hidden';
+			
+			$form['multiselect_custom'] = array('#type'=> 'markup',
+				'#markup' => "<input type='button' id='multiselect_custom_button' value='Save'></input>",
+				'#weight' => 100,
+			);
+			
+			unset($form['field_ref_product']);
             unset($form['field_ref_tree_tid']);
             _unset_menu_items($form,$form_id);
             break;
