@@ -608,6 +608,18 @@
 					$.fn.deleteNode(node);
 				};
 				break;	
+			case 'conditionwhencompanybirthday':
+				menus.custom_delete._disabled = false;
+				menus.custom_delete.action = function(node) {
+					$.fn.deleteNode(node);
+				};
+				break;
+			case 'conditionwhencustomerbirthday':
+				menus.custom_delete._disabled = false;
+				menus.custom_delete.action = function(node) {
+					$.fn.deleteNode(node);
+				};
+				break;		
 			case "conditioncommonand":
 				menus.custom_create._disabled = false;
 				menus.custom_create.submenu = {
@@ -690,6 +702,18 @@
 								"label" : "Subscription Day",
 								action : function(node) {
 									$.fn.addNode(node,{'childContentType': 'conditionwhensubscriptionday'});
+								}
+							},
+							"customerbirthday" : {
+								"label" : "Customer Birthday",
+								action : function(node) {
+									$.fn.addNode(node,{'childContentType': 'conditionwhencustomerbirthday'});
+								}
+							},
+							"companybirthday" : {
+								"label" : "Company Birthday",
+								action : function(node) {
+									$.fn.addNode(node,{'childContentType': 'conditionwhencompanybirthday'});
 								}
 							},
 							"duration" : {
