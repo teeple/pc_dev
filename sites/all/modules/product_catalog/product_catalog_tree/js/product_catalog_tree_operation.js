@@ -147,6 +147,18 @@
             	needToLoadEdit = false;
             	needToLoadDetail = false;
             	break;
+            case 'conditionwhencustomerbirthday':
+            	needToLoadEdit = false;
+            	needToLoadDetail = false;
+            	break;
+            case 'conditionwhencompanybirthday':
+            	needToLoadEdit = false;
+            	needToLoadDetail = false;
+            	break;
+            case 'conditionwhenfirstmonth':
+            	needToLoadEdit = false;
+            	needToLoadDetail = false;
+            	break;
             case 'treenodewithnodereference':
             	switch(rel_type){
             	case 'treenode_timetable':
