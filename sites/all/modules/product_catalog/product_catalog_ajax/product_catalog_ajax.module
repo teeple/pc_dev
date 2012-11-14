@@ -1,4 +1,4 @@
-<?php 
+<?php
 module_load_include('inc', 'product_catalog_ajax', 'custom_submit');
 module_load_include('inc', 'product_catalog_ajax', 'create_modal_link');
 // ---------------------------------------------------------------------------
@@ -94,8 +94,12 @@ function product_catalog_ajax_menu() {
   		'access callback' => TRUE,
   		'type' => MENU_CALLBACK,
   );
-
-
+  $items['product_catalog_ajax/counter_list'] = array(
+  		'title' => 'Set Counter List',
+  		'page callback' => 'product_catalog_ajax_counter_list',
+  		'access callback' => TRUE,
+  		'type' => MENU_CALLBACK,
+  );
   return $items;
 
 } 
@@ -124,6 +128,49 @@ function _create_qtabs_for_counter($nid, $args) {
       ),
     );
     return $qtabs;
+}
+
+function product_catalog_ajax_counter_list() {
+	
+	global $user;
+	$tempProductNid = explode('_',$_POST['product_nid']);
+	$productNid = $tempProductNid[1];
+	
+	$counterNids = $_POST['counter_nids'];
+	
+	$params = array('0' => $productNid);
+	$view = views_get_view('list_prdcounterlist');
+	$view->set_display('panel_pane_1');
+	$view->set_arguments($params);
+	$view->execute();
+	
+	$record = current($view->result);
+	$prdcounterlist = node_load($record->nid);
+	
+	if(isset($prdcounterlist->field_counter_list) 
+		&& !empty($prdcounterlist->field_counter_list['und'])) {
+		unset($prdcounterlist->field_counter_list['und']);
+	};
+	
+	foreach($counterNids as $counterNid) {
+		$prdcounterlist->field_counter_list['und'][] = array('nid' => $counterNid);
+	}
+	
+	node_save($prdcounterlist);
+	
+	$js_settings = array(
+		'success' => TRUE,
+		'data' => 'success'
+	);
+		  
+	drupal_add_js(array('product_catalog_ajax_result' => $js_settings), 'setting');
+	  
+	$renderOutput = '';
+	$output[] = $renderOutput;
+	$output = ajax_render($output);
+	  
+	print $output;
+	exit;
 }
   
 function product_catalog_ajax_add_modal_content($js = NULL, $contentType, $refNodeNid, $refTreeTid) {

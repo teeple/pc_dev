@@ -85,7 +85,7 @@ function multiselect_field_widget_form(&$form, &$form_state, $field, $instance, 
 
   // Prepare the list of options.
   $options = _options_get_options($field, $instance, $properties, NULL, NULL);
-
+  
   // Put current field values in shape.
   $default_value = _options_storage_to_form($items, $options, $value_key, $properties);
   /* END copy from options.module */
@@ -164,7 +164,7 @@ function _multiselect_build_widget_code($options, $items, $element, $required = 
   // For this specific widget, HTML should be filtered out and entities left unencoded.
   // See content_allowed_values / content_filter_xss / filter_xss.
   _multiselect_allowed_values_filter_html($options);
-
+  
   // Create some arrays for use later in the function.
   $selected_options = array();
   $unselected_options = array();
@@ -293,7 +293,7 @@ function theme_multiselect($variables) {
   $items = $element['#default_value']; // All selected options are referred to as "items".
   $element['#field_name'] = $element['#name']; // CCK calls the #name "#field_name", so let's duplicate that..
   $required = $element['#required'];
-
+  
   $widget = _multiselect_build_widget_code($options, $items, $element, $required);
 
   // Add a couple of things into the attributes.
