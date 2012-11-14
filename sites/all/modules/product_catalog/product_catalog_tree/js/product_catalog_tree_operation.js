@@ -361,6 +361,10 @@
 	};
 	
 	$.fn.behaviorAttach = function(settings){	
+		console.log('mutiselect_behavior set');
+		Drupal.behaviors.multiselect.attach(document);
+		
+		
 		Drupal.behaviors.AJAX.attach(document, settings);
 		Drupal.settings.datePopup = settings.datePopup;
 		Drupal.behaviors.date_popup.attach(document);
@@ -379,9 +383,6 @@
         //Drupal.behaviors.qt_accordion.attach($('#tree_content_div'),settings);
         //Drupal.behaviors.qt_ui_tabs.attach(document,settings);
         
-        console.log('mutiselect_behavior set');
-		Drupal.behaviors.multiselect.attach(document);
-		
         $.fn.drawFlotLinkInit();
         
 	};
