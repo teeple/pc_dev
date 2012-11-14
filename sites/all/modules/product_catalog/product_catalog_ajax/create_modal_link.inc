@@ -5,7 +5,6 @@ function _create_modal_add_link($contentType,$params){
 	ctools_include('modal');
 	ctools_modal_add_js();
 	
-	error_log('here');
 	$add_url = '/product_catalog_ajax/nojs/add_modal/'.$contentType;
 	foreach($params as $param){
 		$add_url .= '/'.$param;
