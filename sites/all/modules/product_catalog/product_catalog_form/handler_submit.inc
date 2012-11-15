@@ -11,6 +11,7 @@ function product_catalog_form_node_submit($node, $form, &$form_state)
 		case 'actionpricefactors_node_form':
 			$node->uid =  $user->uid;
 			break;
+		
 	}	
 }
 
@@ -313,16 +314,6 @@ function _create_default_prdattributes($product, $voca_name) {
 		$node->field_ref_tree_tid['und'][0]['value'] = current($treeTerm)->tid;
 		node_save($node);
 	}		
-}
-
-function _number_special_submit_handler(&$form, &$form_state){
-	if(!isset($form['nid']['#value'])) { //create
-        $voca_name  = 'default_tree_node_number_special';
-		_create_default_tree_node($voca_name,$form_state['values']['nid']);
-        
-        $redirectUrl = 'common/number_special/'.$form_state['values']['nid'];
-        drupal_goto($redirectUrl);
-	}
 }
 
 // 상품 생성시 global에 있는 basic counter는 
