@@ -532,7 +532,11 @@
 				
 				if(rel_type === 'simpleproductoffering'){
 					$(location).attr('href',"/product_designer");
-				}
+				}else if(rel_type === 'number_special'){
+					$(location).attr('href',"/common/vouchercardtype#quickset-qtabs_common_data=6");
+				}else if(rel_type === 'vouchercardtype'){
+					$(location).attr('href',"/common/vouchercardtype");
+				}						
 			}
 		});
         //history.go(0);
