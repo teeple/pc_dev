@@ -763,7 +763,8 @@ function product_catalog_ajax_load_tree($js = NULL, $rootNid) {
     switch($rootNode->type){
 		case 'simpleproductoffering':
 		case 'vouchercardtype':
-	    	$children = _load_tree_item_mixed_with_node_and_term($rootNode);	    	
+		case 'number_special':
+		   	$children = _load_tree_item_mixed_with_node_and_term($rootNode);	    	
 	    break;
 		default:
 	    	$children = get_children_stored_procedure($rootNid);

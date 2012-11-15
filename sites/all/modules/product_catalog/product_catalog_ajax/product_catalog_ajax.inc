@@ -12,17 +12,20 @@ function _load_tree_item_mixed_with_node_and_term($rootNode){
 	switch($rootNode->type){
 		case 'simpleproductoffering':
 			$vocaName = _get_vocabulary_name('simpleproductoffering', $rootNode);
-			break;
-			
+			break;			
 		case 'tariffplan':
 		case 'vouchercardtype':
 			$vocaName = $rootNode->field_tree_child_voca_name['und'][0]['value'];
+			break;
+		case 'number_special':
+			$vocaName = 'tpl_numberspecial';
 			break;
 		default :
 			$vocaName = NULL;
 	}
 	
 	$vocabulary = taxonomy_vocabulary_machine_name_load($vocaName);
+	
 	$tree  = taxonomy_get_tree($vocabulary->vid);
 
 	foreach($tree as $item){
@@ -60,7 +63,10 @@ function _load_tree_item_mixed_with_node_and_term($rootNode){
 					$param[] = $rootNode->nid;
 				}else if(strpos($argument, '$voucherCardTypeNid') !== FALSE){
 					$param[] = $rootNode->nid;
-				}else{
+				}else if(strpos($argument, '$numberSpecialNid') !== FALSE){
+					$param[] = $rootNode->nid;
+				}
+				else{
 					$param[] = $argument;
 				}
 			};
@@ -664,6 +670,7 @@ function _create_node_form_in_tree($contentType,$parentType,$parentNid,$weight,$
 					'language' => 'und',
 					'field_weight' => array('und' => array(0 => array('value' => $weight))),
 					'field_ref_product' => array('und' => array(0 => array('nid' => $rootNid))),
+					'field_ref_numberspecial' => array('und' => array(0 => array('nid' => $rootNid))),
 					'field_ref_tree_nid' => array('und' => array(0 => array('nid' => $refTreeNid))),
 			);
 			
