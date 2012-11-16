@@ -15,7 +15,9 @@
   
       // Note: Doesn't matter what sort of submit button it is really (preview or submit)
       // Selects all the items in the selected box (so they are actually selected) when submitted
-      $('input.form-submit:not(.multiselect-processed)', context).addClass('multiselect-processed').click( $.fn.eventSetSelectAll );
+      $('input.form-submit:not(.multiselect-processed)', context).addClass('multiselect-processed').click(function() {
+        $('select.multiselect_sel').selectAll();
+      });
       
       $('#multiselect_custom_button').click($.fn.eventSetSelectAll);
             
