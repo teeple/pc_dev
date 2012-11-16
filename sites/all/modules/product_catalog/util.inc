@@ -135,3 +135,17 @@ function generate_jstree() {
 	$smarty->fetch('index.tpl');
 }
 
+function build_navigation_bar()
+{
+	
+	$image = 'sites/default/files/images/nav/dash-active.png';
+
+	print '
+<div class="top-bar">
+  <ul id="nav">
+         <li class="nav-item">
+           <a href="#"><img src="' . $image . '" alt="" /><p>Home</p></a>
+         </li>
+  </ul>
+</div>';
+}
