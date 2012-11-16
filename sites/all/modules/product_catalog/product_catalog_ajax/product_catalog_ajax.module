@@ -208,6 +208,10 @@ function product_catalog_ajax_add_modal_content($js = NULL, $contentType, $refNo
 			$viewResult = views_get_view_result('list_loyaltypoint', 'panel_pane_1',$refNodeNid);
 			$node->field_ref_loyaltypoint['und'][0]['nid'] = current($viewResult)->nid;
 			break;
+		case 'ocs_state_machine':
+			$node->title = $refNodeNid;
+			$node->field_lifecycle_scheme['und'][0]['nid'] = $refNodeNid;
+			break;
 	}
 	
 	if (!$js) {
@@ -245,6 +249,7 @@ function product_catalog_ajax_add_modal_content($js = NULL, $contentType, $refNo
 			case 'depositschemeadjustment':
 			case 'thresholdschemefactors':
 			case 'area_code':
+			case 'ocs_state_machine':
 				$output[] = ctools_ajax_command_reload();
 				break;
 			default : //for tree
