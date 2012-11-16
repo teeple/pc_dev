@@ -10,13 +10,15 @@ function rating_rules_export_by_content_type_loaded($export_list, $nid=NULL, $va
 {
 	$jsonData = array();
     foreach($export_list as $export_item)
-    {
+	{
+
         if(property_exists($export_item , "field_export_disabled") && count($export_item->field_export_disabled)>0)
         {
             if($export_item->field_export_disabled['und'][0]['value'] == '1')
                 continue;
             //dsm($export_item->field_export_disabled);
-        }
+		}
+
         if(property_exists($export_item, "field_source_view_name") && count($export_item->field_source_view_name)>0)
         {
             $data = rating_rules_export_from_view_has_nid_reference($export_item->title, $export_item, $export_item->field_source_view_name['und'][0]['value'] , $export_item->field_source_display_name['und'][0]['value'] , $export_item->field_result_ruleset_name['und'][0]['value'], $vars, $export_item_cache);
@@ -80,6 +82,7 @@ function rating_rule_export($ruleset_template , $export_item,  $nid=NULL, $vars 
         $ruleset_name = str_replace('$(' . $var_name . ')' , $value , $ruleset_name);
     }
 
+
     if(property_exists($export_item, "field_children_node_type") && count($export_item->field_children_node_type)>0)
     {
         $export_type = 'group';
@@ -104,21 +107,30 @@ function rating_rule_export($ruleset_template , $export_item,  $nid=NULL, $vars 
         {
             $jsonData[$title] = $child;
         }
-        //$jsonData['data'] = rating_rules_export_by_content_type($export_item->field_children_node_type['und'][0]['value'], $nid, $vars);
+		//$jsonData['data'] = rating_rules_export_by_content_type($export_item->field_children_node_type['und'][0]['value'], $nid, $vars);
         return $jsonData;
     }
     else
     {
         if(count($export_item->field_view_name)>0)
         {
+			$individual_ruleset = true;
+			if(property_exists($export_item , 'field_individual_ruleset') && count($export_item->field_individual_ruleset)>0)
+			{
+				if($export_item->field_individual_ruleset['und'][0]['value'] == '0')
+					$individual_ruleset = false;
+			}
+
             $display_name = NULL;
             if(count($export_item->field_display_name)>0)
             {
                 $display_name = $export_item->field_display_name['und'][0]['value'];
             }
             $data = rating_rules_export_from_view($ruleset_name, $export_item->field_view_name['und'][0]['value'] , $display_name, $nid);
-        }
-        return $data;
+			$data['individual_ruleset'] = $individual_ruleset;
+			return $data;
+		}
+		return NULL;
     }
 }
 
