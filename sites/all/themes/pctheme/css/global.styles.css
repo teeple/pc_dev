@@ -301,7 +301,14 @@ a {
  * Logo
  */
 #logo {
+  /*
   padding: 10px 0;
+  position: absolute;
+  top: 0;
+  right: 20px;
+  */
+  padding: 5px;
+  float: left;
 }
 
 #logo img {
@@ -311,7 +318,9 @@ a {
 /*
  * Wrapper for the site name and slogan (hgroup)
  */
-#name-and-slogan {}
+#name-and-slogan {
+ padding: 25px 0px 25px 80px;
+}
 
 /*
  * Site name (h1)
@@ -2082,6 +2091,8 @@ tr.error {}
 }
 #nav .nav-item a {
 	display: list-item;
+    width: 60px;
+    height: 80px;
 }
 #nav .nav-item:hover { border-radius: 0; }
 
@@ -2096,6 +2107,29 @@ tr.error {}
 	border-radius: 3px;
 	box-shadow: inset 0px 0px 1px 0px #000;
 }
+
+#nav .sub-nav {
+    display: none; 
+    position: relative;
+    left: 0;
+    top: 0;
+    background: #343434;
+    border-radius: 2px;
+    z-index: 9999;
+    padding: 0;
+}
+#nav .sub-nav a {
+    height: 20px;
+    padding: 6px 0 0 0;
+    text-align: center;
+    font-size: 11px;
+}
+#nav .sub-nav a:hover {
+    color: #83ab24;
+    background: #3d3d3d;
+    border-radius: 2px;
+}
+
 
 .region-sidebar-first .block-content.content {
 	padding: 0;
