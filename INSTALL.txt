@@ -2,7 +2,7 @@
 CONTENTS OF THIS FILE
 ---------------------
 
- * Requirements and notes
+ * Requirements and notes // test
  * Optional server requirements
  * Installation
  * Building and customizing your site
