@@ -165,6 +165,28 @@ div.pagecontentContent h2 {
 }
 
 /*
+.table-in-general table thead tr {
+	    background-image: url(../img/grad-overlay.png);
+		    height: 30px;
+}
+.table-in-general table thead th {
+	    border-right: 1px solid #ccc;
+		    color: #292929;
+				       text-shadow: 0 1px 0 #fff;
+					       font-size: 12px;
+}
+.table-in-general table thead th:last-of-type { border-right: none; }
+.table-in-general table tbody {
+	    border-top: 1px solid #bbb;
+		    border-bottom: 1px solid #bbb;
+}
+.table-in-general table tr.odd { background-color: #fff; }
+.table-in-general table tr.even { background-color: #f6f6f6; }
+.table-in-general table td { padding: 8px 10px; border-right: 1px solid #ccc; }
+.table-in-general table tbody tr:hover { background-color: #ddd; }
+*/
+
+/*
 .common-data-add-link-ratinggroup div.view-footer {
     margin-right: 100px;
 }

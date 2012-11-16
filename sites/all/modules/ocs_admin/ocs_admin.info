@@ -4,6 +4,6 @@ core = 7.x
 version = 7.0
 package = OCS Admin
 files[] = ocs_admin.test
-stylesheets[all][] = ocs_admin.css
+stylesheets[all][] = ocs_admin.css tables.css
 scripts[] = js/testcase.js
 //ocs_admin.module
