@@ -882,8 +882,6 @@ function _get_available_counter_list($productNid, $existingCounterNids) {
 		$retArray[$record->nid] = $record->node_title;
 	}
 	
-	dsm($retArray, 'retArray');
-	
 	return $retArray;
 }
 
