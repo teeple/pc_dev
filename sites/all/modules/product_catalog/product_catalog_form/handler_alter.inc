@@ -243,8 +243,8 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             
         case 'loyaltypoint_node_form':
         	
-        	// loyaltypoint에 사용되는 counter는 point용 counter만 볼 수 있도록 한다.
-        	// counter_group이 Point인 것들만 리스팅한다.
+        	// loyaltypoint���ъ���� counter��point��counter留�蹂������濡����.
+        	// counter_group��Point��寃��留�由ъ������
         	//
         	$viewResult = views_get_view_result('list_counter_for_vouchercardtype','panel_pane_3');
         	
@@ -291,7 +291,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             unset($form['field_ref_tree_tid']);
             _unset_menu_items($form,$form_id);
 			
-			// service domain과 billing type에 맞는 counter list만을 가져온다.
+			// service domain怨�billing type��留�� counter list留�� 媛���⑤�.
 			// $form['field_counter_list']['und']['#options'] = 'aaa';
 			// 
 			// $counterList = _get_available_counter_list($form_state['product_nid'], array_values($form_state['build_info']['args'][0]->field_counter_list['und']));
@@ -328,13 +328,13 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             
             _unset_menu_items($form,$form_id);
 
-            // 기존 counter list를 가져오는 부분은 없애고, 현재 선택된 counter중에서만 next counter를 찾기 위함
+            // 湲곗〈 counter list瑜�媛���ㅻ� 遺�������怨� ��� �����counter以����� next counter瑜�李얘린 ���
             $siblings = array();
             unset($form['field_rollover_next_counter']['und']['#options']);
             $form['field_rollover_next_counter']['und']['#options'] = array('_none' => '- None -');
             $viewResult = views_get_view_result('list_treenodecounter', 'panel_pane_1', array('0' => $form['nid']['#value']));
             foreach($viewResult as $item){
-                // sibling에 자신은 제외 
+                // sibling���������� 
                 if($item->nid != $form['nid']['#value']) {
                     $form['field_rollover_next_counter']['und']['#options'][$item->nid] =  $item->node_field_data_field_ref_counter_title;
                 }
@@ -352,7 +352,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			
 // dsm($form, 'form');
 // dsm($form_state, 'form_state');
-// 생성 시
+// ��� ��
 			if(!isset($form['nid']['#value'])){
 				$view = views_get_view('query_counter_max_id');
 				$view->execute();
@@ -593,6 +593,27 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
         	break;
 
         case 'depositschemefactors_node_form':
+            _unset_menu_items($form,$form_id);
+            $form['field_ref_depositscheme']['#type'] = 'hidden';
+                        
+            $depositSchemeFactorNode = node_load($form['nid']['#value']);
+            $depositSchemeNode = node_load($depositSchemeFactorNode->field_ref_depositscheme['und'][0]['nid']);
+            $serviceDomainTid = $depositSchemeNode->field_service_domain['und'][0]['tid'];
+            
+            $view = views_get_view('list_counter');
+            $view->set_display('panel_pane_10');
+            $view->set_arguments(array('0' => $serviceDomainTid));
+            $view->execute();
+            $options = array();
+            $options['_none'] = '- None -';
+            foreach($view->result as $item){
+                $options[$item->nid] = $item->node_title;
+            }
+            
+            $form['field_ref_thres_counter_acc']['und']['#options'] = $options;
+            $form['field_ref_thres_counter_limit']['und']['#options'] = $options;
+            
+            break;
         case 'depositschemeadjustment_node_form':
         	_unset_menu_items($form,$form_id);
         	$form['field_ref_depositscheme']['#type'] = 'hidden';
@@ -936,8 +957,8 @@ function _alter_field_action_price_factors(&$form,&$form_state) {
 			    'field_range_units'
             ); 
 
-            // action price 제약 사항..
-            // 확실해 지기 전까지 제약사항 풀어 둠
+            // action price ��� �ы�..
+            // �����吏�린 ���吏�����ы� ��� ��
             /*
             if(!isset($form['nid']['#value'])) { //create
 	            if( count($rule->field_ref_action_charge) == 0){ //define constraint
@@ -984,7 +1005,7 @@ function _alter_field_action_price_factors(&$form,&$form_state) {
     foreach($array_unset_items as $item) {
         unset($form[$item]);
     }
-    //required 제약 사항 일단 주석으로 막아 둠
+    //required ��� �ы� �쇰� 二쇱��쇰� 留�� ��
     /*
     foreach($array_required as $item) {
         $form[$item]['und'][0]['value']['#required'] = TRUE;
