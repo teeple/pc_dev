@@ -66,7 +66,6 @@ function _add_ajax_submit_callback($form_id,&$form){
         case 'prdattributeprefixrangenotallowe_node_form':
         case 'unittransferfactors_node_form':
         case 'conditionwhatservicetypefactors_node_form':       
-        case 'number_special_node_form':
         case 'prdattributefeaturecode_node_form':
         case 'prdattributebenefit_node_form':
         case 'loyaltypoint_node_form':        
@@ -74,6 +73,7 @@ function _add_ajax_submit_callback($form_id,&$form){
         case 'conditionwhatcalltype_node_form':
         case 'conditionwhatcounter_node_form':
 		case 'conditionwhensubscriptionday_node_form':
+		case 'numberspecialrate_node_form':
 		  	$change = TRUE;
         	break;
         	
@@ -82,6 +82,7 @@ function _add_ajax_submit_callback($form_id,&$form){
             break;
         case 'vouchercardtype_node_form':
         case 'unittransfer_node_form':
+		case 'number_special_node_form':
             if(isset($form['nid']['#value'])) { // edit
                 $change = TRUE;
             }
@@ -458,11 +459,14 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             //for select all carrier.
             $form['field_ref_carrier_mobile']['und']['#options']['_none'] = 'All';
             break;
-		case 'number_special_node_form':
-			$form['actions']['submit']['#submit'][] = '_number_special_submit_handler';			
+		case 'number_special_node_form':					
 			_unset_menu_items($form,$form_id);
 			unset($form['field_parent_node']);
             unset($form['field_weight']);
+			if(!isset($form['nid']['#value'])){
+				$form['actions']['submit']['#submit'][]  = 'product_catalog_form_form_redirect_handler';
+			}
+			
 			break;
 		case 'views_form_list_area_ratinggroup_panel_pane_1':
 			unset($form['actions']['submit']['#suffix']);
@@ -781,9 +785,18 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
         	break;
         case 'numberspecialfactors_node_form':
         	unset($form['field_parent_node']);
-            unset($form['field_weight']);            
-            _unset_menu_items($form,$form_id);
+            unset($form['field_weight']);       
+			$form['field_ref_tree_tid']['#type'] = 'hidden';
+			$form['field_ref_numberspecial']['#type'] = 'hidden';     
+            _unset_menu_items($form,$form_id);			
         	break;
+		case 'numberspecialrate_node_form'	:
+			unset($form['field_parent_node']);
+            unset($form['field_weight']);
+			$form['field_ref_tree_tid']['#type'] = 'hidden';
+			$form['field_ref_numberspecial']['#type'] = 'hidden';     
+            _unset_menu_items($form,$form_id); 
+			break;
         case 'unittransfer_node_form':
         	unset($form['field_parent_node']);
         	unset($form['field_weight']);
