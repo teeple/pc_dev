@@ -38,6 +38,8 @@ html {
 body {
   font-family: "Trebuchet MS", "Helvetica Neue", Arial, Helvetica, sans-serif;
   font-size: 87.5%;
+	background: #D8D6D8 url(../img/bkg-pat.png);
+	min-width: 320px;
 }
 
 /* =============================================================================
@@ -549,7 +551,6 @@ a:focus {
 .nav .block {
   margin-bottom: 0;
 }
-
 
 /* =============================================================================
  *   Superfish
@@ -1988,7 +1989,7 @@ tr.error {}
 }
 
 .views-exposed-form .views-exposed-widget .form-submit {
-/*      margin-top: 1.6em; */
+    margin-top: 1.6em; 
 }
 
 .views-exposed-form .form-item,
@@ -2012,4 +2013,56 @@ tr.error {}
 	font-size: 10px;
 	color: #292929;
 	text-shadow: 0 1px 0 #eee;
+}	
+
+/* navigation bar */
+#top-nav {
+	position: relative;
+}
+
+.top-bar {
+	float: left;
+	width: 60px;
+	background: url(../img/grad-overlay-hz.png) 0 0 repeat-y #292929;
+	border: none;
+	border-right: 1px solid #515151;
+	position: absolute;
+	top: 0;
+}
+.top-bar a { color: #9e9e9e; font-size: 10px; text-shadow: 0px 1px 0px #222; }
+
+#nav {
+	margin: 0;
+	display: block;
+	min-width: 0;
+	padding:0;
+}
+#nav .nav-item {
+	float: none;
+	margin-top: 6px;
+	margin-left: 0;
+}
+#nav .nav-item a {
+	display: list-item;
+}
+#nav .nav-item:hover { border-radius: 0; }
+
+#nav .nav-item p {font-size: 11px; font-weight: 600; text-align: center;}
+#nav .nav-item img {
+	width: 30px;
+	height: 30px;
+	padding: 8px 15px 4px;
+}
+#nav .nav-item:hover, #user-panel {
+	background: url(../img/nav/nav-hover.png);
+	border-radius: 3px;
+	box-shadow: inset 0px 0px 1px 0px #000;
+}
+
+.region-sidebar-first .block-content.content {
+	padding: 0;
+}
+
+.region-sidebar-second .block-inner {
+	margin-left: 0;
 }

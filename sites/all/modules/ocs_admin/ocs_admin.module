@@ -657,4 +657,3 @@ function ocs_admin_get_term_list( $type)
     return $select[$type];
  }
 
-
