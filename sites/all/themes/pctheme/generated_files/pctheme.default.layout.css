@@ -1,6 +1,6 @@
 /* Gutters are not currently overridden in theme settings, but may be in theme CSS */
 /* bigscreen two_sidebars_left */
-.container {width:100%;max-width:1140px}
+.container {width:100%;max-width:2280px}
 #content-column,.content-column,div.sidebar {float: left; clear: none}
 .two-sidebars .content-inner {margin-left: 280px; margin-right: 0}
 .sidebar-first .content-inner {margin-left: 80px; margin-right: 0}
