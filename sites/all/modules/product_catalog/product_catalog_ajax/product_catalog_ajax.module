@@ -860,6 +860,7 @@ function product_catalog_ajax_add_content($js = NULL) {
     		print json_encode($output);
     		exit;
     		break;
+			
 		default:    		
     		if($refTreeNid == NULL) $refTreeNid = $parentNid;
     		$qtabs = array();
