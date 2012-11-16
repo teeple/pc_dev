@@ -13,7 +13,7 @@ function _create_modal_add_link($contentType,$params){
 	$add_class_1 = 'add-link-in-rightpane';
 	$add_class_2 = 'ctools-use-modal ctools-modal-add-item-modal-style';
 	
-	$link_string = '<div class='.$add_class_1.'><a href="'.$add_url.'" class='.$add_class_2.'>Add</a>';
+	$link_string = '<div class='.$add_class_1.'><a href="'.$add_url.'" class='.$add_class_2.'>Add</a></div>';
 	
 	return $link_string;	
 }
