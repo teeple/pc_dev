@@ -1161,17 +1161,17 @@ ul.action-links li {}
 /*
  * Block title
  */
-#main-content-header,
+#page-title,
 .block-title {
     background: url(../img/grad-overlay-s.png) #393939;
     border-radius: 2px;
     max-height: 40px;
 }
-#main-content-header:hover,
+#page-title:hover,
 .block-title:hover {
     background: url(../img/grad-overlay-s.png) #444;
 }
-#main-content-header,
+#page-title,
 h2.block-title {
     padding: 10px 10px;
     color: #ddd;
@@ -1628,6 +1628,14 @@ select {
 .form-item input, .form-item select {
 	width: 100%;
 }
+.form-item input[type="checkbox"] {
+	width: 20px;
+}
+.form-item label {
+	float:none;
+}
+
+
 .form-icon {
 	display: inline-block;
 	width: 16px;
@@ -1801,23 +1809,45 @@ table.sticky-header {
 table thead tr {
     background-image: url(../img/grad-overlay.png);
     height: 30px;
+
+	border-width: 0px 1px 0px 1px;
+	border-style: solid;
+	border-color: #BEBFB9;
 }
 table thead th {
     border-right: 1px solid #ccc;
     color: #292929;
     text-shadow: 0 1px 0 #fff;
     font-size: 12px;
+
+	text-transform: uppercase;
+	background: #E1E2DC;
+	font-weight: normal;
+	border-width: 1px;
+	border-style: solid;
+	border-color: #BEBFB9;
+	padding: 3px 10px;
 }
 table thead th:last-of-type { border-right: none; }
 table tbody {
     border-top: 1px solid #bbb;
     border-bottom: 1px solid #bbb;
 }
+table tr {
+	border-width: 0px 1px 0px 1px;
+	border-style: solid;
+	border-color: #BEBFB9;
+}
 table tr.odd { background-color: #fff; }
 table tr.even { background-color: #f6f6f6; }
 table td { padding: 8px 10px; border-right: 1px solid #ccc; }
 table tbody tr:hover { background-color: #ddd; }
 
+table .views-row-last {
+	border-width: 0px 1px 1px 1px;
+	border-style: solid;
+	border-color: #BEBFB9;
+}
 
 
 /*
@@ -2017,6 +2047,11 @@ tr.error {}
 	color: #292929;
 	text-shadow: 0 1px 0 #eee;
 }	
+
+.editablefield-item .form-actions {
+	margin-top: 5px;
+	margin-bottom: 10px;
+}
 
 /* navigation bar */
 #top-nav {
