@@ -300,7 +300,7 @@ function product_catalog_ajax_select_submit() {
       $weight += $weightStep;
 
       switch($rel_type) {
-      case 'mobile_nonusage_unittransfer':
+      case 'mobile_nonusage_unittransfer_scheme':
       	_remove_existing_children($tmpProductNid[1], $tmpParentNid[1]);
       	
       	$child->type = 'treenodeunittransferscheme';
@@ -520,13 +520,18 @@ function _get_view_result_qtabConfgNid($collectionName, $args) {
 	if(isset($qtabConfig['args'])) {
 		$newArgs = _replace_arguments($qtabConfig['args'], $qtabConfig, $args);
 	}
-	$arguments = array('0' => $newArgs);
+	$tempArgs = explode('/', $newArgs);
+	
+	foreach($tempArgs as $tmpArg){
+		$arguments[] = $tmpArg;
+	}
+	
 	$view->set_arguments($arguments);
 	$view->execute();
 	$results = $view->result;
 	
 	foreach($results as $record) {
-		$resultArr[] = view_get_field_value_by_label($view	, 'qtabConfigNid', $record);
+		$resultArr[] = view_get_field_value_by_label($view, 'qtabConfigNid', $record);
 	}
 	
 	return $resultArr;
@@ -542,7 +547,7 @@ function _replace_arguments($origArgs, $qtabConfig, $args) {
 
 	$newArgString = $origArgs;
 	$qtabConfigArgList = explode('/', $origArgs);
-	$reservedArgList = array('$productNid', '$tariffplanNid','$voucherCardTypeNid','$nid', '[arg]', '[Exclude]', '$refTreeTid');
+	$reservedArgList = array('$productNid', '$tariffplanNid','$voucherCardTypeNid','$nid', '[arg]', '[Exclude]', '[Include]', '$refTreeTid');
 
 	$matchedArgList = array_intersect($qtabConfigArgList, $reservedArgList);
 	
@@ -579,6 +584,18 @@ function _replace_arguments($origArgs, $qtabConfig, $args) {
 				}
 				break;
 				
+			case '[Include]':
+				$collectionName = 'field_qtabs_right_click_include';
+				$result = _get_view_result_qtabConfgNid($collectionName, $args);
+				
+			
+				if(!empty($result)) {
+					$newArgString = str_replace($matchedArg, join(',', $result), $newArgString);
+				} else {
+					$newArgString = str_replace('/'.$matchedArg, '', $newArgString);
+				}
+				break;
+			
 			default:
 				break;
 		}
@@ -677,6 +694,7 @@ function product_catalog_ajax_load_select_form($nid,$eventType,$rootNid,$relType
             	break;
             	
             case 'view':
+				
             	$qtabs[] = array(
                     'title' => $qtabConfig['title'],
                     'type' => 'view',
@@ -711,7 +729,7 @@ function product_catalog_ajax_load_select_form($nid,$eventType,$rootNid,$relType
         $weight = $weight + 1;
         $qtabIndex = $qtabIndex + 1;
     }
-    
+	
     $qtoptions = array(
     	'ajax' => FALSE,
     	'style' => 'zen',
@@ -721,7 +739,7 @@ function product_catalog_ajax_load_select_form($nid,$eventType,$rootNid,$relType
     
     $quicktabs = quicktabs_build_quicktabs('qtab_dummy',$qtoptions,$qtabs);
     $qtRender =  drupal_render($quicktabs['content']);
-    //dsm($qtRender, 'qtRender');
+    // dsm($qtRender, 'qtRender');
 
     $renderOutput = '<div id="tree_content_div" style="overflow:scroll;height:700px;">'.$qtRender.'</div>';
     $output[] = $renderOutput;

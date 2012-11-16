@@ -442,8 +442,9 @@ function view_get_field_value($view , $field_name , $record)
                 }
 				else
 				{
-					dsm($raw_items);
-					return "unknown";
+					// dsm($raw_items);
+					return $raw_items[0]['rendered']['#markup'];
+					// return "unknown";
 				}
 			}
 			else
