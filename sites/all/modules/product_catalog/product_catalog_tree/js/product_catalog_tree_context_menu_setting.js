@@ -355,10 +355,10 @@
 					},
 				};
                 break;
-            case "mobile_nonusage_unittransfer":
+            case "mobile_nonusage_unittransfer_scheme":
             	menus.custom_create._disabled = false;
 				menus.custom_create.submenu = {
-					"mobile_nonusage_unittransfer " : {
+					"mobile_nonusage_unittransfer_scheme" : {
 						"label" : "Select Unit Transfer",
 						action : function(node) {
 							$.fn.loadSelectForm(node);
@@ -465,17 +465,43 @@
 					},
 				};
 				break;
+			
 			case "mobile_nonusage_subscription_bonus":
 				menus.custom_create._disabled = false;
 				menus.custom_create.submenu = {
 					"mobile_nonusage_subscription_bonus" : {
 						"label" : "Bonus Item",
 						action : function(node) {
-							$.fn.addNode(node,{'childContentType': 'actionpriceallowance'});
+							$.fn.addNode(node,{'childContentType': 'actionpriceallowanceonetime'});
 						}
 					},
 				};
 				break;
+			
+			case "mobile_nonusage_subscription_charge":
+				menus.custom_create._disabled = false;
+				menus.custom_create.submenu = {
+					"mobile_nonusage_subscription_charge" : {
+						"label" : "Charge Item",
+						action : function(node) {
+							$.fn.addNode(node,{'childContentType': 'actionpricechargeonetime'});
+						}
+					},
+				};
+				break;
+			
+			case "mobile_nonusage_recurring_bonus":
+				menus.custom_create._disabled = false;
+				menus.custom_create.submenu = {
+					"mobile_nonusage_recurring_bonus" : {
+						"label" : "Bonus Item",
+						action : function(node) {
+							$.fn.addNode(node,{'childContentType': 'actionpriceallowancerecurring'});
+						}
+					},
+				};
+				break;
+				
 			case "iptv_nonusage_subscription_bonus":
 				menus.custom_create._disabled = false;
 				menus.custom_create.submenu = {
