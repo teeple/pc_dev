@@ -1,17 +1,25 @@
 <?php
 
+function array_get_value( $a, $f=array()) 
+{
+	if ( ! $a || ! is_array($a)) return array();
+	foreach( $a as $k => $v) {
+		if ( is_array( $v)) $f = array_get_value( $v, $f);
+		else $f[] = $v;
+	}
+	return $f;
+} 
+
 function ocs_admin_check_lifecycle_scheme( $node, $node_unchanged)
 {
-
-	$after = array();
-	foreach( $node->field_lifecycle_states['und'] as $key => $value)	{
-		$after[] = $value['nid'];
-	}
+// 	dpm( $node, 'node');
+// 	dpm( $node_unchanged, 'unchanged');
 	
-	$before = array();
-	foreach( $node_unchanged->field_lifecycle_states['und'] as $key => $value) {
-		$before[] = $value['nid'];
-	}
+	$after = array_get_value( $node->field_lifecycle_states);
+	$before = array_get_value( $node_unchanged->field_lifecycle_states);
+	
+// 	dpm( $after, 'after');
+// 	dpm( $before, 'before');
 	
 	$intersect = array_intersect( $before, $after);
 	$removed = array_diff( $before, $intersect);
@@ -37,14 +45,14 @@ function ocs_admin_check_lifecycle_scheme( $node, $node_unchanged)
 			//dpm( $item->nid, 'belongs to intersect');
 			unset($intersect[$key]); 
 		}
-		else if ( array_search( $state_nid, $removed ) !== FALSE) {
-			// 삭제할 대상에 들어가면, 해당 노드 삭제
-			//dpm( $item->nid, 'remove state');
-			node_delete( $item->nid);
-		}
 		else if ( ($key = array_search( $state_nid, $added)) !== FALSE) {
 			//dpm( $item->nid, 'belongs to add list');
 			unset( $added[$key]);
+		}
+		else {
+			// 그외의 경우는 모두 삭제
+			//dpm( $item->nid, 'remove state');
+			node_delete( $item->nid);
 		}
 	}
 	
@@ -57,10 +65,23 @@ function ocs_admin_check_lifecycle_scheme( $node, $node_unchanged)
 		$new_node = ocs_admin_get_new_node( 'ocs_svc_perm');
 		$new_node->title = $node->nid;
 		$new_node->field_lifecycle_state['und'][0]['nid'] = $add_node_nid;
+		$new_node->field_lifecycle_scheme['und'][0]['nid'] = $node->nid;
 		node_save( $new_node);
 		
 		//dpm( $new_node, 'add node');
 	}
+	
+	// check ocs_state_machine
+	$items = entity_load( 'node', FALSE, array( 'type' => 'ocs_state_machine', 'title' => $node->nid));
+	foreach ( $items as $item) {
+// 		dpm( $item, 'state machine');
+		if ( array_search( $item->field_ocs_from_state['und'][0]['target_id'], $after) === FALSE ||
+				array_search( $item->field_ocs_to_state['und'][0]['target_id'], $after) === FALSE) {
+// 			dpm( $item->nid, 'remove state machine');
+			node_delete( $item->nid);
+		}
+	}
+	
 }
 
 function ocs_lifecycle_node_form( &$form, &$form_state, $form_id)
@@ -143,16 +164,4 @@ function ocs_lifecycle_node_form_validate( $node, $form, $form_state)
 			form_set_error( 'field_ocs_to_state', t('Invalid state : transition rule exists already.'));
 		}
 	}
-}
-
-function ocs_lifecycle_service_permission()
-{
-	$nid = 0;
-	dpm( current_path(), 'current path');
-	
-	$view = views_get_view( 'ocs_svc_perm');
-	$view->execute_display( 'service_perm_table', $nid);
-	$output = $view->render();
-	
-	print $output;
 }
