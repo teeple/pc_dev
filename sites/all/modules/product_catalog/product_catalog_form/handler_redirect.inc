@@ -75,22 +75,10 @@ function product_catalog_form_form_redirect_handler(&$form, &$form_state){
 					$redirect_url = 'common/area_ratinggroup';
 					break;
 			}
-			break;
-		/*
-		case 'number_special_node_form':
-			// create
-            //
-            if(!isset($form['nid']['#value'])){
-				$redirect_url = 'common/number_special/'.$form_state['values']['nid'];
-            }
-			break;
-		case 'number_ratinggroup_node_form':
-			$redirect_url = 'common/number_ratinggroup';
-			break;
-		case 'number_special_rule_node_form':
-			$redirect_url = 'common/number_sp_rule/'.$form_state['values']['nid'].'/edit';
-			break;
-		*/
+			break;		
+		case 'number_special_node_form':			
+			$redirect_url = 'common/number_special/'.$form_state['values']['nid'].'#quickset-qtabs_common_data=6';
+			break;		
         case 'actionpricefactors_node_form':
 
             $rule = node_load($form_state['rule_nid']);

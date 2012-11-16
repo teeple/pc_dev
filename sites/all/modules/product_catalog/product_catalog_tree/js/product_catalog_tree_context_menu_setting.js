@@ -1037,10 +1037,10 @@
 					$.fn.deleteNode(node);
 				};								
 				break;
-			case "treeNodeNumberSpecialFactors":
+			case "allowed":
 				menus.custom_create._disabled = false;
 				menus.custom_create.submenu = {
-					"treeNodeNumberSpecialFactors" : {
+					"allowed" : {
 						"label" : "Number Special Factors",
 						action : function(node) {
 							$.fn.addNode(node,{'childContentType': 'numberspecialfactors'});
@@ -1048,15 +1048,28 @@
 					},
 				};
 				break;
-			case "treeNodeNumberSpecialRates":
+			case 'numberspecialfactors':
+				menus.custom_delete._disabled = false;
+				menus.custom_delete.action = function(node) {
+					$.fn.deleteNode(node);
+				};
+				break;
+			case "Rates":
 				menus.custom_create._disabled = false;
 				menus.custom_create.submenu = {
-					"treeNodeNumberSpecialRates" : {
-						"label" : "Charge Factors",
+					"Rates" : {
+						"label" : "Rate",
 						action : function(node) {
-							$.fn.addNode(node,{'childContentType': 'actionpricechargefactors'});
+							$.fn.addNode(node,{'childContentType': 'numberspecialrate'});
 						}
 					},
+				};
+				break;
+
+			case 'numberspecialrate':
+				menus.custom_delete._disabled = false;
+				menus.custom_delete.action = function(node) {
+					$.fn.deleteNode(node);
 				};
 				break;
 			case "actionpricechargefactors":
