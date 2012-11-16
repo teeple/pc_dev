@@ -1161,14 +1161,17 @@ ul.action-links li {}
 /*
  * Block title
  */
+#main-content-header,
 .block-title {
     background: url(../img/grad-overlay-s.png) #393939;
     border-radius: 2px;
     max-height: 40px;
 }
+#main-content-header:hover,
 .block-title:hover {
     background: url(../img/grad-overlay-s.png) #444;
 }
+#main-content-header,
 h2.block-title {
     padding: 10px 10px;
     color: #ddd;
@@ -2063,6 +2066,3 @@ tr.error {}
 	padding: 0;
 }
 
-.region-sidebar-second .block-inner {
-	margin-left: 0;
-}
