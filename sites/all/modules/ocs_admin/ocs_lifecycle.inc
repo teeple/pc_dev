@@ -148,20 +148,24 @@ function ocs_lifecycle_node_form_validate( $node, $form, $form_state)
 		form_set_error( 'field_ocs_to_state', t('Invalid state : same as "from state"'));
 	}
 	
-	// from, to state가 이미 존재하면 에러 
-	$scheme_nid = $form['field_lifecycle_scheme']['und']['#default_value'][0];
-	$query = new EntityFieldQuery();
-	$items = $query->entityCondition('entity_type', 'node')
+	if ( ! $form['#node_edit_form']) {
+		dpm( $form, 'form');
+		// from, to state가 이미 존재하면 에러
+		$scheme_nid = $form['field_lifecycle_scheme']['und']['#default_value'][0];
+		$query = new EntityFieldQuery();
+		$items = $query->entityCondition('entity_type', 'node')
 		->entityCondition('bundle', 'ocs_state_machine')
 		->fieldCondition('field_lifecycle_scheme', 'nid', $scheme_nid)
 		->execute();
-	
-	foreach( array_keys($items['node']) as $nid) {
-		$item = node_load( $nid);
-		if ( $item->field_ocs_from_state['und'][0]['target_id'] == $from_state &&
-				$item->field_ocs_to_state['und'][0]['target_id'] == $to_state) {
-			form_set_error( 'field_ocs_from_state', t('Invalid state : transition rule exists already.'));
-			form_set_error( 'field_ocs_to_state', t('Invalid state : transition rule exists already.'));
+		
+		foreach( array_keys($items['node']) as $nid) {
+			$item = node_load( $nid);
+			if ( $item->field_ocs_from_state['und'][0]['target_id'] == $from_state &&
+					$item->field_ocs_to_state['und'][0]['target_id'] == $to_state) {
+				form_set_error( 'field_ocs_from_state', t('Invalid state : transition rule exists already.'));
+				form_set_error( 'field_ocs_to_state', t('Invalid state : transition rule exists already.'));
+			}
 		}
+		
 	}
 }
