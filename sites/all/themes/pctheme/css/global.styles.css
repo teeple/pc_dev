@@ -2135,3 +2135,93 @@ tr.error {}
 	padding: 0;
 }
 
+/* for quick tab */
+.quicktabs_main .block-inner {
+	margin: 0;
+}
+
+ul.quicktabs-tabs.quicktabs-style-zen {
+	margin:0;
+}
+
+.quicktabs-tabpage .view {
+	padding: 10px 10px;
+	background: #EEE;
+	border: 1px solid #BBB;
+	border-top: none;
+	border-radius: 0 0 3px 3px;
+}
+
+/* for notification messages */
+/*
+div.messages {
+	max-height: 50px;
+	margin-bottom: 20px;
+	border-radius: 3px;
+	background: url(../img/ui/notif-bg.jpg) repeat-x;
+	box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.3);
+	box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+
+	color: rgba(0, 0, 0, 0.6);
+	padding: 10px 0;
+	margin: 0 10px;
+	font-size: 12px;
+	font-weight: 700;
+	text-shadow: 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+.ad-notif-success { background-position: 0 0; border: 1px solid #71a100; }
+.messages.warngin { background-position: 0 -50px; border: 1px solid #cbac00; }
+.messages.error { background-position: 0 -100px; border: 1px solid #c63434; }
+.messages.status { background-position: 0 -150px; border: 1px solid #308eef; }
+*/
+
+/* for Recent Articles */
+.comment,
+.node-teaser,
+.teaser_normal,
+.search-result,
+.teaser_large,
+.view-archive li,
+.node-bottom-links,
+.view-content ul li.views-row,
+.quicktabs-tabpage li.views-row,
+.block-articles-list-recent li,
+.block-articles-list-featured li,
+.block-dh-block-newsletter .follow-links li,
+.block-dh-recent-node-in-terms li.news-box li
+{
+	background: url("../img/dotted.png") repeat-x center bottom;
+	padding: 10px 0;
+}
+
+.views-field.views-field-type,
+.views-field.views-field-title {
+	font-family: 'PlayfairDisplayRegular',Georgia,"Times New Roman",Times,serif;
+	letter-spacing: 1px;
+	text-transform: uppercase;
+	font-weight: normal;
+	text-rendering: optimizelegibility;
+}
+
+.views-field.views-field-created,
+.views-field.views-field-name {
+	font-size: 80%;
+	float: right;
+	padding: 0 10px 0 10px;
+}
+
+.views-field.views-field-body {
+	margin-top: 5px;
+	font-size: 90%;
+}
+
+div.icon-info {
+	float: left;
+	position: relative;
+	right: 20px;
+	width: 24px;
+	height: 24px;
+	background: url("../img/icon-info.png") ;
+}
