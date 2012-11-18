@@ -77,9 +77,7 @@ function php_eval($code) {
   }
 
   ob_start();
-  error_log('code: '.$code);
   print eval('?>' . $code);
-  error_log('after eval');
   $output = ob_get_contents();
   ob_end_clean();
 
