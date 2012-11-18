@@ -593,6 +593,27 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
         	break;
 
         case 'depositschemefactors_node_form':
+            _unset_menu_items($form,$form_id);
+            $form['field_ref_depositscheme']['#type'] = 'hidden';
+                        
+            $depositSchemeFactorNode = node_load($form['nid']['#value']);
+            $depositSchemeNode = node_load($depositSchemeFactorNode->field_ref_depositscheme['und'][0]['nid']);
+            $serviceDomainTid = $depositSchemeNode->field_service_domain['und'][0]['tid'];
+            
+            $view = views_get_view('list_counter');
+            $view->set_display('panel_pane_10');
+            $view->set_arguments(array('0' => $serviceDomainTid));
+            $view->execute();
+            $options = array();
+            $options['_none'] = '- None -';
+            foreach($view->result as $item){
+                $options[$item->nid] = $item->node_title;
+            }
+            
+            $form['field_ref_thres_counter_acc']['und']['#options'] = $options;
+            $form['field_ref_thres_counter_limit']['und']['#options'] = $options;
+            
+            break;
         case 'depositschemeadjustment_node_form':
         	_unset_menu_items($form,$form_id);
         	$form['field_ref_depositscheme']['#type'] = 'hidden';
