@@ -142,11 +142,13 @@ function ocs_lifecycle_state_callback( $form, $form_state)
 function ocs_lifecycle_node_form_validate( $node, $form, $form_state)
 {
 	// from, to state가 같은 값이면 에러
+	/*
 	$from_state = $node->field_ocs_from_state['und'][0]['target_id'];
 	$to_state = $node->field_ocs_to_state['und'][0]['target_id'];
 	if ( $from_state == $to_state ) {
 		form_set_error( 'field_ocs_to_state', t('Invalid state : same as "from state"'));
 	}
+	*/
 	
 	/*
 	if ( ! $form['#node_edit_form']) {
@@ -269,40 +271,53 @@ function ocs_lifecycle_action_form( $form, &$form_state, $scheme_nid, $action_id
     		'#suffix' => '</div>',
     );
     
-    // set num_actions
-    if (empty($form_state['num_actions'])) {
-    	$form_state['num_actions'] = 1;
-    }
-    else if ( $form_state['triggering_element']['#name'] == 'add_more') {
-    	$form_state['num_actions'] ++;
-    }
+    // set num_actions (AJAX)
+//     if (empty($form_state['num_actions'])) {
+//     	$form_state['num_actions'] = 1;
+//     }
+//     else if ( $form_state['triggering_element']['#name'] == 'add_more') {
+//     	$form_state['num_actions'] ++;
+//     }
+    
+    $form['action_list']['add_action'] = array(
+    		'#id' => 'add-action-button',
+    		'#type' => 'button',
+    		'#value' => t('Add Action'),
+    		'#name' => 'add_more',
+    		// 		'#submit' => array('ocs_lifecycle_add_one_action'),
+    // 		'#ajax' => array(
+    		// 			'callback' => 'ocs_lifecycle_add_action',
+    		// 			'wrapper' => 'ocs_lifecycle_actions_div',
+    		// 		)
+    );
+    
     
     $options = $actions->select_options();
     
-    for( $i=0; $i < $form_state['num_actions']; $i++) {
+    for( $i=0; $i < 10; $i++) {
     	$form['action_list']['action_'.$i] = array(
-    			'#type' => 'select',
-    			'#title' => t('Action ' . ($i+1)),
-    			'#options' => $options,
+    		'#type' => 'select',
+    		'#title' => t('Action ' . ($i+1)),
+    		'#options' => $options,
     			// 		'#default_value' => $selected_action,
 //     			'#description' => t('The Action shall be applied to the system.'),
-    			'#ajax' => array(
-    					'callback' => 'ocs_admin_ajax_action_param',
-    					'wrapper' => 'campaign_action_param_div',
-    			),
+//     		'#ajax' => array(
+//     			'callback' => 'ocs_admin_ajax_action_param',
+//     			'wrapper' => 'campaign_action_param_div',
+//     		),
+    		'#prefix' => t('<div class="hide action-@i">', array( '@i' => $i)),
+    		'#suffix' => '</div>',
     	);
     }
+    
+//     unset( $form['action_list']['action_0']['#prefix']);
+//     unset( $form['action_list']['action_0']['#suffix']);
 
-	$form['action_list']['add_action'] = array(
-		'#type' => 'button',
-		'#value' => t('Add Action'),
-		'#name' => 'add_more',
-		'#submit' => array('ocs_lifecycle_add_one_action'),
-		'#ajax' => array(
-			'callback' => 'ocs_lifecycle_add_action',
-			'wrapper' => 'ocs_lifecycle_actions_div',
-		)
-	);
+    $form['num_action'] = array(
+    	'#type' => 'hidden',
+    	'#value' => '0',
+    );
+    
 	
 // 	// get list of parameters
 // 	$form['param'] = array(
@@ -357,4 +372,10 @@ function ocs_lifecycle_add_one_action($form, &$form_state)
 	
 	$form_state['num_actions']++;
 	$form_state['rebuild'] = TRUE;
+}
+
+function ocs_lifecycle_action_form_submit( $form, &$form_state)
+{
+	dpm( $form, 'submit form');
+	dpm( $form_state, 'submit form_state');
 }

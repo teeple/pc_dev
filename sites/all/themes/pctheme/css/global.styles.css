@@ -2226,3 +2226,7 @@ div.icon-info {
 	height: 24px;
 	background: url("../img/icon-info.png") ;
 }
+
+.myform .hide {
+    display: none; 
+}
