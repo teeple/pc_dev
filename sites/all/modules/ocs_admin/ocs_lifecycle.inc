@@ -144,3 +144,15 @@ function ocs_lifecycle_node_form_validate( $node, $form, $form_state)
 		}
 	}
 }
+
+function ocs_lifecycle_service_permission()
+{
+	$nid = 0;
+	dpm( current_path(), 'current path');
+	
+	$view = views_get_view( 'ocs_svc_perm');
+	$view->execute_display( 'service_perm_table', $nid);
+	$output = $view->render();
+	
+	print $output;
+}

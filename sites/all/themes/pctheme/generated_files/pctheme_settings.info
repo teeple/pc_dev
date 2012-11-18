@@ -49,7 +49,11 @@ settings[bigscreen_page_unit] = %
 settings[bigscreen_page_width] = 100
 settings[bigscreen_set_max_width] = 0
 settings[bigscreen_max_width_unit] = px
+<<<<<<< HEAD
 settings[bigscreen_max_width] = ''
+=======
+settings[bigscreen_max_width] = 2280
+>>>>>>> 612efbb6f89020529b8a240a48fd2430cb105d3b
 settings[bigscreen_media_query] = only screen and (min-width:1025px)
 settings[tablet_landscape_layout] = three_col_grail
 settings[tablet_landscape_sidebar_unit] = %
