@@ -33,7 +33,7 @@ features[] = comment_user_verification
 features[] = favicon
 features[] = main_menu
 features[] = secondary_menu
-settings[toggle_logo] = 0
+settings[toggle_logo] = 1
 settings[toggle_slogan] = 0
 settings[toggle_node_user_picture] = 1
 settings[toggle_comment_user_picture] = 1
@@ -50,10 +50,14 @@ settings[bigscreen_page_width] = 100
 settings[bigscreen_set_max_width] = 0
 settings[bigscreen_max_width_unit] = px
 <<<<<<< HEAD
+<<<<<<< HEAD
 settings[bigscreen_max_width] = ''
 =======
 settings[bigscreen_max_width] = 2280
 >>>>>>> 612efbb6f89020529b8a240a48fd2430cb105d3b
+=======
+settings[bigscreen_max_width] = ''
+>>>>>>> ec3bf54396e902581878eb294c2033c936a48275
 settings[bigscreen_media_query] = only screen and (min-width:1025px)
 settings[tablet_landscape_layout] = three_col_grail
 settings[tablet_landscape_sidebar_unit] = %
