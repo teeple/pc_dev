@@ -128,7 +128,7 @@ class OcsParam
             $form = array(
                 '#type' => 'select',
                 '#title' => $title,
-                '#options' => array_flip( $options),
+                '#options' => $options,
             );
         }
         else if ( $type == OCS_PARAM_TYPE_MESSAGE) {

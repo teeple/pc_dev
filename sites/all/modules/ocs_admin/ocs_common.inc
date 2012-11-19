@@ -79,7 +79,7 @@ function ocs_admin_table_theme( $form, $header)
 // get new content node
 function ocs_admin_get_new_node( $type)
 {
-    $node = (object) NULL;
+    $node = new stdClass();
     $node->type = $type;
     $node->uid = 0;
     $node->created = strtotime("now");
@@ -89,7 +89,7 @@ function ocs_admin_get_new_node( $type)
     $node->promote = 0;
     $node->moderate = 0;
     $node->sticky = 0;
-    $node->language = 'und';
+    $node->language = LANGUAGE_NONE;
 
     node_object_prepare($node);
 
@@ -143,11 +143,26 @@ function ocs_admin_get_counter_id_list()
             $counter_id[ $counter['counter_name']] = $counter['counter_id'];
         }
         */
-        $items = entity_load( 'node', FALSE, array( 'type' => 'Counter'));
+
+        /* get vocabulary name */
+        $vid = taxonomy_vocabulary_machine_name_load( 'countergroup');
+        $query = new EntityFieldQuery;
+        $result = $query->entityCondition('entity_type', 'taxonomy_term')
+            ->propertyCondition('vid', $vid->vid)
+            ->execute();
+
+        $terms = taxonomy_term_load_multiple( array_keys( $result['taxonomy_term']));
+//        dpm( $terms, 'term');
+
+        $items = entity_load( 'node', FALSE, array( 'type' => 'counter'));
         foreach( $items as $item) {
-            $counter_id[$item->title] = $item->field_counter_id ;
+//            dpm( $item, 'counter');
+            $group = $terms[$item->field_counter_group['und'][0]['tid']]->name;
+            $counter_id[$group][$item->field_counter_id['und'][0]['value']] = $item->title;
         }
     }
+
+//    dpm( $counter_id, 'counter id list');
 
     return $counter_id;
 }
