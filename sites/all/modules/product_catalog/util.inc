@@ -156,7 +156,9 @@ function build_navigation_bar()
 			'lifecycle' => array( 'href' => '/lifecycles/product', 'icon' => 'anlt', 
 					'prefix' => 'lifecycles', 'title' => 'Lifecycle'),
 			'common' => array( 'href' => '/common/vouchercardtype', 'icon' => 'typ', 
-					'prefix' => 'common', 'title' => 'Common Data'),
+					'prefix' => 'common', 'title' => 'Common Data',
+					'sub' => array( array( '/common/vouchercardtype', 'Counters'),
+						array( '/common/numberingplan_domestic', 'Numbering Plan'))),
 			'ocs' => array( 'href' => '/config/ocs', 'icon' => 'tb', 
 					'prefix' => 'config/ocs', 'title' => 'OCS'),
 			);
