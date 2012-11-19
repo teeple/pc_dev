@@ -2223,8 +2223,8 @@ div.messages {
 	padding: 10px 0;
 }
 
-.views-field.views-field-type,
-.views-field.views-field-title {
+span.views-field.views-field-type,
+span.views-field.views-field-title {
 	font-family: 'PlayfairDisplayRegular',Georgia,"Times New Roman",Times,serif;
 	letter-spacing: 1px;
 	text-transform: uppercase;
@@ -2232,8 +2232,8 @@ div.messages {
 	text-rendering: optimizelegibility;
 }
 
-.views-field.views-field-created,
-.views-field.views-field-name {
+span.views-field.views-field-created,
+span.views-field.views-field-name {
 	font-size: 80%;
 	float: right;
 	padding: 0 10px 0 10px;
@@ -2260,7 +2260,8 @@ div.icon-info {
 /* for code generated form elements */
 .inner-box-1,
 .inner-box-2 {
-    margin: 5px 10px 10px 30px;
+    margin-left: 30px;
+    margin-right: 10px;
     background: #eee;
     border: 1px solid #bbb;
     border-radius: 0 0 3px 3px;
