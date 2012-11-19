@@ -35,6 +35,7 @@ html {
 }
 
 
+.container.page, 
 body {
   font-family: "Trebuchet MS", "Helvetica Neue", Arial, Helvetica, sans-serif;
   font-size: 87.5%;
@@ -2157,6 +2158,27 @@ ul.quicktabs-tabs.quicktabs-style-zen {
 	border-radius: 0 0 3px 3px;
 }
 
+/* for embeded views fiels */
+td.views-field.views-field-view .view ,
+td.views-field.views-field-view .view .views-row-last {
+	background: none;
+	border: none;
+}
+
+td.views-field.views-field-view .view .views-row {
+	padding: 5px 0;
+	border-bottom: 1px dashed #BBB;
+}
+
+td.views-field.views-field-view .view .views-row.views-row-first {
+	padding-top: 0;
+}
+
+td.views-field.views-field-view .view .views-row.views-row-last {
+	padding-bottom: 0;
+	border: none;
+}
+
 /* for notification messages */
 /*
 div.messages {
@@ -2284,4 +2306,17 @@ ul.action-links a {
     padding-left: 15px; 
     background: transparent url(../images/add.png) no-repeat 0 center;
     line-height: 30px; 
+}
+
+
+/* sidebar second */
+.region-sidebar-second .views-exposed-form .form-item {
+	margin-top: 0px;
+}
+.region-sidebar-second .ui-accordion .ui-accordion-content {
+	padding: 0.5em 0.2em;
+}
+.region-sidebar-second input ,
+.region-sidebar-second select {
+	font-size: 12px;
 }
