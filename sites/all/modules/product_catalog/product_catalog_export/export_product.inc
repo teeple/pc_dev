@@ -197,8 +197,26 @@ function _product_for_export($nid=NULL){
             
             $fees[] = $fee;               
         }
-        
         $nonUsage['fees'] = $fees;
+        
+        //threshold scheme
+        $view = views_get_view('list_thresholdscheme');
+        $view->set_display('panel_pane_3');
+        $view->set_arguments(array('0' => $node->nid));
+        $view->execute();
+        if(!empty($view->result)){
+            $nonUsage['threshold_scheme_id'] = $view->result[0]->nid;    
+        }
+        
+        //deposit scheme
+        $view = views_get_view('list_depositscheme');
+        $view->set_display('panel_pane_4');
+        $view->set_arguments(array('0' => $node->nid));
+        $view->execute();
+        if(!empty($view->result)){
+            $nonUsage['deposit_scheme_id'] = $view->result[0]->node_field_data_field_ref_depositscheme_nid;    
+        }
+       
         $product['nonusage'] = $nonUsage;
 
         $product['usage'] = array();
