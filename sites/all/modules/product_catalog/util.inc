@@ -137,15 +137,53 @@ function generate_jstree() {
 
 function build_navigation_bar()
 {
+	$path = current_path();
+	//dpm( $path, 'current path');
 	
-	$image = 'sites/default/files/images/nav/dash-active.png';
+	$menu = array(
+			'dash' => array( 'href' => '/', 'icon' => 'dash', 
+					'prefix' => 'node', 'title' => 'Home'),
+			'product' => array( 'href' => '/product_designer/mobile', 'icon' => 'gal', 
+					'prefix' => 'product_designer', 'title' => 'Product Designer',
+                    'sub' => array( array( '/product_designer/mobile', 'Mobile'), 
+                        array( '/product_designer/iptv', 'IPTV'),
+                        array( '/product_designer/broadband', 'Broadband'),
+                        array( '/product_designer/voip', 'VOIP'),
+                        array( '/product_designer/satelite', 'Satelite'),
+                        array( '/product_designer/cross', 'Bundle'))),
+			'relation' => array( 'href' => '/relation/product/priority', 'icon' => 'widgets', 
+					'prefix' => 'relation', 'title' => 'Relation Manager'),
+			'lifecycle' => array( 'href' => '/lifecycles/product', 'icon' => 'anlt', 
+					'prefix' => 'lifecycles', 'title' => 'Lifecycle'),
+			'common' => array( 'href' => '/common/vouchercardtype', 'icon' => 'typ', 
+					'prefix' => 'common', 'title' => 'Common Data'),
+			'ocs' => array( 'href' => '/config/ocs', 'icon' => 'tb', 
+					'prefix' => 'config/ocs', 'title' => 'OCS'),
+			);
 
-	print '
-<div class="top-bar">
-  <ul id="nav">
-         <li class="nav-item">
-           <a href="#"><img src="' . $image . '" alt="" /><p>Home</p></a>
-         </li>
-  </ul>
-</div>';
+	$output = '';
+	
+	foreach( $menu as $item) {
+		$image = '/sites/default/files/images/nav/' . $item['icon'];
+		//dpm( $item['prefix']);
+		if ( strpos( $path, $item['prefix'], 0) === 0)
+			$image .= '-active.png';
+		else
+			$image .= '.png';
+
+        $sub_menu = '';
+        if ( array_key_exists( 'sub', $item)) {
+            foreach( $item['sub'] as $title) {
+                $sub_menu .= t( '<li><a href="@href">@title</a></li>', 
+                    array( '@href' => $title[0], '@title' => $title[1]));
+            }
+            $sub_menu = '<ul class="sub-nav">' . $sub_menu . '</ul>';
+        }
+
+		$output .= t('<li class="nav-item"><a href="@href"><img src="@image" alt="" /><p>@title</p></a>!sub</li>',
+				array( '@href' => $item['href'], '@image' => $image, '@title' => $item['title'],
+                    '!sub' => $sub_menu));	
+	}
+	
+	print '<div class="top-bar"><ul id="nav">' . $output . '</ul></div>';
 }

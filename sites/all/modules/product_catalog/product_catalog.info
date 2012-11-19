@@ -5,3 +5,4 @@ core = 7.x
 
 ; Providers. 
 files[] = product_catalog.inc
+scripts[] = util.js
