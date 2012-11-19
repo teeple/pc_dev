@@ -592,12 +592,14 @@ function ocs_admin_form_alter(&$form, &$form_state, $form_id)
 /*
 	implementation of hook_validate()
 */
+/* bhtak 11/18 not used anymore
 function ocs_admin_node_validate( $node, $form, &$form_state)
 {
 	if ( $node->type == 'ocs_state_machine') {
 		ocs_lifecycle_node_form_validate( $node, $form, $form_state);
 	}
 }
+*/
 
 /*
 load card type
