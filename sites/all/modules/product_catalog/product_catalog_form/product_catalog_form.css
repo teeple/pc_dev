@@ -51,20 +51,20 @@
     width: 200px;
 }
  
+.myform .form-textarea-wrapper ,
 .myform .form-select {
     left: clear;
     width: 200px;
 }
 
+.myform .form-type-textarea label, 
 .myform .form-type-textfield label, 
 .myform .form-type-radios label, 
 .myform .form-type-checkboxes label, 
 .myform .form-type-select label {
     float: left;
     width: 160px;
-    /* modified by khg98 */
-    /*padding: 10px 0px 0px 0px;*/
-    padding: 0px 0px 0px 0px;
+    padding: 3px 0px 0px 0px; 
 }
 
 .myform .form-type-radios label.option ,
@@ -72,6 +72,8 @@
     float: none;
 }
 
+.myform .form-type-textarea .description,
+.myform .form-type-textarea .form-textarea-wrapper,
 .myform .form-type-radios .form-type-radio,
 .myform .form-type-checkboxes .form-type-checkbox {
     margin-left: 160px;
