@@ -253,6 +253,14 @@ function _options_get_options($field, $instance, $properties, $entity_type, $ent
 
   if ($properties['empty_option']) {
     $label = theme('options_none', array('instance' => $instance, 'option' => $properties['empty_option']));
+   
+    //modified by sjang
+    //change the label '- None -' to 'All' in case of field collection type of call multiple selection.
+    if($entity_type == 'field_collection_item'){       
+        if($instance['bundle'] == 'field_ref_type_of_call_multiple'){
+           $label = 'All';
+        }          
+    }
     $options = array('_none' => $label) + $options;
   }
 
