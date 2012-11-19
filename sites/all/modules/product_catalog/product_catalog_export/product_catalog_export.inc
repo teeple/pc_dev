@@ -36,7 +36,10 @@ function _make_json_string($termName,$refNid=NULL){
 			break;
 		case 'CONTENT':
 			$jsonString = export_content_rateid();
-			break;
+			break; 
+        case 'DEPOSIT_SCHEME':
+            $jsonString = export_deposit_scheme();
+            break;
 	}
 	
 	return $jsonString;
@@ -78,7 +81,7 @@ function export_deploy($tid,$termName,$refNid=NULL){
 	foreach($term->field_export_url['und'] as $item){
 		$url = $item['safe_value'];
 		$result = drupal_http_request($url, $options); 
-		//TODO: 결과 확인 후, 각 시스템별 상태 업데이트 추가해야 함. 
+		//TODO: 寃곌낵 ��� �� 媛������� ��� ����댄� 異���댁� �� 
 		//dsm($url,'url');
 		//dsm($options,'request options');
 		dsm($result,'deploy result');
