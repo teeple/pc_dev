@@ -2260,8 +2260,11 @@ div.icon-info {
 /* for code generated form elements */
 .inner-box-1,
 .inner-box-2 {
-    margin-left: 30px;
-    margin-right: 10px;
+    margin: 5px 10px 5px 30px;
+}
+
+.inner-box-1.border,
+.inner-box-2.border {
     background: #eee;
     border: 1px solid #bbb;
     border-radius: 0 0 3px 3px;

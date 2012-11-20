@@ -125,7 +125,7 @@ function ocs_admin_get_message_list()
     if ( empty( $messages)) {   
         $items = entity_load( 'node', FALSE, array( 'type' => 'ocs_messages'));
         foreach( $items as $item) {
-            $messages[$item->nid] = $item->nid . ' : ' . $item->field_format['und'][0]['value'];
+            $messages[$item->nid] = $item->title . ' : ' . $item->field_ocs_format['und'][0]['value'];
         }
     }
 
@@ -236,4 +236,29 @@ function ocs_node_title( $nid)
 	$node = node_load( $nid);
 	if ( $node) return $node->title;
 	return "";
+}
+
+function array_get_value( $a, $withKey=TRUE, $f=array())
+{
+	if ( ! $a || ! is_array($a)) return array();
+	foreach( $a as $k => $v) {
+		if ( is_array( $v)) $f = array_get_value( $v, $withKey, $f);
+		else {
+			if ( $withKey) $f[$k] = $v;
+			else $f[] = $v;
+		}
+	}
+	return $f;
+}
+
+// return array of nodes
+function ocs_get_nodes_by_node_ref( $type, $field, $key)
+{
+	$query = new EntityFieldQuery();
+	$result = $query->entityCondition('entity_type', 'node')
+		->entityCondition('bundle', $type)
+		->fieldCondition( $field, 'nid', $key)
+		->execute();
+	
+	return ( count($result) > 0) ? array_keys( $result['node']) : array();
 }
