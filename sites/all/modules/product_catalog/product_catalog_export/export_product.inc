@@ -45,7 +45,7 @@ function _product_for_export($nid=NULL){
         if(isset($node->field_validfor_product['und'][0]['value2'])){
             $validForStr .= $node->field_validfor_product['und'][0]['value2'];
         }else{
-            $validForStr .= '9999-12-31 24:00:00';
+            $validForStr .= '9999-12-31 23:59:59';
         }
         
         $attribute['valid_for'] = $validForStr;
