@@ -778,8 +778,19 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
         	unset($form['field_weight']);
         	unset($form['field_ref_product']);
         	unset($form['field_ref_tree_tid']);
-        	_unset_menu_items($form,$form_id);
+			
+			_unset_menu_items($form,$form_id);
           	break;
+		case 'actionsetcounter_node_form':
+			$form['field_ref_source_action']['#type'] = 'hidden';
+			
+			$counterList = _get_available_counter_list($form_state['product_nid']);
+			
+			$form['field_ref_counter']['und']['#options'] = $counterList;
+			
+			_unset_menu_items($form,$form_id);
+          	break;
+			
         case 'tariffplan_node_form':
 			unset($form['field_parent_node']);
             unset($form['field_weight']);
