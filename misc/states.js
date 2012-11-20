@@ -49,7 +49,16 @@ states.Dependent = function (args) {
 
   this.dependees = this.getDependees();
   for (var selector in this.dependees) {
-    this.initializeDependee(selector, this.dependees[selector]);
+  	
+  	// modified by sjang. in case of loading form by ajax, 
+  	// this module does not work properly.
+  	// temporary patch for this.
+  	if(this.dependees[selector].length === 2){
+  		delete this.dependees[selector][1];
+  	}
+  	
+  	
+  	this.initializeDependee(selector, this.dependees[selector]);
   }
 };
 
@@ -86,12 +95,15 @@ states.Dependent.prototype = {
    *   dependee's compliance status.
    */
   initializeDependee: function (selector, dependeeStates) {
+  	//console.log(selector);
+  	//console.log(dependeeStates);
     var state;
 
     // Cache for the states of this dependee.
     this.values[selector] = {};
 
     for (var i in dependeeStates) {
+      //console.log(dependeeStates.hasOwnProperty(i));
       if (dependeeStates.hasOwnProperty(i)) {
         state = dependeeStates[i];
         // Make sure we're not initializing this selector/state combination twice.
