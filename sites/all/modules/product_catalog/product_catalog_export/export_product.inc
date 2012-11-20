@@ -39,7 +39,7 @@ function _product_for_export($nid=NULL){
         if(isset($node->field_validfor_product['und'][0]['value'])){
             $validForStr = $node->field_validfor_product['und'][0]['value'];
         }else{
-            $validForStr = '0000-01-01 00:00:00';
+            $validForStr = '0001-01-01 00:00:00';
         }
         $validForStr .= ' ~ ';
         if(isset($node->field_validfor_product['und'][0]['value2'])){
