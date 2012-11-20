@@ -1,49 +1,42 @@
 <?php
 
-function array_get_value( $a, $f=array()) 
-{
-	if ( ! $a || ! is_array($a)) return array();
-	foreach( $a as $k => $v) {
-		if ( is_array( $v)) $f = array_get_value( $v, $f);
-		else $f[] = $v;
-	}
-	return $f;
-} 
 
+/* this function shall be called after saving a new lifecycle scheme */
 function ocs_admin_check_lifecycle_scheme( $node, $node_unchanged)
 {
 // 	dpm( $node, 'node');
 // 	dpm( $node_unchanged, 'unchanged');
 	
-	$after = array_get_value( $node->field_lifecycle_states);
-	$before = array_get_value( $node_unchanged->field_lifecycle_states);
+	$after = array_get_value( $node->field_lifecycle_states, FALSE);
+	$before = array_get_value( $node_unchanged->field_lifecycle_states, FALSE);
 	
-// 	dpm( $after, 'after');
-// 	dpm( $before, 'before');
+ 	dpm( $after, 'after');
+ 	dpm( $before, 'before');
 	
 	$intersect = array_intersect( $before, $after);
 	$removed = array_diff( $before, $intersect);
 	$added = array_diff( $after, $intersect);
 	
-	//dpm( $added. 'nodes to add');
-	//dpm( $removed, 'nodes to remove');
-	//dpm( $intersect, 'node intersect');
+	dpm( $added. 'nodes to add');
+	dpm( $removed, 'nodes to remove');
+	dpm( $intersect, 'node intersect');
 	
 	// check ocs_svc_perm
 	// ocs_svc_perm에는 title이 node->nid인 instance 들이 저장되어 있다.
 	// 이중에서 state 값이 added, removed에 속한 것을 추가/삭제한다.
-	$items = entity_load( 'node', FALSE, array( 'type' => 'ocs_svc_perm', 'title' => $node->nid));
-	// add lifecycle states
+	$node_list = ocs_get_nodes_by_node_ref( 'ocs_svc_perm', 'field_lifecycle_scheme', $node->nid);
 	
-	// remove lifecycle states
-	
-	foreach ( $items as $item) {
+	// action_list = array of nid of actions
+	$action_list = array();
+	foreach ( $node_list as $nid) {
+		$item = node_load( $nid);
+
 		//dpm( $item, 'state item');
 		$state_nid = $item->field_lifecycle_state['und'][0]['nid'];
 		if ( ($key = array_search( $state_nid, $intersect)) !== FALSE) {
 			// intersect, 교집합에 들어가므로 패스
 			//dpm( $item->nid, 'belongs to intersect');
-			unset($intersect[$key]); 
+			unset($intersect[$key]);
 		}
 		else if ( ($key = array_search( $state_nid, $added)) !== FALSE) {
 			//dpm( $item->nid, 'belongs to add list');
@@ -63,7 +56,7 @@ function ocs_admin_check_lifecycle_scheme( $node, $node_unchanged)
 	// add lifecycle states
 	foreach( $added as $add_node_nid) {
 		$new_node = ocs_admin_get_new_node( 'ocs_svc_perm');
-		$new_node->title = $node->nid;
+		$new_node->title = 'Service permission for state:' . $add_node_nid . ' scheme:' . $node->nid;
 		$new_node->field_lifecycle_state['und'][0]['nid'] = $add_node_nid;
 		$new_node->field_lifecycle_scheme['und'][0]['nid'] = $node->nid;
 		node_save( $new_node);
@@ -72,8 +65,9 @@ function ocs_admin_check_lifecycle_scheme( $node, $node_unchanged)
 	}
 	
 	// check ocs_state_machine
-	$items = entity_load( 'node', FALSE, array( 'type' => 'ocs_state_machine', 'title' => $node->nid));
-	foreach ( $items as $item) {
+	$node_list = ocs_get_nodes_by_node_ref('ocs_state_machine', 'field_lifecycle_scheme', $node->nid);
+	foreach ( $node_list as $nid) {
+		$item = node_load( $nid);
 // 		dpm( $item, 'state machine');
 		if ( array_search( $item->field_ocs_from_state['und'][0]['target_id'], $after) === FALSE ||
 				array_search( $item->field_ocs_to_state['und'][0]['target_id'], $after) === FALSE) {
@@ -83,6 +77,7 @@ function ocs_admin_check_lifecycle_scheme( $node, $node_unchanged)
 	}
 	
 }
+
 
 function ocs_lifecycle_node_form( &$form, &$form_state, $form_id)
 {
@@ -118,26 +113,8 @@ function ocs_lifecycle_node_form( &$form, &$form_state, $form_id)
 	
 	$form['field_lifecycle_scheme']['#type'] = 'hidden';
 	$form['title']['#type'] = 'hidden';
-	
-	// ajax handler for from & to state
-	/*
-	$form['field_ocs_from_state']['#ajax'] = array(
-			'callback' => 'ocs_lifecycle_state_callback',
-			'wrapper' => 'replace_to_state_div',
-	);
-	
-	$form['field_ocs_to_state']['#prefix'] = '<div id="replace_to_state_div">';
-	$form['field_ocs_to_state']['#suffix'] = '</div>';
-	*/
-	
 }
 
-/*
-function ocs_lifecycle_state_callback( $form, $form_state)
-{
-	return $form['field_ocs_to_state'];
-}
-*/
 
 
 /*
@@ -169,7 +146,7 @@ function ocs_lifecycle_transition_form( $form, &$form_state, $scheme_nid, $trans
     	return $form;
     }
     
-    $state_nids = array_get_value( $scheme->field_lifecycle_states);
+    $state_nids = array_get_value( $scheme->field_lifecycle_states, FALSE);
     $options = array();
     foreach( $state_nids as $state) {
     	$node = node_load( $state);
@@ -254,12 +231,13 @@ function ocs_lifecycle_transition_form( $form, &$form_state, $scheme_nid, $trans
     );
     
     // set num_actions (AJAX)
-    if (empty($form_state['num_actions'])) {
+    if ( !isset($form_state['num_actions'])) {
     	$form_state['num_actions'] = ( $form['#op'] == 'edit') ? count( $action_list) : 1;
     }
     else if ( isset( $form_state['triggering_element']) && $form_state['triggering_element']['#name'] == 'add_more') {
     	$form_state['num_actions'] ++;
     }
+    dpm( $form_state['num_actions'], 'num_actions');
     
     $actions = new OcsAction;
 //     dpm( $actions->select_options(), 'select options');
@@ -270,7 +248,7 @@ function ocs_lifecycle_transition_form( $form, &$form_state, $scheme_nid, $trans
     for( $i=1; $i <= $form_state['num_actions']; $i++) {
         $form['action_list'][$i] = array(
             '#type' => 'fieldset',
-            '#attributes' => array( 'class' => array( 'inner-box-1')),
+            '#attributes' => array( 'class' => array( 'inner-box-1 border')),
         );
         
         // get selected action
@@ -299,7 +277,7 @@ function ocs_lifecycle_transition_form( $form, &$form_state, $scheme_nid, $trans
 
         $form['action_list'][$i]['param_'.$i] = array(
             '#type' => 'fieldset',
-            '#attributes' => array( 'class' => array( 'inner-box-2')),
+            '#attributes' => array( 'class' => array( 'inner-box-2 border')),
             '#prefix' => '<div id="ocs_lifecycle_actions_' . $i . '_div">',
             '#suffix' => '</div>',
         );
@@ -440,7 +418,7 @@ function ocs_lifecycle_transition_form_validate( $form, &$form_state)
 function ocs_lifecycle_transition_form_submit( $form, &$form_state)
 {
     $values = $form_state['values'];
-    dpm( $values, 'submit values');
+//     dpm( $values, 'submit values');
 
     if ( $values['op'] != 'Cancel') {
         // save ocs_state_machine
