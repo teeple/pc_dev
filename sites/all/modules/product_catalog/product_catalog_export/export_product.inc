@@ -2,6 +2,7 @@
 
 function _product_for_export($nid=NULL){
     $retData = array();
+	$retDataTmp = array();
 
     $productView = views_get_view('query_product_export');
     $productView->set_arguments(array('0'=>$nid));
@@ -220,18 +221,24 @@ function _product_for_export($nid=NULL){
         $product['nonusage'] = $nonUsage;
 
         $product['usage'] = array();
-        $retData['products'][] = $product;        
+		
+		$retDataTmp['products'][] = $product;        
     }
 
-    dsm($retData,'before json');
+    dsm($retDataTmp,'before json');
     //dsm(json_encode($retData),'after json');
 
     // return json_encode($jsonData);
     //if($nid==NULL) return $retData['products'][0];
     //else return $retData;
-    
-    if($nid!=NULL) return $retData['products'][0];
-    else return $retData;
+        
+    if($nid!=NULL) {
+    	$retData['ifvalues']['resources'] = '';
+		return $retData;
+    } else {
+    	$retData['ifvalues']['resources'] = '';
+		return $retData;	
+    }
     
     /*
 	$retData = array();
