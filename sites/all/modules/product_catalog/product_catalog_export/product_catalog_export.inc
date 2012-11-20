@@ -40,6 +40,9 @@ function _make_json_string($termName,$refNid=NULL){
         case 'DEPOSIT_SCHEME':
             $jsonString = export_deposit_scheme();
             break;
+        case 'THRESHOLD_SCHEME':
+            $jsonString = export_threshold_scheme();
+            break;
 	}
 	
 	return $jsonString;
