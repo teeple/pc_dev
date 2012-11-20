@@ -20,7 +20,8 @@ function ocs_admin_message_form( $form, &$form_state, $nid = NULL, $op = NULL)
 
     $form['#nid'] = $nid;
     $form['#op'] = $op;
-
+    $form['#attributes'] = array( 'class' => array( 'myform'));
+    
     $form['title'] = array(
         '#type' => 'textfield',
         '#title' => 'Message Name',
@@ -36,17 +37,15 @@ function ocs_admin_message_form( $form, &$form_state, $nid = NULL, $op = NULL)
         '#description' => 'Enter message format in "printf" style. Use "%1, %2" to substitue numeric value.'.
             '<br>Ex) "You have remains %1 won."',
     );
-
-    /*
-    $counters = ocs_admin_get_counter_name_list();
+    
+    $counters = ocs_admin_get_counter_id_list();
 
     $form['valueset'] = array(
         '#type' => 'fieldset',
         '#title' => 'Variables',
-        '#description' => 'Use following counter names to build the message string. : '. implode( ', ', array_keys( $counters)),
+        //'#description' => 'Use following counter names to build the message string. : '. implode( ', ', array_keys( $counters)),
         '#prefix' => '<div id="message_format_div">',
         '#suffix' => '</div>',
-
     );
 
     $form['valueset']['num_values'] = array(
@@ -58,16 +57,19 @@ function ocs_admin_message_form( $form, &$form_state, $nid = NULL, $op = NULL)
             'callback' => 'ocs_admin_ajax_message_form_callback',
             'wrapper' => 'message_format_div',
         ),
+    	'#attributes' => array( 'class' => array( 'inner-box-1')),
     );
 
     for( $i =1; $i<= $num_values; $i++) {
         $form['valueset']['value'.$i] = array(
-            '#type' => 'textfield',
+            '#type' => 'select',
             '#title' => 'Variable %'.$i,
-            '#default_value' => isset( $node) ? $node->field_values['und'][$i-1]['value'] : '',
+        	'#options' => $counters,
+        	'#default_value' => isset( $node) ? $node->field_values['und'][$i-1]['value'] : '',
+    		'#attributes' => array( 'class' => array( 'inner-box-1')),
         );
     }
-    */
+    
 
     $form['actions'] = array('#type' => 'actions');
 
