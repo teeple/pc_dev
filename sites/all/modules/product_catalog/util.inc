@@ -155,8 +155,13 @@ function build_navigation_bar()
 					'prefix' => 'relation', 'title' => 'Relation Manager'),
 			'lifecycle' => array( 'href' => '/lifecycles/product', 'icon' => 'anlt', 
 					'prefix' => 'lifecycles', 'title' => 'Lifecycle'),
-			'common' => array( 'href' => '/common/vouchercardtype', 'icon' => 'typ', 
-					'prefix' => 'common', 'title' => 'Common Data'),
+			'common' => array( 'href' => '/common/numberingplan/domestic/list', 'icon' => 'typ', 
+					'prefix' => 'common', 'title' => 'Common Data',
+					'sub' => array( 
+						array( '/common/numberingplan/domestic/list', 'Numbering Plan'),
+                        array( '/common/counter/list', 'Counters'),
+					    array( '/common/vouchercardtype', 'ETC'),
+                        )),
 			'ocs' => array( 'href' => '/config/ocs', 'icon' => 'tb', 
 					'prefix' => 'config/ocs', 'title' => 'OCS'),
 			);
