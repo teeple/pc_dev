@@ -231,4 +231,9 @@ function ocs_admin_update_configuration( $file_name, $content)
     }
 }
 
-
+function ocs_node_title( $nid)
+{
+	$node = node_load( $nid);
+	if ( $node) return $node->title;
+	return "";
+}

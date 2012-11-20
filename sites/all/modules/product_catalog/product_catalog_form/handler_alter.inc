@@ -148,7 +148,7 @@ function edit_pane_callback($form, &$form_state){
 
 function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 	// dsm('--- form alter --');
-	 //dsm($form_id);
+	// dsm($form_id);
 // dsm($form, 'form_alter: '.$form['#form_id']);
 // dsm($form_state, 'form_state');
     // error_log('form_id: '. $form_id);
@@ -597,7 +597,12 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             $form['field_ref_depositscheme']['#type'] = 'hidden';
                         
             $depositSchemeFactorNode = node_load($form['nid']['#value']);
-            $depositSchemeNode = node_load($depositSchemeFactorNode->field_ref_depositscheme['und'][0]['nid']);
+            
+            if(!isset($form['nid']['#value'])){
+               $depositSchemeNode = node_load($form_state['build_info']['args'][0]->field_ref_depositscheme['und'][0]['nid']);
+            }else{
+                $depositSchemeNode = node_load($depositSchemeFactorNode->field_ref_depositscheme['und'][0]['nid']);
+            }
             $serviceDomainTid = $depositSchemeNode->field_service_domain['und'][0]['tid'];
             
             $view = views_get_view('list_counter');
