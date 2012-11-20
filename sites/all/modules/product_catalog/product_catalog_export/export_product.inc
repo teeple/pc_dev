@@ -223,7 +223,7 @@ function _product_for_export($nid=NULL){
 
         $product['usage'] = array();
 
-		$productNids[] = $node->nid;
+		$productNids[] = $attribute['product_id'];
 		$retDataTmp[] = $product;        
     }
 
