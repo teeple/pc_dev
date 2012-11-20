@@ -11,9 +11,9 @@ function ocs_admin_message_form( $form, &$form_state, $nid = NULL, $op = NULL)
 //        dpm( $node, 'node');
         if ( $node) {
             $title = $node->title;
-            $format = $node->field_format['und'][0]['value'];
+            $format = $node->field_ocs_format['und'][0]['value'];
             if ( ! isset( $form_state['values']['num_values'])) {
-                $num_values = count( $node->field_values['und']);
+                $num_values = count( $node->field_ocs_value['und']);
             }
         }
     }
@@ -26,19 +26,18 @@ function ocs_admin_message_form( $form, &$form_state, $nid = NULL, $op = NULL)
         '#type' => 'textfield',
         '#title' => 'Message Name',
         '#default_value' => $title,
-        '#attributes' => array( 'class' => array( 'myform')),
     );
 
     $form['format'] = array(
         '#type' => 'textarea',
         '#title' => 'Format',
         '#default_value' => $format,
-        '#attributes' => array( 'class' => array( 'myform')),
         '#description' => 'Enter message format in "printf" style. Use "%1, %2" to substitue numeric value.'.
             '<br>Ex) "You have remains %1 won."',
     );
     
     $counters = ocs_admin_get_counter_id_list();
+    $form['#counters']  = $counters;
 
     $form['valueset'] = array(
         '#type' => 'fieldset',
@@ -57,7 +56,8 @@ function ocs_admin_message_form( $form, &$form_state, $nid = NULL, $op = NULL)
             'callback' => 'ocs_admin_ajax_message_form_callback',
             'wrapper' => 'message_format_div',
         ),
-    	'#attributes' => array( 'class' => array( 'inner-box-1')),
+    	'#prefix' => '<div class="inner-box-1">',
+    	'#suffix' => '</div>',
     );
 
     for( $i =1; $i<= $num_values; $i++) {
@@ -65,8 +65,9 @@ function ocs_admin_message_form( $form, &$form_state, $nid = NULL, $op = NULL)
             '#type' => 'select',
             '#title' => 'Variable %'.$i,
         	'#options' => $counters,
-        	'#default_value' => isset( $node) ? $node->field_values['und'][$i-1]['value'] : '',
-    		'#attributes' => array( 'class' => array( 'inner-box-1')),
+        	'#default_value' => isset( $node) ? $node->field_ocs_value['und'][$i-1]['value'] : '',
+       		'#prefix' => '<div class="inner-box-1">',
+       		'#suffix' => '</div>',
         );
     }
     
@@ -115,19 +116,6 @@ function ocs_admin_message_form_validate( $form, &$form_state)
                 }
             }
         }
-
-        // check variables
-        $counters = ocs_admin_get_counter_name_list();
-        for( $i=1; $i <= $values['num_values']; $i++) {
-            $words = str_word_count( $values['value'.$i], 1, '_ ');
-//            dpm( $words, 'value'.$i);
-            foreach( $words as $word) {
-                if ( ! array_key_exists( $word, $counters)) {
-                    form_set_error( 'value'.$i, t( 'Invalid counter name "@name".', 
-                        array( '@name' => $word)));
-                }
-            }
-        }
     }
 }
 
@@ -135,7 +123,9 @@ function ocs_admin_message_form_validate( $form, &$form_state)
 function ocs_admin_message_form_submit( $form, &$form_state)
 {
     $values = $form_state['values'];
-
+	dpm( $values, 'submit values');
+	dpm( $form, 'form');
+	
     if ( $values['op'] != 'Cancel') {   
         if ( $form['#op'] == 'edit') {
             $node = node_load( $form['#nid']);
@@ -146,30 +136,19 @@ function ocs_admin_message_form_submit( $form, &$form_state)
         $node->title = $values['title'];
         $node->field_ocs_format['und'][0]['value'] = $values['format'];
 
-        $counter_id = ocs_admin_get_counter_id_list();
-
+        $counters = array_get_value( $form['#counters']);
+        dpm( $counters, 'counters');
+        
+        $value_str = array();
         for( $i=1; $i <= $values['num_values']; $i++) {
-            $node->field_ocs_value['und'][$i-1]['value'] = $values['value'.$i];
+            $node->field_ocs_value['und'][$i-1]['value'] = $counters[$values['value'.$i]];
 
-            $value_str = $values['value'.$i];
-            $words = str_word_count( $values['value'.$i], 1, '_ ');
-            foreach( $words as $word) {
-                if ( array_key_exists( $word, $counter_id)) {
-                    // replace counter name to counter id
-                    $id = $counter_id[$word];
-                    $value_str = preg_replace( '/\b'.$word.'\b/', t( 'COUNTER_INFO:getCounterValue(@id)', array( '@id' => $id)), $value_str);
-                }
-            }
-
-//            dpm( $value_str, 'value str');
-//            dpm( $node, 'node');
-            $node->field_ocs_value_str['und'][$i-1]['value'] = $value_str;
+            $value_str[] = t( 'COUNTER_INFO:getCounterValue(@id)', array( '@id' => $values['value'.$i]));
         }
-
+        $node->field_ocs_value_str['und'][0]['value'] = implode( ', ' , $value_str);
+        
         node_save( $node);
     }
-
-    $form_state['redirect'] = 'config/ocs/message';
 }
 
 
@@ -180,14 +159,13 @@ function ocs_admin_message_delete_confirm( $form, &$form_state, $nid)
     $form['#nid'] = $nid;
     $form['#name'] = $name;
 
-    $caption = t('<p><strong>Warning:</strong> Message "@name" will be deleted.</p>',
+    $caption = t('<strong>Warning:</strong> Message <em>"@name"</em> will be deleted.',
         array( '@name' => $name));
 
-    $caption .= '<p>'. t('This action cannot be undone.') . '</p>';
+//    $caption .= '<p>'. t('This action cannot be undone.') . '</p>';
 
     return confirm_form( $form, t('Are you sure to delete the message ?'),
-        'config/ocs/message/',
-        $caption, t('Delete'));
+        'config/ocs/message/', $caption, t('Delete'));
 }
 
 function ocs_admin_message_delete_confirm_submit( $form, &$form_state)
@@ -196,8 +174,6 @@ function ocs_admin_message_delete_confirm_submit( $form, &$form_state)
     node_delete( $nid);
 
     drupal_set_message( t('The message "@name" has been delete.', array( '@name' => $form['#name'])));
-
-    $form_state['redirect'] = 'config/ocs/message';
 }
 
 
