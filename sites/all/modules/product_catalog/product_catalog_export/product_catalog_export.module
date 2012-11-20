@@ -11,6 +11,7 @@ module_load_include('inc', 'product_catalog_export', 'export_content_rateid');
 module_load_include('inc', 'product_catalog_export', 'export_voucher_cardtype');
 module_load_include('inc', 'product_catalog_export', 'export_number_special');
 module_load_include('inc', 'product_catalog_export', 'export_deposit_scheme');
+module_load_include('inc', 'product_catalog_export', 'export_threshold_scheme');
 module_load_include('inc', 'product_catalog_export', 'create_export_data');
 module_load_include('inc', 'product_catalog_export', 'create_export_meta_data');
 module_load_include('inc', 'product_catalog_export', 'gura_export_all');
@@ -58,6 +59,10 @@ function export_number_special(){
 
 function export_deposit_scheme(){
     return _json_deposit_scheme();
+}
+
+function export_threshold_scheme(){
+    return _json_threshold_scheme();
 }
 
 ?>
