@@ -188,7 +188,12 @@
             		needToBindCustomSubmitButtons = true;
             		break;
             	}
-            	break;            
+            	
+            	case 'allowed':
+            		needToLoadEdit = false;
+            		break;
+            	break; 
+            	           
             case 'treenodecounterforvoucherprd':
             	needToLoadEdit = false;
         		needToBindCustomSubmitButtons = true;

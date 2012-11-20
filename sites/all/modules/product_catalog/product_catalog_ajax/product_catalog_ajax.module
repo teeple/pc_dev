@@ -558,7 +558,7 @@ function _replace_arguments($origArgs, $qtabConfig, $args) {
 
 	$newArgString = $origArgs;
 	$qtabConfigArgList = explode('/', $origArgs);
-	$reservedArgList = array('$productNid', '$tariffplanNid','$voucherCardTypeNid','$nid', '[arg]', '[Exclude]', '[Include]', '$refTreeTid');
+	$reservedArgList = array('$productNid', '$tariffplanNid','$voucherCardTypeNid','$nid', '$numberSpecialNid','[arg]', '[Exclude]', '[Include]', '$refTreeTid');
 
 	$matchedArgList = array_intersect($qtabConfigArgList, $reservedArgList);
 	
@@ -606,7 +606,9 @@ function _replace_arguments($origArgs, $qtabConfig, $args) {
 					$newArgString = str_replace('/'.$matchedArg, '', $newArgString);
 				}
 				break;
-			
+			case '$numberSpecialNid':
+				$newArgString = str_replace($matchedArg, $args['rootId'], $newArgString);
+				break;
 			default:
 				break;
 		}
