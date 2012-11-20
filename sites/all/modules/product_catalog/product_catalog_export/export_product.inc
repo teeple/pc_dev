@@ -227,9 +227,7 @@ function _product_for_export($nid=NULL){
 		$retDataTmp[] = $product;        
     }
 
-    dsm($retDataTmp,'before json');
-    //dsm(json_encode($retData),'after json');
-
+    
     // return json_encode($jsonData);
     //if($nid==NULL) return $retData['products'][0];
     //else return $retData;
@@ -240,6 +238,9 @@ function _product_for_export($nid=NULL){
     	$retData['ifvalues']['resources'] = '';
 	}
 	$retData['products'] = $retDataTmp;
+	dsm($retData,'before json');
+    //dsm(json_encode($retData),'after json');
+	
 	return $retData;
 }
 
