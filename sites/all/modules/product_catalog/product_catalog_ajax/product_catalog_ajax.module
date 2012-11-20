@@ -185,6 +185,7 @@ function product_catalog_ajax_add_modal_content($js = NULL, $contentType, $refNo
 			'type' => $contentType,
 			'language' => 'und',			
 	);
+	$form_state = array();
 	
 	switch($contentType){
 		case 'rate':
@@ -212,16 +213,21 @@ function product_catalog_ajax_add_modal_content($js = NULL, $contentType, $refNo
 			$node->title = $refNodeNid;
 			$node->field_lifecycle_scheme['und'][0]['nid'] = $refNodeNid;
 			break;
+		case 'actionsetcounter':
+			$node->title = 'source_'.$refNodeNid;
+			$node->field_ref_source_action['und'][0]['nid'] = $refNodeNid;
+			
+			$refNode = node_load($refNodeNid);
+			$form_state['product_nid'] = $refNode->field_ref_product['und'][0]['nid'];
+			break;
 	}
 	
 	if (!$js) {
 		return drupal_get_form($contentType . '_node_form', $node);
 	}
-	$form_state = array(
-    	'title' => 'Add a new '.$contentType, 
-        'ajax' => TRUE,        
-	);
-
+	$form_state['title'] = 'Add a new '.$contentType;
+	$form_state['ajax'] = 'TRUE';
+		
 	$form_state['build_info']['args'] = array($node);
 	$formName = $contentType . '_node_form';
 	
@@ -617,13 +623,13 @@ function _qtabconfig_loading($collectionName, $termInTree) {
 	foreach($loadingInfos as $loadingInfo) {
 		
 		$collectionItem = field_collection_item_load($loadingInfo['value']);
-	
+
 		$qtabConfig = array(
-			'title' => isset($collectionItem->field_tab_title)? $collectionItem->field_tab_title['und'][0]['safe_value']: '',
-			'type' => $collectionItem->field_tab_type['und'][0]['value'],
-			'content' => $collectionItem->field_tab_content['und'][0]['safe_value'],
-			'display' => $collectionItem->field_view_display['und'][0]['safe_value'],
-			'args'	=> $collectionItem->field_view_arguments['und'][0]['safe_value']  
+			'title' => !empty($collectionItem->field_tab_title)? $collectionItem->field_tab_title['und'][0]['safe_value']: '',
+			'type' => !empty($collectionItem->field_tab_type)? $collectionItem->field_tab_type['und'][0]['value']: '',
+			'content' => !empty($collectionItem->field_tab_content)? $collectionItem->field_tab_content['und'][0]['safe_value']: '',
+			'display' => !empty($collectionItem->field_view_display)? $collectionItem->field_view_display['und'][0]['safe_value']: '',
+			'args'	=> !empty($collectionItem->field_view_arguments)? $collectionItem->field_view_arguments['und'][0]['safe_value']: ''  
 		);
 		$qtabConfigs[$collectionName][] = $qtabConfig;
 	}
@@ -654,7 +660,7 @@ function product_catalog_ajax_load_select_form($nid,$eventType,$rootNid,$relType
 			break;
 	}
 	
-	switch($nodeOrTerm){
+	switch($nodeOrTerm) {
 		case 'node':
 			$termInTree = taxonomy_get_term_by_name($relType, 'tpl_node_qtab_info');
 			$termInTree = current($termInTree);
@@ -663,19 +669,18 @@ function product_catalog_ajax_load_select_form($nid,$eventType,$rootNid,$relType
 			$termInTree = taxonomy_term_load($id);
 			break;
 	}
+	
+// dsm($termInTree, 'termInTree');
 	$qtabConfigs = _qtabconfig_loading($targetCollection, $termInTree);
 	
 	$qtabs = array();
     $weight = 0;
     
     $index = 0;
-    
-// dsm($id, 'id');
-// dsm($rootId, 'rootId');
-// dsm($qtabConfigs, 'qtabConfigs');
-    
+	$qtabIndex = 0;
+	
     foreach($qtabConfigs[$targetCollection] as $qtabConfig) {
-    	
+
 		if(isset($qtabConfig['args'])) {
 			$args = array(
 					'qtabIndex' => $qtabIndex,
@@ -688,8 +693,6 @@ function product_catalog_ajax_load_select_form($nid,$eventType,$rootNid,$relType
 		}else {
 			$newArgs = array();
 		}
-		
-//dsm($newArgs, 'args');
 		
 		switch($qtabConfig['type']) {
             case 'node':
@@ -718,18 +721,14 @@ function product_catalog_ajax_load_select_form($nid,$eventType,$rootNid,$relType
             			'rootId' => $rootId
             	);
             	$newArgs = _replace_arguments($qtabConfig['content'], $qtabConfig, $args);
-
-// dsm($newArgs, 'newargs');
-            	 
+				
             	$qtabs[] = array(
             		'title' => $qtabConfig['title'],
             		'type' => 'callback',
             		'path' => $newArgs,
             		'weight' => $weight
             	);
-            	
-// dsm($qtabs, 'qtabs');
-            	break;
+				break;
         }
         $weight = $weight + 1;
         $qtabIndex = $qtabIndex + 1;
@@ -741,16 +740,15 @@ function product_catalog_ajax_load_select_form($nid,$eventType,$rootNid,$relType
     	//'renderer' => 'accordion',
     	//'renderer' => 'ui_tabs'
     );
-    
+	
     $quicktabs = quicktabs_build_quicktabs('qtab_dummy',$qtoptions,$qtabs);
     $qtRender =  drupal_render($quicktabs['content']);
-    // dsm($qtRender, 'qtRender');
 
     $renderOutput = '<div id="tree_content_div" style="overflow:scroll;height:700px;">'.$qtRender.'</div>';
     $output[] = $renderOutput;
     $output = ajax_render($output);
     
-    // dsm($output,'output');
+// dsm($output,'output');
     
     print $output;
     exit;
