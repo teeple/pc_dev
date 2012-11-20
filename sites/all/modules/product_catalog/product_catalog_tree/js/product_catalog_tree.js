@@ -29,6 +29,16 @@
 							}
 						}						
 					}
+				}else{
+					/*
+					console.log(settings.url);
+					var responseText = request.responseText; 
+					var responseJson = $.parseJSON(responseText);
+					console.log(responseJson);
+					if(typeof responseJson[0].settings != 'undefined'){
+						$.fn.behaviorAttach(responseJson[0].settings);
+					}
+					*/
 				}
 			});
 			
