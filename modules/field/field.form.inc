@@ -445,6 +445,8 @@ function field_add_more_js($form, $form_state) {
   $element[$delta]['#prefix'] = '<div class="ajax-new-content">' . (isset($element[$delta]['#prefix']) ? $element[$delta]['#prefix'] : '');
   $element[$delta]['#suffix'] = (isset($element[$delta]['#suffix']) ? $element[$delta]['#suffix'] : '') . '</div>';
 
+dsm($element, 'element');
+
   return $element;
 }
 
