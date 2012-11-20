@@ -36,7 +36,7 @@ class OcsParam
             ),
     );
 
-    function load( $nid, $rule_id)
+    function load( $nid)
     {
         $this->nid = $nid;
 
@@ -50,7 +50,7 @@ class OcsParam
     //				dpm( $para, 'parameter');
 
             // store select options
-            $key = $rule_id . ':' . $param['target_id'];
+            $key = $nid . ':' . $param['target_id'];
 
             // store key
             $this->list[] = $key;
@@ -62,7 +62,7 @@ class OcsParam
             $paramlist[$key] = $value;
             $paramlist[$key.':title'] = $para->title;
             if ( ! isset( $this->selected)) {
-                $this->selected = $rule_id . ':' . $param['target_id'];
+                $this->selected = $nid . ':' . $param['target_id'];
             }
 
             // add additional condition if the parameter is 'account key' type
@@ -195,4 +195,22 @@ class OcsParam
     {
         return $this->list;
     }
+}
+
+// string fomat : Array( [0]=>13033:12191=0212355,[1]=>13033:12184=0, 13033:12186=12336)
+function ocs_lifecycle_decode_action_param_values( $param_list, $toArray=FALSE)
+{
+	$output = array();
+	foreach( $param_list as $p) {
+		list($k,$v) = explode( '=', $p);
+		list($action_nid,$param_nid) = explode( ':', $k);
+		
+		$action = node_load( $action_nid);
+		$param = node_load( $param_nid);
+		
+		$output[] = $param->title . ' = ' . $v;
+	}
+	
+	if ( $toArray) return $output;
+	return implode( ', ', $output);
 }
