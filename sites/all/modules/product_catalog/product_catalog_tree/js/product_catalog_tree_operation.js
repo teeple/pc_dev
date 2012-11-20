@@ -41,7 +41,7 @@
 		var inputItems = $('input[name^=views_bulk_operations]:checked');
 		
 		if(inputItems.length == 0) {
-			// 향후 Drupal message 형태로 변경??
+			// �ν� Drupal message ���濡�蹂�꼍??
 			alert('No Item Selected!');
 			
 		}else{
@@ -68,7 +68,7 @@
 					
 					var product_catalog_ajax_result = output[0].settings.product_catalog_ajax_result;
 					
-					// 만약 기존에 달려있는 children을 지워주어야 할 경우에는 
+					// 留�� 湲곗〈���щ���� children��吏��二쇱�����寃쎌���� 
 					if(product_catalog_ajax_result.data.replace_or_append == 'replace') {
 						var parentObj = $('.product_catalog_tree').jstree('get_json', parent)[0];
 						var children = $.fn.getChildrenNotSelf(parentObj);
@@ -118,8 +118,6 @@
 	
 	$.fn.loadForm = function(node,collapsedIndex){
 		
-		console.log('loadForm');
-		
 		var id = node.attr("id");
         var content_type = node.attr("node_type");
         var rel_type = node.attr("rel");
@@ -127,6 +125,9 @@
 		var needToLoadEdit = true; 
         var needToLoadDetail = true;
         var needToBindCustomSubmitButtons = false;
+        
+        console.log('content type'+content_type);
+        console.log('rel type'+rel_type);
         
         switch(content_type){
             case 'treenodecounter':
@@ -137,6 +138,7 @@
             case 'prdattributepackaged':
             case "treenodeproductforvoucher":
             case 'treenodeunittransferscheme':
+            case 'actionpricechargeonetime':
             	needToLoadEdit = false;
                 break;
             case 'usage':
@@ -196,7 +198,7 @@
             	break;
         }
         
-        // 해당 content type의 edit form을 띄운다.
+        // �대� content type��edit form�������
         if(needToLoadEdit){
             var editLink = '/product_catalog_ajax/nojs/edit/' + content_type + '/' + id;
             $(".product_catalog_tree").mask("Loading...");
@@ -301,7 +303,7 @@
 			var inputItems = $(findStr);
 			
 			if(inputItems.length == 0){
-				// 향후 Drupal message 형태로 변경??
+				// �ν� Drupal message ���濡�蹂�꼍??
 				alert('No Item Selected!');
 			}else{
 				var selectedItemNid = new Array();
@@ -375,7 +377,6 @@
 	$.fn.behaviorAttach = function(settings){	
 		console.log('mutiselect_behavior set');
 		Drupal.behaviors.multiselect.attach(document);
-		
 		
 		Drupal.behaviors.AJAX.attach(document, settings);
 		Drupal.settings.datePopup = settings.datePopup;
