@@ -16,10 +16,12 @@ var states = Drupal.states = {
  */
 Drupal.behaviors.states = {
   attach: function (context, settings) {
-    for (var selector in settings.states) {
+  	var $context = $(context);
+  	for (var selector in settings.states) {
       for (var state in settings.states[selector]) {
-        new states.Dependent({
-          element: $(selector),
+      	
+      	new states.Dependent({
+          element: $context.find(selector),
           state: states.State.sanitize(state),
           constraints: settings.states[selector][state]
         });
@@ -48,6 +50,7 @@ states.Dependent = function (args) {
   $.extend(this, { values: {}, oldValue: null }, args);
 
   this.dependees = this.getDependees();
+  
   for (var selector in this.dependees) {
   	
   	// modified by sjang. in case of loading form by ajax, 
@@ -57,8 +60,8 @@ states.Dependent = function (args) {
   		delete this.dependees[selector][1];
   	}
   	
-  	
   	this.initializeDependee(selector, this.dependees[selector]);
+    
   }
 };
 
