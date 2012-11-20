@@ -378,7 +378,6 @@
 		console.log('mutiselect_behavior set');
 		Drupal.behaviors.multiselect.attach(document);
 		
-		
 		Drupal.behaviors.AJAX.attach(document, settings);
 		Drupal.settings.datePopup = settings.datePopup;
 		Drupal.behaviors.date_popup.attach(document);
