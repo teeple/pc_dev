@@ -267,6 +267,10 @@ function product_catalog_ajax_add_modal_content($js = NULL, $contentType, $refNo
 			case 'ocs_state_machine':
 				$output[] = ctools_ajax_command_reload();
 				break;
+			case 'actionsetcounter':
+				$defaultTabIndex = 1;
+				$output[] = _add_command_after_dismiss_modal($refNodeNid,$refTreeTid,$defaultTabIndex);
+				break;
 			default : //for tree
 				$output[] = _add_command_after_dismiss_modal($refNodeNid,$refTreeTid);
 				break;
@@ -647,7 +651,8 @@ function _qtabconfig_loading($collectionName, $termInTree) {
 	return $qtabConfigs;
 }
 
-function product_catalog_ajax_load_select_form($nid,$eventType,$rootNid,$relType){
+function product_catalog_ajax_load_select_form($nid,$eventType,$rootNid,$relType,$defaultTabIndex){
+	
 	$rootId = explode('_',$rootNid);
 	$rootId = $rootId[1];
 	$rootNode = node_load($rootId);
@@ -748,9 +753,12 @@ function product_catalog_ajax_load_select_form($nid,$eventType,$rootNid,$relType
     $qtoptions = array(
     	'ajax' => FALSE,
     	'style' => 'zen',
-    	//'renderer' => 'accordion',
     	//'renderer' => 'ui_tabs'
     );
+	
+	if(isset($defaultTabIndex)) {
+		$qtoptions['default_tab'] = $defaultTabIndex;
+    }
 	
     $quicktabs = quicktabs_build_quicktabs('qtab_dummy',$qtoptions,$qtabs);
     $qtRender =  drupal_render($quicktabs['content']);
@@ -995,7 +1003,7 @@ function product_catalog_modal_form_edit_modal_content($js = NULL, $contentType,
     ctools_include('node.pages', 'node', '');
     ctools_include('modal');
     ctools_include('ajax');
-
+	
     $node = node_load($nodeNid);
 
     if (!$js) {
@@ -1037,7 +1045,11 @@ function product_catalog_modal_form_edit_modal_content($js = NULL, $contentType,
 			
         	case 'area_code':
         		$output[] = ctools_ajax_command_reload();
-        		break;
+				break;
+			case 'actionsetcounter':
+				$defaultTabIndex = 1;
+				$output[] = _add_command_after_dismiss_modal($refNodeNid,$refTreeTid,$defaultTabIndex);
+				break;
         }
         
     }else{
@@ -1074,6 +1086,11 @@ function product_catalog_ajax_delete_from_view($nodeNid){
 		case 'thresholdschemefactors':
 		case 'area_code':
 			$output[] = ctools_ajax_command_reload();
+			break;
+		case 'actionsetcounter':
+			$refNodeNid = $node->field_ref_source_action['und'][0]['nid'];
+			$defaultTabIndex = 1;
+			$output[] = _add_command_after_dismiss_modal($refNodeNid,NULL,$defaultTabIndex);
 			break;
 	}
 	
