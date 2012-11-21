@@ -137,6 +137,7 @@ class OcsParam
                 '#type' => 'select',
                 '#title' => $title,
                 '#options' => $options,
+            	'#attributes' => array( 'style' => 'width:400px;'),
             );
         }
         else {

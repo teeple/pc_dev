@@ -529,6 +529,18 @@
 				menus.custom_delete.action = function(node) {
 					$.fn.deleteNode(node);
 				};
+				
+				//temp
+				menus.custom_create._disabled = false;
+				menus.custom_create.submenu = {
+					"test acctionset counter" : {
+						"label" : "actionsetcounter",
+						action : function(node) {
+							$.fn.addNode(node,{'childContentType': 'actionsetcounter'});
+						}
+					},
+				};
+				//temp end
 				break;
 			case "actionpricechargerecurring":
 				menus.custom_create._disabled = false;
