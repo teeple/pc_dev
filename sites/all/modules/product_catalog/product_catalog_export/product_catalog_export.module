@@ -15,6 +15,8 @@ module_load_include('inc', 'product_catalog_export', 'export_threshold_scheme');
 module_load_include('inc', 'product_catalog_export', 'create_export_data');
 module_load_include('inc', 'product_catalog_export', 'create_export_meta_data');
 module_load_include('inc', 'product_catalog_export', 'gura_export_all');
+module_load_include('inc', 'product_catalog_export', 'export_lifecycle_scheme');
+module_load_include('inc', 'product_catalog_export', 'export_message');
 
 function export_product($nid=NULL){
     $data = _product_for_export($nid);
@@ -65,4 +67,11 @@ function export_threshold_scheme(){
     return _json_threshold_scheme();
 }
 
+function export_lifecycle_scheme(){
+	return _json_lifecycle_scheme();
+}
+
+function export_message(){
+	return _json_message();
+}
 ?>
