@@ -8,14 +8,6 @@
 		$.ajax({
 			url : loadLink,
 			success : function(data) {
-				
-				// console.log(data);
-<<<<<<< HEAD
-				//console.log('loadSelectForm');
-=======
-				// console.log('loadSelectForm');
->>>>>>> 01a4e6252c65e2e1a9b8a9859c6dd882af015f2e
-								
 				var output = $.parseJSON(data);
 				//console.log(output);
 				var settings = output[0].settings;
