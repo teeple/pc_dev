@@ -529,6 +529,15 @@
 				menus.custom_delete.action = function(node) {
 					$.fn.deleteNode(node);
 				};
+				menus.custom_create._disabled = false;
+				menus.custom_create.submenu = {
+					"actionpricechargeonetime" : {
+						"label" : "ConditionSet",
+						action : function(node) {
+							$.fn.addNode(node,{'childContentType': 'conditioncommonand'});
+						}
+					},
+				};	
 				break;
 			case "actionpricechargerecurring":
 				menus.custom_create._disabled = false;
