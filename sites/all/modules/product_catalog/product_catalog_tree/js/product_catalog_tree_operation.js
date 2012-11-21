@@ -8,10 +8,6 @@
 		$.ajax({
 			url : loadLink,
 			success : function(data) {
-				
-				// console.log(data);
-				console.log('loadSelectForm');
-								
 				var output = $.parseJSON(data);
 				//console.log(output);
 				var settings = output[0].settings;
@@ -33,8 +29,6 @@
 	//
 	$.fn.selectItemHandler = function(event){
 		
-		console.log('selectItemHandler');
-				
 		var parent = event.data.node; 
         var rootId = event.data.rootId;
 		//jQuery('input[name=views_bulk_operations]:checked')		
@@ -116,7 +110,7 @@
 		});	
 	};
 	
-	$.fn.loadForm = function(node,collapsedIndex){
+	$.fn.loadForm = function(node,collapsedIndex,defaultTabIndex){
 		
 		var id = node.attr("id");
         var content_type = node.attr("node_type");
@@ -125,9 +119,6 @@
 		var needToLoadEdit = true; 
         var needToLoadDetail = true;
         var needToBindCustomSubmitButtons = false;
-        
-       // console.log('content type'+content_type);
-       // console.log('rel type'+rel_type);
         
         switch(content_type){
             case 'treenodecounter':
@@ -222,7 +213,11 @@
         
         if(needToLoadDetail){
         	var rootId = $('.product_catalog_tree > ul:first > li:first').attr('id');
-    		var detailLink = '/product_catalog_ajax/load_select_form/' + id + '/' + 'click' + '/' + rootId + '/' + rel_type;
+        	var detailLink = '/product_catalog_ajax/load_select_form/' + id + '/' + 'click' + '/' + rootId + '/' + rel_type;
+        	
+        	if(defaultTabIndex > 0) {
+        		detailLink = detailLink + '/' + defaultTabIndex;
+        	}
     		
         	$(".product_catalog_tree").mask("Loading...");
     		$.ajax({
@@ -331,7 +326,7 @@
 		
 	};
 	
-	$.fn.reloadTreeContentDiv = function(node){
+	$.fn.reloadTreeContentDiv = function(node, tabIndex){
 		//for setFocusRegion
 		var regions = $('#tree_content_div').find('.ctools-toggle');
 		var collapsedIndex = new Array();
@@ -339,13 +334,23 @@
 			if($('#tree_content_div').find('.ctools-toggle:eq('+i+')').hasClass('ctools-toggle-collapsed')){
 				collapsedIndex.push(i);
 			}
-		}	
-		$.fn.loadForm(node,collapsedIndex);	
+		}
+		$.fn.loadForm(node,collapsedIndex, tabIndex);	
 	};
 	
-	$.fn.reloadTreeContentDivFromDrupal = function(nodeId){
+	/*
+	$.fn.reloadTreeContentDivFromDrupal = function(nodeId, tabIndex){
 		var node = $('#' + nodeId);
+		console.log('here');
+		console.log(tabIndex);
 		$.fn.reloadTreeContentDiv(node);
+	};
+	*/
+	
+	$.fn.reloadTreeContentDivFromDrupal = function(nodeId, tabIndex){
+		var node = $('#' + nodeId);
+		
+		$.fn.reloadTreeContentDiv(node, tabIndex);
 	};
 	
 	$.fn.addNestedMultipleChildren = function(product_catalog_ajax_result){		
@@ -381,27 +386,28 @@
 	
 	$.fn.behaviorAttach = function(settings){	
 		//console.log('mutiselect_behavior set');
-		Drupal.behaviors.multiselect.attach(document);
-		
+		Drupal.behaviors.quicktabs.attach(document,settings);
+		Drupal.behaviors.ViewsAjaxView.attach();		
+		Drupal.behaviors.multiselect.attach(document);		
 		Drupal.behaviors.AJAX.attach(document, settings);
 		Drupal.settings.datePopup = settings.datePopup;
 		Drupal.behaviors.date_popup.attach(document);
 		Drupal.behaviors.tableDrag.attach(document, settings);
 		Drupal.behaviors.tableHeader.attach(document, settings);	
-		Drupal.behaviors.ViewsAjaxView.attach();
+		Drupal.behaviors.states.attach(document,settings);	
 		Drupal.behaviors.vbo.attach(document);
-		Drupal.behaviors.quicktabs.attach(document,settings);
 		Drupal.behaviors.ZZCToolsModal.attach(document);
 		Drupal.behaviors.editablefields_submit.attach(document);
 		Drupal.behaviors.CToolsAutoSubmit.attach(document);
     //Drupal.behaviors.bef_live_filter.attach(document);
-		Drupal.behaviors.states.attach(document,settings);		
 		
     Drupal.behaviors.CToolsCollapsible.attach(document);
     //Drupal.behaviors.qt_accordion.attach($('#tree_content_div'),settings);
     //Drupal.behaviors.qt_ui_tabs.attach(document,settings);
         
     $.fn.drawFlotLinkInit();
+    
+    
         
 	};
 	
