@@ -294,7 +294,8 @@ function ocs_admin_message_group_form_submit( $form, &$form_state)
         }
         $node->title = $values['title'];
  
-        for( $i=1; $i <= $values['num_values']; $i++) {
+         unset( $node->field_ocs_message_list);
+         for( $i=1; $i <= $values['num_values']; $i++) {
             $node->field_ocs_message_list['und'][$i-1]['nid'] = $values['value'.$i];  
         }
         
