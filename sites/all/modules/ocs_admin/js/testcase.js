@@ -1,7 +1,7 @@
 (function($) {
 	Drupal.behaviors.ocs_admin = {
 		attach : function(context, settings) {
-			console.log('testcase.js loaded');
+			//console.log('testcase.js loaded');
 			$('#run-test-ocs-button').bind('click', $.fn.runTestOcsHandler); // test button
 			$('#add-action-button').bind('click', $.fn.addActionHandler);
 		}

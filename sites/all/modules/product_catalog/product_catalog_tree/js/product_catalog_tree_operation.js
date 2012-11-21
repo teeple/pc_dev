@@ -124,11 +124,6 @@
         var needToLoadDetail = true;
         var needToBindCustomSubmitButtons = false;
         
-//        console.log('content type'+content_type);
-//        console.log('rel type'+rel_type);
-        
-        console.log('defaultTabIndex: '+defaultTabIndex);
-        
         switch(content_type){
             case 'treenodecounter':
             case 'treenodedepositscheme':
@@ -394,6 +389,10 @@
 	};
 	
 	$.fn.behaviorAttach = function(settings){	
+<<<<<<< HEAD
+=======
+		//console.log('mutiselect_behavior set');
+>>>>>>> 4295ec0fc7b05b0152074cf3b82026e0b9fa77ba
 		Drupal.behaviors.multiselect.attach(document);
 		
 		Drupal.behaviors.AJAX.attach(document, settings);
@@ -407,14 +406,14 @@
 		Drupal.behaviors.ZZCToolsModal.attach(document);
 		Drupal.behaviors.editablefields_submit.attach(document);
 		Drupal.behaviors.CToolsAutoSubmit.attach(document);
-        //Drupal.behaviors.bef_live_filter.attach(document);
+    //Drupal.behaviors.bef_live_filter.attach(document);
 		Drupal.behaviors.states.attach(document,settings);		
 		
-        Drupal.behaviors.CToolsCollapsible.attach(document);
-        //Drupal.behaviors.qt_accordion.attach($('#tree_content_div'),settings);
-        //Drupal.behaviors.qt_ui_tabs.attach(document,settings);
+    Drupal.behaviors.CToolsCollapsible.attach(document);
+    //Drupal.behaviors.qt_accordion.attach($('#tree_content_div'),settings);
+    //Drupal.behaviors.qt_ui_tabs.attach(document,settings);
         
-        $.fn.drawFlotLinkInit();
+    $.fn.drawFlotLinkInit();
         
 	};
 	
