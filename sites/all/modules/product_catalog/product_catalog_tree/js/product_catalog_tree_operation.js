@@ -10,7 +10,11 @@
 			success : function(data) {
 				
 				// console.log(data);
+<<<<<<< HEAD
 				//console.log('loadSelectForm');
+=======
+				// console.log('loadSelectForm');
+>>>>>>> 01a4e6252c65e2e1a9b8a9859c6dd882af015f2e
 								
 				var output = $.parseJSON(data);
 				//console.log(output);
@@ -33,8 +37,6 @@
 	//
 	$.fn.selectItemHandler = function(event){
 		
-		console.log('selectItemHandler');
-				
 		var parent = event.data.node; 
         var rootId = event.data.rootId;
 		//jQuery('input[name=views_bulk_operations]:checked')		
@@ -116,7 +118,7 @@
 		});	
 	};
 	
-	$.fn.loadForm = function(node,collapsedIndex){
+	$.fn.loadForm = function(node,collapsedIndex,defaultTabIndex){
 		
 		var id = node.attr("id");
         var content_type = node.attr("node_type");
@@ -125,9 +127,6 @@
 		var needToLoadEdit = true; 
         var needToLoadDetail = true;
         var needToBindCustomSubmitButtons = false;
-        
-       // console.log('content type'+content_type);
-       // console.log('rel type'+rel_type);
         
         switch(content_type){
             case 'treenodecounter':
@@ -222,7 +221,11 @@
         
         if(needToLoadDetail){
         	var rootId = $('.product_catalog_tree > ul:first > li:first').attr('id');
-    		var detailLink = '/product_catalog_ajax/load_select_form/' + id + '/' + 'click' + '/' + rootId + '/' + rel_type;
+        	var detailLink = '/product_catalog_ajax/load_select_form/' + id + '/' + 'click' + '/' + rootId + '/' + rel_type;
+        	
+        	if(defaultTabIndex > 0) {
+        		detailLink = detailLink + '/' + defaultTabIndex;
+        	}
     		
         	$(".product_catalog_tree").mask("Loading...");
     		$.ajax({
@@ -331,7 +334,7 @@
 		
 	};
 	
-	$.fn.reloadTreeContentDiv = function(node){
+	$.fn.reloadTreeContentDiv = function(node, tabIndex){
 		//for setFocusRegion
 		var regions = $('#tree_content_div').find('.ctools-toggle');
 		var collapsedIndex = new Array();
@@ -339,13 +342,23 @@
 			if($('#tree_content_div').find('.ctools-toggle:eq('+i+')').hasClass('ctools-toggle-collapsed')){
 				collapsedIndex.push(i);
 			}
-		}	
-		$.fn.loadForm(node,collapsedIndex);	
+		}
+		$.fn.loadForm(node,collapsedIndex, tabIndex);	
 	};
 	
-	$.fn.reloadTreeContentDivFromDrupal = function(nodeId){
+	/*
+	$.fn.reloadTreeContentDivFromDrupal = function(nodeId, tabIndex){
 		var node = $('#' + nodeId);
+		console.log('here');
+		console.log(tabIndex);
 		$.fn.reloadTreeContentDiv(node);
+	};
+	*/
+	
+	$.fn.reloadTreeContentDivFromDrupal = function(nodeId, tabIndex){
+		var node = $('#' + nodeId);
+		
+		$.fn.reloadTreeContentDiv(node, tabIndex);
 	};
 	
 	$.fn.addNestedMultipleChildren = function(product_catalog_ajax_result){		
