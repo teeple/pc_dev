@@ -446,9 +446,19 @@ function _get_max_weight_in_children($parentNid){
     return $weight;
 }
 
-function _add_command_after_dismiss_modal($refNodeNid,$refTreeTid){
-	$nodeId = 'term_'.$refTreeTid.'_'.$refNodeNid;	
-	return ajax_command_invoke(NULL, 'reloadTreeContentDivFromDrupal', array($nodeId));
+function _add_command_after_dismiss_modal($refNodeNid,$refTreeTid,$defaultTabIndex){
+	if(empty($refNodeTid)) {
+		$nodeId = 'node_'.$refNodeNid;	
+	} else {
+		$nodeId = 'term_'.$refTreeTid.'_'.$refNodeNid;	
+	}
+	$params = array();
+	$params[] = $nodeId;
+	if(!empty($defaultTabIndex)){
+		$params[] = $defaultTabIndex;
+	}
+	
+	return ajax_command_invoke(NULL, 'reloadTreeContentDivFromDrupal', $params);
 }
 
 function _basicrate_timetablefactors_custom_form($form, &$form_state){
