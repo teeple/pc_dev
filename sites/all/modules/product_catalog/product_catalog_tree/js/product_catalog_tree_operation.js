@@ -389,10 +389,6 @@
 	};
 	
 	$.fn.behaviorAttach = function(settings){	
-<<<<<<< HEAD
-=======
-		//console.log('mutiselect_behavior set');
->>>>>>> 4295ec0fc7b05b0152074cf3b82026e0b9fa77ba
 		Drupal.behaviors.multiselect.attach(document);
 		
 		Drupal.behaviors.AJAX.attach(document, settings);
