@@ -529,6 +529,15 @@
 				menus.custom_delete.action = function(node) {
 					$.fn.deleteNode(node);
 				};
+				menus.custom_create._disabled = false;
+				menus.custom_create.submenu = {
+					"actionpricechargeonetime" : {
+						"label" : "ConditionSet",
+						action : function(node) {
+							$.fn.addNode(node,{'childContentType': 'conditioncommonand'});
+						}
+					},
+				};	
 				break;
 			case "actionpricechargerecurring":
 				menus.custom_create._disabled = false;
@@ -1036,23 +1045,6 @@
 				menus.custom_delete.action = function(node) {
 					$.fn.deleteNode(node);
 				};								
-				break;
-			case "allowed":
-				menus.custom_create._disabled = false;
-				menus.custom_create.submenu = {
-					"allowed" : {
-						"label" : "Number Special Factors",
-						action : function(node) {
-							$.fn.addNode(node,{'childContentType': 'numberspecialfactors'});
-						}
-					},
-				};
-				break;
-			case 'numberspecialfactors':
-				menus.custom_delete._disabled = false;
-				menus.custom_delete.action = function(node) {
-					$.fn.deleteNode(node);
-				};
 				break;
 			case "Rates":
 				menus.custom_create._disabled = false;

@@ -16,10 +16,12 @@ var states = Drupal.states = {
  */
 Drupal.behaviors.states = {
   attach: function (context, settings) {
-    for (var selector in settings.states) {
+  	var $context = $(context);
+  	for (var selector in settings.states) {
       for (var state in settings.states[selector]) {
-        new states.Dependent({
-          element: $(selector),
+      	
+      	new states.Dependent({
+          element: $context.find(selector),
           state: states.State.sanitize(state),
           constraints: settings.states[selector][state]
         });
@@ -48,8 +50,18 @@ states.Dependent = function (args) {
   $.extend(this, { values: {}, oldValue: null }, args);
 
   this.dependees = this.getDependees();
+  
   for (var selector in this.dependees) {
-    this.initializeDependee(selector, this.dependees[selector]);
+  	
+  	// modified by sjang. in case of loading form by ajax, 
+  	// this module does not work properly.
+  	// temporary patch for this.
+  	if(this.dependees[selector].length === 2){
+  		delete this.dependees[selector][1];
+  	}
+  	
+  	this.initializeDependee(selector, this.dependees[selector]);
+    
   }
 };
 
@@ -86,12 +98,15 @@ states.Dependent.prototype = {
    *   dependee's compliance status.
    */
   initializeDependee: function (selector, dependeeStates) {
+  	//console.log(selector);
+  	//console.log(dependeeStates);
     var state;
 
     // Cache for the states of this dependee.
     this.values[selector] = {};
 
     for (var i in dependeeStates) {
+      //console.log(dependeeStates.hasOwnProperty(i));
       if (dependeeStates.hasOwnProperty(i)) {
         state = dependeeStates[i];
         // Make sure we're not initializing this selector/state combination twice.
