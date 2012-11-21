@@ -132,7 +132,8 @@ class OcsParam
             );
         }
         else if ( $type == OCS_PARAM_TYPE_MESSAGE) {
-            $options = ocs_admin_get_message_list();
+            $options['Message'] = ocs_admin_get_message_list();
+            $options['Group'] = ocs_admin_get_message_group_list();
             $form = array(
                 '#type' => 'select',
                 '#title' => $title,
