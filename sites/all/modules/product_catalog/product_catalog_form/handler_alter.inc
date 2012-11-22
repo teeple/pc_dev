@@ -75,6 +75,7 @@ function _add_ajax_submit_callback($form_id,&$form){
 		case 'conditionwhensubscriptionday_node_form':
 		case 'numberspecialrate_node_form':
 		case 'actionpriceallowanceonetime_node_form':
+		case 'actionpriceallowancerecurring_node_form':
 		  	$change = TRUE;
         	break;
         	
@@ -148,8 +149,9 @@ function edit_pane_callback($form, &$form_state){
 }
 
 function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
-	// dsm('--- form alter --');
-dsm($form_id);
+	
+// dsm('--- form alter --');
+// dsm($form_id);
 // dsm($form, 'form_alter: '.$form['#form_id']);
 // dsm($form_state, 'form_state');
     // error_log('form_id: '. $form_id);

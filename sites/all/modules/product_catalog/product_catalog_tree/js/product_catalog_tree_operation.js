@@ -131,6 +131,8 @@
             case 'treenodeunittransferscheme':
             case 'actionpricechargeonetime':
             case 'actionpriceallowanceonetime':
+            case 'actionpricechargerecurring':
+            case 'actionpriceallowancerecurring':
             	needToLoadEdit = false;
                 break;
             case 'usage':

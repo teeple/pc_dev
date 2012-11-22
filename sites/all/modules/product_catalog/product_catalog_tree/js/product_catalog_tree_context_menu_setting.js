@@ -641,6 +641,23 @@
 					$.fn.deleteNode(node);
 				};
 				break;
+				
+			case "actionpriceallowancerecurring":
+				menus.custom_create._disabled = false;
+				menus.custom_create.submenu = {
+					"actionpriceallowancerecurring" : {
+						"label" : "Discount",
+						action : function(node) {
+							$.fn.addNode(node,{'childContentType': 'conditioncommonand'});
+						}
+					},
+				};	
+				menus.custom_delete._disabled = false;
+				menus.custom_delete.action = function(node) {
+					$.fn.deleteNode(node);
+				};
+				break;
+				
 			case "actionpricediscount":
 				menus.custom_create._disabled = false;
 				menus.custom_create.submenu = {
