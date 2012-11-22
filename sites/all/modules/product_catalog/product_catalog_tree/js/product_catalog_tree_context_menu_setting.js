@@ -765,25 +765,25 @@
 					"what" : {
 						"label" : "WHAT",
 						"submenu" : {
-			                "service_type" : {
-			                    "label" : "ServiceType",
+			                "usage_type" : {
+			                    "label" : "UsageType",
 			                    "submenu" : {
-			                        "VOICE": {
-			                            "label" : "VOICE",
+			                        "voice": {
+			                            "label" : "voice",
 			                            action : function(node) {
-			                                $.fn.addNode(node,{'childContentType': 'conditionwhatservicetypefactors','serviceType':'VOICE'});
+			                                $.fn.addNode(node,{'childContentType': 'conditionwhatusagetypefactors','usageType':'voice'});
 			                            }
 			                        },
-			                        "SMS": {
-			                            "label" : "SMS",
+			                        "sms": {
+			                            "label" : "sms",
 			                            action : function(node) {
-			                                $.fn.addNode(node,{'childContentType': 'conditionwhatservicetypefactors','serviceType':'SMS'});
+			                                $.fn.addNode(node,{'childContentType': 'conditionwhatusagetypefactors','usageType':'sms'});
 			                            }
 			                        },
-			                        "DATA": {
-			                            "label" : "DATA",
+			                        "packet": {
+			                            "label" : "packet",
 			                            action : function(node) {
-			                                $.fn.addNode(node,{'childContentType': 'conditionwhatservicetypefactors','serviceType':'DATA'});
+			                                $.fn.addNode(node,{'childContentType': 'conditionwhatusagetypefactors','usageType':'packet'});
 			                            }
 			                        },
 			                    },
@@ -954,7 +954,7 @@
 			case "conditionwhatqos":
 			case "conditionwhaturlgroupfactors":
 			case "conditionwhatcustomfactors":
-            case "conditionwhatservicetypefactors":
+            case "conditionwhatusagetypefactors":
 			case "conditionwhendayfactors":
 			case "conditionwhendurationfactors":
 			case "conditionwhenholidayfactors":
