@@ -458,6 +458,7 @@ function _add_command_after_dismiss_modal($refNodeNid,$refTreeTid,$defaultTabInd
 	}
 	$params = array();
 	$params[] = $nodeId;
+
 	if(!empty($defaultTabIndex)){
 		$params[] = $defaultTabIndex;
 	}

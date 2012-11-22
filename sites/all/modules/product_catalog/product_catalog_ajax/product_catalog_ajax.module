@@ -179,11 +179,6 @@ function product_catalog_ajax_add_modal_content($js = NULL, $contentType, $refNo
 	ctools_include('modal');
 	ctools_include('ajax');
 	
-	dsm($contentType, 'contentType');
-	dsm($nodeNid, '$nodeNid');
-	dsm($refNodeNid, '$refNodeNid');
-	dsm($refTreeTid, '$refTreeTid');
-	
 	$node = (object) array(
 			'uid' => $user->uid,
 			'name' => (isset($user->name) ? $user->name : ''),
@@ -1011,11 +1006,6 @@ function product_catalog_modal_form_edit_modal_content($js = NULL, $contentType,
     ctools_include('modal');
     ctools_include('ajax');
 	
-	dsm($contentType, 'contentType');
-	dsm($nodeNid, '$nodeNid');
-	dsm($refNodeNid, '$refNodeNid');
-	dsm($refTreeTid, '$refTreeTid');
-	
     $node = node_load($nodeNid);
 
     if (!$js) {
@@ -1045,11 +1035,7 @@ function product_catalog_modal_form_edit_modal_content($js = NULL, $contentType,
         		$output[] = _add_command_after_dismiss_modal($refNodeNid,$refTreeTid);
         		break;
         	case 'numberspecialfactors':
-				$orirefNodeNid = $refNodeNid;
-				$refNodeNid = $node->nid;
-        		$refTreeTid = $orirefNodeNid;
         		$output[] = _add_command_after_dismiss_modal($refNodeNid,$refTreeTid);
-        	//	$output[] = ctools_ajax_command_reload();
 				break;	
         	case 'domestic_ratinggroup':
         	case 'idd_ratinggroup':
@@ -1088,13 +1074,7 @@ function product_catalog_ajax_delete_from_view($nodeNid, $refNodeNid, $defaultTa
 	switch($node->type){
 		case 'rate':
 		case 'numberspecialfactors';
-		//	$refNodeNid = $node->field_ref_tariffplan['und'][0]['nid'];
-		//	$refTreeTid = $node->field_ref_tree_tid['und'][0]['value'];
-		//	dsm('_add_command_after_dismiss_modal--------------------------------');
-		//	$output[] = ajax_command_invoke(NULL, 'reloadTreeContentDivFromDrupal', array($nodeId));
-		//	$output[] = _add_command_after_dismiss_modal($refNodeNid,$refTreeTid);
-		//dsm('ctools_ajax_command_reload--------------------------------');
-			$output[] = ctools_ajax_command_reload();
+			$output[] = _add_command_after_dismiss_modal($refNodeNid,$defaultTabIndex);
 			break;
 		case 'domestic_ratinggroup':
 		case 'idd_ratinggroup':
