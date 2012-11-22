@@ -60,7 +60,6 @@ function _add_ajax_submit_callback($form_id,&$form){
         case 'actionpricediscount_node_form':
         case 'actionpriceallowance_node_form':
         case 'tariffplan_node_form':
-        case 'numberspecialfactors_node_form':
         case 'treenodecounter_node_form':
         case 'prdattributeprefixrangeallowed_node_form':
         case 'prdattributeprefixrangenotallowe_node_form':
@@ -149,10 +148,6 @@ function edit_pane_callback($form, &$form_state){
 
 function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 	// dsm('--- form alter --');
-dsm($form_id);
-// dsm($form, 'form_alter: '.$form['#form_id']);
-// dsm($form_state, 'form_state');
-    // error_log('form_id: '. $form_id);
     if(isset($form['#attributes']) && gettype($form['#attributes']['class']) == 'array') {
     	$form['#attributes']['class'][] = 'myform';
     	
