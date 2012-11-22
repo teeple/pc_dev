@@ -836,6 +836,7 @@ function product_catalog_ajax_add_content($js = NULL) {
 	$childContentType = $_POST['child_content_type'];
 	$maxWeight = $_POST['max_weight'];
 	$usageType = $_POST['usage_type'];
+	$nonUsageType = $_POST['nonusage_type'];
 	
 	$weightStep = 100;
 	$weight = $maxWeight + $weightStep;
@@ -853,6 +854,24 @@ function product_catalog_ajax_add_content($js = NULL) {
 			$child->field_ref_usage_type = array('und' => array(0 => array('tid' => current($usageTypeTerm)->tid)));
             
             node_save($child);
+
+            // js tree node add function call
+    		$output = array('parent_id' => $parentId, 'child_id' => 'node_'.$child->nid,'title' => $child->title, 'node_type' => $child->type, 'weight' => $weight);
+    		print json_encode($output);
+    		exit;
+            break;
+			
+		case 'conditionwhatnonusagetypefactors':        	 
+			$child = new StdClass();
+    		$child->uid = $user->uid;
+    		$child->type = $childContentType;
+    		$child->language = 'und';
+    		$child->field_parent_node = array('und' => array(0 => array('nid' => $parentNid)));
+    		$child->field_weight = array('und' => array(0 => array('value' => $weight)));
+
+            $nonUsageTypeTerm = taxonomy_get_term_by_name($nonUsageType, 'nonusagetype');
+			$child->field_ref_nonusage_type = array('und' => array(0 => array('tid' => current($nonUsageTypeTerm)->tid)));
+			node_save($child);
 
             // js tree node add function call
     		$output = array('parent_id' => $parentId, 'child_id' => 'node_'.$child->nid,'title' => $child->title, 'node_type' => $child->type, 'weight' => $weight);
