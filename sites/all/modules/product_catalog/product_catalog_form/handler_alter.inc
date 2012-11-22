@@ -60,6 +60,7 @@ function _add_ajax_submit_callback($form_id,&$form){
         case 'actionpricediscount_node_form':
         case 'actionpriceallowance_node_form':
         case 'tariffplan_node_form':
+        case 'numberspecialfactors_node_form':
         case 'treenodecounter_node_form':
         case 'prdattributeprefixrangeallowed_node_form':
         case 'prdattributeprefixrangenotallowe_node_form':
@@ -148,7 +149,7 @@ function edit_pane_callback($form, &$form_state){
 
 function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 	// dsm('--- form alter --');
-	// dsm($form_id);
+dsm($form_id);
 // dsm($form, 'form_alter: '.$form['#form_id']);
 // dsm($form_state, 'form_state');
     // error_log('form_id: '. $form_id);
@@ -720,7 +721,17 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			_unset_menu_items($form,$form_id);
         	
 			break;
-		
+			
+		case 'actionpriceallowancerecurring_node_form':
+			$form['field_ref_product']['#type'] = 'hidden';
+        	$form['field_ref_tree_tid']['#type'] = 'hidden';
+        	$form['field_ref_tree_nid']['#type'] = 'hidden';
+			$form['field_parent_node']['#type'] = 'hidden';
+			$form['field_weight']['#type'] = 'hidden';
+			
+			_unset_menu_items($form,$form_id);
+        	break;
+			
         case 'actionpriceallowance_node_form':
         case 'actionpriceallowancefactors_node_form':
         	$form['field_allow_start']['#type'] = 'hidden';
