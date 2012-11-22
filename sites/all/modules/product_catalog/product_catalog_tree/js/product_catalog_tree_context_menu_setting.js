@@ -788,6 +788,71 @@
 			                        },
 			                    },
 			                },
+			                "nonusage_type" : {
+			                    "label" : "NonUsageType",
+			                    "submenu" : {
+			                        "activation": {
+			                            "label" : "activation",
+			                            action : function(node) {
+			                                $.fn.addNode(node,{'childContentType': 'conditionwhatnonusagetypefactors','nonUsageType':'activation'});
+			                            }
+			                        },
+			                        "bonus_on_recharge": {
+			                            "label" : "bonus_on_recharge",
+			                            action : function(node) {
+			                                $.fn.addNode(node,{'childContentType': 'conditionwhatnonusagetypefactors','nonUsageType':'bonus_on_recharge'});
+			                            }
+			                        },
+			                        "query_hotbill": {
+			                            "label" : "query_hotbill",
+			                            action : function(node) {
+			                                $.fn.addNode(node,{'childContentType': 'conditionwhatnonusagetypefactors','nonUsageType':'query_hotbill'});
+			                            }
+			                        },
+			                        "recharge": {
+			                            "label" : "recharge",
+			                            action : function(node) {
+			                                $.fn.addNode(node,{'childContentType': 'conditionwhatnonusagetypefactors','nonUsageType':'recharge'});
+			                            }
+			                        },
+			                        "recurring_bonus": {
+			                            "label" : "recurring_bonus",
+			                            action : function(node) {
+			                                $.fn.addNode(node,{'childContentType': 'conditionwhatnonusagetypefactors','nonUsageType':'recurring_bonus'});
+			                            }
+			                        },
+			                        "recurring_charge": {
+			                            "label" : "recurring_charge",
+			                            action : function(node) {
+			                                $.fn.addNode(node,{'childContentType': 'conditionwhatnonusagetypefactors','nonUsageType':'recurring_charge'});
+			                            }
+			                        },
+			                        "subscription": {
+			                            "label" : "subscription",
+			                            action : function(node) {
+			                                $.fn.addNode(node,{'childContentType': 'conditionwhatnonusagetypefactors','nonUsageType':'subscription'});
+			                            }
+			                        },
+			                        "unit_transfer": {
+			                            "label" : "unit_transfer",
+			                            action : function(node) {
+			                                $.fn.addNode(node,{'childContentType': 'conditionwhatnonusagetypefactors','nonUsageType':'unit_transfer'});
+			                            }
+			                        },
+			                        "unsubscription": {
+			                            "label" : "unsubscription",
+			                            action : function(node) {
+			                                $.fn.addNode(node,{'childContentType': 'conditionwhatnonusagetypefactors','nonUsageType':'unsubscription'});
+			                            }
+			                        },
+			                        "usage_based_bonus": {
+			                            "label" : "usage_based_bonus",
+			                            action : function(node) {
+			                                $.fn.addNode(node,{'childContentType': 'conditionwhatnonusagetypefactors','nonUsageType':'usage_based_bonus'});
+			                            }
+			                        },
+			                    },
+			                },
                    
               				"incomingcall" : {
 								"label" : "Incoming Call",

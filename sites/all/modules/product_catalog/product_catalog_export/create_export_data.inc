@@ -135,10 +135,15 @@ function _create_export_data_by_content_type($node){
     		break;    		
        case 'conditionwhatusagetypefactors':
     		$data['type'] = $node->type;
-            $serviceTypeTerm = taxonomy_term_load($node->field_ref_usage_type['und'][0]['tid']);
-    		$data['what_service_type'] = isset($serviceTypeTerm)? $serviceTypeTerm->name : null;
-    		break;  
-    	case 'conditionwhaturlgroupfactors':
+            $usageTypeTerm = taxonomy_term_load($node->field_ref_usage_type['und'][0]['tid']);
+    		$data['what_usage_type'] = isset($nonUsageTypeTerm)? $usageTypeTerm->name : null;
+    		break;
+	   case 'conditionwhatnonusagetypefactors':
+    		$data['type'] = $node->type;
+            $nonUsageTypeTerm = taxonomy_term_load($node->field_ref_nonusage_type['und'][0]['tid']);
+    		$data['what_nonusage_type'] = isset($nonUsageTypeTerm)? $nonUsageTypeTerm->name : null;
+    		break;
+	   case 'conditionwhaturlgroupfactors':
     		$data['type'] = $node->type;
     		$urls = array();
     		foreach($node->field_url['und'] as $urlItem){

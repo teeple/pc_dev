@@ -64,7 +64,8 @@ function _add_ajax_submit_callback($form_id,&$form){
         case 'prdattributeprefixrangeallowed_node_form':
         case 'prdattributeprefixrangenotallowe_node_form':
         case 'unittransferfactors_node_form':
-        case 'conditionwhatusagetypefactors_node_form':       
+        case 'conditionwhatusagetypefactors_node_form':
+        case 'conditionwhatnonusagetypefactors_node_form':
         case 'prdattributefeaturecode_node_form':
         case 'prdattributebenefit_node_form':
         case 'loyaltypoint_node_form':        
@@ -401,6 +402,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 
 		// sub factors
 		case 'conditionwhatusagetypefactors_node_form':
+		case 'conditionwhatnonusagetypefactors_node_form':
 		case 'conditionwhatcustomfactors_node_form':
 		case 'conditionwhaturlgroupfactors_node_form':
 		case 'conditionwhencustomfactors_node_form':
