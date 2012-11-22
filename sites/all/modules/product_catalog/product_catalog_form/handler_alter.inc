@@ -74,6 +74,7 @@ function _add_ajax_submit_callback($form_id,&$form){
         case 'conditionwhatcounter_node_form':
 		case 'conditionwhensubscriptionday_node_form':
 		case 'numberspecialrate_node_form':
+		case 'actionpriceallowanceonetime_node_form':
 		  	$change = TRUE;
         	break;
         	
@@ -709,6 +710,18 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             }        	
         	
         	break;
+			
+		case'actionpriceallowanceonetime_node_form':
+			$form['field_ref_product']['#type'] = 'hidden';
+        	$form['field_ref_tree_tid']['#type'] = 'hidden';
+        	$form['field_ref_tree_nid']['#type'] = 'hidden';
+			$form['field_parent_node']['#type'] = 'hidden';
+			$form['field_weight']['#type'] = 'hidden';
+			
+			_unset_menu_items($form,$form_id);
+        	
+			break;
+		
         case 'actionpriceallowance_node_form':
         case 'actionpriceallowancefactors_node_form':
         	$form['field_allow_start']['#type'] = 'hidden';
@@ -782,6 +795,16 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			_unset_menu_items($form,$form_id);
           	break;
 		case 'actionsetcounter_node_form':
+			$form['field_ref_source_action']['#type'] = 'hidden';
+			
+			$counterList = _get_available_counter_list($form_state['product_nid']);
+			
+			$form['field_ref_counter']['und']['#options'] = $counterList;
+			
+			_unset_menu_items($form,$form_id);
+          	break;
+		
+		case 'actionsetcounteronbonus_node_form':
 			$form['field_ref_source_action']['#type'] = 'hidden';
 			
 			$counterList = _get_available_counter_list($form_state['product_nid']);
