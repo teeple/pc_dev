@@ -478,6 +478,42 @@
 				};
 				break;
 			
+			case "mobile_nonusage_activation_bonus":
+				menus.custom_create._disabled = false;
+				menus.custom_create.submenu = {
+					"mobile_nonusage_activation_bonus" : {
+						"label" : "Bonus Item",
+						action : function(node) {
+							$.fn.addNode(node,{'childContentType': 'actionpriceallowanceonetime'});
+						}
+					},
+				};
+				break;
+			
+			case "mobile_nonusage_recharge_bonus":
+				menus.custom_create._disabled = false;
+				menus.custom_create.submenu = {
+					"mobile_nonusage_recharge_bonus" : {
+						"label" : "Bonus Item",
+						action : function(node) {
+							$.fn.addNode(node,{'childContentType': 'actionpriceallowanceonetime'});
+						}
+					},
+				};
+				break;
+			case "mobile_nonusage_usageend_bonus":
+				menus.custom_create._disabled = false;
+				menus.custom_create.submenu = {
+					"mobile_nonusage_usageend_bonus" : {
+						"label" : "Bonus Item",
+						action : function(node) {
+							$.fn.addNode(node,{'childContentType': 'actionpriceallowanceonetime'});
+						}
+					},
+				};
+				break;
+				
+			
 			case "mobile_nonusage_subscription_charge":
 				menus.custom_create._disabled = false;
 				menus.custom_create.submenu = {
@@ -490,6 +526,42 @@
 				};
 				break;
 			
+			case "mobile_nonusage_unsubscription_charge":
+				menus.custom_create._disabled = false;
+				menus.custom_create.submenu = {
+					"mobile_nonusage_unsubscription_charge" : {
+						"label" : "Charge Item",
+						action : function(node) {
+							$.fn.addNode(node,{'childContentType': 'actionpricechargeonetime'});
+						}
+					},
+				};
+				break;
+			
+			case "mobile_nonusage_unsubscription_penalty":
+				menus.custom_create._disabled = false;
+				menus.custom_create.submenu = {
+					"mobile_nonusage_unsubscription_penalty" : {
+						"label" : "Charge Item",
+						action : function(node) {
+							$.fn.addNode(node,{'childContentType': 'actionpricechargeonetime'});
+						}
+					},
+				};
+				break;
+			
+			case "mobile_nonusage_unittransfer_charge":
+				menus.custom_create._disabled = false;
+				menus.custom_create.submenu = {
+					"mobile_nonusage_unittransfer_charge" : {
+						"label" : "Charge Item",
+						action : function(node) {
+							$.fn.addNode(node,{'childContentType': 'actionpricechargeonetime'});
+						}
+					},
+				};
+				break;
+				
 			case "mobile_nonusage_recurring_bonus":
 				menus.custom_create._disabled = false;
 				menus.custom_create.submenu = {
@@ -539,6 +611,21 @@
 					},
 				};	
 				break;
+			case "actionpriceallowanceonetime":
+				menus.custom_delete._disabled = false;
+				menus.custom_delete.action = function(node) {
+					$.fn.deleteNode(node);
+				};
+				menus.custom_create._disabled = false;
+				menus.custom_create.submenu = {
+					"actionpriceallowanceonetime" : {
+						"label" : "ConditionSet",
+						action : function(node) {
+							$.fn.addNode(node,{'childContentType': 'conditioncommonand'});
+						}
+					},
+				};	
+				break;	
 			case "actionpricechargerecurring":
 				menus.custom_create._disabled = false;
 				menus.custom_create.submenu = {
