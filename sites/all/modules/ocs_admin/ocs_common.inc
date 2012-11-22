@@ -132,6 +132,19 @@ function ocs_admin_get_message_list()
     return $messages;
 }
 
+function ocs_admin_get_message_group_list()
+{
+    $messages = &drupal_static( __FUNCTION__, array());
+    if ( empty( $messages)) {   
+        $items = entity_load( 'node', FALSE, array( 'type' => 'ocs_message_group'));
+        foreach( $items as $item) {
+            $messages[$item->nid] = $item->title ;
+        }
+    }
+
+    return $messages;
+}
+
 function ocs_admin_get_counter_id_list()
 {
     $counter_id = &drupal_static( __FUNCTION__, array());

@@ -43,12 +43,18 @@ function _make_json_string($termName,$refNid=NULL){
         case 'THRESHOLD_SCHEME':
             $jsonString = export_threshold_scheme();
             break;
+		case 'LIFECYCLE_SCHEME' :
+			$jsonString = export_lifecycle_scheme();
+		case 'MESSAGES':
+			$jsonString = export_message();
+			break;
 	}
 	
 	return $jsonString;
 }
 
 function export_json($tid,$termName,$refNid=NULL){
+	dpm( $termName, 'term name');
 	$jsonString = _make_json_string($termName,$refNid);
 	$output = _indent_json_string($jsonString);
 	return $output;
