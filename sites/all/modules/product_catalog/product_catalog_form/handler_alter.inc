@@ -60,7 +60,6 @@ function _add_ajax_submit_callback($form_id,&$form){
         case 'actionpricediscount_node_form':
         case 'actionpriceallowance_node_form':
         case 'tariffplan_node_form':
-        case 'numberspecialfactors_node_form':
         case 'treenodecounter_node_form':
         case 'prdattributeprefixrangeallowed_node_form':
         case 'prdattributeprefixrangenotallowe_node_form':
