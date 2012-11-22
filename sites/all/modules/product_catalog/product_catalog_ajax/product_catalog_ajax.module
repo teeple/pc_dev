@@ -179,6 +179,11 @@ function product_catalog_ajax_add_modal_content($js = NULL, $contentType, $refNo
 	ctools_include('modal');
 	ctools_include('ajax');
 	
+	dsm($contentType, 'contentType');
+	dsm($nodeNid, '$nodeNid');
+	dsm($refNodeNid, '$refNodeNid');
+	dsm($refTreeTid, '$refTreeTid');
+	
 	$node = (object) array(
 			'uid' => $user->uid,
 			'name' => (isset($user->name) ? $user->name : ''),
@@ -214,12 +219,14 @@ function product_catalog_ajax_add_modal_content($js = NULL, $contentType, $refNo
 			$node->field_lifecycle_scheme['und'][0]['nid'] = $refNodeNid;
 			break;
 		case 'actionsetcounter':
+		case 'actionsetcounteronbonus':
 			$node->title = 'source_'.$refNodeNid;
 			$node->field_ref_source_action['und'][0]['nid'] = $refNodeNid;
 			
 			$refNode = node_load($refNodeNid);
 			$form_state['product_nid'] = $refNode->field_ref_product['und'][0]['nid'];
 			break;
+		
 		case 'numberspecialfactors':
 			$node->field_ref_numberspecial['und'][0]['nid'] = $refNodeNid;
 			break;
@@ -268,7 +275,11 @@ function product_catalog_ajax_add_modal_content($js = NULL, $contentType, $refNo
 				$output[] = ctools_ajax_command_reload();
 				break;
 			case 'actionsetcounter':
-				$defaultTabIndex = 1;
+				$defaultTabIndex = $refTreeTid;
+				$output[] = _add_command_after_dismiss_modal($refNodeNid,$refTreeTid,$defaultTabIndex);
+				break;
+			case 'actionsetcounteronbonus':
+				$defaultTabIndex = $refTreeTid;
 				$output[] = _add_command_after_dismiss_modal($refNodeNid,$refTreeTid,$defaultTabIndex);
 				break;
 			default : //for tree
@@ -1004,6 +1015,11 @@ function product_catalog_modal_form_edit_modal_content($js = NULL, $contentType,
     ctools_include('modal');
     ctools_include('ajax');
 	
+	dsm($contentType, 'contentType');
+	dsm($nodeNid, '$nodeNid');
+	dsm($refNodeNid, '$refNodeNid');
+	dsm($refTreeTid, '$refTreeTid');
+	
     $node = node_load($nodeNid);
 
     if (!$js) {
@@ -1047,7 +1063,8 @@ function product_catalog_modal_form_edit_modal_content($js = NULL, $contentType,
         		$output[] = ctools_ajax_command_reload();
 				break;
 			case 'actionsetcounter':
-				$defaultTabIndex = 1;
+			case 'actionsetcounteronbonus':
+				$defaultTabIndex = $refTreeTid;
 				$output[] = _add_command_after_dismiss_modal($refNodeNid,$refTreeTid,$defaultTabIndex);
 				break;
         }
@@ -1062,7 +1079,7 @@ function product_catalog_modal_form_edit_modal_content($js = NULL, $contentType,
     exit;
 }
 
-function product_catalog_ajax_delete_from_view($nodeNid){
+function product_catalog_ajax_delete_from_view($nodeNid, $refNodeNid, $defaultTabIndex){
 	ctools_include('node.pages', 'node', '');
 	ctools_include('ajax');
 		
@@ -1088,8 +1105,7 @@ function product_catalog_ajax_delete_from_view($nodeNid){
 			$output[] = ctools_ajax_command_reload();
 			break;
 		case 'actionsetcounter':
-			$refNodeNid = $node->field_ref_source_action['und'][0]['nid'];
-			$defaultTabIndex = 1;
+		case 'actionsetcounteronbonus':
 			$output[] = _add_command_after_dismiss_modal($refNodeNid,NULL,$defaultTabIndex);
 			break;
 	}

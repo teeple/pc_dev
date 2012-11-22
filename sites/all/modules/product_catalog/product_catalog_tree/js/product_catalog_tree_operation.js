@@ -134,6 +134,7 @@
             case "treenodeproductforvoucher":
             case 'treenodeunittransferscheme':
             case 'actionpricechargeonetime':
+            case 'actionpriceallowanceonetime':
             	needToLoadEdit = false;
                 break;
             case 'usage':
