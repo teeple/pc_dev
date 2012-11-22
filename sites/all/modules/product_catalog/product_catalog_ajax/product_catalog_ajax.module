@@ -244,7 +244,6 @@ function product_catalog_ajax_add_modal_content($js = NULL, $contentType, $refNo
 	$output = ctools_modal_form_wrapper($formName, $form_state);
 
 	if (!empty($form_state['executed'])) {
-
 		$output = array();
 		//$output[] = ctools_modal_command_display(t('Node created'),'<div class="modal-message">Node creation successful.</div>');
 		$output[] = ctools_modal_command_dismiss();
@@ -262,11 +261,9 @@ function product_catalog_ajax_add_modal_content($js = NULL, $contentType, $refNo
 				node_save($planNode);
 				$output[] = ctools_ajax_command_reload();
 				break;
-		//	case 'numberspecialfactors':
-		//	dsm('numberspecialfactors2222222222222222222222222222222222222222');
-		//		$output[] = _add_command_after_dismiss_modal($refNodeNid,$refTreeTid);
-			//	$output[] = ctools_ajax_command_reload();
-		//		break;
+			case 'numberspecialfactors':
+				$output[] = _add_command_after_dismiss_modal($refNodeNid,$refTreeTid);
+				break;
 			case 'depositschemefactors':
 			case 'depositschemeadjustment':
 			case 'thresholdschemefactors':
@@ -1049,9 +1046,11 @@ function product_catalog_modal_form_edit_modal_content($js = NULL, $contentType,
         		$output[] = _add_command_after_dismiss_modal($refNodeNid,$refTreeTid);
         		break;
         	case 'numberspecialfactors':
-				$refNodeNid = $node->field_ref_tariffplan['und'][0]['nid'];
-        		$refTreeTid = $node->field_ref_tree_tid['und'][0]['value'];
+				$orirefNodeNid = $refNodeNid;
+				$refNodeNid = $node->nid;
+        		$refTreeTid = $orirefNodeNid;
         		$output[] = _add_command_after_dismiss_modal($refNodeNid,$refTreeTid);
+        	//	$output[] = ctools_ajax_command_reload();
 				break;	
         	case 'domestic_ratinggroup':
         	case 'idd_ratinggroup':
@@ -1084,7 +1083,6 @@ function product_catalog_ajax_delete_from_view($nodeNid, $refNodeNid, $defaultTa
 	ctools_include('ajax');
 		
 	$node = node_load($nodeNid);
-	
 	$output = array();
 
 	switch($node->type){
@@ -1092,8 +1090,10 @@ function product_catalog_ajax_delete_from_view($nodeNid, $refNodeNid, $defaultTa
 		case 'numberspecialfactors';
 		//	$refNodeNid = $node->field_ref_tariffplan['und'][0]['nid'];
 		//	$refTreeTid = $node->field_ref_tree_tid['und'][0]['value'];
-		//	dsm('ctools_ajax_command_reload--------------------------------');
+		//	dsm('_add_command_after_dismiss_modal--------------------------------');
+		//	$output[] = ajax_command_invoke(NULL, 'reloadTreeContentDivFromDrupal', array($nodeId));
 		//	$output[] = _add_command_after_dismiss_modal($refNodeNid,$refTreeTid);
+		//dsm('ctools_ajax_command_reload--------------------------------');
 			$output[] = ctools_ajax_command_reload();
 			break;
 		case 'domestic_ratinggroup':

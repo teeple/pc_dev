@@ -22,8 +22,8 @@ function ocs_admin_check_lifecycle_scheme( $node, $node_unchanged)
 	dpm( $intersect, 'node intersect');
 	
 	// check ocs_svc_perm
-	// ocs_svc_perm¿¡´Â titleÀÌ node->nidÀÎ instance µéÀÌ ÀúÀåµÇ¾î ÀÖ´Ù.
-	// ÀÌÁß¿¡¼­ state °ªÀÌ added, removed¿¡ ¼ÓÇÑ °ÍÀ» Ãß°¡/»èÁ¦ÇÑ´Ù.
+	// ocs_svc_permï¿½ï¿½ï¿½ï¿½ titleï¿½ï¿½ node->nidï¿½ï¿½ instance ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ç¾ï¿½ ï¿½Ö´ï¿½.
+	// ï¿½ï¿½ï¿½ß¿ï¿½ï¿½ï¿½ state ï¿½ï¿½ï¿½ï¿½ added, removedï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ß°ï¿½/ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½.
 	$node_list = ocs_get_nodes_by_node_ref( 'ocs_svc_perm', 'field_lifecycle_scheme', $node->nid);
 	
 	// action_list = array of nid of actions
@@ -34,7 +34,7 @@ function ocs_admin_check_lifecycle_scheme( $node, $node_unchanged)
 		//dpm( $item, 'state item');
 		$state_nid = $item->field_lifecycle_state['und'][0]['nid'];
 		if ( ($key = array_search( $state_nid, $intersect)) !== FALSE) {
-			// intersect, ±³ÁýÇÕ¿¡ µé¾î°¡¹Ç·Î ÆÐ½º
+			// intersect, ï¿½ï¿½ï¿½ï¿½ï¿½Õ¿ï¿½ ï¿½ï¿½î°¡ï¿½Ç·ï¿½ ï¿½Ð½ï¿½
 			//dpm( $item->nid, 'belongs to intersect');
 			unset($intersect[$key]);
 		}
@@ -43,7 +43,7 @@ function ocs_admin_check_lifecycle_scheme( $node, $node_unchanged)
 			unset( $added[$key]);
 		}
 		else {
-			// ±×¿ÜÀÇ °æ¿ì´Â ¸ðµÎ »èÁ¦
+			// ï¿½×¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 			//dpm( $item->nid, 'remove state');
 			node_delete( $item->nid);
 		}
@@ -237,7 +237,6 @@ function ocs_lifecycle_transition_form( $form, &$form_state, $scheme_nid, $trans
     else if ( isset( $form_state['triggering_element']) && $form_state['triggering_element']['#name'] == 'add_more') {
     	$form_state['num_actions'] ++;
     }
-    dpm( $form_state['num_actions'], 'num_actions');
     
     $actions = new OcsAction;
 //     dpm( $actions->select_options(), 'select options');
@@ -277,7 +276,7 @@ function ocs_lifecycle_transition_form( $form, &$form_state, $scheme_nid, $trans
 
         $form['action_list'][$i]['param_'.$i] = array(
             '#type' => 'fieldset',
-            '#attributes' => array( 'class' => array( 'inner-box-2 border')),
+            '#attributes' => array( 'class' => array( 'inner-box-2')),
             '#prefix' => '<div id="ocs_lifecycle_actions_' . $i . '_div">',
             '#suffix' => '</div>',
         );
@@ -378,7 +377,7 @@ function ocs_lifecycle_transition_form_validate( $form, &$form_state)
             form_set_error( 'to_state', t('Invalid state : same as "from state"'));
         }
 
-		// from, to state°¡ ÀÌ¹Ì Á¸ÀçÇÏ¸é ¿¡·¯
+		// from, to stateï¿½ï¿½ ï¿½Ì¹ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï¸ï¿½ ï¿½ï¿½ï¿½ï¿½
 		$scheme_nid = $form['#scheme_nid'];
 
 		$query = new EntityFieldQuery();
