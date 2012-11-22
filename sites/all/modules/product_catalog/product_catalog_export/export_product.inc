@@ -221,7 +221,9 @@ function _product_for_export($nid=NULL){
        
         $product['nonusage'] = $nonUsage;
 
-        $product['usage'] = array();
+		$product['usage'] = array();
+
+		$product['rating_rules'] = rating_rules_export_by_content_type('rating_rule_export_product' ,  $products[$i]->nid);
 
 		$productNids[] = $attribute['product_id'];
 		$retDataTmp[] = $product;        

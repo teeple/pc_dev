@@ -59,6 +59,30 @@ function rating_rules_export_by_content_type_loaded($export_list, $nid=NULL, $va
 
     return $jsonData;
 }
+
+function rating_rules_export_by_content_type_and_item_name($type_name, $item_name, $nid=NULL, $vars = array(), &$export_item_cache = array())
+{
+	if(array_key_exists($type_name , $export_item_cache))
+	{
+		$export_list = $export_item_cache[$type_name];
+	}
+	else
+	{
+		$export_list = node_load_multiple(array(), array('type' => $type_name));
+		$export_item_cache[$type_name] = $export_list;
+	}
+
+	$item_list = array();
+	foreach($export_list as $export_item)
+	{
+		if($export_item->title == $item_name)
+		{
+			$item_list[] = $export_item;
+		}
+	}
+	return rating_rules_export_by_content_type_loaded($item_list , $nid, $vars, $export_item_cache);
+}
+
 function rating_rules_export_by_content_type($type_name, $nid=NULL, $vars = array(), &$export_item_cache = array())
 {
 
