@@ -133,9 +133,9 @@ function _create_export_data_by_content_type($node){
     		$temp = $level;
     		$data['what_qos_level'] = $level;
     		break;    		
-       case 'conditionwhatservicetypefactors':
+       case 'conditionwhatusagetypefactors':
     		$data['type'] = $node->type;
-            $serviceTypeTerm = taxonomy_term_load($node->field_ref_service_type['und'][0]['tid']);
+            $serviceTypeTerm = taxonomy_term_load($node->field_ref_usage_type['und'][0]['tid']);
     		$data['what_service_type'] = isset($serviceTypeTerm)? $serviceTypeTerm->name : null;
     		break;  
     	case 'conditionwhaturlgroupfactors':

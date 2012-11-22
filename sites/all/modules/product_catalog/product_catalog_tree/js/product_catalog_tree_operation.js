@@ -439,7 +439,7 @@
         var addLink = '/product_catalog_ajax/nojs/add/';
         
         var ajaxParam = {'root_id': rootId, 'parent_id': parentNodeId, 'child_content_type': param.childContentType
-	        	, 'max_weight': max_weight, 'service_type' : param.serviceType};
+	        	, 'max_weight': max_weight, 'usage_type' : param.usageType};
         
         /*
         switch(parentNode.attr('rel')){
