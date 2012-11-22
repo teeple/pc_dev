@@ -272,13 +272,12 @@ function product_catalog_ajax_add_modal_content($js = NULL, $contentType, $refNo
 				$output[] = ctools_ajax_command_reload();
 				break;
 			case 'actionsetcounter':
-				$defaultTabIndex = $refTreeTid;
-				$output[] = _add_command_after_dismiss_modal($refNodeNid,$refTreeTid,$defaultTabIndex);
-				break;
 			case 'actionsetcounteronbonus':
 				$defaultTabIndex = $refTreeTid;
+				$refTreeTid = NULL;
 				$output[] = _add_command_after_dismiss_modal($refNodeNid,$refTreeTid,$defaultTabIndex);
 				break;
+			
 			default : //for tree
 				$output[] = _add_command_after_dismiss_modal($refNodeNid,$refTreeTid);
 				break;
@@ -1064,6 +1063,7 @@ function product_catalog_modal_form_edit_modal_content($js = NULL, $contentType,
 			case 'actionsetcounter':
 			case 'actionsetcounteronbonus':
 				$defaultTabIndex = $refTreeTid;
+				$refTreeTid = NULL;
 				$output[] = _add_command_after_dismiss_modal($refNodeNid,$refTreeTid,$defaultTabIndex);
 				break;
         }
