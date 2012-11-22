@@ -835,13 +835,13 @@ function product_catalog_ajax_add_content($js = NULL) {
 	$parentNid = $parentNid[1];
 	$childContentType = $_POST['child_content_type'];
 	$maxWeight = $_POST['max_weight'];
-	$serviceType = $_POST['service_type'];
+	$usageType = $_POST['usage_type'];
 	
 	$weightStep = 100;
 	$weight = $maxWeight + $weightStep;
 
 	switch ($childContentType){
-        case 'conditionwhatservicetypefactors':        	 
+        case 'conditionwhatusagetypefactors':        	 
 			$child = new StdClass();
     		$child->uid = $user->uid;
     		$child->type = $childContentType;
@@ -849,15 +849,15 @@ function product_catalog_ajax_add_content($js = NULL) {
     		$child->field_parent_node = array('und' => array(0 => array('nid' => $parentNid)));
     		$child->field_weight = array('und' => array(0 => array('value' => $weight)));
 
-            $serviceTypeTerm = taxonomy_get_term_by_name($serviceType, 'service_type');
-            $child->field_ref_service_type = array('und' => array(0 => array('tid' => current($serviceTypeTerm)->tid)));
+            $usageTypeTerm = taxonomy_get_term_by_name($usageType, 'usagetype');
+			$child->field_ref_usage_type = array('und' => array(0 => array('tid' => current($usageTypeTerm)->tid)));
             
             node_save($child);
 
             // js tree node add function call
     		$output = array('parent_id' => $parentId, 'child_id' => 'node_'.$child->nid,'title' => $child->title, 'node_type' => $child->type, 'weight' => $weight);
     		print json_encode($output);
-    		exit;    		
+    		exit;
             break;
             
     	case 'conditioncommonor':
