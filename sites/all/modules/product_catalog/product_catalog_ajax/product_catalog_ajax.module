@@ -214,12 +214,14 @@ function product_catalog_ajax_add_modal_content($js = NULL, $contentType, $refNo
 			$node->field_lifecycle_scheme['und'][0]['nid'] = $refNodeNid;
 			break;
 		case 'actionsetcounter':
+		case 'actionsetcounteronbonus':
 			$node->title = 'source_'.$refNodeNid;
 			$node->field_ref_source_action['und'][0]['nid'] = $refNodeNid;
 			
 			$refNode = node_load($refNodeNid);
 			$form_state['product_nid'] = $refNode->field_ref_product['und'][0]['nid'];
 			break;
+		
 		case 'numberspecialfactors':
 			$node->field_ref_numberspecial['und'][0]['nid'] = $refNodeNid;
 			break;
@@ -237,7 +239,6 @@ function product_catalog_ajax_add_modal_content($js = NULL, $contentType, $refNo
 	$output = ctools_modal_form_wrapper($formName, $form_state);
 
 	if (!empty($form_state['executed'])) {
-
 		$output = array();
 		//$output[] = ctools_modal_command_display(t('Node created'),'<div class="modal-message">Node creation successful.</div>');
 		$output[] = ctools_modal_command_dismiss();
@@ -255,11 +256,9 @@ function product_catalog_ajax_add_modal_content($js = NULL, $contentType, $refNo
 				node_save($planNode);
 				$output[] = ctools_ajax_command_reload();
 				break;
-		//	case 'numberspecialfactors':
-		//	dsm('numberspecialfactors2222222222222222222222222222222222222222');
-		//		$output[] = _add_command_after_dismiss_modal($refNodeNid,$refTreeTid);
-			//	$output[] = ctools_ajax_command_reload();
-		//		break;
+			case 'numberspecialfactors':
+				$output[] = _add_command_after_dismiss_modal($refNodeNid,$refTreeTid);
+				break;
 			case 'depositschemefactors':
 			case 'depositschemeadjustment':
 			case 'thresholdschemefactors':
@@ -268,9 +267,12 @@ function product_catalog_ajax_add_modal_content($js = NULL, $contentType, $refNo
 				$output[] = ctools_ajax_command_reload();
 				break;
 			case 'actionsetcounter':
-				$defaultTabIndex = 1;
+			case 'actionsetcounteronbonus':
+				$defaultTabIndex = $refTreeTid;
+				$refTreeTid = NULL;
 				$output[] = _add_command_after_dismiss_modal($refNodeNid,$refTreeTid,$defaultTabIndex);
 				break;
+			
 			default : //for tree
 				$output[] = _add_command_after_dismiss_modal($refNodeNid,$refTreeTid);
 				break;
@@ -833,13 +835,14 @@ function product_catalog_ajax_add_content($js = NULL) {
 	$parentNid = $parentNid[1];
 	$childContentType = $_POST['child_content_type'];
 	$maxWeight = $_POST['max_weight'];
-	$serviceType = $_POST['service_type'];
+	$usageType = $_POST['usage_type'];
+	$nonUsageType = $_POST['nonusage_type'];
 	
 	$weightStep = 100;
 	$weight = $maxWeight + $weightStep;
 
 	switch ($childContentType){
-        case 'conditionwhatservicetypefactors':        	 
+        case 'conditionwhatusagetypefactors':        	 
 			$child = new StdClass();
     		$child->uid = $user->uid;
     		$child->type = $childContentType;
@@ -847,15 +850,33 @@ function product_catalog_ajax_add_content($js = NULL) {
     		$child->field_parent_node = array('und' => array(0 => array('nid' => $parentNid)));
     		$child->field_weight = array('und' => array(0 => array('value' => $weight)));
 
-            $serviceTypeTerm = taxonomy_get_term_by_name($serviceType, 'service_type');
-            $child->field_ref_service_type = array('und' => array(0 => array('tid' => current($serviceTypeTerm)->tid)));
+            $usageTypeTerm = taxonomy_get_term_by_name($usageType, 'usagetype');
+			$child->field_ref_usage_type = array('und' => array(0 => array('tid' => current($usageTypeTerm)->tid)));
             
             node_save($child);
 
             // js tree node add function call
     		$output = array('parent_id' => $parentId, 'child_id' => 'node_'.$child->nid,'title' => $child->title, 'node_type' => $child->type, 'weight' => $weight);
     		print json_encode($output);
-    		exit;    		
+    		exit;
+            break;
+			
+		case 'conditionwhatnonusagetypefactors':        	 
+			$child = new StdClass();
+    		$child->uid = $user->uid;
+    		$child->type = $childContentType;
+    		$child->language = 'und';
+    		$child->field_parent_node = array('und' => array(0 => array('nid' => $parentNid)));
+    		$child->field_weight = array('und' => array(0 => array('value' => $weight)));
+
+            $nonUsageTypeTerm = taxonomy_get_term_by_name($nonUsageType, 'nonusagetype');
+			$child->field_ref_nonusage_type = array('und' => array(0 => array('tid' => current($nonUsageTypeTerm)->tid)));
+			node_save($child);
+
+            // js tree node add function call
+    		$output = array('parent_id' => $parentId, 'child_id' => 'node_'.$child->nid,'title' => $child->title, 'node_type' => $child->type, 'weight' => $weight);
+    		print json_encode($output);
+    		exit;
             break;
             
     	case 'conditioncommonor':
@@ -1033,8 +1054,6 @@ function product_catalog_modal_form_edit_modal_content($js = NULL, $contentType,
         		$output[] = _add_command_after_dismiss_modal($refNodeNid,$refTreeTid);
         		break;
         	case 'numberspecialfactors':
-				$refNodeNid = $node->field_ref_tariffplan['und'][0]['nid'];
-        		$refTreeTid = $node->field_ref_tree_tid['und'][0]['value'];
         		$output[] = _add_command_after_dismiss_modal($refNodeNid,$refTreeTid);
 				break;	
         	case 'domestic_ratinggroup':
@@ -1047,7 +1066,9 @@ function product_catalog_modal_form_edit_modal_content($js = NULL, $contentType,
         		$output[] = ctools_ajax_command_reload();
 				break;
 			case 'actionsetcounter':
-				$defaultTabIndex = 1;
+			case 'actionsetcounteronbonus':
+				$defaultTabIndex = $refTreeTid;
+				$refTreeTid = NULL;
 				$output[] = _add_command_after_dismiss_modal($refNodeNid,$refTreeTid,$defaultTabIndex);
 				break;
         }
@@ -1062,22 +1083,17 @@ function product_catalog_modal_form_edit_modal_content($js = NULL, $contentType,
     exit;
 }
 
-function product_catalog_ajax_delete_from_view($nodeNid){
+function product_catalog_ajax_delete_from_view($nodeNid, $refNodeNid, $defaultTabIndex){
 	ctools_include('node.pages', 'node', '');
 	ctools_include('ajax');
 		
 	$node = node_load($nodeNid);
-	
 	$output = array();
 
 	switch($node->type){
 		case 'rate':
 		case 'numberspecialfactors';
-		//	$refNodeNid = $node->field_ref_tariffplan['und'][0]['nid'];
-		//	$refTreeTid = $node->field_ref_tree_tid['und'][0]['value'];
-		//	dsm('ctools_ajax_command_reload--------------------------------');
-		//	$output[] = _add_command_after_dismiss_modal($refNodeNid,$refTreeTid);
-			$output[] = ctools_ajax_command_reload();
+			$output[] = _add_command_after_dismiss_modal($refNodeNid,$defaultTabIndex);
 			break;
 		case 'domestic_ratinggroup':
 		case 'idd_ratinggroup':
@@ -1088,8 +1104,7 @@ function product_catalog_ajax_delete_from_view($nodeNid){
 			$output[] = ctools_ajax_command_reload();
 			break;
 		case 'actionsetcounter':
-			$refNodeNid = $node->field_ref_source_action['und'][0]['nid'];
-			$defaultTabIndex = 1;
+		case 'actionsetcounteronbonus':
 			$output[] = _add_command_after_dismiss_modal($refNodeNid,NULL,$defaultTabIndex);
 			break;
 	}
