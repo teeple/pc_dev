@@ -155,7 +155,6 @@ function _offering_submit_characteristic_handler(&$form, &$form_state, &$spec_ch
 }
 
 function _node_save_handler_for_add_js_settings_after_node_save(&$form, &$form_state){
-	//dsm('_node_save_handler_for_add_js_settings_after_node_save');
 	$rootNode = node_load($form_state['values']['nid']);
 	add_js_settings_after_node_save($rootNode);
 }
