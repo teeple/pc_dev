@@ -180,6 +180,31 @@ function ocs_admin_get_counter_id_list()
     return $counter_id;
 }
 
+function ocs_admin_get_counter_group_list()
+{
+    $counter_group = &drupal_static( __FUNCTION__, array());
+    if ( empty( $counter_group)) {
+
+        /* get vocabulary name */
+        $vid = taxonomy_vocabulary_machine_name_load( 'countergroup');
+        $query = new EntityFieldQuery;
+        $result = $query->entityCondition('entity_type', 'taxonomy_term')
+            ->propertyCondition('vid', $vid->vid)
+            ->execute();
+
+        $terms = taxonomy_term_load_multiple( array_keys( $result['taxonomy_term']));
+       	foreach( $terms as $term) {
+       		if ( !empty( $term->field_common_code))
+       			$counter_group[$term->field_common_code['und'][0]['value']] = $term->name;
+       	}
+    }
+
+//    dpm( $counter_group, 'counter id list');
+
+    return $counter_group;
+}
+
+
 function ocs_admin_ftp_put( $ip_address, $user, $passwd, $dir, $file)
 {
     $error_msg = NULL;
