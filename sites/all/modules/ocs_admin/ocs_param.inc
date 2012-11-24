@@ -36,6 +36,15 @@ class OcsParam
             ),
     );
 
+    private $date_format = array(
+        'yyyy-MM-dd',
+        'MM/dd/yy',
+    );
+
+    private $time_format = array(
+        'HH:mm:ss',
+    );
+
     function load( $nid)
     {
         $this->nid = $nid;
@@ -109,11 +118,19 @@ class OcsParam
         return OCS_PARAM_TYPE_STRING;
     }
 
+    // return title of the parameter
+    function get_title( $param)
+	{
+		$title = isset( $this->params[$param.':title']) ? $this->params[$param.':title'] : 'Unknown';
+		return $title;
+	}
+	
+    // return Drupal Form
     function get_form( $param, $operator = NULL)
     {
         $type = $this->type( $param);
-        $title = isset( $this->params[$param.':title']) ? $this->params[$param.':title'] : 'Value';
-
+        $title = $this->get_title( $param);
+                
         if ($type == OCS_PARAM_TYPE_ENUM) {
             $options = array_flip( $this->params[$param.':enum']);
             //dpm( $options, 'enum');
@@ -139,6 +156,18 @@ class OcsParam
                 '#title' => $title,
                 '#options' => $options,
             	'#attributes' => array( 'style' => 'width:400px;'),
+            );
+        }
+        else if ( $type == OCS_PARAM_TYPE_DATE) {
+            $form[0] = array(
+                '#type' => 'textfield',
+                '#title' => $title,
+                '#size' => 30,
+            );
+            $form[1] = array(
+                '#type' => 'select',
+                '#title' => 'Date format',
+                '#options' => $date_format,
             );
         }
         else {
@@ -216,3 +245,5 @@ function ocs_lifecycle_decode_action_param_values( $param_list, $toArray=FALSE)
 	if ( $toArray) return $output;
 	return implode( ', ', $output);
 }
+
+
