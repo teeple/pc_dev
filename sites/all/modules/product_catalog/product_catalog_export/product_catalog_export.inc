@@ -45,6 +45,7 @@ function _make_json_string($termName,$refNid=NULL){
             break;
 		case 'LIFECYCLE_SCHEME' :
 			$jsonString = export_lifecycle_scheme();
+			break;
 		case 'MESSAGES':
 			$jsonString = export_message();
 			break;

@@ -68,7 +68,8 @@ function ocs_admin_check_lifecycle_scheme($node, $node_unchanged)
 	foreach ($node_list as $nid) {
 		$item = node_load($nid);
 		// 		dpm( $item, 'state machine');
-		if (array_search($item->field_ocs_from_state['und'][0]['target_id'], $after) === FALSE || array_search($item->field_ocs_to_state['und'][0]['target_id'], $after) === FALSE) {
+		if (array_search($item->field_ocs_from_state['und'][0]['target_id'], $after) === FALSE || 
+			array_search($item->field_ocs_to_state['und'][0]['target_id'], $after) === FALSE) {
 			// 			dpm( $item->nid, 'remove state machine');
 			node_delete($item->nid);
 		}
@@ -188,7 +189,10 @@ function ocs_lifecycle_transition_form($form, &$form_state, $scheme_nid, $transi
 
 		// load related actions
 		$query = new EntityFieldQuery();
-		$result = $query->entityCondition('entity_type', 'node')->entityCondition('bundle', 'ocs_transition_actions')->fieldCondition('field_ocs_transition', 'nid', $transition_nid)->execute();
+		$result = $query->entityCondition('entity_type', 'node')
+			->entityCondition('bundle', 'ocs_transition_actions')
+			->fieldCondition('field_ocs_transition', 'nid', $transition_nid)
+			->execute();
 
 		// action_list = array of nid of actions
 		$action_list = array();
@@ -242,9 +246,9 @@ function ocs_lifecycle_transition_form($form, &$form_state, $scheme_nid, $transi
 		);
 
 		// get selected action
-		$selected_action = ( isset($form_state['values'])) ? $form_state['values']['action_list'][$i]['action_' . $i] : (($form['#op'] == 'edit') ?
-		// // edit mode
-		$action_list[$i - 1]->field_ocs_action['und'][0]['nid'] : 0);
+		$selected_action = ( isset($form_state['values'])) ? $form_state['values']['action_list'][$i]['action_' . $i] : 
+			(($form['#op'] == 'edit') ? 		// // edit mode
+				$action_list[$i - 1]->field_ocs_action['und'][0]['nid'] : 0);
 
 		//        dpm( $selected_action, 'sel');
 		//        dpm( $options, 'options');
@@ -458,13 +462,13 @@ function ocs_lifecycle_transition_form_submit($form, &$form_state)
 					// update the contents otherwise
 					$action->field_ocs_transition['und'][0]['nid'] = $node->nid;
 					$action->field_ocs_action['und'][0]['nid'] = $value['action_' . $key];
-
+					unset($action->field_ocs_action_param_values);
+					
 					// store parameter values
 					if (isset($value['param_' . $key])) {
-						$idx = 0;
 						foreach ($value['param_'.$key] as $p => $v) {
 							// store parameter name and value
-							$action->field_ocs_action_param_values['und'][$idx++] = array('value' => $p . '=' . $v);
+							$action->field_ocs_action_param_values['und'][] = array('value' => $p . '=' . $v);
 						}
 					}
 
@@ -519,10 +523,7 @@ function ocs_lifecycle_transition_delete_form_submit($form, &$form_state)
 function ocs_delete_all_actions_of_transition($transition)
 {
 	$query = new EntityFieldQuery();
-	$result = $query->entityCondition('entity_type', 'node')
-		->entityCondition('bundle', 'ocs_transition_actions')
-		->fieldCondition('field_ocs_transition', 'nid', $transition)
-		->execute();
+	$result = $query->entityCondition('entity_type', 'node')->entityCondition('bundle', 'ocs_transition_actions')->fieldCondition('field_ocs_transition', 'nid', $transition)->execute();
 
 	if (!empty($result)) {
 		foreach (array_keys($result['node']) as $nid) {
