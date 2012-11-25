@@ -3,25 +3,6 @@
 function _array_lifecycle_scheme($nid=NULL){
     $jsonData = array();
 
-/*
-	$query = new EntityFieldQuery();
-
-	$result = $query->entityCondition('entity_type', 'node')
-		->entityCondition('bundle', 'lifecyclescheme')
-		->execute();
-		
-	foreach( array_keys($result['node']) as $nid) {
-		// read lifecycle scheme node
-		$node = node_load( $nid);
-		
-		$scheme = array(
-			'name' => $node->title,
-			'service domain' => $node
- 		);
-	}
- *
- */
-	
     //fetch data    
     $viewResult = views_get_view_result('list_lifecycle_scheme', 'panel_json', $nid);
 	//dpm( $viewResult, 'lifecycle scheme');
@@ -67,14 +48,14 @@ function _array_lifecycle_scheme($nid=NULL){
 				
 				// get transition actions
 				$view_actions = views_get_view_result('ocs_list_transition_actions', 'panel_json', $node->nid);
+				// dpm( $view_actions, 'view actions');
 				
 				$rule['actions'] = array();
 				foreach( $view_actions as $node) {
+					$action = array();
 					$action['action'] = $node->field_field_ocs_action[0]['rendered']['#markup'];
-				
-					foreach( $node->field_field_ocs_action_param_values as $value) {
-						$action['parameters'][] = $value['rendered']['#markup'];
-					}
+					$action['parameters'] = _decode_action_param_values( $node->field_field_ocs_action_param_values);
+
 					$rule['actions'][] = $action;
 				}
 				
@@ -90,6 +71,25 @@ function _array_lifecycle_scheme($nid=NULL){
 
     return $jsonData;   
 }
+
+// string fomat : Array( [0]=>13033:12191=0212355,[1]=>13033:12184=0, 13033:12186=12336)
+function _decode_action_param_values( $param_list)
+{
+	$output = array();
+	foreach( $param_list as $param) {
+		list($k,$v) = explode( '=', $param['rendered']['#markup']);
+		list($action_nid,$param_nid) = explode( ':', $k);
+
+		$action = node_load( $action_nid);
+		$param = node_load( $param_nid);
+		
+		$output[$param->title] = $v;
+	}
+
+	return $output;
+}
+
+
 
 function _json_lifecycle_scheme($nid=NULL) {
     $retArray = array();

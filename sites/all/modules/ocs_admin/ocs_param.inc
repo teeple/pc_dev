@@ -238,7 +238,7 @@ function ocs_lifecycle_decode_action_param_values( $param_list, $toArray=FALSE)
 		
 		$action = node_load( $action_nid);
 		$param = node_load( $param_nid);
-		
+
 		$output[] = $param->title . ' = ' . $v;
 	}
 	
