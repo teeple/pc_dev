@@ -503,22 +503,54 @@ function _remove_existing_children($root_nid, $refTreeTid) {
 	
 }
 
+// 선택된 product의 counter만큼
+// 
 function _create_treenodecounterforvoucherprd($treenodeproductforvoucher, $productNid){
 	global $user;
+
+	error_log('treenodeproductforvoucher nid: '.$treenodeproductforvoucher->nid);
+	error_log('product_nid: '.$productNid);
 	
+	// 해당 상품의 optional counter를 가져옴.
+	// 	
 	$params = array('0' => $productNid);
-	$view = views_get_view('list_treenodecounter');
-	$view->set_display('panel_pane_4');
+	$view = views_get_view('list_prdcounterlist');
+	$view->set_display('panel_pane_2');
 	$view->set_arguments($params);
 	$view->execute();
 	
-	foreach($view->result as $record) {
+	$counterList = array();
+	foreach($view->result as $record){
+		$counterList[] = view_get_field_value_by_label($view, 'qtabConfigNid', $record);
+	}
+	
+	// 해당 상품의 basic counter를 가져옴.
+	// 	
+	$product = node_load($productNid);
+
+    $term_service_domain = taxonomy_term_load($product->field_service_type_of_provider['und'][0]['tid']);
+    $term_bill_type = taxonomy_term_load($product->field_billing_type['und'][0]['tid']);
+
+    $args = array('0' => 'Basic');
+    if(isset($term_service_domain)) { $args[1] = $term_service_domain->name; }
+    $args[2] = ($term_bill_type->name == 'Hybrid') ? $args[2] = 'all': $term_bill_type->name;
+
+    $view = views_get_view('query_list_counter');
+    $view->set_display('panel_pane_1');
+    $view->set_arguments($args);
+    $view->execute();
+    
+    foreach($view->result as $record){
+        $counterList[] = $record->nid;
+	}
+	
+	foreach($counterList as $record) {
 		
 		$treenodecounterforvoucherprd = new StdClass();
 		$treenodecounterforvoucherprd->type = 'treenodecounterforvoucherprd';
 		$treenodecounterforvoucherprd->uid = $user->uid;
 		$treenodecounterforvoucherprd->language = 'und';
-		$treenodecounterforvoucherprd->field_ref_treenodecounter['und'][0]['nid'] = $record->nid;
+		$treenodecounterforvoucherprd->field_ref_counter['und'][0]['nid'] = $record;
 		$treenodecounterforvoucherprd->field_ref_treenodeproductforvouc['und'][0]['nid'] = $treenodeproductforvoucher->nid;
 		node_save($treenodecounterforvoucherprd);
 	}
