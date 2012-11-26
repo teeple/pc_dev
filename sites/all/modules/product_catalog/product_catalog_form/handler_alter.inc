@@ -149,6 +149,10 @@ function edit_pane_callback($form, &$form_state){
 }
 
 function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
+
+// dsm($form, 'form');
+// dsm($form_state, 'form_state');
+
     if(isset($form['#attributes']) && gettype($form['#attributes']['class']) == 'array') {
     	$form['#attributes']['class'][] = 'myform';
     	

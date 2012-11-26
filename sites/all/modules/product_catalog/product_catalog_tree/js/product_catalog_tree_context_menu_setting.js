@@ -1020,6 +1020,7 @@
 			case "conditionwhaturlgroupfactors":
 			case "conditionwhatcustomfactors":
             case "conditionwhatusagetypefactors":
+            case "conditionwhatnonusagetypefactors":
 			case "conditionwhendayfactors":
 			case "conditionwhendurationfactors":
 			case "conditionwhenholidayfactors":
