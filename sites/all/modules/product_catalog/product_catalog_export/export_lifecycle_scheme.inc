@@ -80,8 +80,12 @@ function _decode_action_param_values( $param_list)
 		list($k,$v) = explode( '=', $param['rendered']['#markup']);
 		list($action_nid,$param_nid) = explode( ':', $k);
 
-		$action = node_load( $action_nid);
 		$param = node_load( $param_nid);
+
+		if ( $param->field_ocs_param_type['und'][0]['value'] == OCS_PARAM_TYPE_ENUM) {
+			$options = array_flip( json_decode( $param->field_ocs_param_value['und'][0]['value'], TRUE));
+			$v = $options[$v];
+        }
 		
 		$output[$param->title] = $v;
 	}
