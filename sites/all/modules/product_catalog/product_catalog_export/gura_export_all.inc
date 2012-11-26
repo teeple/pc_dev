@@ -198,6 +198,40 @@ function rating_rules_export_from_view_has_nid_reference($title , $export_item ,
     return $ret;
 }
 
+function array_to_paren_comma_list($arr)
+{
+	if(count($arr) > 1)
+	{
+		return '(' . join(',',$arr) . ')';
+	}
+	else
+	{
+		return join(',',$arr);
+	}
+}
+
+function array_apply(&$arr , $funcname)
+{
+	foreach($arr as $k => $v)
+	{
+		$arr[$k] = $funcname($v);	
+	}
+}
+function dash_date_to_nondash_date_string($d)
+{
+	return substr($d, 0,4). substr($d , 5 , 2) . substr($d , 8 , 2);
+}
+
+function get_drupal_field_values($obj , $field_name)
+{
+	$ret = array();
+	$temp = $obj->$field_name;
+	foreach($temp['und'] as $und)
+	{
+		$ret[] = $und['value'];
+	}
+	return $ret;
+}
 
 function generate_condition_json_by_condition_node($nid)
 {
