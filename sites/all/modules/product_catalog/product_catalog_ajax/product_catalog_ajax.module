@@ -507,9 +507,6 @@ function _remove_existing_children($root_nid, $refTreeTid) {
 // 
 function _create_treenodecounterforvoucherprd($treenodeproductforvoucher, $productNid){
 	global $user;
-
-	error_log('treenodeproductforvoucher nid: '.$treenodeproductforvoucher->nid);
-	error_log('product_nid: '.$productNid);
 	
 	// 해당 상품의 optional counter를 가져옴.
 	// 	
@@ -525,15 +522,21 @@ function _create_treenodecounterforvoucherprd($treenodeproductforvoucher, $produ
 	}
 	
 	// 해당 상품의 basic counter를 가져옴.
-	// 	
 	$product = node_load($productNid);
 
-    $term_service_domain = taxonomy_term_load($product->field_service_type_of_provider['und'][0]['tid']);
-    $term_bill_type = taxonomy_term_load($product->field_billing_type['und'][0]['tid']);
-
-    $args = array('0' => 'Basic');
-    if(isset($term_service_domain)) { $args[1] = $term_service_domain->name; }
-    $args[2] = ($term_bill_type->name == 'Hybrid') ? $args[2] = 'all': $term_bill_type->name;
+	$term_counter_type = taxonomy_get_term_by_name('Basic', 'countertype');
+	$term_service_domain_tid = $product->field_service_type_of_provider['und'][0]['tid'];
+	$term_billing_type_product = taxonomy_term_load($product->field_billing_type['und'][0]['tid']);
+		
+    $args[0] = current($term_counter_type)->tid;
+	$args[1] = $term_service_domain->tid;
+	if($term_bill_type_product->name == 'Hybrid') {
+		$args[2] = 'all';
+			
+	} else {
+		$term_billing_type_counter = taxonomy_get_term_by_name($term_billing_type_product->name, 'billtypecounter');
+		$args[2] = $term_billing_type_counter->tid;
+	}
 
     $view = views_get_view('query_list_counter');
     $view->set_display('panel_pane_1');
@@ -1058,17 +1061,23 @@ function product_catalog_modal_form_edit_modal_content($js = NULL, $contentType,
     ctools_include('ajax');
 	
     $node = node_load($nodeNid);
-
-    if (!$js) {
+	
+	$form_state = array();
+	switch($contentType) {
+		case 'actionsetcounter':
+		case 'actionsetcounteronbonus':
+			$refNode = node_load($refNodeNid);
+			$form_state['product_nid'] = $refNode->field_ref_product['und'][0]['nid'];
+			break;
+	}
+	
+	if (!$js) {
         return drupal_get_form($contentType . '_node_form', $node);
     }
 
-    $form_state = array(
-        'ajax' => TRUE,
-    );
-
-    $form_state['build_info']['args'] = array($node);
-
+    $form_state['ajax'] = TRUE;
+	$form_state['build_info']['args'] = array($node);
+	
     $output = ctools_modal_form_wrapper($contentType . '_node_form', $form_state);
 
     if (!empty($form_state['executed'])) {
