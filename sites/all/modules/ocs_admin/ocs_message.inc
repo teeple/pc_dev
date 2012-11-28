@@ -166,11 +166,13 @@ function ocs_admin_message_form($form, &$form_state, $nid = NULL, $op = NULL)
 			'#suffix' => '</div>',
 		);
 
+		/*
 		$form['valueset'][$i]['valueset' . $i]['markup'] = array(
 			'#type' => 'markup',
 			'#markup' => print_r( $form_state['values'], TRUE) . 
 				' isset:' . $i . ':' . isset($form_state['values']['type:' . $i]) . ':' . $type, 
 		);
+		*/
 		
 		$selected_value = isset($form_state['values']['value:' . $i]) ? $form_state['values']['value:' . $i] : 
 			(($op == 'edit') ? $node->field_ocs_value['und'][$i - 1]['value'] : '');
