@@ -198,6 +198,54 @@ function rating_rules_export_from_view_has_nid_reference($title , $export_item ,
     return $ret;
 }
 
+function array_to_paren_comma_list($arr)
+{
+	if(count($arr) > 1)
+	{
+		return '(' . join(',',$arr) . ')';
+	}
+	else
+	{
+		return join(',',$arr);
+	}
+}
+
+function to_rating_conditions($value , $user_data)
+{
+	return $user_data['factor_name'] . ' '  . $user_data['op'] . ' ' . $value;
+}
+
+function array_apply(&$arr , $funcname, $user_data = NULL)
+{
+	foreach($arr as $k => $v)
+	{
+		$arr[$k] = $funcname($v, $user_data);	
+	}
+}
+function dash_date_to_nondash_date_string($d)
+{
+	return substr($d, 0,4). substr($d , 5 , 2) . substr($d , 8 , 2);
+}
+
+function to_rating_rule_string($value)
+{
+	if(strstr($value, ' ') != FALSE)
+	{
+		return '\'' . $value . '\'';
+	}
+	return $value;
+}
+
+function get_drupal_field_values($obj , $field_name)
+{
+	$ret = array();
+	$temp = $obj->$field_name;
+	foreach($temp['und'] as $und)
+	{
+		$ret[] = $und['value'];
+	}
+	return $ret;
+}
 
 function generate_condition_json_by_condition_node($nid)
 {
@@ -296,11 +344,52 @@ function generate_condition_string_by_condition_node($nid, &$factor_list )
             $factor_list[$type->field_rating_factor_name['und'][0]['value']] = $type;
 			$newfunc = create_function('$data', $type->field_conversion_php_code['und'][0]['value'] );
 			$value = $newfunc($node);
-            if(strstr($value, ' ') != FALSE)
-            {
-                $value = '\'' . $value . '\'';
-            }
-			return $type->field_rating_factor_name['und'][0]['value'] . ' ' . $type->field_rating_factor_op['und'][0]['value'] . ' ' . $value;
+
+			if(is_array($value))
+			{
+				$o = '';
+				$factor_name = $type->field_rating_factor_name['und'][0]['value'];
+				$op = $type->field_rating_factor_op['und'][0]['value'];
+				if($op == '=' || $op == 'starts' || $op == 'ends')
+				{
+					array_apply($value , 'to_rating_rule_string');
+					return $factor_name . ' ' . $op . ' ' . join(',' , $value);
+				}
+				else if($op == 'between')
+				{
+					if(count($value) == 2)
+					{
+						array_apply($value , 'to_rating_rule_string');
+						return $factor_name . ' ' . $op . ' ' . join(',' , $value);
+					}
+					else
+					{
+						/* TODO */
+					}
+				}
+				else
+				{
+					if(count($value)==1)
+					{
+						array_apply($value , 'to_rating_rule_string');
+						return $factor_name . ' ' . $op . ' ' . join(',' , $value);
+					}
+					else
+					{
+						array_apply($value , 'to_rating_conditions', array("factor_name" => $factor_name , "op" => $op) );
+
+						return '(' . join(' or ', $value) . ')' ;
+					}
+				}
+			}
+			else
+			{
+				if(strstr($value, ' ') != FALSE)
+				{
+					$value = '\'' . $value . '\'';
+				}
+				return $type->field_rating_factor_name['und'][0]['value'] . ' ' . $type->field_rating_factor_op['und'][0]['value'] . ' ' . $value;
+			}
 		}
 	}
     dsm($node);

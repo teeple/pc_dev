@@ -1,377 +1,494 @@
 <?php
 
-function ocs_admin_message_form( $form, &$form_state, $nid = NULL, $op = NULL)
+define('OCS_MESSAGE_PARAMETER', 0);
+define('OCS_MESSAGE_COUNTER', 1);
+define('OCS_MESSAGE_COUNTER_GROUP' , 2);
+
+global $param_type_options;
+$param_type_options = array(
+	OCS_PARAM_TYPE_DATE => array(
+		'%c' => '09/16/98 23:48:10',
+		'%Y/%m/%d' => '2012/12/31',
+	),
+	OCS_PARAM_TYPE_TIME => array(
+		'%X' => '23:48:10',
+	),
+);
+
+function ocs_admin_message_form($form, &$form_state, $nid = NULL, $op = NULL)
 {
-    $num_values = isset( $form_state['values']['num_values']) ? $form_state['values']['num_values'] : 0;
+	$num_values = isset($form_state[
+'values']['num_values']) ? $form_state['values']['num_values'] : 0;
 
-    $title = '';
-    $format = '';
-    if ( $op == 'edit') {
-        $node = node_load( $nid);
-//        dpm( $node, 'node');
-        if ( $node) {
-            $title = $node->title;
-            $format = $node->field_ocs_format['und'][0]['value'];
-            if ( ! isset( $form_state['values']['num_values'])) {
-                $num_values = count( $node->field_ocs_value['und']);
-            }
-        }
-    }
+	$title = '';
+	$format = '';
+	if ($op == 'edit') {
+		$node = node_load($nid);
+		//        dpm( $node, 'node');
+		if ($node) {
+			$title = $node->title;
+			$format = $node->field_ocs_format['und'][0]['value'];
+			if (!isset($form_state['values']['num_values'])) {
+				$num_values = count($node->field_ocs_value['und']);
+			}
+		}
+	}
 
-    $form['#nid'] = $nid;
-    $form['#op'] = $op;
-    $form['#attributes'] = array( 'class' => array( 'myform'));
-    
-    $form['title'] = array(
-        '#type' => 'textfield',
-        '#title' => 'Message Name',
-        '#default_value' => $title,
-    );
+	// get parameter list of action '_ocs_noti_param_list'
+	$params = &drupal_static(__FUNCTION__, NULL);
+	if (empty($params)) {
+		// get nid of the action: '_ocs_noti_param_list'
+		$items = entity_load('node', FALSE, array(
+			'type' => 'ocs_actions',
+			'title' => '_ocs_noti_param_list'
+		));
+		if (count($items) != 1) {
 
-    $form['format'] = array(
-        '#type' => 'textarea',
-        '#title' => 'Format',
-        '#default_value' => $format,
-        '#description' => 'Enter message format in "printf" style. Use "%1, %2" to substitue numeric value.'.
-            '<br>Ex) "You have remains %1 won."',
-    );
-    
-    $form['valueset'] = array(
-        '#type' => 'fieldset',
-        '#title' => 'Variables',
-        //'#description' => 'Use following counter names to build the message string. : '. implode( ', ', array_keys( $counters)),
-        '#prefix' => '<div id="message_format_div">',
-        '#suffix' => '</div>',
-    );
+			drupal_set_message(t('Action "_ocs_noti_param_list" is not defined.'), 'error');
+			return $form;
+		}
+		$action_nid = array_keys($items);
+		$params = new OcsParam;
+		$params->load($action_nid[0], NULL);
+	}
 
-    $form['valueset']['num_values'] = array(
-        '#type' => 'select',
-        '#title' => 'Number of Variables',
-        '#options' => array( 0, 1,2,3,4,5,6,7,8,9,10),
-        '#default_value' => $num_values,
-        '#ajax' => array(
-            'callback' => 'ocs_admin_ajax_message_form_callback',
-            'wrapper' => 'message_format_div',
-        ),
-    	'#prefix' => '<div class="inner-box-1">',
-    	'#suffix' => '</div>',
-    );
+	$form['#nid'] = $nid;
+	$form['#op'] = $op;
+	$form['#attributes'] = array('class' => array('myform'));
 
+	$form['title'] = array(
+		'#type' => 'textfield',
+		'#title' => 'Message Name',
+		'#default_value' => $title,
+	);
 
-	// get parameter list of action '_ocs_notification_message'
-	$params = new OcsParam;
-	$params->load( 18485, NULL);
+	$form['format'] = array(
+		'#type' => 'textarea',
+		'#title' => 'Format',
+		'#default_value' => $format,
+		'#description' => 'Enter message format in "printf" style. Use "%1, %2" to substitue numeric value.' . 
+			'<br>Ex) "You have remains %1 won."',
+	);
+
+	$form['valueset'] = array(
+		'#type' => 'fieldset',
+		'#title' => 'Variables',
+		//'#description' => 'Use following counter names to build the message string. :
+		// '. implode( ', ', array_keys( $counters)),
+		'#prefix' => '<div id="message_format_div">',
+		'#suffix' => '</div>',
+	);
+
+	$form['valueset']['num_values'] = array(
+		'#type' => 'select',
+		'#title' => 'Number of Variables',
+		'#options' => array(
+			0,
+			1,
+			2,
+			3,
+			4,
+			5,
+			6,
+			7,
+			8,
+			9,
+			10
+		),
+		'#default_value' => $num_values,
+		'#ajax' => array(
+			'callback' => 'ocs_admin_ajax_message_form_callback',
+			'wrapper' => 'message_format_div',
+		),
+		'#prefix' => '<div class="inner-box-1">',
+		'#suffix' => '</div>',
+	);
 
 	// get parameter list
 	$param_list = $params->keylist();
 	$param_options = array();
-	foreach( $param_list as $key) {
+	foreach ($param_list as $key) {
 		$param_options[$key] = $params->get_title($key);
 	}
-	
+
 	// Notification Message parameters consist of following three types
-    $param_types = array( 'Parameter', 'Counter', 'Counter Group' );
+	$param_types = array(
+		'Parameter',
+		'Counter',
+		'Counter Group'
+	);
 
-    // get option list for each type	
-	$options[0] = $param_options;
-	$options[1] = ocs_admin_get_counter_id_list();
-   	$options[2] = ocs_admin_get_counter_group_list();
-   	$form['#options'] = $options;
-    	
-	for( $i =1; $i<= $num_values; $i++) {
-		$type = isset( $form_state['values']['type:'.$i]) ? $form_state['values']['type:'.$i] : 
-			( ($op == 'edit') ? $node->field_ocs_value_type['und'][$i-1]['value']: 0);
+	// get option list for each type
+	$options[OCS_MESSAGE_PARAMETER] = $param_options;
+	$options[OCS_MESSAGE_COUNTER] = ocs_admin_get_counter_id_list();
+	$options[OCS_MESSAGE_COUNTER_GROUP] = ocs_admin_get_counter_group_list();
+	$form['#options'] = $options;
+
+	for ($i = 1; $i <= $num_values; $i++) {
+		$type = isset($form_state['values']['type:' . $i]) ? $form_state['values']['type:' . $i] : 
+			(($op == 'edit') ? $node->field_ocs_value_type['und'][$i - 1]['value'] : 0);
+
+		$form['valueset'][$i] = array(
+			'#type' => 'fieldset',
+			'#title' => 'Variable %' . $i,
+			'#prefix' => '<div class="inner-box-1">',
+			'#suffix' => '</div>',
+		);
+		
+		// select one from (Parameter, Counter, Counter Group)
+		$form['valueset'][$i]['type:' . $i] = array(
+			'#type' => 'select',
+			'#title' => 'Type',
+			'#options' => $param_types,
+			'#default_value' => $type,
+			'#prefix' => '<div class="inner-box-2">',
+			'#suffix' => '</div>',
+			'#ajax' => array(
+				'callback' => 'ocs_admin_ajax_variable_type_callback',
+				'wrapper' => 'ocs_variable_type_div' . $i,
+			),
+		);
+
+		$form['valueset'][$i]['valueset' . $i] = array(
+			'#type' => 'fieldset',
+			'#prefix' => t('<div id="ocs_variable_type_div@i" class="inner-box-2">', array('@i' => $i)),
+			'#suffix' => '</div>',
+		);
+
+		$selected_value = isset($form_state['values']['value:' . $i]) ? $form_state['values']['value:' . $i] : 
+			(($op == 'edit') ? $node->field_ocs_value['und'][$i - 1]['value'] : '');
 			
-        $form['valueset'][$i] = array(
-            '#type' => 'fieldset',
-        	'#title' => 'Variable %'.$i,
-       		'#prefix' => '<div class="inner-box-1">',
-       		'#suffix' => '</div>',
-        );
-        $form['valueset'][$i]['type:'.$i] = array(
-            '#type' => 'select',
-            '#title' => 'Type',
-        	'#options' => $param_types,
-        	'#default_value' => $type,
-       		'#prefix' => '<div class="inner-box-2">',
-       		'#suffix' => '</div>',
-            '#ajax' => array(
-                'callback' => 'ocs_admin_ajax_variable_type_callback',
-                'wrapper' => 'ocs_variable_type_div'.$i,
-            ),
-        );
+		// select parameter such as (today, act_date) if it's Parameter type
+		// select counter id if it's Counter type
+		// select counter group if it's Counter Group type
+		$form['valueset'][$i]['valueset' . $i]['value:' . $i] = array(
+			'#type' => 'select',
+			'#title' => $param_types[$type],
+			'#options' => $options[$type],
+			'#default_value' => $selected_value,
+		);
 
-        $form['valueset'][$i]['valueset'.$i] = array(            
-        	'#type' => 'fieldset',
-       		'#prefix' => t('<div id="ocs_variable_type_div@i" class="inner-box-2">', array( '@i' => $i)),
-       		'#suffix' => '</div>',
-       	);
-                
-        $form['valueset'][$i]['valueset'.$i]['value'.$i] = array(
-            '#type' => 'select',
-            '#title' => $param_types[$type],
-        	'#options' => $options[$type],
-        	'#default_value' => isset( $form_state['values']['value'.$i]) ? $form_state['values']['value'.$i] : 
-        		( ($op == 'edit') ? $node->field_ocs_value['und'][$i-1]['value'] : ''),
-        );
-        
-        if ( $type == 0) {
-            $form['valueset'][$i]['valueset'.$i]['format:'.$i] = array(
-                '#type' => 'textfield',
-                '#title' => 'Format',
-                '#size' => 30,
-                '#default_value' => isset( $form_state['values']['value'.$i]) ? $form_state['values']['value'.$i] :
-                	(($op == 'edit') ? $node->field_ocs_value_format['und'][$i-1]['value'] : ''),
-            );
-         }
-    }
-    
+		$format_value = isset($form_state['values']['value:' . $i]) ? $form_state['values']['value:' . $i] : 
+			(($op == 'edit') ? $node->field_ocs_value_format['und'][$i - 1]['value'] : '');
 
-    $form['actions'] = array('#type' => 'actions');
+		if ($type == OCS_MESSAGE_PARAMETER) {
+			// add ajax handler to change format if it's parameter such as (today, active_date) 
+			$form['valueset'][$i]['valueset' . $i]['value:' . $i]['#ajax'] = array(
+				'callback' => 'ocs_admin_ajax_variable_type_format_callback',
+				'wrapper' => 'ocs_variable_type_format_div' . $i,
+			);
+			
+			$selected_param_type = $params->type($selected_value);
+			global $param_type_options;
+						
+			if ($selected_param_type == OCS_PARAM_TYPE_DATE || $selected_param_type == OCS_PARAM_TYPE_TIME) {
+				$form['valueset'][$i]['valueset' . $i]['format:' . $i] = array(
+					'#type' => 'select',
+					'#title' => 'Format',
+					'#options' => $param_type_options[$selected_param_type],
+				);
+			}
+			else {
+				$form['valueset'][$i]['valueset' . $i]['format:' . $i] = array(
+					'#type' => 'textfield',
+					'#title' => 'Format',
+					'#size' => 30,
+					'#default_value' => $format_value,
+				);
+			}
+			
+			$form['valueset'][$i]['valueset' . $i]['format:' . $i]['#prefix'] = 
+				t('<div id="ocs_variable_type_format_div@idx">', array( '@idx' => $i));
+			$form['valueset'][$i]['valueset' . $i]['format:' . $i]['#suffix'] = '</div>';
+								
+		}
+		else if ($type == OCS_MESSAGE_COUNTER) {
+			$form['valueset'][$i]['valueset' . $i]['format:' . $i] = array(
+				'#type' => 'select',
+				'#title' => 'Format',
+				'#options' => array(
+					'_value' => 'Value',
+					'_expire' => 'Expire Date'
+				),
+				'#default_value' => $format_value,
+			);
+		}
+	}
 
-    $form['actions']['submit'] = array(
-        '#type' => 'submit',
-        '#value' => t('Save'),
-    );
+	$form['actions'] = array('#type' => 'actions');
 
-    $form['actions']['cancel'] = array(
-        '#type' => 'submit',
-        '#value' => t('Cancel'),
-    );
+	$form['actions']['submit'] = array(
+		'#type' => 'submit',
+		'#value' => t('Save'),
+	);
 
-    return $form;
+	$form['actions']['cancel'] = array(
+		'#type' => 'submit',
+		'#value' => t('Cancel'),
+	);
+
+	return $form;
 }
 
 // ajax handlers
 
-function ocs_admin_ajax_message_form_callback( $form, &$form_state)
+function ocs_admin_ajax_message_form_callback($form, &$form_state)
 {
-    return $form['valueset'];
+	return $form['valueset'];
 }
 
-function ocs_admin_ajax_variable_type_callback( $form, &$form_state)
+function ocs_admin_ajax_variable_type_callback($form, &$form_state)
 {
-    list( $name, $idx) = explode(':', $form_state['triggering_element']['#name']);
-    return $form['valueset'][$idx]['valueset'.$idx];
+	list($name, $idx) = explode(':', $form_state['triggering_element']['#name']);
+	return $form['valueset'][$idx]['valueset' . $idx];
 }
 
-function ocs_admin_message_form_validate( $form, &$form_state)
+function ocs_admin_ajax_variable_type_format_callback( $form, &$form_state)
 {
-    $values = $form_state['values'];
-
-    if ( $values['op'] == 'Save') {
-        foreach( array( 'title', 'format') as $key) {
-            if ( empty( $values[$key])) {
-                form_set_error( $key, $form[$key]['#title']. ' is empty'); 
-            }
-        }
-
-        // check format string
-        $format = str_word_count( $values['format'], 1, '%0123456789');
-        foreach( $format as $fmt) {
-            if ( substr( $fmt, 0, 1) == '%') {
-                // check the variable number
-                if ( substr( $fmt, 1) > $values['num_values']) {
-                    form_set_error( 'format', t( 'Invalid variable "@v" in format string.', array( '@v' => $fmt)));
-                }
-            }
-        }
-    }
+	list($name, $idx) = explode(':', $form_state['triggering_element']['#name']);
+	return $form['valueset'][$idx]['valueset' . $idx]['format:'.$idx];
 }
 
-
-function ocs_admin_message_form_submit( $form, &$form_state)
+function ocs_admin_message_form_validate($form, &$form_state)
 {
-    $values = $form_state['values'];
-	dpm( $values, 'submit values');
-	// dpm( $form, 'form');
-	
-    if ( $values['op'] == 'Save') {   
-        if ( $form['#op'] == 'edit') {
-            $node = node_load( $form['#nid']);
-        }
-        else {
-            $node = ocs_admin_get_new_node( 'ocs_messages');
-        }
-        $node->title = $values['title'];
-        $node->field_ocs_format['und'][0]['value'] = $values['format'];
+	$values = $form_state['values'];
 
-        $options = $form['#options'];
-        // flatten $options[1], counter
-        $options[1] = array_get_value( $options[1]);
-        dpm( $options, 'options'); 
-        
-        for( $i=1; $i <= $values['num_values']; $i++) {
-            $type = $values['type:'.$i];
-            $node->field_ocs_value_type['und'][$i-1]['value'] = $type; 
-            $node->field_ocs_value['und'][$i-1]['value'] = $options[$type][$values['value'.$i]];
-            $node->field_ocs_value_format['und'][$i-1]['value'] = isset($values['format:'.$i]) ? $values['format:'.$i] : '';
-        }
-
-        // get parameter list from message format
-        if ( preg_match_all( '/%\d+/', $values['format'], $matches) > 0) {
-          	foreach( $matches[0] as $pivot) {
-          		
-          		// pivot : %1 => idx:1
-           		$idx = substr( $pivot, 1);
-           		$type = $values['type:'.$idx];
-           		if ( $type == 0) {	// parameter
-           			$value_str = $node->field_ocs_value['und'][$idx-1]['value'] .
-           				( isset( $values['format:'.$idx]) ? ','.$values['format:'.$idx] : '');
-           		}
-				else if ( $type == 1) {	// counter
-           			$value_str = 'counter_value,'. $values['value'.$idx];
-           		}
-				else {	// counter group
-					$value_str = 'counter_group,' . $values['value'.$idx];
-				}
-           		$node->field_ocs_value_str['und'][$idx-1]['value'] = $value_str;
+	if ($values['op'] == 'Save') {
+		foreach (array( 'title', 'format') as $key) {
+			if (empty($values[$key])) {
+				form_set_error($key, $form[$key]['#title'] . ' is empty');
 			}
-        }
-        
-        node_save( $node);
-    }
+		}
+
+		// check format string
+		$format = str_word_count($values['format'], 1, '%0123456789');
+		foreach ($format as $fmt) {
+			if (substr($fmt, 0, 1) == '%') {
+				// check the variable number
+				if (substr($fmt, 1) > $values['num_values']) {
+					form_set_error('format', t('Invalid variable "@v" in format string.', array('@v' => $fmt)));
+				}
+			}
+		}
+	}
 }
 
-
-function ocs_admin_message_delete_confirm( $form, &$form_state, $nid)
+function ocs_admin_message_form_submit($form, &$form_state)
 {
-	$name = isset( $_GET['name']) ? strip_tags($_GET['name']) : 'Message ID:' . $nid;
+	$values = $form_state['values'];
+	//dpm($values, 'submit values');
+	// dpm( $form, 'form');
 
-    $form['#nid'] = $nid;
-    $form['#name'] = $name;
+	if ($values['op'] == 'Save') {
+		if ($form['#op'] == 'edit') {
+			$node = node_load($form['#nid']);
+		}
+		else {
+			$node = ocs_admin_get_new_node('ocs_messages');
+		}
+		$node->title = $values['title'];
+		$node->field_ocs_format['und'][0]['value'] = $values['format'];
 
-    $caption = t('<strong>Warning:</strong> Message <em>"@name"</em> will be deleted.',
-        array( '@name' => $name));
+		$options = $form['#options'];
+		// flatten $options[1], counter
+		$options[1] = array_get_value($options[1]);
+		//dpm($options, 'options');
 
-//    $caption .= '<p>'. t('This action cannot be undone.') . '</p>';
+		for ($i = 1; $i <= $values['num_values']; $i++) {
+			$type = $values['type:' . $i];
+			$node->field_ocs_value_type['und'][$i - 1]['value'] = $type;
+			$node->field_ocs_value_str['und'][$i - 1]['value'] = $options[$type][$values['value:' . $i]];
+			$node->field_ocs_value['und'][$i - 1]['value'] = $values['value:' . $i];
+			$node->field_ocs_value_format['und'][$i - 1]['value'] = isset($values['format:' . $i]) ? $values['format:' . $i] : '';
+		}
 
-    return confirm_form( $form, t('Are you sure to delete the message ?'),
-        'config/ocs/message/', $caption, t('Delete'));
+		// get parameter list from message format
+		if (preg_match_all('/%\d+/', $values['format'], $matches) > 0) {
+			foreach ($matches[0] as $pivot) {
+
+				// pivot : %1 => idx:1
+				$idx = substr($pivot, 1);
+				$type = $values['type:' . $idx];
+				if ($type == OCS_MESSAGE_PARAMETER) {// parameter
+					$value_str = $options[$type][$values['value:' . $idx]] . 
+						(isset($values['format:' . $idx]) ? ',' . $values['format:' . $idx] : '');
+				}
+				else if ($type == OCS_MESSAGE_COUNTER) {// counter
+					$value_str = 'counter' . $values['format:'.$idx] . ',' . $values['value:' . $idx];
+				}
+				else {// counter group
+					$value_str = 'counter_group,' . $values['value:' . $idx];
+				}
+				$node->field_ocs_export_format['und'][$idx - 1]['value'] = $value_str;
+			}
+		}
+
+		node_save($node);
+	}
 }
 
-function ocs_admin_message_delete_confirm_submit( $form, &$form_state)
+function ocs_admin_message_delete_confirm($form, &$form_state, $nid)
 {
-    $nid = $form['#nid'];
-    node_delete( $nid);
+	$name = isset($_GET['name']) ? strip_tags($_GET['name']) : 'Message ID:' . $nid;
 
-    drupal_set_message( t('The message "@name" has been delete.', array( '@name' => $form['#name'])));
+	$form['#nid'] = $nid;
+	$form['#name'] = $name;
+
+	$caption = t('<strong>Warning:</strong> Message <em>"@name"</em> will be deleted.<br>', array('@name' => $name));
+
+	// check if the message belongs to any message group
+	$query = new EntityFieldQuery();
+	$result = $query->entityCondition('entity_type', 'node')
+		->entityCondition('bundle', 'ocs_message_group')
+		->fieldCondition('field_ocs_message_list', 'nid', $nid)->execute();
+
+	if (count($result) > 0) {
+		$caption .= 'The Message is also included in the following message group.<br><br><ul>';
+		foreach (array_keys( $result['node']) as $msg_nid) {
+			$msg = node_load($msg_nid);
+			$caption .= '<li>' . $msg->title . '</li>';
+		}
+		$caption .= '</ul>';
+	}
+
+	//    $caption .= '<p>'. t('This action cannot be undone.') . '</p>';
+
+	return confirm_form($form, t('Are you sure to delete the message ?'), 'config/ocs/message/', $caption, t('Delete'));
+}
+
+function ocs_admin_message_delete_confirm_submit($form, &$form_state)
+{
+	$nid = $form['#nid'];
+	node_delete($nid);
+
+	drupal_set_message(t('The message "@name" has been delete.', array('@name' => $form['#name'])));
 }
 
 // add or edit message group
-function ocs_admin_message_group_form( $form, &$form_state, $nid = NULL, $op = NULL)
+function ocs_admin_message_group_form($form, &$form_state, $nid = NULL, $op = NULL)
 {
-    $num_values = isset( $form_state['values']['num_values']) ? $form_state['values']['num_values'] : 0;
+	$num_values = isset($form_state['values']['num_values']) ? $form_state['values']['num_values'] : 0;
 
-    $title = '';
-    $format = '';
-    if ( $op == 'edit') {
-        $node = node_load( $nid);
-//        dpm( $node, 'node');
-        if ( $node) {
-            $title = $node->title;
-            if ( ! isset( $form_state['values']['num_values'])) {
-                $num_values = count( $node->field_ocs_message_list['und']);
-            }
-        }
-    }
+	$title = '';
+	$format = '';
+	if ($op == 'edit') {
+		$node = node_load($nid);
+		//        dpm( $node, 'node');
+		if ($node) {
+			$title = $node->title;
+			if (!isset($form_state['values']['num_values'])) {
+				$num_values = count($node->field_ocs_message_list['und']);
+			}
+		}
+	}
 
-    $form['#nid'] = $nid;
-    $form['#op'] = $op;
-    $form['#attributes'] = array( 'class' => array( 'myform'));
-    
-    $form['title'] = array(
-        '#type' => 'textfield',
-        '#title' => 'Message Name',
-        '#default_value' => $title,
-        '#required' => TRUE,
-    );
+	$form['#nid'] = $nid;
+	$form['#op'] = $op;
+	$form['#attributes'] = array('class' => array('myform'));
 
-    
-    $form['valueset'] = array(
-        '#type' => 'fieldset',
-        '#title' => 'Messages',
-        '#prefix' => '<div id="message_format_div">',
-        '#suffix' => '</div>',
-    );
+	$form['title'] = array(
+		'#type' => 'textfield',
+		'#title' => 'Message Name',
+		'#default_value' => $title,
+		'#required' => TRUE,
+	);
 
-    $form['valueset']['num_values'] = array(
-        '#type' => 'select',
-        '#title' => 'Number of Messages',
-        '#options' => array( 0, 1,2,3,4,5,6,7,8,9,10),
-        '#default_value' => $num_values,
-        '#ajax' => array(
-            'callback' => 'ocs_admin_ajax_message_form_callback',
-            'wrapper' => 'message_format_div',
-        ),
-    	'#prefix' => '<div class="inner-box-1">',
-    	'#suffix' => '</div>',
-    );
+	$form['valueset'] = array(
+		'#type' => 'fieldset',
+		'#title' => 'Messages',
+		'#prefix' => '<div id="message_format_div">',
+		'#suffix' => '</div>',
+	);
+
+	$form['valueset']['num_values'] = array(
+		'#type' => 'select',
+		'#title' => 'Number of Messages',
+		'#options' => array(
+			0,
+			1,
+			2,
+			3,
+			4,
+			5,
+			6,
+			7,
+			8,
+			9,
+			10
+		),
+		'#default_value' => $num_values,
+		'#ajax' => array(
+			'callback' => 'ocs_admin_ajax_message_form_callback',
+			'wrapper' => 'message_format_div',
+		),
+		'#prefix' => '<div class="inner-box-1">',
+		'#suffix' => '</div>',
+	);
 
 	$options = ocs_admin_get_message_list();
-            
-    for( $i =1; $i<= $num_values; $i++) {
-        $form['valueset']['value'.$i] = array(
-            '#type' => 'select',
-            '#title' => 'Message %'.$i,
-        	'#options' => $options,
-        	'#default_value' => isset( $node) ? $node->field_ocs_message_list['und'][$i-1]['nid'] : '',
-       		'#prefix' => '<div class="inner-box-1">',
-       		'#suffix' => '</div>',
-       		'#attributes' => array( 'style' => 'width:400px;'),
-        );
-    }
-    
 
-    $form['actions'] = array('#type' => 'actions');
+	for ($i = 1; $i <= $num_values; $i++) {
+		$form['valueset']['value' . $i] = array(
+			'#type' => 'select',
+			'#title' => 'Message %' . $i,
+			'#options' => $options,
+			'#default_value' => isset($node) ? $node->field_ocs_message_list['und'][$i - 1]['nid'] : '',
+			'#prefix' => '<div class="inner-box-1">',
+			'#suffix' => '</div>',
+			'#attributes' => array('style' => 'width:400px;'),
+		);
+	}
 
-    $form['actions']['submit'] = array(
-        '#type' => 'submit',
-        '#value' => t('Save'),
-    );
+	$form['actions'] = array('#type' => 'actions');
 
-    $form['actions']['cancel'] = array(
-        '#type' => 'submit',
-        '#value' => t('Cancel'),
-    );
+	$form['actions']['submit'] = array(
+		'#type' => 'submit',
+		'#value' => t('Save'),
+	);
 
-    return $form;
+	$form['actions']['cancel'] = array(
+		'#type' => 'submit',
+		'#value' => t('Cancel'),
+	);
+
+	return $form;
 }
 
 // return the format string of a message group
-function ocs_message_group_format( $nid)
+function ocs_message_group_format($nid)
 {
-	$node = node_load( $nid);
-	
+	$node = node_load($nid);
+
 	$format = array();
-	if ( isset( $node->field_ocs_message_list['und'])) {
-		foreach( $node->field_ocs_message_list['und'] as $msg) {
-			$msg_node = node_load( $msg['nid']);
-			$format[] = $msg_node->field_ocs_format['und'][0]['value'];
+	if (isset($node->field_ocs_message_list['und'])) {
+		foreach ($node->field_ocs_message_list['und'] as $msg) {
+			$msg_node = node_load($msg['nid']);
+			if (!empty($msg_node))
+				$format[] = $msg_node->field_ocs_format['und'][0]['value'];
 		}
 	}
-	return implode( ' ', $format);
+	return implode(' ', $format);
 }
 
-function ocs_admin_message_group_form_submit( $form, &$form_state)
+function ocs_admin_message_group_form_submit($form, &$form_state)
 {
-    $values = $form_state['values'];
-	dpm( $values, 'submit values');
-	dpm( $form, 'form');
-	
-    if ( $values['op'] == 'Save') {   
-        if ( $form['#op'] == 'edit') {
-            $node = node_load( $form['#nid']);
-        }
-		 else {
-            $node = ocs_admin_get_new_node( 'ocs_message_group');
-        }
-        $node->title = $values['title'];
- 
-        for( $i=1; $i <= $values['num_values']; $i++) {
-            $node->field_ocs_message_list['und'][$i-1]['nid'] = $values['value'.$i];  
-        }
-        
-        node_save( $node);
+	$values = $form_state['values'];
+	dpm($values, 'submit values');
+	dpm($form, 'form');
+
+	if ($values['op'] == 'Save') {
+		if ($form['#op'] == 'edit') {
+			$node = node_load($form['#nid']);
+		}
+		else {
+			$node = ocs_admin_get_new_node('ocs_message_group');
+		}
+		$node->title = $values['title'];
+
+		for ($i = 1; $i <= $values['num_values']; $i++) {
+			$node->field_ocs_message_list['und'][$i - 1]['nid'] = $values['value' . $i];
+		}
+
+		node_save($node);
 	}
 }
