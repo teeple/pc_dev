@@ -327,14 +327,14 @@ function _create_default_basic_counters($productNid, $refTreeTid) {
 	$term_bill_type_product = taxonomy_term_load($product->field_billing_type['und'][0]['tid']);
 	
 	$args = array();
-	$args[0] = $term_counter_type->tid;
+	$args[0] = current($term_counter_type)->tid;
 	$args[1] = $term_service_domain_tid;
 	
 	if($term_bill_type_product->name == 'Hybrid') {
 		$args[2] = 'all';
 	} else {
 		$term_bill_type_counter = taxonomy_get_term_by_name($term_bill_type_product->name, 'billtypecounter');
-		$args[2] = $term_bill_type_counter->tid;
+		$args[2] = current($term_bill_type_counter)->tid;
 	}
 
     // 예) POSTPAID/MOBILE로 view검색
@@ -615,7 +615,7 @@ function _unittransfer_submit_handler($form,$form_state){
 	
 	$term_counter_type = taxonomy_get_term_by_name('Basic', 'countertype');
 	$args = array();
-	$args[0] = $term_counter_type->tid;
+	$args[0] = current($term_counter_type)->tid;
 	
 	//main basic counter
 	$view = views_get_view('query_list_counter');
