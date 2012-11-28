@@ -239,8 +239,6 @@ function _create_default_prdcounterlist($product, $voca_name) {
 	
 	$term = taxonomy_get_term_by_name('Counter', $voca_name);
 	
-	dsm($term, 'term');
-	
 	$node->field_ref_tree_tid['und'][0]['value'] = current($term)->tid;
 	$node->field_ref_product['und'][0]['nid'] = $product->nid;
 	node_save($node);
@@ -286,7 +284,8 @@ function _create_default_prdattributes($product, $voca_name) {
 	global $user;
 	
 	$defaultContentTypes = array(
-		'prdattributebenefit' => 'Benefits', 
+		'prdattributebenefit' => 'Benefits',
+		'prdattributefeaturecode' => 'Service Feature Code'
 	);
 	
 	$service_domain = taxonomy_term_load($product->field_service_type_of_provider['und'][0]['tid']);
@@ -312,7 +311,8 @@ function _create_default_prdattributes($product, $voca_name) {
 		
 		$node->field_ref_tree_tid['und'][0]['value'] = current($treeTerm)->tid;
 		node_save($node);
-	}		
+	}
+	
 }
 
 // 상품 생성시 global에 있는 basic counter는 
@@ -322,19 +322,23 @@ function _create_default_basic_counters($productNid, $refTreeTid) {
     
     $product = node_load($productNid);
 
-    $term_service_domain = taxonomy_term_load($product->field_service_type_of_provider['und'][0]['tid']);
-    $term_bill_type = taxonomy_term_load($product->field_billing_type['und'][0]['tid']);
+    $term_service_domain_tid = $product->field_service_type_of_provider['und'][0]['tid'];
+    $term_counter_type = taxonomy_get_term_by_name('Basic', 'countertype');
+	$term_bill_type_product = taxonomy_term_load($product->field_billing_type['und'][0]['tid']);
+	
+	$args = array();
+	$args[0] = $term_counter_type->tid;
+	$args[1] = $term_service_domain_tid;
+	
+	if($term_bill_type_product->name == 'Hybrid') {
+		$args[2] = 'all';
+	} else {
+		$term_bill_type_counter = taxonomy_get_term_by_name($term_bill_type_product->name, 'billtypecounter');
+		$args[2] = $term_bill_type_counter->tid;
+	}
 
-    $args = array('0' => 'Basic');
-    if(isset($term_service_domain)) { $args[1] = $term_service_domain->name; }
-    $args[2] = ($term_bill_type->name == 'Hybrid') ? $args[2] = 'all': $term_bill_type->name;
-
-    // 동일 domain에 있는 것만 우선적으로 넣어줌.
-    // 다른 domain 것을 넣을 수는 없도록 ? 
-    // 
-    
     // 예) POSTPAID/MOBILE로 view검색
-    $view = views_get_view('list_counter');
+    $view = views_get_view('query_list_counter');
     $view->set_display('panel_pane_1');
     $view->set_arguments($args);
     $view->execute();
@@ -609,11 +613,16 @@ function _unittransfer_submit_handler($form,$form_state){
 	node_save($node);
 	$unitTransferNode->field_ref_unittransferfactors['und'][] = array('nid' => $node->nid);
 	
+	$term_counter_type = taxonomy_get_term_by_name('Basic', 'countertype');
+	$args = array();
+	$args[0] = $term_counter_type->tid;
+	
 	//main basic counter
-	$view = views_get_view('list_counter');
+	$view = views_get_view('query_list_counter');
 	$view->set_display('panel_pane_1');
-	$view->set_arguments(array('0' => 'Basic'));
-	$view->execute();	
+	$view->set_arguments($args);
+	$view->execute();
+	
 	foreach($view->result as $item){
 		$weight += $weightStep;
 		$node = new StdClass();
