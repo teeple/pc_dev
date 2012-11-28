@@ -8,16 +8,16 @@ function ocs_admin_import_title( $arg)
 
 function ocs_admin_import_ocs_config( $form, &$form_state, $local_file = NULL)
 {
-    $form['desc'] = array(
-        '#type' => 'markup',
-        '#markup' => '<p>Import configuration file from OCS.</p>',
-    );
+    // $form['desc'] = array(
+        // '#type' => 'markup',
+        // '#markup' => '<p>Import configuration file from OCS.</p>',
+    // );
 
     $form['ocs'] = array(
         '#type' => 'fieldset',
         '#title' => 'OCS(Online Charging System) Access Info',
         '#description' => t('OCS Access Settings. It can be changed ').
-            l( t('here'), '/admin/config/system/ocs_admin'),
+            l( t('here'), 'admin/config/system/ocs_admin'),
         '#collapsible' => TRUE, 
         '#collapsed' => FALSE,
     );
@@ -54,7 +54,8 @@ function ocs_admin_import_ocs_config( $form, &$form_state, $local_file = NULL)
 
     $form['actions'] = array('#type' => 'actions');
 
-    $file_content = _ftp_get( $ip_address, $user_account, $user_password, $config_directory, $event_file);
+    //$file_content = _ftp_get( $ip_address, $user_account, $user_password, $config_directory, $event_file);
+    $file_content = _scp_get( $ip_address, $user_account, $user_password, $config_directory, $event_file);
     if ( $file_content) {
         $form['file_content'] = array(
             '#type' => 'textarea',
@@ -111,7 +112,44 @@ function _ftp_get( $ip_address, $user, $passwd, $dir, $file)
         }
     }
     else {
-        $error_msg = t('Fail to connect the server %addr',
+        $error_msg = t('Fail to connect the server "%addr"',
+            array( '%addr' => $ip_address));
+    }
+
+    if ( $error_msg) {
+        drupal_set_message( $error_msg, 'warning');
+        return FALSE;
+    }
+
+    return $file_content;
+}
+
+function _scp_get( $ip_address, $user, $passwd, $dir, $file)
+{
+    // get file from the OCS server by ftp
+    $file_content = NULL;
+    $error_msg = NULL;
+    $scp = ssh2_connect( $ip_address);
+    if ( $scp) {
+    	$result = ssh2_auth_password( $scp, $user, $passwd);
+        if ( $result ) {
+        	$local_file = '/tmp/'.$file;
+        	
+            if ( ssh2_scp_recv( $scp, $dir.$file, $local_file)) {
+           		$file_content = file_get_contents( $local_file);
+			}
+            else {
+                $error_msg = t('Fail to get file %file from the server %addr.',
+                        array( '%file' => $dir . $file, '%addr' => $ip_address));
+            }
+        }
+        else {
+            $error_msg = t('Fail to login to the server %addr with user id "%user".',
+                array( '%addr' => $ip_address, '%user' => $user));
+        }
+    }
+    else {
+        $error_msg = t('Fail to connect the server "%addr"',
             array( '%addr' => $ip_address));
     }
 
@@ -232,6 +270,7 @@ function update_ocs_param( $param)
         $node->title = $param_name;
         $node->field_ocs_client_id['und'][0]['tid'] = ocs_admin_get_term_id( 'ocs_client_id', 'OCS');
         $node->field_description['und'][0]['value'] = $param_info['param_desc'];
+        $node->field_ocs_param_type_name['und'][0]['value'] = $param_info['param_type'];
         $node->field_ocs_param_type['und'][0]['value'] = ocs_admin_get_param_type( $param_info['param_type']);
         $node->field_ocs_param_value['und'][0]['value'] = isset( $param_info['param_value']) ? json_encode( $param_info['param_value']) : '';
         $node->field_rule_property['und'][0]['value'] = isset( $param_info['rule']) ? $param_info['rule'] : '';
@@ -302,6 +341,8 @@ function update_ocs_events( $events)
         $node->field_property['und'][0]['value'] = isset( $event_info['property']) ? json_encode($event_info['property']) : '';
 
         unset( $node->field_ocs_param_ref['und']);
+        /* bhtak 12/11/24
+        Event has not parameters anymore
         foreach( $event_info['param'] as $name) {
             $items = entity_load( 'node', FALSE, array( 'type' => 'ocs_param', 'title' => $name));
 
@@ -309,6 +350,7 @@ function update_ocs_events( $events)
                 $node->field_ocs_param_ref['und'][] = array( 'target_id' => $item->nid);
             }
         }
+        */
 
         node_save( $node);
     }
