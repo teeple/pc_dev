@@ -54,8 +54,8 @@ function ocs_admin_import_ocs_config( $form, &$form_state, $local_file = NULL)
 
     $form['actions'] = array('#type' => 'actions');
 
-    //$file_content = _ftp_get( $ip_address, $user_account, $user_password, $config_directory, $event_file);
-    $file_content = _scp_get( $ip_address, $user_account, $user_password, $config_directory, $event_file);
+    $file_content = _ftp_get( $ip_address, $user_account, $user_password, $config_directory, $event_file);
+    //$file_content = _scp_get( $ip_address, $user_account, $user_password, $config_directory, $event_file);
     if ( $file_content) {
         $form['file_content'] = array(
             '#type' => 'textarea',
