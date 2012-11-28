@@ -192,3 +192,17 @@ function build_navigation_bar()
 	
 	print '<div class="top-bar"><ul id="nav">' . $output . '</ul></div>';
 }
+
+function _get_nids_from_views($view_name, $display, $args) {
+	$retArray = array();
+	
+	$view = views_get_view($view_name);
+	$view->set_display($display);
+	$view->set_arguments($args);
+	$view->execute();
+	
+	foreach($view->result as $record) {
+		$retArray[] = $record->nid;
+	}
+	return $retArray;
+}
