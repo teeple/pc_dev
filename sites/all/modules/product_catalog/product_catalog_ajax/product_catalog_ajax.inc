@@ -322,6 +322,7 @@ function get_viewdata($viewName, $nid, $additionalParam=NULL) {
 }
 
 function add_js_settings_after_node_save($node){
+	
 	//dsm('add_js_settings_after_node_save');
 	if(isset($node->field_parent_node['und'][0]['nid'])){
 		$parentId = 'node_'.$node->field_parent_node['und'][0]['nid'];
@@ -343,23 +344,53 @@ function add_js_settings_after_node_save($node){
 		$js_data = get_children_stored_procedure($node->nid,$parentId);
 	}
 	
+	$js_data['content_type'] = $node->type;
+	
 	$js_settings = array(
 		'success' => TRUE,
 		'data' => $js_data,
 		'parent_nid' => $parentId
 	);
+	
 	drupal_add_js(array('product_catalog_ajax_result' => $js_settings), 'setting');
 }
 
+function add_js_settings_after_node_update($node) {
+	dsm($node, 'node');
+	
+	if($node->type == 'prdcounterlist') {
+	    $rootNode = node_load($node->field_ref_product['und'][0]['nid']);
+    	$children = _load_tree_item_mixed_with_node_and_term($rootNode);
+		$js_data = json_encode($children);
+	} else {
+		$js_data = array(
+			'nid' => 'node_'.$node->nid,
+			'title' => $node->title
+	   	);
+	}
+	
+	$js_settings = array(
+		'success' => TRUE,
+		'data' => $js_data,
+		'parent_nid' => $parentId
+	);
+	
+	dsm($js_settings, 'js_settings in node update');
+	drupal_add_js(array('product_catalog_ajax_result' => $js_settings), 'setting');
+}
+/*
 function add_js_settings_after_node_update($node){
 	$js_settings = array(
 		'success' => TRUE,
 		'data' => array('nid' => 'node_'.$node->nid
 					   ,'title' => $node->title
+					   ,'content_type' => $node->type
 					   )
 	);
 	drupal_add_js(array('product_catalog_ajax_result' => $js_settings), 'setting');	
 }
+ 
+ */
 
 function load_required_js_css_before_ajax_load(){
 	
