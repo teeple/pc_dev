@@ -392,9 +392,15 @@ function load_required_js_css_before_ajax_load(){
     
     //field conditional state    
     drupal_add_js(base_path().'misc/states.js');
+	
     $fieldConditionalStatePath = drupal_get_path('module','field_conditional_state');
     drupal_add_js($fieldConditionalStatePath.'/js/conditional_state.js');
-    //drupal_add_js($fieldConditionalStatePath.'/js/required_conditional_state.js');       
+	
+	$arrangeFieldsPath = drupal_get_path('module', 'arrange_fields');
+	drupal_add_js($arrangeFieldsPath.'/js/arrange_fields.js');
+	drupal_add_css($arrangeFieldsPath.'/css/arrange_fields.css');
+	
+	//drupal_add_js($fieldConditionalStatePath.'/js/required_conditional_state.js');       
     //drupal_add_js($fieldConditionalStatePath.'/js/settings_form.js');
     
 	//jstree
