@@ -150,8 +150,8 @@ function edit_pane_callback($form, &$form_state){
 
 function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 
-// dsm($form, 'form');
-// dsm($form_state, 'form_state');
+//dsm($form, 'form');
+//dsm($form_state, 'form_state');
 
     if(isset($form['#attributes']) && gettype($form['#attributes']['class']) == 'array') {
     	$form['#attributes']['class'][] = 'myform';
@@ -808,9 +808,9 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 		case 'actionsetcounter_node_form':
 			$form['field_ref_source_action']['#type'] = 'hidden';
 			
-			$counterList = _get_available_counter_list($form_state['product_nid']);
+			$existingCounterList = _get_existing_counter_list($form_state['product_nid']);
 			
-			$form['field_ref_counter']['und']['#options'] = $counterList;
+			$form['field_ref_counter']['und']['#options'] = $existingCounterList;
 			
 			_unset_menu_items($form,$form_id);
           	break;
@@ -818,9 +818,9 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 		case 'actionsetcounteronbonus_node_form':
 			$form['field_ref_source_action']['#type'] = 'hidden';
 			
-			$counterList = _get_available_counter_list($form_state['product_nid']);
+			$existingCounterList = _get_existing_counter_list($form_state['product_nid']);
 			
-			$form['field_ref_counter']['und']['#options'] = $counterList;
+			$form['field_ref_counter']['und']['#options'] = $existingCounterList;
 			
 			_unset_menu_items($form,$form_id);
           	break;
@@ -938,27 +938,67 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 	return $form;
 }
 
+function _get_existing_counter_list($productNid) {
+	
+	$view = views_get_view('list_prdcounterlist');
+	$view->set_display('panel_pane_2');
+	$view->set_arguments(array('0'=> $productNid));
+	$view->execute();
+	
+	$counterList = array();
+	foreach($view->result as $record) {
+		$existingCounterList[]= view_get_field_value_by_label($view, 'qtabConfigNid', $record);
+	}
+	
+	$args[0] = join('+', $existingCounterList);
+	
+	$view = views_get_view('query_list_counter');
+	$view->set_display('panel_pane_3');
+	$view->set_arguments($args);
+	$view->execute();
+	
+	$retArray = array();
+	foreach($view->result as $record) {
+		$unit = view_get_field_value_by_label($view, 'Unit Type', $record);
+		$retArray[$record->nid]= $record->node_title . '(Unit: '.$unit.')';
+	}
+	
+	return $retArray;
+}
+
 function _get_available_counter_list($productNid, $existingCounterNids) {
 	$product = node_load($productNid);
 	
-	$tids = array();
-	$tids[0] = $product->field_service_type_of_provider['und'][0]['tid'];
-	$tids[1] = $product->field_billing_type['und'][0]['tid'];
+	$term_billing_type_product = taxonomy_term_load($product->field_billing_type['und'][0]['tid']);
+	$term_product_type = taxonomy_term_load($product->field_product_type['und'][0]['tid']);
 	
-	$terms = taxonomy_term_load_multiple($tids);
-	$counterTypeName = 'Optional';
-	$serviceDomainName = $terms[0]->name;
+	$args = array();
 	
-	if($terms[1]->name == 'Hybrid') {
-		$counterBillingTypeName = 'Prepaid+Postpaid';
+	// counter type (Basic ,Optional or all)
+	if ($term_product_type->name == 'Main') {
+		$temp = taxonomy_get_term_by_name('Optional', 'countertype');
+		$args[0] = current($temp)->tid;
 	} else {
-		$counterBillingTypeName = $terms[1]->name;
+		$args[0] = 'all';
 	}
-		
-	$view = views_get_view('list_counter');
+	
+	// service domain
+	$args[1] = $product->field_service_type_of_provider['und'][0]['tid'];
+	 
+	if($term_billing_type_product == 'Hybrid') {
+		$args[2] = 'all';
+	} else {
+		$term_billing_type_counter = taxonomy_get_term_by_name($term_billing_type_product->name, 'billtypecounter');
+		$args[2] = current($term_billing_type_counter)->tid;
+	}
+	
+	if(isset($existingCounterNids)) {
+		$args[3] = join('+', $existingCounterNids);
+	}
+	
+	$view = views_get_view('query_list_counter');
 	$view->set_display('panel_pane_1');
-	// $view->set_arguments(array('0' => $counterTypeName, '1' => $serviceDomainName, '2' => $counterBillingTypeName, '3' => join('+', $existingCounterNids)));
-	$view->set_arguments(array('0' => $counterTypeName, '1' => $serviceDomainName, '2' => $counterBillingTypeName));
+	$view->set_arguments($args);
 	$view->execute();
 	
 	$retArray = array();

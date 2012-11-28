@@ -1,0 +1,13 @@
+product_catalog_ajax/product_catalog_ajax.module:        'vid' => 'list_counter',
+product_catalog_ajax/product_catalog_ajax.module:    $view = views_get_view('query_list_counter');
+product_catalog_export/export_counter.inc:	$view = views_get_view('list_counter');
+product_catalog_export/export_counter.inc:	$viewResult = views_get_view_result('list_counter', 'panel_pane_5', $nid);
+product_catalog_form/handler_alter.inc:		case 'views_form_list_counter_for_vouchercardtype_panel_pane_2':
+product_catalog_form/handler_alter.inc:        	$viewResult = views_get_view_result('list_counter_for_vouchercardtype','panel_pane_3');
+product_catalog_form/handler_alter.inc:            $view = views_get_view('list_counter');
+product_catalog_form/handler_alter.inc:	$view = views_get_view('query_list_counter');
+product_catalog_form/handler_submit.inc:    $view = views_get_view('list_counter');
+product_catalog_form/handler_submit.inc:	//$viewResult = views_get_view_result('list_counter', 'panel_pane_1',array('0'=>'MAIN','1'=>'BASIC'));
+product_catalog_form/handler_submit.inc:	$view = views_get_view('list_counter');
+product_catalog_form/handler_submit.inc:	$allCounters = views_get_view_result('list_counter_for_vouchercardtype', 'panel_pane_1');
+product_catalog_rules/product_catalog_rules.module:		$viewResult = views_get_view_result('list_counter', 'panel_pane_1', 'MAIN');

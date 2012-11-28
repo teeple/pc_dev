@@ -214,6 +214,20 @@ $databases = array (
       'prefix' => '',
     ),
   ),
+    'fce' =>
+        array (
+        'default' =>
+        array (
+            'database' => 'fce_rating_rule',
+            'username' => 'root',
+            'password' => 'root.123',
+            'host' => '192.168.1.103',
+            'port' => '',
+            'driver' => 'mysql',
+            'prefix' => '',
+        ),
+    ),
+
     'ocsdb' =>
         array (
         'default' =>

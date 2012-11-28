@@ -14,7 +14,10 @@
 				var context = output[1];
 				$('#tree_content_div').replaceWith(context);
 				//console.log(output);
-				$.extend(Drupal.settings.views.ajaxViews,settings.views.ajaxViews);
+				if( typeof settings.views != 'undefined') {
+					$.extend(Drupal.settings.views.ajaxViews,settings.views.ajaxViews);
+				}
+				
 				$.fn.behaviorAttach(settings);
 				
 				$('#tree_content_div').append('<div style="clear:both;"><input id="vbo-select-button" type="button" value="Select"/></div>');
