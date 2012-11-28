@@ -975,8 +975,9 @@ function _get_available_counter_list($productNid, $existingCounterNids) {
 	$args = array();
 	
 	// counter type (Basic ,Optional or all)
-	if ($term_product_type == 'Main') {
-		$args[0] = taxonomy_term_load('Optional', 'countertype');
+	if ($term_product_type->name == 'Main') {
+		$temp = taxonomy_get_term_by_name('Optional', 'countertype');
+		$args[0] = current($temp)->tid;
 	} else {
 		$args[0] = 'all';
 	}
@@ -988,7 +989,7 @@ function _get_available_counter_list($productNid, $existingCounterNids) {
 		$args[2] = 'all';
 	} else {
 		$term_billing_type_counter = taxonomy_get_term_by_name($term_billing_type_product->name, 'billtypecounter');
-		$args[2] = $term_billing_type_counter->tid;
+		$args[2] = current($term_billing_type_counter)->tid;
 	}
 	
 	if(isset($existingCounterNids)) {
