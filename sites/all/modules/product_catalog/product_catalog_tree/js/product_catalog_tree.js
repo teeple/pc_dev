@@ -6,9 +6,11 @@
 			//console.log(context);
 			//console.log(settings);
 
-			//bind ajax success callback. changes tree node's title			
+			//bind ajax success callback. changes tree node's title		
+				
 			$(document).ajaxSuccess(function(event,request, settings) {
-				//console.log(event,request, settings);
+	
+				console.log(event,request, settings);
 				if(settings.url === '/system/ajax'){
 					if(settings.extraData._triggering_element_name === 'op' && 
 							settings.extraData._triggering_element_value === 'Save'){
@@ -29,8 +31,26 @@
 							}
 						}						
 					}
-				}else{
 					
+				// counter list를 보여주고자 할 때에는 변경된 부분을 보이기 위해 전체 tree를 refresh한다.
+				} else if (settings.url == '/product_catalog_ajax/counter_list') {
+					
+					var responseText = request.responseText;
+					var responseJson = $.parseJSON(responseText);
+					var treeData = $.parseJSON(responseJson[0].settings.product_catalog_ajax_result.data[0]);
+					
+					console.log('treeData');
+					console.log(treeData);
+					
+					$.jstree._focused()._get_settings().json_data.data = treeData;
+					$.jstree._focused().refresh(-1);
+
+					$(".product_catalog_tree").unmask();
+
+					$(".product_catalog_tree").jstree('open_all');
+					// window.location = "http://localhost:8888/product_designer/Mobile/Main/edit/19085";
+				} else {
+
 				}
 			});
 			
@@ -73,7 +93,8 @@
 						dataType : 'json',
 						success : function(data) {
 							//console.log('haha');
-							//console.log(data);
+							console.log('loadTree');
+							console.log(data);
 							$.jstree._focused()._get_settings().json_data.data = data;
 							$.jstree._focused().refresh(-1);
 
