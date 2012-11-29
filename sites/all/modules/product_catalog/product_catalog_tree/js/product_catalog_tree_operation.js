@@ -356,8 +356,6 @@
 	
 	$.fn.reloadTreeContentDivFromDrupal = function(nodeId, tabIndex){
 		var node = $('#' + nodeId);
-		console.log('reloadTreeContentDivFromDrupal');
-		console.log(nodeId);
 		
 		$.fn.reloadTreeContentDiv(node, tabIndex);
 	};
