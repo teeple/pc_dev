@@ -7,13 +7,34 @@ define('OCS_MESSAGE_COUNTER_GROUP' , 2);
 global $param_type_options;
 $param_type_options = array(
 	OCS_PARAM_TYPE_DATE => array(
-		'%c' => '09/16/98 23:48:10',
 		'%Y/%m/%d' => '2012/12/31',
+		'%m/%d/%Y' => '12/31/2013',
+		'%Y/%b/%d' => '2012/Dec/31',
+		'%b/%d/%Y' => 'Dec/31/2013',
+		'%d/%b/%Y' => '31/Dec/2013',
+		'%m/%d' => '12/31',
+		'%b/%d' => 'Dec/31',
+		'%d/%b' => '31/Dec',
+		'%Y/%m/%d %a' => '2012/12/31 Wed',
+		'%m/%d/%Y %a' => '12/31/2013 Wed',
+		'%Y/%b/%d %a' => '2012/Dec/31 Wed',
+		'%b/%d/%Y %a' => 'Dec/31/2013 Wed',
+		'%d/%b/%Y %a' => '31/Dec/2013 Wed',
 	),
 	OCS_PARAM_TYPE_TIME => array(
 		'%X' => '23:48:10',
+		'%H:%M' => '23:48',
+		'%p %I:%M' => 'pm 11:48',
 	),
 );
+
+global $param_types;
+$param_types = array(
+	OCS_MESSAGE_PARAMETER => 'Parameter',
+	OCS_MESSAGE_COUNTER => 'Counter',
+	OCS_MESSAGE_COUNTER_GROUP => 'Counter Group'
+);
+
 
 function ocs_admin_message_form($form, &$form_state, $nid = NULL, $op = NULL)
 {
@@ -82,19 +103,7 @@ function ocs_admin_message_form($form, &$form_state, $nid = NULL, $op = NULL)
 	$form['valueset']['num_values'] = array(
 		'#type' => 'select',
 		'#title' => 'Number of Variables',
-		'#options' => array(
-			0,
-			1,
-			2,
-			3,
-			4,
-			5,
-			6,
-			7,
-			8,
-			9,
-			10
-		),
+		'#options' => array(0,1,2,3,4,5,6,7,8,9,10),
 		'#default_value' => $num_values,
 		'#ajax' => array(
 			'callback' => 'ocs_admin_ajax_message_form_callback',
@@ -112,11 +121,7 @@ function ocs_admin_message_form($form, &$form_state, $nid = NULL, $op = NULL)
 	}
 
 	// Notification Message parameters consist of following three types
-	$param_types = array(
-		'Parameter',
-		'Counter',
-		'Counter Group'
-	);
+	global $param_types;
 
 	// get option list for each type
 	$options[OCS_MESSAGE_PARAMETER] = $param_options;
@@ -143,9 +148,15 @@ function ocs_admin_message_form($form, &$form_state, $nid = NULL, $op = NULL)
 			'#default_value' => $type,
 			'#prefix' => '<div class="inner-box-2">',
 			'#suffix' => '</div>',
+			// 해당 variable type만 바꾸는 경우 예기치 않은 에러가 발생해서, $form['valueset'] 전체를 바꾸는 것으로 변경함
+			// '#ajax' => array(
+				// 'callback' => 'ocs_admin_ajax_variable_type_callback',
+				// 'wrapper' => 'ocs_variable_type_div' . $i,
+			// ),
+			
 			'#ajax' => array(
-				'callback' => 'ocs_admin_ajax_variable_type_callback',
-				'wrapper' => 'ocs_variable_type_div' . $i,
+				'callback' => 'ocs_admin_ajax_message_form_callback',
+				'wrapper' => 'message_format_div',
 			),
 		);
 
@@ -155,6 +166,14 @@ function ocs_admin_message_form($form, &$form_state, $nid = NULL, $op = NULL)
 			'#suffix' => '</div>',
 		);
 
+		/*
+		$form['valueset'][$i]['valueset' . $i]['markup'] = array(
+			'#type' => 'markup',
+			'#markup' => print_r( $form_state['values'], TRUE) . 
+				' isset:' . $i . ':' . isset($form_state['values']['type:' . $i]) . ':' . $type, 
+		);
+		*/
+		
 		$selected_value = isset($form_state['values']['value:' . $i]) ? $form_state['values']['value:' . $i] : 
 			(($op == 'edit') ? $node->field_ocs_value['und'][$i - 1]['value'] : '');
 			
@@ -168,7 +187,7 @@ function ocs_admin_message_form($form, &$form_state, $nid = NULL, $op = NULL)
 			'#default_value' => $selected_value,
 		);
 
-		$format_value = isset($form_state['values']['value:' . $i]) ? $form_state['values']['value:' . $i] : 
+		$format_value = isset($form_state['values']['format:' . $i]) ? $form_state['values']['format:' . $i] : 
 			(($op == 'edit') ? $node->field_ocs_value_format['und'][$i - 1]['value'] : '');
 
 		if ($type == OCS_MESSAGE_PARAMETER) {
@@ -239,6 +258,7 @@ function ocs_admin_ajax_message_form_callback($form, &$form_state)
 
 function ocs_admin_ajax_variable_type_callback($form, &$form_state)
 {
+	//return $form_state['triggering_element']['#name'] . print_r( $form_state['values'], TRUE);
 	list($name, $idx) = explode(':', $form_state['triggering_element']['#name']);
 	return $form['valueset'][$idx]['valueset' . $idx];
 }
