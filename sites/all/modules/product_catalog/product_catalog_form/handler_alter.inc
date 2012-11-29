@@ -63,7 +63,8 @@ function _add_ajax_submit_callback($form_id,&$form){
         case 'treenodecounter_node_form':
         case 'prdattributeprefixrangeallowed_node_form':
         case 'prdattributeprefixrangenotallowe_node_form':
-        case 'unittransferfactors_node_form':
+		case 'prdnonusagerollover_node_form':
+	    case 'unittransferfactors_node_form':
         case 'conditionwhatusagetypefactors_node_form':
         case 'conditionwhatnonusagetypefactors_node_form':
         case 'prdattributefeaturecode_node_form':
@@ -270,13 +271,41 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
         case 'prdattributeprefixrangenotallowe_node_form':
         case 'prdattributefeaturecode_node_form':
 			
-// dsm($form, 'form');
+//dsm($form, 'form');
 // dsm($form_state, 'form_state');
 			$form['field_parent_node']['#type'] = 'hidden';
             unset($form['field_ref_product']);
             unset($form['field_ref_tree_tid']);
-            _unset_menu_items($form,$form_id);
+			unset($form['field_weight']);
+			_unset_menu_items($form,$form_id);
             break;
+        
+		case 'prdnonusagerollover_node_form':
+			
+			unset($form['actions']);
+			$form['field_parent_node']['#type'] = 'hidden';
+			
+			$form['multiselect_custom'] = array('#type'=> 'markup',
+				'#markup' => "<input type='button' id='multiselect_custom_button' value='Save'></input>",
+				'#weight' => 100,
+			);
+			
+			unset($form['field_ref_product']);
+            unset($form['field_ref_tree_tid']);
+            _unset_menu_items($form,$form_id);
+			
+			$counterList = _get_available_counter_list($form_state['product_nid']);
+			
+			$options = $counterList;
+			$element = $form['field_counter_list']['und'];
+			
+			$items = $form_state['build_info']['args'][0]->field_counter_list['und'];
+			
+			$widget = _multiselect_build_widget_code($options, $items, $element, NULL);
+			$form['field_counter_list']['und']['#prefix'] = $widget['prefix_pre'] . $widget['prefix_options'] . $widget['prefix_post'];
+			$form['field_counter_list']['und']['#options'] = $counterList;
+			
+			break;
         
 		case 'prdcounterlist_node_form':
 			
