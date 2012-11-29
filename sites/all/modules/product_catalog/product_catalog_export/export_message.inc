@@ -11,7 +11,7 @@ function _array_message($nid = NULL)
 	foreach ($viewResult as $record) {
 		$msg = array();
 		$msg['message_id'] = isset($record->nid) ? $record->nid : null;
-		$format = $record->field_field_ocs_format[0]['rendered']['#markup'];
+		$format = $record->field_field_ocs_format[0]['raw']['value'];
 		$msg['name'] = $record->node_title;
 		$msg['format'] = preg_replace('/%\d+/', '%s', $format);
 		foreach( $record->field_field_ocs_export_format as $export) {
@@ -34,9 +34,9 @@ function _array_message($nid = NULL)
 			$msg[$record->nid]['composed_messages'][] = $msg_nid;
 		}
 	}
-
-	$jsonData['group'] = array_values($msg);
-
+	
+	$jsonData['messages'] = array_merge( $jsonData['messages'], array_values( $msg));
+	
 	return $jsonData;
 }
 
@@ -46,10 +46,28 @@ function _json_message($nid = NULL)
 	$jsonData = _array_message($nid);
 	$retArray = $jsonData;
 
-	if ($nid != NULL) {
-		return json_encode($jsonData);
-	}
-	else {
-		return json_encode($retArray);
-	}
+	$enc = ($nid != NULL) ? json_encode($jsonData) : json_encode($retArray);
+		
+	// write to file
+    try{
+        $fd = fopen( '/tmp/export_message.json', 'w');
+        fwrite( $fd, $enc);
+        fclose( $fd);
+// 
+        // $ip_address = variable_get('ocs_admin_ip_address', 'Administrative Warning');
+        // $user = variable_get('ocs_admin_user_account', 'Administrative Warning');
+        // $passwd = variable_get('ocs_admin_user_password', 'Administrative Warning');
+        // $dir = variable_get('ocs_admin_config_directory', 'Administrative Warning');
+// 
+        // // ftp to host
+        // if ( ocs_admin_ftp_put( $ip_address, $user, $passwd, $dir, $file_name)) {
+            // drupal_set_message( t('Configuration file "@name" is uploaded to the OCS',
+                // array( '@name' => $file_name)));
+        // }
+    }
+    catch( Exception $e) {
+        drupal_set_message( $e->getMessage(), 'warning');       
+    }
+    
+    return $enc;
 }
