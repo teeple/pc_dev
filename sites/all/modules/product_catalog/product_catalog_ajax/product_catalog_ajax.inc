@@ -356,7 +356,7 @@ function add_js_settings_after_node_save($node){
 }
 
 function add_js_settings_after_node_update($node) {
-	dsm($node, 'node');
+	//dsm($node, 'node');
 	
 	if($node->type == 'prdcounterlist') {
 	    $rootNode = node_load($node->field_ref_product['und'][0]['nid']);
@@ -375,7 +375,7 @@ function add_js_settings_after_node_update($node) {
 		'parent_nid' => $parentId
 	);
 	
-	dsm($js_settings, 'js_settings in node update');
+//	dsm($js_settings, 'js_settings in node update');
 	drupal_add_js(array('product_catalog_ajax_result' => $js_settings), 'setting');
 }
 /*
@@ -484,9 +484,6 @@ function _get_max_weight_in_children($parentNid){
 }
 
 function _add_command_after_dismiss_modal($refNodeNid,$refTreeTid,$defaultTabIndex){
-	
-	dsm($refNodeNid, 'refNodeNid');
-	dsm($refTreeTid, 'refTreeTid');
 	
 	if(empty($refTreeTid)) {
 		$nodeId = 'node_'.$refNodeNid;	
