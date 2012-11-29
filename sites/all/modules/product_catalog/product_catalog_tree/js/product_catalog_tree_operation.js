@@ -136,7 +136,8 @@
             case 'actionpriceallowanceonetime':
             case 'actionpricechargerecurring':
             case 'actionpriceallowancerecurring':
-            	needToLoadEdit = false;
+            case 'prdnonusagerollover':
+               	needToLoadEdit = false;
                 break;
             case 'usage':
             case 'conditioncommonor':
