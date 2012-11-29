@@ -181,6 +181,7 @@
             	case 'sms_tariffplan_domestic':
             	case 'sms_tariffplan_international': 
             	case 'mobile_counter':
+            	case 'mobile_nonusage_rollover':
             		needToLoadEdit = false;
             		needToBindCustomSubmitButtons = true;
             		break;
