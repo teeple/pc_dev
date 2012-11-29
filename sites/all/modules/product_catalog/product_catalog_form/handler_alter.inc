@@ -284,9 +284,10 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			
 			unset($form['actions']);
 			$form['field_parent_node']['#type'] = 'hidden';
+			$form['field_weight']['#type'] = 'hidden';
 			
 			$form['multiselect_custom'] = array('#type'=> 'markup',
-				'#markup' => "<input type='button' id='multiselect_custom_button' value='Save'></input>",
+				'#markup' => "<input type='button' id='multiselect_custom_button_rollover' value='Save'></input>",
 				'#weight' => 100,
 			);
 			
@@ -358,7 +359,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             
             _unset_menu_items($form,$form_id);
 
-            // 湲곗〈 counter list瑜�媛���ㅻ� 遺�������怨� ��� �����counter以����� next counter瑜�李얘린 ���
+			/*
             $siblings = array();
             unset($form['field_rollover_next_counter']['und']['#options']);
             $form['field_rollover_next_counter']['und']['#options'] = array('_none' => '- None -');
@@ -369,6 +370,8 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
                     $form['field_rollover_next_counter']['und']['#options'][$item->nid] =  $item->node_field_data_field_ref_counter_title;
                 }
             }
+			*/
+			
             break;
         case 'conditionwhatcalltype_node_form':
         	unset($form['field_parent_node']);

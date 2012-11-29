@@ -39,9 +39,6 @@
 					var responseJson = $.parseJSON(responseText);
 					var treeData = $.parseJSON(responseJson[0].settings.product_catalog_ajax_result.data[0]);
 					
-					console.log('treeData');
-					console.log(treeData);
-					
 					$.jstree._focused()._get_settings().json_data.data = treeData;
 					$.jstree._focused().refresh(-1);
 
@@ -49,8 +46,14 @@
 
 					$(".product_catalog_tree").jstree('open_all');
 					// window.location = "http://localhost:8888/product_designer/Mobile/Main/edit/19085";
+				} else if (settings.url == '/product_catalog_ajax/set_rollover') {
+					
+					var responseText = request.responseText;
+					
+					$('#term_1643_19273').trigger('click');
+					
 				} else {
-
+					
 				}
 			});
 			
