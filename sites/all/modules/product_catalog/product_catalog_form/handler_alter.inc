@@ -283,19 +283,30 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 		case 'prdnonusagerollover_node_form':
 			
 			unset($form['actions']);
-			$form['field_parent_node']['#type'] = 'hidden';
-			$form['field_weight']['#type'] = 'hidden';
+			unset($form['field_parent_node']);
+			unset($form['field_weight']);
+			unset($form['field_ref_product']);
+			unset($fomr['field_ref_tree_tid']);
+			_unset_menu_items($form,$form_id);
 			
+			// in case of update
+			// if(isset($form['nid']['#value'])) {
+				$form['custom'] = array('#type'=> 'markup',
+					'#markup' => "<input type='hidden' id='rollover_nid' value='".$form['nid']['#value']."'></input>
+								<input type='hidden' id='rollover_weight' value='".$form['#node']->field_weight['und'][0]['value']."'></input>
+								<input type='hidden' id='rollover_ref_product' value='".$form['#node']->field_ref_product['und'][0]['nid']."'></input>
+								<input type='hidden' id='rollover_ref_tree_nid' value='".$form['#node']->field_ref_tree_nid['und'][0]['nid']."'></input>
+								<input type='hidden' id='rollover_ref_tree_tid' value='".$form['#node']->field_ref_tree_tid['und'][0]['value']."'></input>",
+					'#weight' => 200,
+				);
+			// }
 			$form['multiselect_custom'] = array('#type'=> 'markup',
 				'#markup' => "<input type='button' id='multiselect_custom_button_rollover' value='Save'></input>",
 				'#weight' => 100,
 			);
 			
-			unset($form['field_ref_product']);
-            unset($form['field_ref_tree_tid']);
-            _unset_menu_items($form,$form_id);
-			
-			$counterList = _get_available_counter_list($form_state['product_nid']);
+			$productNid = $form['#node']->field_ref_product['und'][0]['nid'];
+			$counterList = _get_available_counter_list($productNid);
 			
 			$options = $counterList;
 			$element = $form['field_counter_list']['und'];

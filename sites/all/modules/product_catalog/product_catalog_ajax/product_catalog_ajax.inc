@@ -723,6 +723,8 @@ function _create_node_form_in_tree($contentType,$parentType,$parentNid,$weight,$
 					'field_ref_tree_nid' => array('und' => array(0 => array('nid' => $refTreeNid))),
 			);
 			
+			dsm($node, 'node_in_tree');
+			
 			if($parentType == 'node'){
 				$node->field_parent_node['und'][0]['nid'] = $parentNid;
 			}else{
