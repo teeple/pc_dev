@@ -20,6 +20,8 @@
 	  });
       
       $('#multiselect_custom_button').click($.fn.eventSetSelectAll);
+      
+      $('#multiselect_custom_button_rollover').click($.fn.eventSetSelectAllRollover);
             
       // Moves selection if it's double clicked to selected box
       $('select.multiselect_unsel:not(.multiselect-unsel-processed)', context).addClass('multiselect-unsel-processed').dblclick(function() {
@@ -78,6 +80,38 @@ jQuery.fn.eventSetSelectAll = function() {
 		},
 	});
 }
+
+jQuery.fn.eventSetSelectAllRollover = function() {
+	
+	jQuery(".product_catalog_tree").mask("Selecting...");
+	
+	var multiselect_sel = jQuery('select.multiselect_sel');
+	multiselect_sel.selectAll();
+	
+	var selectCounters = new Array();
+	multiselect_sel.each(function(index, element) {
+		for (var x=0;x<element.options.length;x++) {
+			selectCounters[x] = element.options[x].value;
+		};
+	});
+	
+	var rootId = jQuery('.product_catalog_tree > ul:first > li:first').attr('id');
+	var rolloverSetUrl = '/product_catalog_ajax/set_rollover';
+	
+	var rolloverFlag = jQuery('#edit-field-used-for-rollover-und input[checked=checked]').attr('value');
+	var happens = jQuery('#edit-field-happens option[selected=selected]').attr('value');
+	var addOrReplace = jQuery('#edit-field-rollover-add-or-replace-und input[checked=checked]').attr('value');
+	
+	jQuery.ajax({
+		url : rolloverSetUrl,
+		type: "post",
+		data: {'product_nid': rootId, 'counter_nids':selectCounters, 'rollover_flag': rolloverFlag, 'happens': happens, 'add_or_replace': addOrReplace},
+		success : function(data) {
+			jQuery(".product_catalog_tree").unmask();
+		},
+	});
+}
+
 
 // Selects all the items in the select box it is called from.
 // usage $('nameofselectbox').selectAll();
