@@ -48,9 +48,8 @@
 					// window.location = "http://localhost:8888/product_designer/Mobile/Main/edit/19085";
 				} else if (settings.url == '/product_catalog_ajax/set_rollover') {
 					
-					var responseText = request.responseText;
-					
-					$('#term_1643_19273').trigger('click');
+					var selectTreeTid = $.parseJSON(request.responseText)[0].settings.product_catalog_ajax_result.data.select_tree_id;
+					$('#'+selectTreeTid).trigger('click');
 					
 				} else {
 					
