@@ -11,6 +11,7 @@
 			$(document).ajaxSuccess(function(event,request, settings) {
 	
 				console.log(event,request, settings);
+				
 				if(settings.url === '/system/ajax'){
 					if(settings.extraData._triggering_element_name === 'op' && 
 							settings.extraData._triggering_element_value === 'Save'){
@@ -48,8 +49,18 @@
 					// window.location = "http://localhost:8888/product_designer/Mobile/Main/edit/19085";
 				} else if (settings.url == '/product_catalog_ajax/set_rollover') {
 					
-					var selectTreeTid = $.parseJSON(request.responseText)[0].settings.product_catalog_ajax_result.data.select_tree_id;
-					$('#'+selectTreeTid).trigger('click');
+					// var selectTreeTid = $.parseJSON(request.responseText)[0].settings.product_catalog_ajax_result.data.select_tree_id;
+					var parentId = $.parseJSON(request.responseText)[0].settings.product_catalog_ajax_result.data.parentId;
+					var childId = $.parseJSON(request.responseText)[0].settings.product_catalog_ajax_result.data.childId;
+					var title = $.parseJSON(request.responseText)[0].settings.product_catalog_ajax_result.data.title;
+					var contentType = $.parseJSON(request.responseText)[0].settings.product_catalog_ajax_result.data.contentType;
+					var weight = $.parseJSON(request.responseText)[0].settings.product_catalog_ajax_result.data.weight;
+					
+					if(childId) {
+						$('#'+childId).trigger('click');	
+					} else {
+						$.fn.addTreeItemCallback(parentId, childId, title,contentType, weight);
+					}
 					
 				} else {
 					
