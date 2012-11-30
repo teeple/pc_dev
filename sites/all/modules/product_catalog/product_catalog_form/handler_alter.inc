@@ -63,7 +63,8 @@ function _add_ajax_submit_callback($form_id,&$form){
         case 'treenodecounter_node_form':
         case 'prdattributeprefixrangeallowed_node_form':
         case 'prdattributeprefixrangenotallowe_node_form':
-        case 'unittransferfactors_node_form':
+		case 'prdnonusagerollover_node_form':
+	    case 'unittransferfactors_node_form':
         case 'conditionwhatusagetypefactors_node_form':
         case 'conditionwhatnonusagetypefactors_node_form':
         case 'prdattributefeaturecode_node_form':
@@ -270,13 +271,54 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
         case 'prdattributeprefixrangenotallowe_node_form':
         case 'prdattributefeaturecode_node_form':
 			
-// dsm($form, 'form');
+//dsm($form, 'form');
 // dsm($form_state, 'form_state');
 			$form['field_parent_node']['#type'] = 'hidden';
             unset($form['field_ref_product']);
             unset($form['field_ref_tree_tid']);
-            _unset_menu_items($form,$form_id);
+			unset($form['field_weight']);
+			_unset_menu_items($form,$form_id);
             break;
+        
+		case 'prdnonusagerollover_node_form':
+			
+			unset($form['actions']);
+			unset($form['field_parent_node']);
+			unset($form['field_weight']);
+			unset($form['field_ref_product']);
+			unset($form['field_ref_tree_tid']);
+			
+			_unset_menu_items($form,$form_id);
+			
+			// in case of update
+			// if(isset($form['nid']['#value'])) {
+				$form['custom'] = array('#type'=> 'markup',
+					'#markup' => "<input type='hidden' id='rollover_nid' value='".$form['nid']['#value']."'></input>
+								<input type='hidden' id='rollover_weight' value='".$form['#node']->field_weight['und'][0]['value']."'></input>
+								<input type='hidden' id='rollover_ref_product' value='".$form['#node']->field_ref_product['und'][0]['nid']."'></input>
+								<input type='hidden' id='rollover_ref_tree_nid' value='".$form['#node']->field_ref_tree_nid['und'][0]['nid']."'></input>
+								<input type='hidden' id='rollover_ref_tree_tid' value='".$form['#node']->field_ref_tree_tid['und'][0]['value']."'></input>",
+					'#weight' => 200,
+				);
+			// }
+			$form['multiselect_custom'] = array('#type'=> 'markup',
+				'#markup' => "<input type='button' id='multiselect_custom_button_rollover' value='Save'></input>",
+				'#weight' => 100,
+			);
+			
+			$productNid = $form['#node']->field_ref_product['und'][0]['nid'];
+			$counterList = _get_available_counter_list($productNid);
+			
+			$options = $counterList;
+			$element = $form['field_counter_list']['und'];
+			
+			$items = $form_state['build_info']['args'][0]->field_counter_list['und'];
+			
+			$widget = _multiselect_build_widget_code($options, $items, $element, NULL);
+			$form['field_counter_list']['und']['#prefix'] = $widget['prefix_pre'] . $widget['prefix_options'] . $widget['prefix_post'];
+			$form['field_counter_list']['und']['#options'] = $counterList;
+			
+			break;
         
 		case 'prdcounterlist_node_form':
 			
@@ -329,7 +371,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             
             _unset_menu_items($form,$form_id);
 
-            // 湲곗〈 counter list瑜�媛���ㅻ� 遺�������怨� ��� �����counter以����� next counter瑜�李얘린 ���
+			/*
             $siblings = array();
             unset($form['field_rollover_next_counter']['und']['#options']);
             $form['field_rollover_next_counter']['und']['#options'] = array('_none' => '- None -');
@@ -340,6 +382,8 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
                     $form['field_rollover_next_counter']['und']['#options'][$item->nid] =  $item->node_field_data_field_ref_counter_title;
                 }
             }
+			*/
+			
             break;
         case 'conditionwhatcalltype_node_form':
         	unset($form['field_parent_node']);
