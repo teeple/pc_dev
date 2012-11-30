@@ -100,6 +100,12 @@ function product_catalog_ajax_menu() {
   		'access callback' => TRUE,
   		'type' => MENU_CALLBACK,
   );
+  $items['product_catalog_ajax/set_rollover'] = array(
+  		'title' => 'Set Rollover',
+  		'page callback' => 'product_catalog_ajax_set_rollover',
+  		'access callback' => TRUE,
+  		'type' => MENU_CALLBACK,
+  );
   return $items;
 
 } 
@@ -169,6 +175,81 @@ function product_catalog_ajax_counter_list() {
 	$output[] = $renderOutput;
 	$output = ajax_render($output);
 	  
+	print $output;
+	exit;
+}
+
+function product_catalog_ajax_set_rollover() {
+	
+	global $user;
+	$tempProductNid = explode('_',$_POST['product_nid']);
+	$productNid = $tempProductNid[1];
+	
+	$nodeNid = $_POST['rollover_nid'];
+	$rolloverWeight = $_POST['rollover_weight'];
+	$rolloverRefProduct = $_POST['rollover_ref_product'];
+	$rolloverRefTreeNid = $_POST['rollover_ref_tree_nid'];
+	$rolloverRefTreeTid = $_POST['rollover_ref_tree_tid'];
+	
+	$counterNids = $_POST['counter_nids'];
+	$rolloverFlag = $_POST['rollover_flag'];
+	$happens = $_POST['happens'];
+	$addOrReplace = $_POST['add_or_replace'];
+	
+	if(empty($nodeNid)) {
+		$prdnonusagerollover = new StdClass();
+		$prdnonusagerollover->uid = $user->uid;
+		$prdnonusagerollover->type = 'prdnonusagerollover';
+		$prdnonusagerollover->language = 'und';
+		
+		$prdnonusagerollover->field_ref_product['und'][0]['nid'] = $productNid;
+		$prdnonusagerollover->field_ref_tree_tid['und'][0]['value'] = $rolloverRefTreeTid;
+		$prdnonusagerollover->field_weight['und'][0]['value'] = $rolloverWeight;
+		
+	} else {
+		$prdnonusagerollover = node_load($nodeNid);
+	}
+	
+	if(isset($prdnonusagerollover->field_counter_list) 
+		&& !empty($prdnonusagerollover->field_counter_list['und'])) {
+		unset($prdnonusagerollover->field_counter_list['und']);
+	};
+	
+	foreach($counterNids as $counterNid) {
+		$prdnonusagerollover->field_counter_list['und'][] = array('nid' => $counterNid);
+	}
+	
+	$prdnonusagerollover->field_user_for_rollover['und'][0]['value'] = isset($rolloverFlag)? $rolloverFlag: '0';
+	$prdnonusagerollover->field_rollover_add_or_replace['und'][0]['value'] = isset($addOrReplace)? $addOrReplace: '0';
+	$prdnonusagerollover->field_happens['und'][0]['value'] = isset($happens)? $happens: 'week';
+	
+	/*
+	$product = node_load($productNid);
+	$voca_name = _get_vocabulary_name('simpleproductoffering', $product);
+	$terms = taxonomy_get_term_by_name('Rollover', $voca_name);
+	$rollover_tid = current($terms)->tid;
+	*/
+	node_save($prdnonusagerollover);
+	
+	$jquery_select_id = 'node_'.$nodeNid;
+	
+	$js_settings = array(
+		'success' => TRUE,
+		'data' => array(
+				'parentId' => 'term_'.$rolloverRefTreeTid.'_'.$productNid,
+				'childId' => 'node_'.$prdnonusagerollover->nid,
+				'title' => 'PrdNonUsageRollover',
+				'contentType' => 'prdnonusagerollover',
+				'weight' => $rolloverWeight
+			),
+	);
+		  
+	drupal_add_js(array('product_catalog_ajax_result' => $js_settings), 'setting');
+	  
+	$renderOutput = '';
+	$output[] = $renderOutput;
+	$output = ajax_render($output);
+	
 	print $output;
 	exit;
 }
@@ -940,8 +1021,8 @@ function product_catalog_ajax_add_content($js = NULL) {
     		$qtabs = array();
     		
     		$path = 'tree/create/'.$childContentType.'/'.$parentType.'/'.$parentNid.'/'.$weight.'/'.$rootNid.'/'.$refTreeNid;
-    		
-    		$qtabs[] = array(
+			
+			$qtabs[] = array(
     				'title' => 'Add',
     				'type' => 'callback',
     				'path' => $path,

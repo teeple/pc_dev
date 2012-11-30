@@ -156,31 +156,106 @@ function _product_for_export($nid=NULL){
         }
         $product['package_product'] = $packagedProducts;
         
-        //Counter
-        $counter = array(); 
-        $view = views_get_view('list_product_child_node');
-        $view->set_display('panel_pane_2');
-        $view->set_arguments(array('0' => $node->nid, '1' => 'treenodecounter'));
+        // Counter
+        // 상품에서 사용하는 counter list만 정의함. Charging용인지 Accumulating용인지는 구분할 필요 없음.
+        // 
+        $counters = array(); 
+        $view = views_get_view('list_prdcounterlist');
+        $view->set_display('panel_pane_3');
+        $view->set_arguments(array('0' => $node->nid));
         $view->execute();
         
+		$counters = array();
         foreach($view->result as $item){
-            $treeNodeCounter = node_load($item->nid);
-            $mainOrAccumulated = taxonomy_term_load($treeNodeCounter->field_main_or_accumulated['und'][0]['tid']);
-            //Main counter 일 경우에만..
-            if($mainOrAccumulated->field_common_code['und'][0]['safe_value'] == 1){
-                $realCounter = node_load($treeNodeCounter->field_ref_counter['und'][0]['nid']);
-                $counter[] = array(
-                    'counter_id' => $realCounter->field_counter_id['und'][0]['value'],              
-                );
-            }
+        	$counters[] = array('counter_id'=> $item->field_data_field_counter_list_field_counter_list_nid);
         }       
-        $product['counters'] = $counter;
+        $product['counters'] = $counters;
 
         //nonusage
         $nonUsage = array();
-        $fees = array();
+		
+		//one time fee
+		// $nonUsage['onetime_charge'] = _get_onetime_charge($productNid);
+		
+        //threshold scheme
+        $view = views_get_view('list_thresholdscheme');
+        $view->set_display('panel_pane_3');
+        $view->set_arguments(array('0' => $node->nid));
+        $view->execute();
+        if(!empty($view->result)){
+            $nonUsage['threshold_scheme_id'] = $view->result[0]->nid;    
+        }
         
-        //one time fee
+        //deposit scheme
+        $view = views_get_view('list_depositscheme');
+        $view->set_display('panel_pane_4');
+        $view->set_arguments(array('0' => $node->nid));
+        $view->execute();
+        if(!empty($view->result)){
+            $nonUsage['deposit_scheme_id'] = $view->result[0]->node_field_data_field_ref_depositscheme_nid;    
+        }
+		$nonUsage['recurring_charge'] = _get_recurring_charge($node->nid);
+		
+        $product['nonusage'] = $nonUsage;
+
+		$product['usage'] = array();
+
+		$product['rating_rules'] = rating_rules_export_by_content_type('rating_rule_export_product' ,  $products[$i]->nid);
+
+		$productNids[] = $attribute['product_id'];
+		$retDataTmp[] = $product;        
+    }
+    
+    // return json_encode($jsonData);
+    //if($nid==NULL) return $retData['products'][0];
+    //else return $retData;
+        
+    if($nid!=NULL) {
+    	$retData['ifvalues']['resources'] = array_values($productNids);
+	} else {
+    	$retData['ifvalues']['resources'] = '';
+	}
+	$retData['products'] = $retDataTmp;
+	//dsm(json_encode($retData),'after json');
+	
+	return $retData;
+}
+
+function _get_recurring_charge($productNid) {
+	$view_name = 'list_actionpricechargerecurring';
+	$display = 'panel_pane_1';
+	$args = array( '0'=> $productNid );
+	
+	$req_labels = array(
+		'rcrr_insff_balance_charge' => 'Insufficient Balance Charge',
+		'price_amount' 				=> 'Price_amount',
+		'price_unit' 				=> 'Price_units',
+		'valid_for' 				=> 'validFor',
+		'cycle_pricing' 			=> 'Pricing Cycle',
+		'cycle_type_pricing' 		=> 'Pricing Cycle Type',
+		'rcrr_use_charging_day'		=> 'Related to Invoice Date',
+		'rcrr_insff_balance_charge' => 'Charging First or Later',
+		'rcrr_period_type'			=> 'Charging Cycle Type', 
+		'rcrr_period_value'			=> 'Charging Cycle',
+		'rcrr_charging_day_month'   => 'Charging Day_Day of Month',
+		'rcrr_charging_day_week'	=> 'Charging Day_Day of Week',
+		'rcrr_charging_day_weekOrMonth' => 'Charging Day_Week or Month',
+		'pricing_cycle'				=> 'Pricing Cycle',
+		'pricing_cycle_type'		=> 'Pricing Cycle Type',
+		'charging_cycle'			=> 'Charging Cycle',
+		'charging_cycle_type'		=> 'Charging Cycle Type'
+	);
+	$records = _get_records_from_views_by_label($view_name, $display, $args, $req_labels);
+	
+	return $records;
+}
+
+function _get_recurring_bonus($productNid) {
+   
+}
+
+function _get_onetime_charge($productNid) {
+
         $view = views_get_view('list_product_child_node');
         $view->set_display('panel_pane_2');
         $view->set_arguments(array('0' => $node->nid, '1' => 'actionpricechargeonetime'));
@@ -200,52 +275,7 @@ function _product_for_export($nid=NULL){
             $fees[] = $fee;               
         }
         $nonUsage['fees'] = $fees;
-        
-        //threshold scheme
-        $view = views_get_view('list_thresholdscheme');
-        $view->set_display('panel_pane_3');
-        $view->set_arguments(array('0' => $node->nid));
-        $view->execute();
-        if(!empty($view->result)){
-            $nonUsage['threshold_scheme_id'] = $view->result[0]->nid;    
-        }
-        
-        //deposit scheme
-        $view = views_get_view('list_depositscheme');
-        $view->set_display('panel_pane_4');
-        $view->set_arguments(array('0' => $node->nid));
-        $view->execute();
-        if(!empty($view->result)){
-            $nonUsage['deposit_scheme_id'] = $view->result[0]->node_field_data_field_ref_depositscheme_nid;    
-        }
-       
-        $product['nonusage'] = $nonUsage;
-
-		$product['usage'] = array();
-
-		$product['rating_rules'] = rating_rules_export_by_content_type('rating_rule_export_product' ,  $products[$i]->nid);
-
-		$productNids[] = $attribute['product_id'];
-		$retDataTmp[] = $product;        
-    }
-
-    
-    // return json_encode($jsonData);
-    //if($nid==NULL) return $retData['products'][0];
-    //else return $retData;
-        
-    if($nid!=NULL) {
-    	$retData['ifvalues']['resources'] = array_values($productNids);
-	} else {
-    	$retData['ifvalues']['resources'] = '';
-	}
-	$retData['products'] = $retDataTmp;
-	dsm($retData,'before json');
-    //dsm(json_encode($retData),'after json');
-	
-	return $retData;
 }
-
 
 function _get_common_code($term){
 	$data = array();
