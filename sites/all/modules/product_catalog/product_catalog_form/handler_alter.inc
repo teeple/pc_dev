@@ -286,7 +286,8 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			unset($form['field_parent_node']);
 			unset($form['field_weight']);
 			unset($form['field_ref_product']);
-			unset($fomr['field_ref_tree_tid']);
+			unset($form['field_ref_tree_tid']);
+			
 			_unset_menu_items($form,$form_id);
 			
 			// in case of update

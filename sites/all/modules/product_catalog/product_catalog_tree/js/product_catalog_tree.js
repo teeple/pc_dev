@@ -56,10 +56,11 @@
 					var contentType = $.parseJSON(request.responseText)[0].settings.product_catalog_ajax_result.data.contentType;
 					var weight = $.parseJSON(request.responseText)[0].settings.product_catalog_ajax_result.data.weight;
 					
-					if(childId) {
-						$('#'+childId).trigger('click');	
+					if( $('#'+childId).length >0 ) {
+						$('#'+childId).trigger('click');
 					} else {
 						$.fn.addTreeItemCallback(parentId, childId, title,contentType, weight);
+						$('#'+childId).trigger('click');	
 					}
 					
 				} else {

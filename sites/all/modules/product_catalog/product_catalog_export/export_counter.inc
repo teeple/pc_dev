@@ -18,13 +18,17 @@ function _add_commoncode($field) {
 
 function _array_export_counter($nid=NULL){
 	$jsonData = array();
-
+	$jsonData_counters = array();
+	$jsonData_common = array();
+	
 	//fetch data	
 	$view = views_get_view('list_counter');
 	//$view->set_display('panel_pane_5');
 
 	$viewResult = views_get_view_result('list_counter', 'panel_pane_5', $nid);
-
+	
+	$counterNids = array();
+	
     foreach($viewResult as $record) {
 
         // $jsonCounter['ID'] = !empty($record->field_field_code[0]['raw']['value']) ? $record->field_field_code[0]['raw']['value'] : null;
@@ -41,9 +45,17 @@ function _array_export_counter($nid=NULL){
         $jsonCounter['description'] = !empty($record->field_field_description) ? $record->field_field_description[0]['rendered']['#markup']: null;
         $jsonCounter['scale'] = !empty($record->field_field_scale) ? $record->field_field_scale[0]['rendered']['#title']: null;
 
-        $jsonData[] = $jsonCounter;
+        $jsonData_counters['counters'][] = $jsonCounter;
+		
+		$counterNids[] = $record->nid;
     }
 
+    if($nid!=NULL) {
+    	$jsonData_common['ifvalues']['resources'] = array_values($counterNids);
+	} else {
+    	$jsonData_common['ifvalues']['resources'] = '';
+	}
+	
 	/*
 	$options = array();
 	$options['method'] = 'POST';
@@ -51,7 +63,8 @@ function _array_export_counter($nid=NULL){
 	$options['data'] = json_encode($jsonData);
 	$result = drupal_http_request('http://192.168.1.105:99/crm/counter/deploy', $options);
 	*/
-
+	$jsonData[] = array_merge($jsonData_common, $jsonData_counters);
+	
 	return $jsonData;
 
 }
@@ -60,12 +73,12 @@ function _json_counter($nid=NULL) {
 
 	$retArray = array();
 	$jsonData  = _array_export_counter($nid);
-	$retArray['counters'] = $jsonData;
+	// $retArray['counters'] = $jsonData;
 	
 	if($nid != NULL) {
 		return json_encode($jsonData);
 	} else {
-		return json_encode($retArray);
+		return json_encode($jsonData);
 	}
 	return json_encode($jsonData);
 }
