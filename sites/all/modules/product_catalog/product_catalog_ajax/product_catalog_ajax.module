@@ -210,7 +210,6 @@ function product_catalog_ajax_set_rollover() {
 		$prdnonusagerollover = node_load($nodeNid);
 	}
 	
-	
 	if(isset($prdnonusagerollover->field_counter_list) 
 		&& !empty($prdnonusagerollover->field_counter_list['und'])) {
 		unset($prdnonusagerollover->field_counter_list['und']);
@@ -233,7 +232,7 @@ function product_catalog_ajax_set_rollover() {
 	node_save($prdnonusagerollover);
 	
 	$jquery_select_id = 'node_'.$nodeNid;
-		
+	
 	$js_settings = array(
 		'success' => TRUE,
 		'data' => array(
