@@ -192,3 +192,45 @@ function build_navigation_bar()
 	
 	print '<div class="top-bar"><ul id="nav">' . $output . '</ul></div>';
 }
+
+function _get_nids_from_views($view_name, $display, $args) {
+	$retArray = array();
+	
+	$view = views_get_view($view_name);
+	$view->set_display($display);
+	$view->set_arguments($args);
+	$view->execute();
+	
+	foreach($view->result as $record) {
+		$retArray[] = $record->nid;
+	}
+	return $retArray;
+}
+
+function _get_records_from_views($view_name, $display, $args) {
+	
+	$view = views_get_view($view_name);
+	$view->set_display($display);
+	$view->set_arguments($args);
+	$view->execute();
+	
+	return $view->result;
+}
+
+function _get_records_from_views_by_label($view_name, $display, $args, $req_labels){
+	$retArray = array();
+	
+	$view = views_get_view($view_name);
+	$view->set_display($display);
+	$view->set_arguments($args);
+	$view->execute();
+	
+	foreach($view->result as $record) {
+		$tmpRecord = array();
+		foreach($req_labels as $key => $value) {
+			$tmpRecord[$key] = view_get_field_value_by_label($view, $value, $record);
+		}
+		$retArray[] = $tmpRecord;
+	}
+	return $retArray;
+}

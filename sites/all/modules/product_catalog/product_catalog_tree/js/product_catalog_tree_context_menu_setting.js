@@ -62,6 +62,13 @@
                     $.fn.deleteNode(node);
                 };
                 break;
+            case "prdnonusagerollover":
+            	menus.custom_delete._disabled = false;
+                menus.custom_delete.action = function(node) {
+                    $.fn.deleteNode(node);
+                };
+                break;
+            	            	
             case "prdattributeprefixrangenotallowe":
                 menus.custom_delete._disabled = false;
                 menus.custom_delete.action = function(node) {
@@ -365,6 +372,17 @@
 						}
 					},
 				};
+            	break;
+            case 'mobile_nonusage_rollover':
+            	menus.custom_create._disabled = false;
+            	menus.custom_create.submenu = {
+            		'mobile_nonusgae_rollover': {
+            			"label" : "RollOver",
+            			action : function(node) {
+            				$.fn.addNode(node, {'childContentType': 'prdnonusagerollover'});
+            			}
+            		},
+            	};
             	break;
 			case "treeNodeCustomCharge":
 				menus.custom_create._disabled = false;
