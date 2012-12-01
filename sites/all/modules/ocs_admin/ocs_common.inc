@@ -93,8 +93,6 @@ function ocs_admin_get_new_node( $type)
     $node->language = LANGUAGE_NONE;
 
     node_object_prepare($node);
-    
-    node_save( $node);
 
     return $node;
 }
