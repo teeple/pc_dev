@@ -304,6 +304,13 @@ function _analyze_tariff_plan( $carrier)
 function _get_voice_tariff($category = 'A')
 {
 	global $carrier_info;
+	
+	if ( empty($carrier_info)) {
+		$carrier_info = ocs_load_all_carrier();
+		dpm( $carrier_info, 'carrier info reloaded.');
+	}		
+		
+	
 	//dpm( $carrier, 'carrier');
 	
 	//_analyze_tariff_plan( $carrier);
@@ -355,7 +362,7 @@ function _get_voice_tariff($category = 'A')
 		$output .= '<td>' . implode(',', array_keys($carrier_info[$c]['rating_group'])) . '</td>';
 		$output .= '</tr>';
 
-		$record['regionFlag'] = $carrier_info[$c]['regionFlag'];
+		// $record['regionFlag'] = $carrier_info[$c]['regionFlag'];
 		$records[] = $record;
 	}
 	$output .= '</tbody>';
@@ -370,13 +377,7 @@ function _get_voice_tariff($category = 'A')
 
 function ocs_migrate_fce_voiceplan($form, &$form_state)
 {
-	global $carrier_info;
-	
-	if ( empty($carrier_info)) {
-		$carrier_info = ocs_load_all_carrier();
-		dpm( $carrier_info, 'carrier info reloaded.');
-	}		
-	
+
 	$category = isset($form_state['values']['category']) ? $form_state['values']['category'] : 'null';
 
 	// dpm( $category, 'category:');
@@ -386,7 +387,6 @@ function ocs_migrate_fce_voiceplan($form, &$form_state)
 	$form['#attributes'] = array('class' => array('myform'));
 
 	$form['#rule'] = $records;
-	$form['#carrier'] = $carrier_info;
 	
 	$form['category'] = array(
 		'#type' => 'select',
@@ -488,6 +488,8 @@ function ocs_migrate_fce_voiceplan_submit($form, &$form_state)
 {
 	$values = $form_state['values'];
 	if ($values['op'] == 'Save') {
+		global $carrier_info;
+	
 		dpm($values, 'values');
 
 		// find 'FCE Numbering Plan'
@@ -505,13 +507,35 @@ function ocs_migrate_fce_voiceplan_submit($form, &$form_state)
 				dpm(t('Domestic rating group @id is removed', array('@id' => $nid['nid'])));
 			}
 
+			
+			// find dangling entity
+			$query = new EntityFieldQuery();
+			$result = $query->entityCondition('entity_type', 'node')
+				->entityCondition('bundle', 'domestic_ratinggroup')
+				->execute();
+		
+			if ( count( $result) > 0) {		// find the ratinggroup first
+				foreach( array_keys( $result['node']) as $nid) {
+					$node = node_load( $nid);
+					dpm( $node, 'node:'.$nid);
+					if ( ! isset($node->field_ref_numberingplan_domestic['und']) || 
+						$node->field_ref_numberingplan_domestic['und'][0]['nid'] == 0 ||
+						$node->field_ref_numberingplan_domestic['und'][0]['nid'] == $np->nid) {
+							node_delete( $nid);
+							dpm( 'dangling entity is removed: '. $nid);
+						}
+				}
+			}
+	
 			unset($np->field_ref_domestic_ratinggroup);
 		}
+		
+		return;
 
-		$rating_group_list = array();
-		foreach ($form['#rule'] as $rule) {
-			$rating_group_list[$rule['ruleName']][$rule['called_carrier']][] = $rule;
-		}
+		// $rating_group_list = array();
+		// foreach ($form['#rule'] as $rule) {
+			// $rating_group_list[$rule['ruleName']][$rule['called_carrier']][] = $rule;
+		// }
 		//dpm($rating_group_list, 'rating group list');
 		
 		// foreach( $rating_group_list as $k => $v) {
@@ -521,45 +545,24 @@ function ocs_migrate_fce_voiceplan_submit($form, &$form_state)
 				// )));
 		// }
 
-		if ($values['check'] == '0' ) {
-			_update_numbering_plan($np, $form['#rule'], $form['#carrier'] );
-		}
+		_update_numbering_plan($np, $form['#rule'], $carrier_info, $values['check'] == '0');
 	}
 
 }
 
-function _update_numbering_plan($np, $rule_list, $carrier_info)
+function _update_numbering_plan($np, $rule_list, $carrier_info, $update_flag)
 {
-	
 	// get nid of carrier 		
-	foreach( array_keys( $carrier_info) as $name) {
-		$node = _get_first_node_by_title( 'carrier_mobile', $name);
-		if (empty($node)) {
-			dpm('Carrier not found: ' . $name);
-			continue;
-		}
-		
-		$carrier_info[$name]['nid'] = $node->nid;
-	
-		// find area code nid
-		$query = new EntityFieldQuery();
-		$result = $query->entityCondition('entity_type', 'node')
-			->entityCondition('bundle', 'area_code')
-			->fieldCondition( 'field_ref_carrier_mobile', 'nid', $node->nid)
-			->execute();
+	$query = new EntityFieldQuery();
+	$result = $query->entityCondition('entity_type', 'node')
+		->entityCondition('bundle', 'carrier_mobile')
+		->execute();
 
-		if ( count($result) > 0) {
-			foreach( array_keys( $result['node']) as $nid) {
-				$code = node_load( $nid);
-				$carrier_info[$name]['region_code'][$code->field_area_code['und'][0]['value']]['nid'] = $nid;
-			}
-		}
-		else {
-			dpm( t('area code not found. Carrier=@c', array( '@c' => $name)));
-		}
-			
+	foreach( array_keys( $result['node']) as $nid) {
+		$node = node_load( $nid);
+		$carrier_info[$node->title]['nid'] = $nid;
 	}
-	
+		
 	//dpm( $carrier_info, 'carrier info');
 	
 	// find rating group list
@@ -582,43 +585,71 @@ function _update_numbering_plan($np, $rule_list, $carrier_info)
 		$carrier_name = $rule['called_carrier'];
 		
 		// set callee's area code
-		$area_code = array(0);
-		if ( _need_area_code( $carrier_info, $carrier_name)) {
+		$need_area_code = _need_area_code( $carrier_info, $carrier_name);
+		$area_code = array( null);
+		if ( $need_area_code) {
 			dpm( 'Need area code: carrier='.$carrier_name.' rating_group='.$rule['rating_group']);
 			
 			if ( ! isset($carrier_info[$carrier_name]['rating_group'][$rule['rating_group']]) ) {
 				drupal_set_message( t('Rating group not found. Carrier=@c RatingGroup=@r', 
 					array( '@c' => $carrier_name, '@r' => $rule['rating_group'])),
-					'error');				
+					'error');
+				continue;				
 			}
 			else {
 				$area_code = array_keys( $carrier_info[$carrier_name]['rating_group'][$rule['rating_group']]);
+				//dpm( $carrier_info[$carrier_name], 'carrier');
 			}
 		}
+				
+		if ( ! isset( $carrier_info[$carrier_name]['nid'])) {
+			dpm( 'nid not found for carrier:'. $carrier_name);
+			continue;
+		}
 		
-		if ( isset($rating_group_list[$rule['ruleName']][$carrier_info[$carrier_name]['nid']])) {
-			$result = $rating_group_list[$rule['ruleName']][$carrier_info[$carrier_name]['nid']];
+		$carrier_nid = $carrier_info[$carrier_name]['nid'];
+		if ( isset($rating_group_list[$rule['ruleName']][$carrier_nid])) {
+			// rating group exist already
+			
+			$result = $rating_group_list[$rule['ruleName']][$carrier_nid];
+			if ( $need_area_code && (count( $result) != count( $area_code))) {
+				dpm( $result, 'mismatch with area code');
+				dpm( $area_code, 'mismatch with area code');
+			}
 			//dpm( $result, 'rating group');
+			$i = 0;
 			foreach( $result as $nid ) {
+					
+				dpm( t('existing rating group: carrier=@c rating_group=@r area=@a', array( '@c' => $rule['called_carrier'],
+					'@r' => $rule['ruleName'], '@a' => implode( ',', $area_code))));
+					
+				
 				$r = node_load( $nid);
 				//dpm( $r, 'rating group');
-				_set_domestic_ratinggroup( $carrier_info, $r, $np, $rule, $area_code);
-				//node_save( $r);
+				_set_domestic_ratinggroup( $carrier_info, $r, $np, $rule, $need_area_code ? $area_code[$i++] : null);
+				if ( $update_flag) node_save( $r);
 			}
 		}
 		else {
 			foreach( $area_code as $code ) {
+				dpm( t('new rating group: carrier=@c rating_group=@r area=@a', array( '@c' => $rule['called_carrier'],
+					'@r' => $rule['ruleName'], '@a' => $code)));
 				// make new rating group
 				$r = ocs_admin_get_new_node('domestic_ratinggroup');
-				$np->field_ref_domestic_ratinggroup['und'][] = array('nid' => $r->nid);
 				_set_domestic_ratinggroup( $carrier_info, $r, $np, $rule, $code);
-				node_save( $r);
+				if ( $update_flag) {
+					node_save( $r);
+				
+					$np->field_ref_domestic_ratinggroup['und'][] = array('nid' => $r->nid);
+									// update rating_group_list
+					$rating_group_list[$r->field_rating_group['und'][0]['value']][$r->field_ref_carrier_mobile['und'][0]['nid']][] = $r->nid;
+				}
 			}
 		}
 		
 	}
 
-	node_save($np);
+	if ( $update_flag) node_save($np);
 
 }
 
@@ -656,23 +687,20 @@ function _set_domestic_ratinggroup( $carrier_info, &$r, $np, $rule, $area_code)
 		$r->field_ref_type_of_call['und'][0]['tid'] = 1513;
 	}
 
-	if ( $area_code != 0) {
-		if ( isset($r->field_ref_area_code_to['und'])) {
-			$nid = $r->field_ref_area_code_to['und'][0]['nid'];
-			$found = FALSE;
-			foreach( $area_code as $code) {
-				if ( $code == $nid) {
-					$found = TRUE;
-					break;
-				}
-			}
-			if ( ! $found ) {
-				dpm( $nid, 'rating group area code is not found');
-				dpm( $area_code, 'area code list');
-			}
-		}
-		else {
-			$r->field_ref_area_code_to['und'][0]['nid'] = $area_code;
+	// reset area_code_to
+	if ( ! empty( $area_code)) {
+		// find area code nid
+		$query = new EntityFieldQuery();
+		$result = $query->entityCondition('entity_type', 'node')
+			->entityCondition('bundle', 'area_code')
+			->fieldCondition( 'field_ref_carrier_mobile', 'nid', $carrier_info[$carrier_name]['nid'])
+			->fieldCondition( 'field_area_code', 'value', $area_code)
+			->execute();
+
+			// TODO : area_code 1개와 매핑되는게 아님.. area_code_to를 text로 바꿔야 함
+		if ( count( $result) > 0) {
+			$nids = array_keys( $result['node']);
+			$r->field_ref_area_code_to['und'][0]['nid'] = $nids[0];
 		}
 	}
 }
@@ -726,7 +754,7 @@ function ocs_load_all_carrier()
 
 		$area = array();
 		while ($record = $result->fetchAssoc()) {
-			$carrier[$record['carrier']]['rating_group'][$record['rating_group']][$record['region_code']][] = $record;
+			$carrier[$record['carrier']]['rating_group'][$record['rating_group']][$record['region_code']][] = $record['second_prefix'];
 			$carrier[$record['carrier']]['region_code'][$record['region_code']][] = $record['second_prefix'];
 		}
 
