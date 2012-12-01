@@ -372,6 +372,7 @@ function _get_voice_tariff($category = 'A')
 	return array(
 		$records,
 		$output,
+		$carrier_info,
 	);
 }
 
@@ -382,8 +383,9 @@ function ocs_migrate_fce_voiceplan($form, &$form_state)
 
 	// dpm( $category, 'category:');
 	// dpm( $form_state['values'], 'values');
-	list($records, $output) = _get_voice_tariff($category);
+	list($records, $output, $carrier) = _get_voice_tariff($category);
 
+	$form['#carrier'] = $carrier;
 	$form['#attributes'] = array('class' => array('myform'));
 
 	$form['#rule'] = $records;
@@ -488,8 +490,7 @@ function ocs_migrate_fce_voiceplan_submit($form, &$form_state)
 {
 	$values = $form_state['values'];
 	if ($values['op'] == 'Save') {
-		global $carrier_info;
-	
+		
 		dpm($values, 'values');
 
 		// find 'FCE Numbering Plan'
@@ -530,8 +531,6 @@ function ocs_migrate_fce_voiceplan_submit($form, &$form_state)
 			unset($np->field_ref_domestic_ratinggroup);
 		}
 		
-		return;
-
 		// $rating_group_list = array();
 		// foreach ($form['#rule'] as $rule) {
 			// $rating_group_list[$rule['ruleName']][$rule['called_carrier']][] = $rule;
@@ -545,7 +544,7 @@ function ocs_migrate_fce_voiceplan_submit($form, &$form_state)
 				// )));
 		// }
 
-		_update_numbering_plan($np, $form['#rule'], $carrier_info, $values['check'] == '0');
+		_update_numbering_plan($np, $form['#rule'], $form['#carrier'], $values['check'] == '0');
 	}
 
 }
@@ -591,8 +590,8 @@ function _update_numbering_plan($np, $rule_list, $carrier_info, $update_flag)
 			dpm( 'Need area code: carrier='.$carrier_name.' rating_group='.$rule['rating_group']);
 			
 			if ( ! isset($carrier_info[$carrier_name]['rating_group'][$rule['rating_group']]) ) {
-				drupal_set_message( t('Rating group not found. Carrier=@c RatingGroup=@r', 
-					array( '@c' => $carrier_name, '@r' => $rule['rating_group'])),
+				drupal_set_message( t('Rating group not found. Carrier=@c RatingGroup=@r,@ra', 
+					array( '@c' => $carrier_name, '@r' => $rule['rating_group'], '@ra' => $rule['ruleName'])),
 					'error');
 				continue;				
 			}
@@ -620,8 +619,8 @@ function _update_numbering_plan($np, $rule_list, $carrier_info, $update_flag)
 			$i = 0;
 			foreach( $result as $nid ) {
 					
-				dpm( t('existing rating group: carrier=@c rating_group=@r area=@a', array( '@c' => $rule['called_carrier'],
-					'@r' => $rule['ruleName'], '@a' => implode( ',', $area_code))));
+				dpm( t('existing rating group: carrier=@c rating_group=@r,@ra area=@a', array( '@c' => $rule['called_carrier'],
+					'@r' => $rule['rating_group'], '@ra' => $rule['ruleName'], '@a' => implode( ',', $area_code))));
 					
 				
 				$r = node_load( $nid);
