@@ -621,7 +621,6 @@ function _update_numbering_plan($np, $rule_list, $carrier_info, $update_flag)
 					
 				dpm( t('existing rating group: carrier=@c rating_group=@r,@ra area=@a', array( '@c' => $rule['called_carrier'],
 					'@r' => $rule['rating_group'], '@ra' => $rule['ruleName'], '@a' => implode( ',', $area_code))));
-					
 				
 				$r = node_load( $nid);
 				//dpm( $r, 'rating group');
