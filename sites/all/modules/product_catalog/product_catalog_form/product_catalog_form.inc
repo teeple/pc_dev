@@ -210,7 +210,7 @@ function _load_node_form($buildType,$nodeType=NULL,$nid=NULL,$params=NULL){
 			$form_state[$paramKeys[$i]] = $paramValues[$i];
 		}
 	}
-
+	
 	$form_state['build_info']['args'] = array($node);
 	$formName = $nodeType.'_node_form';
 	$form = drupal_build_form($formName, $form_state);
