@@ -104,7 +104,7 @@ function ocs_migrate_fce_area($form, &$form_state)
 		'second_prefix',
 		'region_code',
 		'rating_group'
-	))->orderBy('carrier', 'DESC')->execute();
+	))->orderBy('carrier')->execute();
 
 	$output = '<thead><tr><td>Carrier</td><td>Area Name</td><td>Prefix</td><td>Region Code</td><td>Rating Group</td></tr></thead>';
 	$output .= '<tbody>';
@@ -176,22 +176,47 @@ function ocs_migrate_fce_area_submit($form, &$form_state)
 
 		// add entities
 		foreach ($form['#area'] as $r) {
-			$node = ocs_admin_get_new_node('area_code');
-			$node->title = $r['ruleName'];
-			$node->field_prefix['und'][0]['value'] = $r['second_prefix'];
-			$node->field_area_code['und'][0]['value'] = $r['region_code'];
-
 			$items = entity_load('node', FALSE, array(
 				'type' => 'carrier_mobile',
 				'title' => $r['carrier']
 			));
 			if (count($items) == 1) {
 				$nids = array_keys($items);
-				$node->field_ref_carrier_mobile['und'][0]['nid'] = $nids[0];
+				$carrier_nid = $nids[0];
 			}
 			else {
 				dpm('Carrier not found: ' . $r['carrier']);
+				continue;
+			}	
+			
+			$query = new EntityFieldQuery();
+			$result = $query->entityCondition('entity_type', 'node')
+				->entityCondition('bundle', 'area_code')
+				->propertyCondition( 'title', $r['ruleName'])
+				->fieldCondition( 'field_ref_carrier_mobile', 'nid', $carrier_nid)
+				->fieldCondition( 'field_prefix', 'value', $r['second_prefix'])
+				->execute();
+
+			if ( count( $result) > 0) {
+				foreach( array_keys( $result['node']) as $nid) {
+					$node = node_load( $nid);
+					if ( $node->field_area_code['und'][0]['value'] != $r['region_code'] ) {
+						dpm( t('Area code is updated for @carrier prefix:@prefix. Region code: @a=>@b', 
+							array( '@carrier' => $r['carrier'], '@prefix' => $r['second_prefix'],
+								'@a' => $node->field_area_code['und'][0]['value'], '@b' => $r['region_code'])));
+							
+						$node->field_area_code['und'][0]['value'] = $r['region_code'];
+					}
+				}
 			}
+			else {
+				$node = ocs_admin_get_new_node('area_code');
+				$node->title = $r['ruleName'];
+				$node->field_prefix['und'][0]['value'] = $r['second_prefix'];
+				$node->field_area_code['und'][0]['value'] = $r['region_code'];
+				$node->field_ref_carrier_mobile['und'][0]['nid'] = $nids[0];
+			}
+			
 			node_save($node);
 		}
 	}
@@ -301,7 +326,7 @@ function _analyze_tariff_plan( $carrier)
 	}
 } 
 
-function _get_voice_tariff($category = 'A')
+function _get_voice_tariff($category = 'A', $condition='user_category')
 {
 	global $carrier_info;
 	
@@ -330,14 +355,19 @@ function _get_voice_tariff($category = 'A')
 	$query = db_select('voice_tariff_decision', 'v');
 	$query->fields('v', $fields);
 
-	if ($category == 'All') {
-		$query->orderBy('v.user_category');
+	if ( $condition == 'user_category') {
+		if ($category == 'All') {
+			$query->orderBy('v.user_category');
+		}
+		else if ( $category == 'null') {
+			$query->where('user_category is null');
+		}
+		else {
+			$query->where('user_category = :category', array(':category' => $category));
+		}
 	}
-	else if ( $category == 'null') {
-		$query->where('user_category is null');
-	}
-	else {
-		$query->where('user_category = :category', array(':category' => $category));
+	else if ( $condition == 'carrier') {
+		$query->where( 'called_carrier = :category', array(':category' => $category));
 	}
 
 	$result = $query->orderBy('v.called_carrier')->orderBy('v.user_category')->orderBy('v.ruleName')->execute();
@@ -376,6 +406,42 @@ function _get_voice_tariff($category = 'A')
 	);
 }
 
+
+function ocs_fce_tariffplan($form, &$form_state, $condition='carrier')
+{
+
+	$category = isset($form_state['values']['category']) ? $form_state['values']['category'] : 'Unitel';
+
+	// dpm( $category, 'category:');
+	// dpm( $form_state['values'], 'values');
+	list($records, $output, $carrier) = _get_voice_tariff($category, $condition);
+
+	$form['#carrier'] = $carrier;
+	$form['#attributes'] = array('class' => array('myform'));
+	
+	$form['category'] = array(
+		'#type' => 'select',
+		'#title' => 'Category to browse',
+		'#options' => drupal_map_assoc(array_keys($carrier)),
+		'#default_value' => $category,
+		'#ajax' => array(
+			'callback' => 'ocs_ajax_select_user_category',
+			'wrapper' => 'ocs_ajax_user_category_div',
+		),
+	);
+
+	$form['data'] = array(
+		'#type' => 'markup',
+		'#title' => 'Rule data',
+		'#markup' => '<table>' . $output . '</table>',
+		'#prefix' => '<div id="ocs_ajax_user_category_div">',
+		'#suffix' => '</div>',
+	);
+
+	return $form;
+}
+
+
 function ocs_migrate_fce_voiceplan($form, &$form_state)
 {
 
@@ -396,6 +462,20 @@ function ocs_migrate_fce_voiceplan($form, &$form_state)
 			'<p><ol><li>User Category가 없는 tariff의 경우 각 Carrier, Rating Group 별로 Numbering Plan을 하나씩 등록하고,'. 
 			'<Carrier>_<Rating Group>을 이름으로 하는 Rating Group을 등록한다.</li>'.
 			'<li>User Category가 있는 경우 각 Rule Name을 Rating Group으로 등록한다.</li>'.
+			'</ol></p><br>'.
+			'<h3>Changes</h3>'.
+			'<p><ol><li>GobilInfo의 region_code 변경: TuvdengiinBorIntlLLC, 기존:1 => 신규:2</li>'.
+			'<ol><li>update area set region_code=2 where carrier="GobiInfo" and rating_group = 2;</li></ol>'.
+			
+			'<li>INFO_10의 경우 area에는 rating group이 4,5만 존재하는데, tariff에는 1,2,3,4,5가 모두 있음. 이 경우 1,2,3은 사용되지 않으므로 삭제함</li>'.
+			'<ol><li>select ruleName, isDDD, called_carrier, rating_group, user_category from voice_tariff_decision where called_carrier="INFO_1" and rating_group in (1,2,3);</li>'.
+			'<li>delete from RuleList where rule_id in (4925, 4930, 4924, 4928, 4929, 4927)</li>'.
+			'<li> update area set region_code = "5" where carrier="INFO_10" and rating_group="5";</li></ol>'.
+			
+			'<li>info_123의 경우에도 동일한 region code 1에 대해 서로 다른 rating group 1,2,3이 존재함. 수정 필요<ii>'.
+			"<ol><li>select ruleName, carrier, rating_group, region_code from area where carrier = 'info_123';</li>".
+			"<li>update area set region_code'3' where carrier = 'info_123' and rating_group = '3';</li>".
+			"<li>update area set region_code='3' where carrier = 'info_123' and rating_group = '3';'</li></ol>".
 			'</ol></p><br>'
 		,
 	);
@@ -705,19 +785,7 @@ function _set_domestic_ratinggroup( $carrier_info, &$r, $np, $rule, $area_code, 
 
 	// reset area_code_to
 	if ( ! empty( $area_code)) {
-		// find area code nid
-		$query = new EntityFieldQuery();
-		$result = $query->entityCondition('entity_type', 'node')
-			->entityCondition('bundle', 'area_code')
-			->fieldCondition( 'field_ref_carrier_mobile', 'nid', $carrier_info[$carrier_name]['nid'])
-			->fieldCondition( 'field_area_code', 'value', $area_code)
-			->execute();
-
-			// TODO : area_code 1개와 매핑되는게 아님.. area_code_to를 text로 바꿔야 함
-		if ( count( $result) > 0) {
-			$nids = array_keys( $result['node']);
-			$r->field_ref_area_code_to['und'][0]['nid'] = $nids[0];
-		}
+		$r->field_area_code_of_the_callee['und'][0]['value'] = $area_code;
 	}
 }
 
