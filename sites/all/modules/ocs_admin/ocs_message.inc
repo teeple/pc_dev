@@ -38,8 +38,7 @@ $param_types = array(
 
 function ocs_admin_message_form($form, &$form_state, $nid = NULL, $op = NULL)
 {
-	$num_values = isset($form_state[
-'values']['num_values']) ? $form_state['values']['num_values'] : 0;
+	$num_values = isset($form_state['values']['num_values']) ? $form_state['values']['num_values'] : 0;
 
 	$title = '';
 	$format = '';
