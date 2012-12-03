@@ -373,6 +373,17 @@
 					},
 				};
             	break;
+            case "mobile_attribute_subscriber_lifecycle_scheme":
+            	menus.custom_create._disabled = false;
+				menus.custom_create.submenu = {
+					"mobile_attribute_subscriber_lifecycle_scheme" : {
+						"label" : "Select Lifecycle Scheme",
+						action : function(node) {
+							$.fn.loadSelectForm(node);
+						}
+					},
+				};
+            	break;
             case 'mobile_nonusage_rollover':
             	menus.custom_create._disabled = false;
             	menus.custom_create.submenu = {

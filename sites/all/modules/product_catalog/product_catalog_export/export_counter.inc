@@ -21,7 +21,7 @@ function _array_export_counter($nid=NULL){
 	$jsonData_counters = array();
 	$jsonData_common = array();
 	
-	//fetch data	
+	//fetch data
 	$view = views_get_view('list_counter');
 	//$view->set_display('panel_pane_5');
 
@@ -51,9 +51,9 @@ function _array_export_counter($nid=NULL){
     }
 
     if($nid!=NULL) {
-    	$jsonData_common['ifvalues']['resources'] = array_values($counterNids);
+    	$jsonData_common['ifvalues']['resources'] = array(array_values($counterNids));
 	} else {
-    	$jsonData_common['ifvalues']['resources'] = '';
+    	$jsonData_common['ifvalues']['resources'] = array();
 	}
 	
 	/*
