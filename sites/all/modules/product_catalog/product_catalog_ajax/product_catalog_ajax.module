@@ -52,6 +52,13 @@ function product_catalog_ajax_menu() {
   		'access callback' => TRUE,
   		'type' => MENU_CALLBACK,
   );
+  $items['/product_catalog_ajax/modal_view_link/%'] = array(
+  		'title' => 'View',
+  		'page callback' => 'product_catalog_modal_view_link',
+  		'page arguments' => array(2),
+  		'access callback' => TRUE,
+  		'type' => MENU_CALLBACK,
+  );
   $items['product_catalog_ajax/%ctools_js/delete_from_tree'] = array(
       'title' => 'Delete',
       'page callback' => 'product_catalog_ajax_delete_from_tree',
@@ -422,7 +429,21 @@ function product_catalog_ajax_select_submit() {
       	$js_data['replace_or_append'] = 'replace';
       	
       	break;
-      case 'mobile_counter_main':
+	  case 'mobile_attribute_subscriber_lifecycle_scheme':
+		_remove_existing_children($tmpProductNid[1], $tmpParentNid[1]);
+      	
+      	$child->type = 'treenodelifecyclescheme';
+      	$child->field_weight['und'][0]['value'] = $weight;
+      	$child->field_ref_product['und'][0]['nid'] = $tmpProductNid[1];
+      	$child->field_lifecycle_scheme['und'][0]['nid'] = $childNid;
+      	
+      	node_save($child);
+      	 
+      	$js_data['parent_title'] = $child->title;
+      	$js_data['append_to'] = 'inside';
+      	$js_data['replace_or_append'] = 'replace';
+      	break;
+	  case 'mobile_counter_main':
       	$child->type = 'treenodecounter';
       	
       	$term_tree = taxonomy_get_term_by_name('Main', 'countermainoraccu');
@@ -1134,6 +1155,24 @@ function product_catalog_modal_form_view($formName,$param1=NULL){
 	
 	print ajax_render($output);
 	exit;
+}
+
+function product_catalog_modal_view_link($params){
+	product_catalog_modal_form_view('depositscheme_view_form');
+	/*
+	ctools_include('node.pages', 'node', '');
+	ctools_include('modal');
+	ctools_include('ajax');
+	
+	$nid = $params[1];
+	$eventType = 'click';
+	$rootNid = null;
+	$relType = $params[0];
+	$defaultTabIndex = 0;
+		
+	product_catalog_ajax_load_select_form($nid,$eventType,$rootNid,$relType,$defaultTabIndex);
+	exit;
+	 */
 }
 
 function product_catalog_modal_form_edit_modal_content($js = NULL, $contentType, $nodeNid, $refNodeNid = NULL, $refTreeTid = NULL) {
