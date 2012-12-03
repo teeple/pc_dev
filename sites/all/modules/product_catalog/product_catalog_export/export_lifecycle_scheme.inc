@@ -60,6 +60,7 @@ function _array_lifecycle_scheme($nid=NULL){
 				foreach( $tr->field_field_ocs_trigger_events as $event) {
 					$rule['event'] = $event['rendered']['#markup'];
 					
+					// 각 event 별로 transition rule을 넣기 위해 아래와 같이 처리함 
 					$transition[] = $rule;
 				}
 			}
