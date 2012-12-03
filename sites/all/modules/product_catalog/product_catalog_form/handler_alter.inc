@@ -151,9 +151,6 @@ function edit_pane_callback($form, &$form_state){
 
 function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 
-//dsm($form, 'form');
-//dsm($form_state, 'form_state');
-
     if(isset($form['#attributes']) && gettype($form['#attributes']['class']) == 'array') {
     	$form['#attributes']['class'][] = 'myform';
     	
@@ -434,13 +431,18 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			unset($form['field_tpl_voca_machine_name']);
 			// unset($form['field_counter_list']);
 			// dsm($form, 'form');
-			_unset_menu_items($form,$form_id);	
+			_unset_menu_items($form,$form_id);
 			
-			// only for create
-			//
-			if(!isset($form['nid']['#value'])){
-				$form['field_service_type_of_provider']['und']['#default_value'][0] = $form_state['service_domain_tid'];
-				_alter_simpleproductoffering_node_form($form, $form_state);
+			if($form['edit_type'] == 'exclusive') {
+				
+			} else {
+				
+				// only for create
+				//
+				if(!isset($form['nid']['#value'])){
+					$form['field_service_type_of_provider']['und']['#default_value'][0] = $form_state['service_domain_tid'];
+					_alter_simpleproductoffering_node_form($form, $form_state);
+				}
 			}
 			
 			break;
