@@ -15,16 +15,16 @@
 
 #selectable { 
 	list-style-type: none; 
-	margin: 0; 
+	margin-top: 10px; 
 	padding: 0; 
-	width: 990px; 
+	width: 750px; 
 }
 
 #selectable li { 
 	margin: 3px; 
 	padding: 1px; 
 	float: left; 
-	width: 100px; 
+	width: 70px; 
 	height: 25px; 
 	font-size: 10px; 
 	text-align: center;
@@ -87,4 +87,10 @@
 /* Disabled Opacity */
 .ui-selectable.ui-selectable-disabled.ui-state-disabled{
 	opacity: 1;
+}
+
+/* timetable select form */
+
+.timetable_select_form{
+  height: 1000px; 
 }

@@ -138,7 +138,11 @@ function _product_for_export($nid=NULL){
             $benefit['bonus'] = NULL;
         }
         $attribute['benefit'] = $benefit;
-        $product['attribute'] = $attribute;
+		
+		// subscriber's lifecycle scheme과 연결
+		$attribute['lifecyclescheme'] = _get_lifecyclescheme($node->nid);
+		
+		$product['attribute'] = $attribute;
         
         //Packaged Products
         $packagedProducts = Array();
@@ -149,8 +153,9 @@ function _product_for_export($nid=NULL){
         foreach($view->result as $item){
             $packageProduct = Array();
             $packageNode = node_load($item->nid);
-            $packageProduct['package_product_id'] = $packageNode->field_ref_connected_product['und'][0]['nid'];
-            $packageTypeTerm = taxonomy_term_load($packageNode->field_ref_prdrelationtype['und'][0]['tid']);
+			$connectedProduct = node_load($packageNode->field_ref_connected_product['und'][0]['nid']);
+			$packageProduct['package_product_id'] = $connectedProduct->field_product_id['und'][0]['value'];
+			$packageTypeTerm = taxonomy_term_load($packageNode->field_ref_prdrelationtype['und'][0]['tid']);
             $packageProduct['relation_type'] = _get_common_code($packageTypeTerm);
             $packagedProducts [] = $packageProduct;
         }
@@ -248,6 +253,27 @@ function _get_recurring_charge($productNid) {
 	$records = _get_records_from_views_by_label($view_name, $display, $args, $req_labels);
 	
 	return $records;
+}
+
+function _get_lifecyclescheme($productNid) {
+	
+	$view_name = 'list_tree_term_child_node_for_product';
+	$display = 'panel_pane_1';
+	$args = array('0' => $productNid);
+	
+	$contentType = 'simpleproductoffering';
+	$productNode = node_load($productNid);
+	$vocaName = _get_vocabulary_name($contentType, $productNode);
+	
+	$term = taxonomy_get_term_by_name('Subscriber Lifecycle Scheme', $vocaName);
+	$args[] = current($term)->tid;
+	
+	$req_labels = array(
+		'lifecyclescheme_id' => 'Nid',
+	);
+	$records = _get_records_from_views_by_label($view_name, $display, $args, $req_labels);
+	
+	return $records[0];
 }
 
 function _get_recurring_bonus($productNid) {
