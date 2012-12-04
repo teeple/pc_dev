@@ -52,7 +52,7 @@ function product_catalog_ajax_menu() {
   		'access callback' => TRUE,
   		'type' => MENU_CALLBACK,
   );
-  $items['product_catalog_ajax/modal_view_link/%'] = array(
+  $items['product_catalog_ajax/modal_view_link/%'] = array( 
   		'title' => 'View',
   		'page callback' => 'product_catalog_modal_view_link',
   		'page arguments' => array(2),
