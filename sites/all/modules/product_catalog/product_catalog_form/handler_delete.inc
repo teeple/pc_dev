@@ -34,31 +34,35 @@ function product_catalog_form_node_delete($node){
 			break;	
 		case 'domestic_ratinggroup':
 			// unlink numberingplan_domestic's link
-			$parent = node_load($node->field_ref_numberingplan_domestic['und'][0]['nid']);				
-			$searchTargets = $parent->field_ref_domestic_ratinggroup['und'];
-			$totalSearchTargets = count($searchTargets);
-			for($i = 0; $i < $totalSearchTargets; $i++){
-				if($searchTargets[$i]['nid'] == $node->nid){
-					unset($searchTargets[$i]);
-					break;
-				}
-			}
-			$parent->field_ref_domestic_ratinggroup['und'] = $searchTargets;				
-			node_save($parent);			
+			if(isset($node->field_ref_numberingplan_domestic['und'][0]['nid'])){
+    			$parent = node_load($node->field_ref_numberingplan_domestic['und'][0]['nid']);				
+    			$searchTargets = $parent->field_ref_domestic_ratinggroup['und'];
+    			$totalSearchTargets = count($searchTargets);
+    			for($i = 0; $i < $totalSearchTargets; $i++){
+    				if($searchTargets[$i]['nid'] == $node->nid){
+    					unset($searchTargets[$i]);
+    					break;
+    				}
+    			}
+    			$parent->field_ref_domestic_ratinggroup['und'] = $searchTargets;				
+    			node_save($parent);			
+            }
 			break;	
 		case 'idd_ratinggroup':
 			// unlink numberingplan_idd's link
-			$parent = node_load($node->field_ref_numberingplan_idd['und'][0]['nid']);
-			$searchTargets = $parent->field_ref_idd_ratinggroup['und'];
-			$totalSearchTargets = count($searchTargets);
-			for($i = 0; $i < $totalSearchTargets; $i++){
-				if($searchTargets[$i]['nid'] == $node->nid){
-					unset($searchTargets[$i]);
-					break;
-				}
-			}
-			$parent->field_ref_idd_ratinggroup['und'] = $searchTargets;
-			node_save($parent);
+			if(isset($node->field_ref_numberingplan_idd['und'][0]['nid'])){
+    			$parent = node_load($node->field_ref_numberingplan_idd['und'][0]['nid']);
+    			$searchTargets = $parent->field_ref_idd_ratinggroup['und'];
+    			$totalSearchTargets = count($searchTargets);
+    			for($i = 0; $i < $totalSearchTargets; $i++){
+    				if($searchTargets[$i]['nid'] == $node->nid){
+    					unset($searchTargets[$i]);
+    					break;
+    				}
+    			}
+    			$parent->field_ref_idd_ratinggroup['und'] = $searchTargets;
+    			node_save($parent);
+            }
 			break;
 		case 'timetable':
 			//delete child nodes
