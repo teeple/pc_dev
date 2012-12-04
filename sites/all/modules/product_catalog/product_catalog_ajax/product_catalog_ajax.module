@@ -895,8 +895,6 @@ function product_catalog_ajax_load_select_form($nid,$eventType,$rootNid,$relType
     	//'renderer' => 'ui_tabs'
     );
 	
-	dsm($qtabs, 'qtabs');
-	
 	if(isset($defaultTabIndex)) {
 		$qtoptions['default_tab'] = $defaultTabIndex;
     }
