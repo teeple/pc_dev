@@ -1187,9 +1187,11 @@ function product_catalog_modal_view_link($content_type, $nid){
     	'renderer' => 'ui_tabs'
     );
 	
+	/*
 	if(isset($defaultTabIndex)) {
 		$qtoptions['default_tab'] = $defaultTabIndex;
     }
+	 */
 	
     $quicktabs = quicktabs_build_quicktabs('qtab_dummy',$qtoptions,$qtabs);
     $qtRender =  drupal_render($quicktabs['content']);
@@ -1200,7 +1202,6 @@ function product_catalog_modal_view_link($content_type, $nid){
 	$output = ajax_render($output);
 	print $output;
 	exit;
-	
 }
 
 function product_catalog_modal_form_edit_modal_content($js = NULL, $contentType, $nodeNid, $refNodeNid = NULL, $refTreeTid = NULL) {
