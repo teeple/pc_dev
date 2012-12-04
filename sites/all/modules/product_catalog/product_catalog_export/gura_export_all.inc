@@ -601,6 +601,9 @@ function view_get_field_value($view , $field_name , $record)
 				}
 				else if(array_key_exists('taxonomy_term' , $raw_items[0]['raw']))
 				{
+					$t = $raw_items[0]['raw']['taxonomy_term'];
+					if(property_exists($t , "field_rating_operation_code"))
+						return $t->field_rating_operation_code['und'][0]['value'];
 					return $raw_items[0]['raw']['taxonomy_term']->name;
 				}
                 else if(array_key_exists('nid' , $raw_items[0]['raw']) && array_key_exists('node' , $raw_items[0]['raw']))
