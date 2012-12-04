@@ -423,10 +423,18 @@ function generate_condition_string_by_condition_node($nid, &$factor_list )
 			{
 				//$factor_list[$type->field_rating_factor_name['und'][0]['value']] = $type;
 				$newfunc = create_function('$data', $type->field_conversion_php_code['und'][0]['value'] );
-				$value = $newfunc($node);
+                if($newfunc!=NULL)
+                {
+                    $value = $newfunc($node);
 
-				$factor_list[$value[0]['label']] = $value[0];
-				return $value[1];
+                    $factor_list[$value[0]['label']] = $value[0];
+                    return $value[1];
+                }
+                else
+                {
+                    dsm($type->field_conversion_php_code['und'][0]['value']);
+                }
+                return NULL;
 			}
 		}
 	}
@@ -601,6 +609,9 @@ function view_get_field_value($view , $field_name , $record)
 				}
 				else if(array_key_exists('taxonomy_term' , $raw_items[0]['raw']))
 				{
+					$t = $raw_items[0]['raw']['taxonomy_term'];
+					if(property_exists($t , "field_rating_operation_code"))
+						return $t->field_rating_operation_code['und'][0]['value'];
 					return $raw_items[0]['raw']['taxonomy_term']->name;
 				}
                 else if(array_key_exists('nid' , $raw_items[0]['raw']) && array_key_exists('node' , $raw_items[0]['raw']))
