@@ -790,7 +790,7 @@ function _qtabconfig_loading($collectionName, $termInTree) {
 	return $qtabConfigs;
 }
 
-function product_catalog_ajax_load_select_form($nid,$eventType,$rootNid,$relType,$defaultTabIndex){
+function product_catalog_ajax_load_select_form($nid,$eventType,$rootNid,$relType,$defaultTabIndex=0){
 	
 	$rootId = explode('_',$rootNid);
 	$rootId = $rootId[1];
