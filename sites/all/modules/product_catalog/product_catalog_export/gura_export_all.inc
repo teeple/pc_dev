@@ -423,10 +423,18 @@ function generate_condition_string_by_condition_node($nid, &$factor_list )
 			{
 				//$factor_list[$type->field_rating_factor_name['und'][0]['value']] = $type;
 				$newfunc = create_function('$data', $type->field_conversion_php_code['und'][0]['value'] );
-				$value = $newfunc($node);
+                if($newfunc!=NULL)
+                {
+                    $value = $newfunc($node);
 
-				$factor_list[$value[0]['label']] = $value[0];
-				return $value[1];
+                    $factor_list[$value[0]['label']] = $value[0];
+                    return $value[1];
+                }
+                else
+                {
+                    dsm($type->field_conversion_php_code['und'][0]['value']);
+                }
+                return NULL;
 			}
 		}
 	}
