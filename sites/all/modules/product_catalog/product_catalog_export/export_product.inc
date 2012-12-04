@@ -265,8 +265,6 @@ function _get_lifecyclescheme($productNid) {
 	$productNode = node_load($productNid);
 	$vocaName = _get_vocabulary_name($contentType, $productNode);
 	
-	dsm($vocaName, 'vocaName');
-	
 	$term = taxonomy_get_term_by_name('Subscriber Lifecycle Scheme', $vocaName);
 	$args[] = current($term)->tid;
 	
