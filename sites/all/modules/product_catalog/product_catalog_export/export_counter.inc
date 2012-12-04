@@ -45,7 +45,7 @@ function _array_export_counter($nid=NULL){
         $jsonCounter['description'] = !empty($record->field_field_description) ? $record->field_field_description[0]['rendered']['#markup']: null;
         $jsonCounter['scale'] = !empty($record->field_field_scale) ? $record->field_field_scale[0]['rendered']['#title']: null;
 
-        $jsonData_counters['counters'][] = $jsonCounter;
+        $jsonData_counters[] = $jsonCounter;
 		
 		$counterNids[] = $record->nid;
     }
@@ -56,14 +56,8 @@ function _array_export_counter($nid=NULL){
     	$jsonData_common['ifvalues']['resources'] = array();
 	}
 	
-	/*
-	$options = array();
-	$options['method'] = 'POST';
-	$options['headers']['content-type']= 'application/json';
-	$options['data'] = json_encode($jsonData);
-	$result = drupal_http_request('http://192.168.1.105:99/crm/counter/deploy', $options);
-	*/
-	$jsonData[] = array_merge($jsonData_common, $jsonData_counters);
+	$jsonData['ifvalues'] = $jsonData_common;
+	$jsonData['counters'] = $jsonData_counters;
 	
 	return $jsonData;
 
