@@ -76,10 +76,6 @@
                 };
                 break;
             case "mobile_packaged_mandatory":
-            	menus.custom_delete._disabled = false;
-            	menus.custom_delete.action = function(node) {
-            		$.fn.deleteNode(node);
-            	};
             	menus.custom_create._disabled = false;
  				menus.custom_create.submenu = {
  					"mobile_packaged_mandatory" : {
@@ -91,10 +87,6 @@
  				};
             	break;
             case "mobile_packaged_optional":
-            	menus.custom_delete._disabled = false;
-            	menus.custom_delete.action = function(node) {
-            		$.fn.deleteNode(node);
-            	};
             	menus.custom_create._disabled = false;
  				menus.custom_create.submenu = {
  					"mobile_packaged_optional" : {
@@ -105,11 +97,13 @@
  					},
  				};
             	break;
-            case "mobile_packaged_hidden":
+            case 'prdattributepackaged':
             	menus.custom_delete._disabled = false;
             	menus.custom_delete.action = function(node) {
             		$.fn.deleteNode(node);
             	};
+            	break;
+            case "mobile_packaged_hidden":
             	menus.custom_create._disabled = false;
  				menus.custom_create.submenu = {
  					"mobile_packaged_hidden" : {
