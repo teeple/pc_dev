@@ -137,6 +137,7 @@
             case 'actionpricechargerecurring':
             case 'actionpriceallowancerecurring':
             case 'prdnonusagerollover':
+            case 'treenodelifecyclescheme':
                	needToLoadEdit = false;
                 break;
             case 'usage':

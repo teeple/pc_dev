@@ -3,6 +3,6 @@ name = Product Catalog
 description = "Product Catalog"
 core = 7.x
 
-; Providers. 
+; Providers.  
 files[] = product_catalog.inc
 scripts[] = util.js

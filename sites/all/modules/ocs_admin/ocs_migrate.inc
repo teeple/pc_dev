@@ -93,20 +93,36 @@ function ocs_migrate_fce_carrier_submit($form, &$form_state)
 	}
 }
 
-function ocs_migrate_fce_area($form, &$form_state)
+function _get_area_code( $category)
 {
 	db_set_active('fce');
 
-	$query = db_select('area', 'a');
-	$result = $query->fields('a', array(
-		'carrier',
-		'ruleName',
-		'second_prefix',
-		'region_code',
-		'rating_group'
-	))->orderBy('carrier')->execute();
+    $info = array(
+        'voice' => array( 'table' => 'area', 
+            'field' => array(
+                'carrier',
+                'ruleName',
+                'second_prefix',
+                'region_code',
+                'rating_group'
+                ),
+            'order' => 'carrier'),
+        'intl voice' => array( 'table' => 'intl_area',
+            'field' => array( 'ruleName', 'intl_carrier', 'prefix', 'country_code', 'NPA_prefix',
+                'country_prefix', 'rating_group'),
+            'order' => 'intl_carrier'),
+    );
 
-	$output = '<thead><tr><td>Carrier</td><td>Area Name</td><td>Prefix</td><td>Region Code</td><td>Rating Group</td></tr></thead>';
+	$query = db_select( $info[$category]['table'], 'a');
+	$result = $query->fields('a', $info[$category]['field'])
+        ->orderBy( $info[$category]['order'])
+        ->execute();
+
+	$output = '<thead><tr>';
+    foreach( $info[$category]['field'] as $f) {
+        $output .= '<td>'. $f . '</td>';
+    }
+	$output .= '</tr></thead>>';
 	$output .= '<tbody>';
 	$records = array();
 	while ($record = $result->fetchAssoc()) {
@@ -120,9 +136,57 @@ function ocs_migrate_fce_area($form, &$form_state)
 	}
 	$output .= '</tbody>';
 
-	$form['#area'] = $records;
-
 	db_set_active('default');
+
+    return array( $records, $output);
+}
+
+
+function ocs_migrate_fce_area($form, &$form_state)
+{
+    $category = ( isset( $form_state['values']['category']) ? $form_state['values']['category'] : 'voice');
+
+    list( $records, $output ) = _get_area_code( $category);
+
+	$form['#area'] = $records;
+	$form['#attributes'] = array('class' => array('myform'));
+
+
+    $form['info'] = array(
+        '#type' => 'markup',
+        '#markup' => 'Migrate area table',
+    );
+
+    $form['category'] = array(
+        '#type' => 'select',
+        '#title' => 'Category',
+		'#options' => drupal_map_assoc(array( 'voice', 'intl voice', 'sms', 'intl sms')),
+        '#default_value' => $category,
+        '#ajax' => array(
+            'callback' => 'ocs_ajax_select_area_code_category',
+            'wrapper' => 'ocs_ajax_select_area_code_category_div',
+        ),
+    );
+
+	$form['remove'] = array(
+		'#type' => 'radios',
+		'#options' => array(
+			'No',
+			'Yes'
+		),
+		'#default_value' => '0',
+		'#title' => 'Remove all existing data',
+	);
+
+	$form['check'] = array(
+		'#type' => 'radios',
+		'#options' => array(
+			'No',
+			'Yes'
+		),
+		'#default_value' => '1',
+		'#title' => 'Check Only',
+	);
 
 	$form['actions'] = array('#type' => 'actions');
 
@@ -136,25 +200,19 @@ function ocs_migrate_fce_area($form, &$form_state)
 		'#value' => t('Cancel'),
 	);
 
-	$form['carrier'] = array(
-		'#type' => 'fieldset',
-		'#title' => 'Area',
-		'#collapsible' => TRUE,
-	);
-
-	// $form['carrier']['remove'] = array(
-	// '#type' => 'radios',
-	// '#title' => 'remove all existing data',
-	// '#options' => array( 'No', 'Yes'),
-	// '#default_value' => '1',
-	// );
-
-	$form['carrier']['data'] = array(
+	$form['data'] = array(
 		'#type' => 'markup',
-		'#markup' => '<table>' . $output . '</table>'
+		'#markup' => '<table>' . $output . '</table>',
+        '#prefix' => '<div id="ocs_ajax_select_area_code_category_div">',
+        '#suffix' => '</div>',
 	);
 
 	return $form;
+}
+
+function ocs_ajax_select_area_code_category( $form, &$form_state)
+{
+    return $form['data'];
 }
 
 function ocs_migrate_fce_area_submit($form, &$form_state)
@@ -163,16 +221,22 @@ function ocs_migrate_fce_area_submit($form, &$form_state)
 	if ($values['op'] == 'Save') {
 		dpm($values, 'values');
 
-		// if ( $values['remove'] == '1') {
-		// dpm( 'remove all area instances.');
-		//
-		// // remove all existing values
-		// $items = entity_load( 'node', FALSE, array( 'type' => 'area_code'));
-		// foreach( array_keys( $items) as $nid) {
-		// dpm( 'node '.$nid.' deleted.');
-		// node_delete( $nid);
-		// }
-		// }
+        if ( $values['remove'] == '1') {
+            dpm( 'remove all idd_ratinggroup instances.');
+        
+            // remove all existing values
+            $type = ( $values['category'] == 'intl voice') ? 'idd_ratinggroup' : 'area_code';
+            $items = entity_load( 'node', FALSE, array( 'type' => $type));
+            foreach( array_keys( $items) as $nid) {
+                dpm( 'node '.$nid.' deleted.');
+                node_delete( $nid);
+            }
+        }
+
+        if ( $values['category'] == 'intl voice') {
+            _update_area_code_for_intl_voice( $form['#area'], $values['check'] == '1');
+            return;
+        }
 
 		// add entities
 		foreach ($form['#area'] as $r) {
@@ -220,6 +284,109 @@ function ocs_migrate_fce_area_submit($form, &$form_state)
 			node_save($node);
 		}
 	}
+}
+
+function _update_area_code_for_intl_voice( $records, $check_only)
+{
+    // get country code
+   	db_set_active('fce');
+
+	$query = db_select('intl_country_code', 'c');
+	$result = $query->fields('c', array(
+		'ruleName',
+		'country_prefix',
+        ))->execute();
+
+	$country_code = array();
+	while ($record = $result->fetchAssoc()) {
+		$country_code[ $record['ruleName']] = $record['country_prefix'];
+    }
+	db_set_active('default');
+
+    // find 'FCE IDD Numbering Plan'
+    $plan = 'FCE IDD Numbering Plan 2';
+    $np = _get_first_node_by_title('numberingplan_idd', $plan);
+    if (empty($np)) {
+        dpm('numbering plan not found: ' . $plan);
+        return;
+    }
+
+	global $carrier_info;
+	
+	if ( empty($carrier_info)) {
+		$carrier_info = ocs_load_all_carrier();
+		dpm( $carrier_info, 'carrier info reloaded.');
+	}		
+
+	// find rating group list
+	$query = new EntityFieldQuery();
+	$result = $query->entityCondition('entity_type', 'node')
+		->entityCondition('bundle', 'idd_ratinggroup')
+		->fieldCondition( 'field_ref_numberingplan_idd', 'nid', $np->nid)
+		->execute();
+		
+	$rating_group_list = array();
+	if ( count( $result) > 0) {		// find the ratinggroup first
+		foreach( array_keys( $result['node']) as $nid) {
+			$node = node_load( $nid);
+			$rating_group_list[$node->field_prefix['und'][0]['value']] = $nid;
+		}
+	}
+	dpm( $rating_group_list, 'rating group list');	
+	dpm( $np, 'IDD numbering plan');
+		
+    foreach ($records as $r) {
+        $prefix = ( isset( $country_code[ $r['country_code']])) ?  
+            ($country_code[ $r['country_code']] . $r['NPA_prefix']) : 
+            ($r['prefix'] . $r['NPA_prefix']);
+
+
+        if ( isset( $rating_group_list[$prefix])) {
+            dpm( t('existing prefix : carrier=@c prefix=@p name=!n', array( '@c' => $r['intl_carrier'],
+                '@p' => $prefix, '!n' => $r['ruleName'])));
+
+            $nid = $rating_group_list[$prefix];
+            $c = node_load( $nid);
+            _set_idd_ratinggroup( $carrier_info, $c, $np, $r, $prefix);
+            //dpm( $c, 'idd_ratinggroup');
+
+            if ( ! $check_only) {
+                node_save( $c);
+            }
+        }
+        else {
+            dpm( t('new prefix : carrier=@c prefix=@p name=!n', array( '@c' => $r['intl_carrier'],
+                '@p' => $prefix, '!n' => $r['ruleName'])));
+
+            $c = ocs_admin_get_new_node('idd_ratinggroup');
+            _set_idd_ratinggroup( $carrier_info, $c, $np, $r, $prefix);
+            //dpm( $c, 'idd_ratinggroup');
+
+            if ( ! $check_only) {
+                node_save( $c);
+                $np->field_ref_idd_ratinggroup['und'][] = array('nid' => $c->nid);
+            }
+        }
+    }
+
+	if ( ! $check_only) node_save($np);
+}
+
+function _set_idd_ratinggroup( $carrier_info, &$r, $np, $rule, $prefix)
+{
+	$carrier_name = $rule['intl_carrier'];
+
+	$r->title = 'idd_ratinggroup';
+	$r->field_ref_numberingplan_idd['und'][0]['nid'] = $np->nid;
+	$r->field_service_type_of_provider['und'][0]['tid'] = 406;		// Mobile
+	$r->field_ref_carrier_mobile['und'][0]['nid'] = $carrier_info[$carrier_name]['nid'];
+	$r->field_prefix['und'][0]['value'] = $prefix;
+	$r->field_area_name['und'][0]['value'] = $rule['ruleName'];
+	$r->field_rating_group['und'][0]['value'] = $carrier_name . '_' . $rule['rating_group'];
+	
+	// set type of call
+    // outgoing international voice call
+    $r->field_ref_type_of_call['und'][0]['tid'] = 1514;
 }
 
 function ocs_migrate_fce_timetable($form, &$form_state)
@@ -642,19 +809,6 @@ function ocs_migrate_fce_voiceplan_submit($form, &$form_state)
 
 function _update_numbering_plan($np, $rule_list, $carrier_info, $update_flag)
 {
-	// get nid of carrier 		
-	$query = new EntityFieldQuery();
-	$result = $query->entityCondition('entity_type', 'node')
-		->entityCondition('bundle', 'carrier_mobile')
-		->execute();
-
-	foreach( array_keys( $result['node']) as $nid) {
-		$node = node_load( $nid);
-		$carrier_info[$node->title]['nid'] = $nid;
-	}
-		
-	//dpm( $carrier_info, 'carrier info');
-	
 	// find rating group list
 	$query = new EntityFieldQuery();
 	$result = $query->entityCondition('entity_type', 'node')
@@ -713,8 +867,11 @@ function _update_numbering_plan($np, $rule_list, $carrier_info, $update_flag)
 			$i = 0;
 			foreach( $result as $r ) {
 					
-				dpm( t('existing rating group: carrier=@c rating_group=@r,@ra area=@a', array( '@c' => $rule['called_carrier'],
-					'@r' => $rule['rating_group'], '@ra' => $rule['ruleName'], '@a' => implode( ',', $area_code))));
+				dpm( t('existing rating group: carrier=@c rating_group=@r,@ra area=@a', 
+                    array( '@c' => $rule['called_carrier'],
+					    '@r' => $rule['rating_group'], 
+                        '@ra' => $rule['ruleName'], 
+                        '@a' => implode( ',', $area_code))));
 				
 				_set_domestic_ratinggroup( $carrier_info, $r, $np, $rule, $need_area_code ? $area_code[$i++] : null, $rating_group_name);
 				if ( $update_flag) {
@@ -843,6 +1000,19 @@ function ocs_load_all_carrier()
 		}
 
 		db_set_active('default');
+
+        // get nid of carrier 		
+        $query = new EntityFieldQuery();
+        $result = $query->entityCondition('entity_type', 'node')
+            ->entityCondition('bundle', 'carrier_mobile')
+            ->execute();
+
+        foreach( array_keys( $result['node']) as $nid) {
+            $node = node_load( $nid);
+            $carrier[$node->title]['nid'] = $nid;
+        }
+            
+        //dpm( $carrier, 'carrier info');
 	}
 
 	return $carrier;
