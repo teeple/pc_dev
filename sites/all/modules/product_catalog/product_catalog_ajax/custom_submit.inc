@@ -74,20 +74,20 @@ function _create_basicrate_node($type,$tariffplanNode){
 		case 'select_timetable_domestic':
 		case 'select_numberingplan_domestic':
 			$targetTimetableFieldName = 'field_ref_timetable_domestic';
-			$targetCreatedContentType = 'basicrate_domestic';
+            $targetCreatedContentType = 'basicrate_domestic';
 			$targetRatingGroupViewDisplay = 'panel_pane_1';
 			$targetRatingGroupViewArgNid = array('0' => $tariffplanNode->field_ref_numberingplan_domestic['und'][0]['nid']);
 			break;
 		case 'select_timetable_idd':
 		case 'select_numberingplan_idd':
 			$targetTimetableFieldName = 'field_ref_timetable_idd';
-			$targetCreatedContentType = 'basicrate_idd';
+            $targetCreatedContentType = 'basicrate_idd';
 			$targetRatingGroupViewDisplay = 'panel_pane_2';
 			$targetRatingGroupViewArgNid = array('0' => $tariffplanNode->field_ref_numberingplan_idd['und'][0]['nid']);
 			break;
 	}
 	
-	//delete old children
+	//delete old children	
 	$view = views_get_view('list_basicrate');
 	$view->set_display('panel_pane_1');
 	$view->set_arguments(array('0' => $targetCreatedContentType,'1' => $tariffplanNode->nid));
@@ -95,9 +95,10 @@ function _create_basicrate_node($type,$tariffplanNode){
 	$delNids = array();
 		
 	foreach($view->result as $item){
+		    
 		$delNids[] = $item->nid;
 	}
-	
+   
 	node_delete_multiple($delNids);
 	
 	//add new children
@@ -107,13 +108,18 @@ function _create_basicrate_node($type,$tariffplanNode){
 	$ratingGroupView->set_arguments($targetRatingGroupViewArgNid);
 	$ratingGroupView->execute();
 	$ratingGroups = array();
+    $ratingGroupCheck = array();
 	foreach($ratingGroupView->result as $item){
-		$ratingGroups[] = $item->field_field_rating_group[0]['raw']['value'];
+	    if(!in_array($item->field_field_rating_group[0]['raw']['value'],$ratingGroupCheck)){
+            $ratingGroups[] = $item->field_field_rating_group[0]['raw']['value'];
+            $ratingGroupCheck[] = $item->field_field_rating_group[0]['raw']['value'];
+        }
 	}
 	
 	//2. search timetablefactors
 	$evalStr = '$timetableNode = node_load($tariffplanNode->'.$targetTimetableFieldName.'[\'und\'][0][\'nid\']);';
 	eval($evalStr);
+    dsm($timetableNode->field_ref_timetablefactors['und'],'timetable factors');
 	
 	//3. create basicrate nodes
 	foreach($ratingGroups as $ratingGroup){		
