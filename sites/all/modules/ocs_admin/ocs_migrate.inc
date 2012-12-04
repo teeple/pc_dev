@@ -1,5 +1,8 @@
 <?php
 
+require_once('ocs_migrate_timetable.inc');
+require_once('ocs_migrate_tariff.inc');
+
 function ocs_migrate_fce_carrier($form, &$form_state)
 {
 	db_set_active('fce');
@@ -440,91 +443,69 @@ function _set_idd_ratinggroup( $carrier_info, &$r, $np, $rule, $prefix)
     $r->field_ref_type_of_call['und'][0]['tid'] = 1514;
 }
 
-function ocs_migrate_fce_timetable($form, &$form_state)
+function _get_time_table( $call_type)
 {
 	db_set_active('fce');
 
-	$query = db_select('voice_time_table', 'a');
-	$result = $query->fields('a', array(
-		'carrier',
-		'ruleName',
-		'holiday',
-		'week',
-		'timeLower',
-		'timeUpper'
-	))->orderBy('carrier')->orderBy('ruleName')->execute();
+	if ( $call_type == 'domestic:voice') {
+		$fields = array(
+			'carrier',
+			'ruleName',
+			'holiday',
+			'week',
+			'timeLower',
+			'timeUpper'
+		);
+		$table = 'voice_time_table';
+		$order = array('carrier', 'ruleName');
+	}
+	else if ( $call_type == 'intl:voice') {
+		$fields = array(
+			'intl_carrier', 
+			'holiday', 'week', 'timeLower', 'timeUpper',
+			'ruleName', 
+		);
+		$table = 'intl_voice_time_table';
+		$order = array( 'intl_carrier', 'week');
+	}
+	else {
+		dpm( 'Unknown call type : '. $call_type);
+		return array();
+	}
 
-	$output = '<thead><tr><td>Carrier</td><td>Name</td><td>Holiday</td><td>Week</td><td>From</td><td>To</td></tr></thead>';
+	$query = db_select( $table, 'v');
+	$query->fields('v', $fields);
+
+	foreach( $order as $o) {
+		$query->orderBy( $o);
+	}
+	$result = $query->execute();
+
+	$output = '<thead><tr>';
+	foreach ($fields as $field) {
+		$output .= '<td>' . $field . '</td>';
+	}
+
+	$output .= '</tr></thead>';
 	$output .= '<tbody>';
 	$records = array();
 	while ($record = $result->fetchAssoc()) {
-		$records[] = $record;
 
 		$output .= '<tr>';
 		foreach (array_keys( $record) as $key) {
 			$output .= '<td>' . $record[$key] . '</td>';
 		}
+
 		$output .= '</tr>';
+
+		// $record['regionFlag'] = $carrier_info[$c]['regionFlag'];
+		$records[] = $record;
 	}
 	$output .= '</tbody>';
 
-	$form['#timetable'] = $records;
-
 	db_set_active('default');
 
-	$form['actions'] = array('#type' => 'actions');
-
-	$form['actions']['submit'] = array(
-		'#type' => 'submit',
-		'#value' => t('Save'),
-	);
-
-	$form['actions']['cancel'] = array(
-		'#type' => 'submit',
-		'#value' => t('Cancel'),
-	);
-
-	$form['carrier'] = array(
-		'#type' => 'fieldset',
-		'#title' => 'Area',
-		'#collapsible' => TRUE,
-	);
-
-	// $form['carrier']['remove'] = array(
-	// '#type' => 'radios',
-	// '#title' => 'remove all existing data',
-	// '#options' => array( 'No', 'Yes'),
-	// '#default_value' => '1',
-	// );
-
-	$form['carrier']['data'] = array(
-		'#type' => 'markup',
-		'#markup' => '<table>' . $output . '</table>'
-	);
-
-	return $form;
-}
-
-function ocs_migrate_fce_timetable_submit($form, &$form_state)
-{
-	$values = $form_state['values'];
-	if ($values['op'] == 'Save') {
-		dpm($values, 'values');
-
-		// if ( $values['remove'] == '1') {
-		// dpm( 'remove all area instances.');
-		//
-		// // remove all existing values
-		// $items = entity_load( 'node', FALSE, array( 'type' => 'area_code'));
-		// foreach( array_keys( $items) as $nid) {
-		// dpm( 'node '.$nid.' deleted.');
-		// node_delete( $nid);
-		// }
-		// }
-
-		// add entities
-		// manual migration
-	}
+	return array( $records, $output);
 }
 
 function _analyze_tariff_plan( $carrier)
@@ -567,7 +548,15 @@ function _get_voice_tariff( $call_type, $category='All', $condition='user_catego
 	}
 	else if ( $call_type == 'intl:voice') {
 		$fields = array(
-			'ruleName', 'intl_carrier', 'country_code', 'rating_group', 'user_category', 'intl_call_type', 'isDDD', 'called' 
+			'user_category', 
+			'intl_carrier', 
+			'country_code', 
+			'ruleName', 
+			'intl_time_id', 
+			'intl_call_type', 
+			'isDDD', 
+			'called', 
+			'rating_group', 
 		);
 		$table = 'intl_voice_tariff_decision';
 		$order = array( 'intl_carrier');
@@ -1104,7 +1093,7 @@ function ocs_load_all_rate()
 	return $rate;
 }
 
-function ocs_migrate_fce_tariff($form, &$form_state, $domestic_or_intl = 'domestic', $calltype = 'voice')
+function ocs_migrate_fce_rate($form, &$form_state, $domestic_or_intl = 'domestic', $calltype = 'voice')
 {
 	$category = isset($form_state['values']['category']) ? $form_state['values']['category'] : 'All';
 
@@ -1247,7 +1236,7 @@ function _get_rate_list($rate, $name)
 	return $list;
 }
 
-function ocs_migrate_fce_tariff_submit($form, &$form_state)
+function ocs_migrate_fce_rate_submit($form, &$form_state)
 {
 	$values = $form_state['values'];
 	if ($values['op'] == 'Save') {
@@ -1361,3 +1350,7 @@ function _set_rate($plan_nid, $name, $rate_list, $tid, $check_only = TRUE)
 		node_save($new_rate);
 	}
 }
+
+
+
+
