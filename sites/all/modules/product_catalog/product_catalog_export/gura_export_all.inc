@@ -247,6 +247,32 @@ function get_drupal_field_values($obj , $field_name)
 	return $ret;
 }
 
+function get_drupal_field_refs($obj , $field_name)
+{
+	$ret = array();
+	$temp = $obj->$field_name;
+	foreach($temp['und'] as $und)
+	{
+		$nid = $und['nid'];
+		$ret[] = node_load($nid);
+	}
+	return $ret;
+}
+
+function get_drupal_field_tids($obj , $field_name)
+{
+	$ret = array();
+	$temp = $obj->$field_name;
+	dsm($field_name);
+	dsm($temp);
+	foreach($temp['und'] as $und)
+	{
+		$tid = $und['tid'];
+		$ret[] = taxonomy_term_load($tid);
+	}
+	return $ret;
+}
+
 function generate_condition_json_by_condition_node($nid)
 {
 	$ret = array();
@@ -341,54 +367,66 @@ function generate_condition_string_by_condition_node($nid, &$factor_list )
 	{
 		foreach($types as $type)
 		{
-            $factor_list[$type->field_rating_factor_name['und'][0]['value']] = $type;
-			$newfunc = create_function('$data', $type->field_conversion_php_code['und'][0]['value'] );
-			$value = $newfunc($node);
-
-			if(is_array($value))
+			if(count($type->field_rating_factor_name['und'])>0)
 			{
-				$o = '';
-				$factor_name = $type->field_rating_factor_name['und'][0]['value'];
-				$op = $type->field_rating_factor_op['und'][0]['value'];
-				if($op == '=' || $op == 'starts' || $op == 'ends')
+				$factor_list[$type->field_rating_factor_name['und'][0]['value']] = $type;
+				$newfunc = create_function('$data', $type->field_conversion_php_code['und'][0]['value'] );
+				$value = $newfunc($node);
+
+				if(is_array($value))
 				{
-					array_apply($value , 'to_rating_rule_string');
-					return $factor_name . ' ' . $op . ' ' . join(',' , $value);
-				}
-				else if($op == 'between')
-				{
-					if(count($value) == 2)
+					$o = '';
+					$factor_name = $type->field_rating_factor_name['und'][0]['value'];
+					$op = $type->field_rating_factor_op['und'][0]['value'];
+					if($op == '=' || $op == 'starts' || $op == 'ends')
 					{
 						array_apply($value , 'to_rating_rule_string');
 						return $factor_name . ' ' . $op . ' ' . join(',' , $value);
 					}
+					else if($op == 'between')
+					{
+						if(count($value) == 2)
+						{
+							array_apply($value , 'to_rating_rule_string');
+							return $factor_name . ' ' . $op . ' ' . join(',' , $value);
+						}
+						else
+						{
+							/* TODO */
+						}
+					}
 					else
 					{
-						/* TODO */
+						if(count($value)==1)
+						{
+							array_apply($value , 'to_rating_rule_string');
+							return $factor_name . ' ' . $op . ' ' . join(',' , $value);
+						}
+						else
+						{
+							array_apply($value , 'to_rating_conditions', array("factor_name" => $factor_name , "op" => $op) );
+
+							return '(' . join(' or ', $value) . ')' ;
+						}
 					}
 				}
 				else
 				{
-					if(count($value)==1)
+					if(strstr($value, ' ') != FALSE)
 					{
-						array_apply($value , 'to_rating_rule_string');
-						return $factor_name . ' ' . $op . ' ' . join(',' , $value);
+						$value = '\'' . $value . '\'';
 					}
-					else
-					{
-						array_apply($value , 'to_rating_conditions', array("factor_name" => $factor_name , "op" => $op) );
-
-						return '(' . join(' or ', $value) . ')' ;
-					}
+					return $type->field_rating_factor_name['und'][0]['value'] . ' ' . $type->field_rating_factor_op['und'][0]['value'] . ' ' . $value;
 				}
 			}
 			else
 			{
-				if(strstr($value, ' ') != FALSE)
-				{
-					$value = '\'' . $value . '\'';
-				}
-				return $type->field_rating_factor_name['und'][0]['value'] . ' ' . $type->field_rating_factor_op['und'][0]['value'] . ' ' . $value;
+				//$factor_list[$type->field_rating_factor_name['und'][0]['value']] = $type;
+				$newfunc = create_function('$data', $type->field_conversion_php_code['und'][0]['value'] );
+				$value = $newfunc($node);
+
+				$factor_list[$value[0]['label']] = $value[0];
+				return $value[1];
 			}
 		}
 	}
@@ -496,6 +534,11 @@ function get_field_type_string($field_name)
         return $field_info['type'];
     }
     return "unknown";
+}
+
+function date_to_iso8601_date_str($value)
+{
+	return strftime('%Y-%m-%dT%H:%M', strtotime($value));
 }
 
 function view_get_field_value($view , $field_name , $record)
@@ -653,7 +696,17 @@ function get_rating_factor_info($rating_factor_name)
             $ret["type"] = $node->field_rating_factor_type['und'][0]['value'];
             return $ret;
         }
-     }
+	 }
+	 else if(string_startsWith($rating_factor_name , "counter_"))
+	 {
+		$ret = array();
+		$ret["label"] = $rating_factor_name;
+		$ret["default_op"] = "=";
+		$ret["size"] = 0;
+		$ret["type"] = "double";
+		return $ret;
+	 }
+	 return NULL;
 }
 
 function has_same_sub_factor($arr , $factor_name)
