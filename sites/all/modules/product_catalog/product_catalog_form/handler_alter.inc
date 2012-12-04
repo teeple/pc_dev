@@ -59,6 +59,7 @@ function _add_ajax_submit_callback($form_id,&$form){
         case 'actionpricechargerecurring_node_form':
         case 'actionpricediscount_node_form':
         case 'actionpriceallowance_node_form':
+		case 'actionsetnotification_node_form':
         case 'tariffplan_node_form':
         case 'treenodecounter_node_form':
         case 'prdattributeprefixrangeallowed_node_form':
@@ -870,7 +871,11 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			
 			_unset_menu_items($form,$form_id);
           	break;
+		case 'actionsetnotification_node_form':
+			$form['field_ref_source_action']['#type'] = 'hidden';
 			
+			_unset_menu_items($form,$form_id);
+			break;
         case 'tariffplan_node_form':
 			unset($form['field_parent_node']);
             unset($form['field_weight']);
