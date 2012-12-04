@@ -32,9 +32,9 @@ function timetable_selectable_add(){
 	$titleView->execute();
 	
 	if(count($titleView->result) > 0){
-		$timeTableFactorsNode = node_load($titleView->result[0]->node_field_data_field_ref_timetablefactors_nid);
-	}else{	
-		$timeTableFactorsNode = new StdClass();
+	    $timeTableFactorsNode = node_load($titleView->result[0]->node_field_data_field_ref_timetablefactors_nid);
+	}else{
+	    $timeTableFactorsNode = new StdClass();
 		$timeTableFactorsNode->type = 'timetablefactors';
 		$timeTableFactorsNode->language= 'und';
 		$timeTableFactorsNode->uid = $user->uid;
@@ -59,9 +59,9 @@ function timetable_selectable_add(){
 		
 		$timeTableFactorsNode->field_css_order['und'][0]['value'] = $color;
 		node_save($timeTableFactorsNode);
+        $timeTableNode->field_ref_timetablefactors['und'][] = array('nid' => $timeTableFactorsNode->nid);
 	}
 	
-	$timeTableNode->field_ref_timetablefactors['und'][] = array('nid' => $timeTableFactorsNode->nid);
 	node_save($timeTableNode);
 	
 	foreach($selected as $item){
@@ -69,8 +69,8 @@ function timetable_selectable_add(){
 	}
 		
 	_cleanup_timetablefactors($timeTableNode->nid);
-	
-	$redirect_url = 'common/timetable/'.$timeTableNode->nid.'/timetablefactors';
+	 
+	$redirect_url = 'common/numberingplan/timetable/'.$timeTableNode->nid.'/timetablefactors#quickset-numbering_plan=2';
 	$commands[] = ctools_ajax_command_redirect($redirect_url);
 	print ajax_render($commands);
 	exit;
@@ -133,8 +133,10 @@ function timetable_selectable_form($form, &$form_state) {
 	
     $timetableNid = $form_state['param']['timetable_nid'];
     
+    $form['#attributes'] = array('class' => 'timetable_select_form');
+    
     if($form_state['param']['editable'] != FALSE){
-    	$form['selectable_submit'] = array(
+        $form['selectable_submit'] = array(
 	    	'#type' => 'fieldset',    		
 	    	'#title' => 'Save',
 	    	'#weight' => 0,
