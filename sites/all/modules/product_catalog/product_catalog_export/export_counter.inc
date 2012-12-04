@@ -51,9 +51,9 @@ function _array_export_counter($nid=NULL){
     }
 
     if($nid!=NULL) {
-    	$jsonData_common['ifvalues']['resources'] = array(array_values($counterNids));
+    	$jsonData_common['resources'] = array(array_values($counterNids));
 	} else {
-    	$jsonData_common['ifvalues']['resources'] = array();
+    	$jsonData_common['resources'] = array();
 	}
 	
 	$jsonData['ifvalues'] = $jsonData_common;
