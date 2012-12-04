@@ -78,6 +78,7 @@ function _add_ajax_submit_callback($form_id,&$form){
 		case 'numberspecialrate_node_form':
 		case 'actionpriceallowanceonetime_node_form':
 		case 'actionpriceallowancerecurring_node_form':
+        case 'treenodeotheronetimecharge_node_form':
 		  	$change = TRUE;
         	break;
         	
@@ -969,6 +970,20 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
         	break;
         case 'lifecyclescheme_node_form':
             _unset_menu_items($form,$form_id);
+            break;
+        case 'treenodeotheronetimecharge_node_form':
+            _unset_menu_items($form,$form_id);
+            $form['field_ref_product']['#type'] = 'hidden';
+            $form['field_ref_tree_tid']['#type'] = 'hidden'; 
+            $form['field_weight']['#type'] = 'hidden';
+            $form['field_ref_otherontimecharge']['#type'] = 'hidden';
+            
+            $custom_title = $form['title']['#default_value'];
+            $form['custom_title'] = array(
+                '#type' => 'markup',
+                '#markup' => '<h3>'.$custom_title.'</h3>',
+                '#weight' => 0
+            );
             break;
         /*
         case 'views_form_list_numberingplan_domestic_for_product_default':
