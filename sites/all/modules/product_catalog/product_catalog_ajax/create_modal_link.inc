@@ -18,6 +18,24 @@ function _create_modal_add_link($contentType,$params){
 	return $link_string;	
 }
 
+function _create_modal_select_link($contentType, $params) {
+	ctools_include('ajax');
+	ctools_include('modal');
+	ctools_modal_add_js();
+	
+	$select_url = '/product_catalog_ajax/nojs/select_modal/'.$contentType;
+	foreach($params as $param){
+		$select_url .= '/'.$param;
+	}
+	
+	$add_class_1 = 'add-link-in-rightpane';
+	$add_class_2 = 'ctools-use-modal ctools-modal-add-item-modal-style';
+	
+	$link_string = '<div class='.$add_class_1.'><a href="'.$select_url.'" class='.$add_class_2.'>Add</a></div>';
+	
+	return $link_string;
+}
+
 function _create_modal_edit_delete_link($contentType,$params){ 
 	ctools_include('ajax');
 	ctools_include('modal');
@@ -72,3 +90,4 @@ function _create_modal_form_view_link_by_page($linkTitle,$contentType, $params){
 	$link_string = '<div><a href="'.$url.'" class='.$link_class.'>'.$linkTitle.'</a></div>';
 	echo $link_string;
 }
+
