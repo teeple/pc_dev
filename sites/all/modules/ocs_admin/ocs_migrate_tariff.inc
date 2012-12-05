@@ -137,36 +137,99 @@ function ocs_migrate_fce_tariff_submit($form, &$form_state)
 		$plan_list = array( 'voice_plan_a');
 
 		$timetable_list = _load_all_time_table();
+        dpm( $timetable_list, 'time table');
+
+        $idd_ratinggroup = _load_all_idd_ratinggroup();
+
 
 		foreach( $plan_list as $plan_name) {
 			$plan_node = _get_first_node_by_title( 'tariffplan', $plan_name);
 
-			// add rating group records
-			foreach ($form['#rule'] as $rule) {
+            $rate_list = _load_all_rate( $plan_node->nid);
+            dpm( $rate_list, 'rate list');
 
-			//dpm( $rate_list, 'rate list:'.$rule['ruleName']);
-			//_set_tariff($plan_node->nid, $rule['ruleName'], $rate_list, $tid, $values['check'] == '1');
+			// add rating group records
+			foreach ($form['#rule'] as $r) {
+                $rating_group = $r['intl_carrier'] . '_' . $r['rating_group'];
+
+                if ( ! isset( $idd_ratinggroup[$rating_group])) {
+                    dpm( 'rating group not found: '. $rating_group);
+                    continue;
+                }
+
+                if ( ! isset( $timetable_list[$r['intl_carrier']])) {
+                    dpm( 'time table not found: '. $r['intl_carrier']);
+                    continue;
+                }
+
+                $tt = $timetable_list[$r['intl_carrier']];
+                dpm( $tt, 'time table');
+
+                $idx = $r['intl_time_id'] - 1;
+                if ( ! isset( $tt->field_ref_timetablefactors['und'][$idx])) {
+                    dpm( 'time table factor not found for time_id:'. $r['intl_time_id']);
+                    continue;
+                }
+
+                if ( ! isset( $rate_list[$r['ruleName']])) {
+                    dpm( 'rate not found: '. $r['ruleName']);
+                    continue;
+                }
+
+                dpm( 'rating group:'.$rating_group);
+
+			    _set_tariff($plan_node->nid, 
+                    $rating_group, 
+                    $tt->field_ref_timetablefactors['und'][$idx]['nid'],
+                    $rate_list[$r['ruleName']],
+                    $values['check'] == '1');
 			}
 		}
 	}
 }
 
-function _set_tariff( $plan_nid)
+function _set_tariff( $plan_nid, $ratinggroup, $tt_nid, $rate_nid, $check_only)
 {
-	$node = ocs_admin_get_new_node( 'basicrate_idd');
+	$query = new EntityFieldQuery();
+	$result = $query->entityCondition('entity_type', 'node')
+		->entityCondition('bundle', 'basicrate_idd')
+		->fieldCondition('field_ref_tariffplan', 'nid', $plan_nid)
+		->fieldCondition('field_basicrate_ratinggroup', 'value', $ratinggroup)
+		//->fieldCondition('field_ref_timetablefactors', 'nid', $tt_nid)
+		->execute();
 
+	if ( count( $result) > 0) {
+        dpm( $result, 'result');
+        dpm( $tt_nid, 'tt_nid');
+
+        foreach( array_keys( $result['node']) as $nid) {
+            dpm( node_load( $nid), 'node');
+        }
+
+        return;
+
+        $nids = array_keys( $result['node']);
+        $node = node_load( $nids[0]);
+	
+    /*
 	$node->title = 'basicrate_idd';
 	$node->field_ref_tariffplan['und'][0]['nid'] = $plan_nid;
-	$node->field_basicrate_ratinggroup = '';
-	$node->field_ref_timetablefactors = '';
-	$node->field_ref_rate = '';
+	$node->field_basicrate_ratinggroup['und'][0]['nid'] = $ratinggroup_nid;
+	$node->field_ref_timetablefactors['und'][0]['nid'] = $tt_nid;
+    */
+        $node->field_ref_rate['und'][0]['nid'] = $rate_nid;
+        node_save( $node);
+    }
+    else {
+        dpm('rating not found');
+    }
 
 }
 
 /*
    $type : idd or domestic
    */
-function _load_all_time_table( $type)
+function _load_all_time_table()
 {
 	$query = new EntityFieldQuery();
 	$result = $query->entityCondition('entity_type', 'node')
@@ -184,4 +247,39 @@ function _load_all_time_table( $type)
 	return $list;
 }
 
+function _load_all_idd_ratinggroup()
+{
+	$query = new EntityFieldQuery();
+	$result = $query->entityCondition('entity_type', 'node')
+		->entityCondition('bundle', 'idd_ratinggroup')
+		->execute();
 
+	$list = array();
+	if ( count( $result) > 0) {
+		foreach( array_keys( $result['node']) as $nid) {
+			$node = node_load( $nid);
+			$list[$node->field_rating_group['und'][0]['value']] = $nid;
+		}
+	}
+
+	return $list;
+}
+
+function _load_all_rate( $plan_nid)
+{
+	$query = new EntityFieldQuery();
+	$result = $query->entityCondition('entity_type', 'node')
+		->entityCondition('bundle', 'rate')
+		->fieldCondition('field_ref_tariffplan', 'nid', $plan_nid)
+		->execute();
+
+	$list = array();
+	if ( count( $result) > 0) {
+		foreach( array_keys( $result['node']) as $nid) {
+			$node = node_load( $nid);
+			$list[$node->title] = $nid;
+		}
+	}
+
+	return $list;
+}
