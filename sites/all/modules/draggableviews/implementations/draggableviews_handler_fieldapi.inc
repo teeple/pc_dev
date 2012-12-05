@@ -78,10 +78,18 @@ class draggableviews_handler_fieldapi extends draggableviews_handler {
       $field_name = substr($field_name, 0, 60);
     }
 
-    // Search for the nid and return the value from of the Views result
+	// Search for the nid and return the value from of the Views result
     foreach ($this->view->result as $result) {
-      if ($result->nid == $value) {
-        return empty($result->$field_name) ? 0 : $result->$field_name;
+    	
+     if ($result->nid == $value) {
+     	
+		// views의 에러 때문에 수정했음. 따라서, 이 view의 priority를 조정하면 동작하지 않음.
+		if($field_name == 'field_data_field_parent_node_for_hr_field_parent_node_for_hr') {
+			return empty($result->field_field_parent_node_for_hr) ? 0 : $result->field_field_parent_node_for_hr[0]['raw']['nid'];
+		} else {
+		return empty($result->$field_name) ? 0 : $result->$field_name;
+			
+		} 
       }
     }
 
