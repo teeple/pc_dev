@@ -160,7 +160,8 @@ function _create_basicrate_node($type,$tariffplanNode){
 			$node->type = $targetCreatedContentType;
 			$node->field_ref_tariffplan['und'][0]['nid'] = $tariffplanNode->nid;
 			$node->field_ref_timetablefactors['und'][0]['nid'] = $timetableFactor['nid'];
-			$node->field_basicrate_ratinggroup['und'][0]['value'] = $ratingGroup;
+			$node->field_rating_group['und'][0]['value'] = $ratingGroup;
+            $node->field_rating_group['und'][0]['safe_value'] = $ratingGroup;
 			node_save($node);				
 		}
 	}
