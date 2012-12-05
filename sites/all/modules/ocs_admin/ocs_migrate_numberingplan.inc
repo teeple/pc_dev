@@ -2,7 +2,7 @@
 
 function ocs_migrate_fce_numberingplan($form, &$form_state, $domestic_or_intl, $call_type)
 {
-	$category = isset($form_state['values']['category']) ? $form_state['values']['category'] : 'null';
+	$category = isset($form_state['values']['category']) ? $form_state['values']['category'] : 'A';
 
 	dpm( $category, 'category:');
 	// dpm( $form_state['values'], 'values');
@@ -48,6 +48,11 @@ function ocs_migrate_fce_numberingplan($form, &$form_state, $domestic_or_intl, $
 				"<ol><li>select ruleName, carrier, rating_group, region_code from area where carrier = 'info_123';</li>".
 				"<li>update area set region_code'3' where carrier = 'info_123' and rating_group = '3';</li>".
 				"<li>update area set region_code='3' where carrier = 'info_123' and rating_group = '3';'</li></ol>".
+
+				'<li>INFO_4</li>'.
+				'<li>INFO_3</li>'.
+				'<li>INFO_5</li>'.
+				'<li>INFO_8</li>'.
 				'</ol></p><br>'
 			,
 		);
@@ -56,8 +61,7 @@ function ocs_migrate_fce_numberingplan($form, &$form_state, $domestic_or_intl, $
 			'#type' => 'select',
 			'#title' => 'User Category to migrate',
 			'#options' => drupal_map_assoc(array(
-				'All',
-				'null',
+				//'All',
 				'A',
 				'B',
 				'C',
@@ -152,11 +156,13 @@ function ocs_migrate_fce_numberingplan_submit($form, &$form_state)
 		$carrier_info = $form['#carrier'];
 
         if ( $form['#category'] == 'intl:voice') {
-            _update_numberingplan_for_intl_voice( $carrier_info, $values['target'], $form['#rule'], $values['check'] == '1', $values['remove'] == '1');
+            _update_numberingplan_for_intl_voice( $carrier_info, $values['target'], $form['#rule'], 
+					$values['check'] == '1', $values['remove'] == '1');
             return;
         }
 		else if ( $form['#category'] == 'domestic:voice') {
-            _update_numberingplan_for_domestic_voice( $carrier_info, $values['target'], $form['#rule'], $values['check'] == '1');
+            _update_numberingplan_for_domestic_voice( $carrier_info, $values['target'], $form['#rule'], 
+					$values['check'] == '1', $values['remove'] == '1');
 
 		}
 		else {
@@ -176,34 +182,38 @@ function _update_numberingplan_for_domestic_voice( $carrier_info, $target_nid, $
 				node_delete($nid['nid']);
 				dpm(t('Domestic rating group @id is removed', array('@id' => $nid['nid'])));
 			}
-			*/
-
-/*			
-			// find dangling entity
-			$query = new EntityFieldQuery();
-			$result = $query->entityCondition('entity_type', 'node')
-				->entityCondition('bundle', 'domestic_ratinggroup')
-				->execute();
-		
-			if ( count( $result) > 0) {		// find the ratinggroup first
-				foreach( array_keys( $result['node']) as $nid) {
-					$node = node_load( $nid);
-					dpm( $node, 'node:'.$nid);
-					if ( ! isset($node->field_ref_numberingplan_domestic['und']) || 
-						$node->field_ref_numberingplan_domestic['und'][0]['nid'] == 0 ||
-						$node->field_ref_numberingplan_domestic['und'][0]['nid'] == $np->nid) {
-							node_delete( $nid);
-							dpm( 'dangling entity is removed: '. $nid);
-						}
-				}
-			}
-	
-			unset($np->field_ref_domestic_ratinggroup);
 		}
 			*/
-		
+
 	// load numbering plan
 	$np = node_load( $target_nid);
+
+	if ( $remove_flag) {
+
+		// find dangling entity
+		$query = new EntityFieldQuery();
+		$result = $query->entityCondition('entity_type', 'node')
+			->entityCondition('bundle', 'domestic_ratinggroup')
+			->execute();
+	
+		if ( count( $result) > 0) {		// find the ratinggroup first
+			foreach( array_keys( $result['node']) as $nid) {
+				$node = node_load( $nid);
+				//dpm( $node, 'node:'.$nid);
+				if ( ! isset($node->field_ref_numberingplan_domestic['und']) || 
+					$node->field_ref_numberingplan_domestic['und'][0]['nid'] == 0 ||
+					$node->field_ref_numberingplan_domestic['und'][0]['nid'] == $np->nid) {
+						node_delete( $nid);
+						dpm( 'dangling entity is removed: '. $nid);
+					}
+			}
+		}
+
+		unset($np->field_ref_domestic_ratinggroup);
+
+		node_save( $np);
+	}
+		
 
 	// find rating group list
 	$query = new EntityFieldQuery();
@@ -221,8 +231,90 @@ function _update_numberingplan_for_domestic_voice( $carrier_info, $target_nid, $
 	}
 	dpm( $rating_group_list, 'rating group list');	
 				
+	// for each user category, check if all the conditions are same
+	// category별로 분석하기 위해 잠시 사용한 코드 
+	/*
+	$rule_by_category = array();
+	$count_by_category = array();
+	foreach ($rule_list as $r) {
+		if ( empty($r['user_category'])) continue;
+
+		if ( isset( $rule_by_carrier[$r['called_carrier']][$r['rating_group']])) {
+			$old = $rule_by_carrier[$r['called_carrier']][$r['rating_group']];
+
+			if ( $old['isDDD'] != $r['isDDD'] ) {
+				dpm( $old, 'mismatch old value');
+				dpm( $r, 'mismatch new value');
+			}
+		}
+		else if ( $r['user_category'] != 'A') {
+			dpm( $r, 'new rating group');
+		}
+
+		$rule_by_carrier[ $r['called_carrier']][$r['rating_group']] = $r;
+
+		if ( isset( $count_by_category[$r['user_category']]))
+			$count_by_category[$r['user_category']] += 1;
+		else
+			$count_by_category[$r['user_category']] = 0;
+	}
+
+	$count_list = array_keys( $count_by_category);
+	foreach( $count_list as $c) {
+		if ( $count_by_category[$count_list[0]] != $count_by_category[$c]) {
+			dpm( 'mismatch:'. $c);
+		}
+		dpm( 'count ' . $c . ' => ' . $count_by_category[$c]);
+	}
+
+	// 시험 결과
+	count A => 59
+	count B => 59
+	count C => 59
+	count D => 59
+	count E => 59
+	count F => 59
+	count G => 59
+	mismatch:I
+	count I => 34
+	mismatch:J
+	count J => 34
+	mismatch:K
+	count K => 32
+	mismatch:M
+	count M => 60
+	count N => 59
+	mismatch:O
+	count O => 5
+	count P => 59
+	count Q => 59
+	count S => 59
+	mismatch:W
+	count W => 58
+	count X => 59
+	count Y => 59
+	count Z => 59
+	*/
+
+	// 분석 결과 다음 각 category 별로 나눠서 numbering plan을 만들어야 한다.
+
+	/*
+		Numbering Plan 1 - A, B, C, D, E, F, G, N, P, Q, S, X, Y, Z
+		Numbering Plan 2 - I, 
+		Numbering Plan 3 - J, 
+		Numbering Plan 4 - K, 
+		Numbering Plan 5 - M, 
+		Numbering Plan 6 - O, 
+		Numbering Plan 7W
+	*/
+	
 	foreach ($rule_list as $rule) {
 		$carrier_name = $rule['called_carrier'];
+
+		if ( ! isset( $carrier_info[$carrier_name]['rating_group'][$rule['rating_group']])) {
+			dpm( t( 'Undefined rating group @r for carrier @c', array( '@r' => $rule['rating_group'], '@c' => $carrier_name)));
+			continue;
+		}
 		
 		// set callee's area code
 		$need_area_code = _need_area_code( $carrier_info, $carrier_name);
@@ -247,8 +339,8 @@ function _update_numberingplan_for_domestic_voice( $carrier_info, $target_nid, $
 			continue;
 		}
 
-		$rating_group_name = ( empty( $rule['user_category'])) ? $carrier_name . '_' . $rule['rating_group'] : $rule['ruleName'];
-		//dpm( '>>> Rating group : ' . $rating_group_name);
+		$rating_group_name = $carrier_name . '_' . $rule['rating_group'];
+		$real_rating_group = (empty( $rule['user_category'])) ? $rating_group_name : $rule['ruleName'];
 
 		$carrier_nid = $carrier_info[$carrier_name]['nid'];
 		if ( isset($rating_group_list[$rating_group_name])) {
@@ -263,13 +355,15 @@ function _update_numberingplan_for_domestic_voice( $carrier_info, $target_nid, $
 			$i = 0;
 			foreach( $result as $r ) {
 					
-				dpm( t('existing rating group: carrier=@c rating_group=@r,@ra area=@a', 
+				dpm( t('existing rating group: carrier=@c rating_group=@r,@ra area=@a final_rating_group=@f', 
                     array( '@c' => $rule['called_carrier'],
 					    '@r' => $rule['rating_group'], 
                         '@ra' => $rule['ruleName'], 
-                        '@a' => implode( ',', $area_code))));
+                        '@a' => implode( ',', $area_code),
+						'@f' => $real_rating_group)));
 				
-				_set_domestic_ratinggroup( $carrier_info, $r, $np, $rule, $need_area_code ? $area_code[$i++] : null, $rating_group_name);
+				_set_domestic_ratinggroup( $carrier_info, $r, $np, $rule, $need_area_code ? $area_code[$i++] : null, $real_rating_group);
+
 				if ( ! $check_only) {
 					node_save( $r);
 					$nid_list = array_get_value( $np->field_ref_domestic_ratinggroup, FALSE);
@@ -283,12 +377,14 @@ function _update_numberingplan_for_domestic_voice( $carrier_info, $target_nid, $
 		}
 		else {
 			foreach( $area_code as $code ) {
-				dpm( t('>>> new rating group "@nr": carrier=@c rating_group=@r area=@a', 
+				dpm( t('>>> new rating group "@nr": carrier=@c rating_group=@r area=@a final_rating_group=@f', 
 					array( '@nr' => $rating_group_name, '@c' => $rule['called_carrier'],
-					'@r' => $rule['rating_group'], '@a' => $code)));
+					'@r' => $rule['rating_group'], '@a' => $code, '@f' => $real_rating_group)));
 				// make new rating group
 				$r = ocs_admin_get_new_node('domestic_ratinggroup');
-				_set_domestic_ratinggroup( $carrier_info, $r, $np, $rule, $code, $rating_group_name);
+
+				_set_domestic_ratinggroup( $carrier_info, $r, $np, $rule, $code, $real_rating_group);
+
 				if ( ! $check_only) {
 					node_save( $r);
 				

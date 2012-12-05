@@ -8,21 +8,31 @@ function ocs_migrate_fce_carrier($form, &$form_state)
 {
 	db_set_active('fce');
 
-	$query = db_select('carrier', 'c');
-	$result = $query->fields('c', array(
+	$fields = array(
 		'ruleName',
-		'prefix'
-	))->execute();
+		'prefix',
+		'regionFlag'
+	);
+	$query = db_select('carrier', 'c');
+	$result = $query->fields('c', $fields)->execute();
 
-	$output = '<thead><tr><td>Carrier</td><td>Prefix</td></tr></thead>';
+
+	$output = '<thead><tr>';
+    foreach( $fields as $f) {
+        $output .= '<td>'. $f . '</td>';
+    }
+	$output .= '</tr></thead>>';
 	$output .= '<tbody>';
+
 	$records = array();
 	while ($record = $result->fetchAssoc()) {
-		$records[] = array(
-			'carrier' => $record['ruleName'],
-			'prefix' => $record['prefix']
-		);
-		$output .= '<tr><td>' . $record['ruleName'] . '</td><td>' . $record['prefix'] . '</td></tr>';
+		$records[] = $record;
+
+		$output .= '<tr>';
+		foreach (array_keys( $record) as $key) {
+			$output .= '<td>' . $record[$key] . '</td>';
+		}
+		$output .= '</tr>';
 	}
 	$output .= '</tbody>';
 	db_set_active('default');
@@ -433,7 +443,9 @@ function _get_voice_tariff( $call_type, $category='All', $condition='user_catego
 			'second_prefix'
 		);
 		$table = 'voice_tariff_decision';
-		$order = array('v.called_carrier', 'v.user_category', 'v.ruleName');
+		$order = ($condition == 'user_category') ? 
+				array('v.user_category', 'v.called_carrier', 'v.ruleName'):
+				array('v.called_carrier', 'v.user_category', 'v.ruleName');
 	}
 	else if ( $call_type == 'intl:voice') {
 		$fields = array(
@@ -459,12 +471,7 @@ function _get_voice_tariff( $call_type, $category='All', $condition='user_catego
 	$query->fields('v', $fields);
 
 	if ( $condition == 'user_category') {
-		if ( $category == 'null') {
-			$query->where('user_category is null');
-		}
-		else if ( $category != 'All') {
-			$query->where('user_category = :category', array(':category' => $category));
-		}
+		$query->where('user_category is null or user_category = :category', array(':category' => $category));
 	}
 	else if ( $condition == 'carrier') {
 		$query->where( 'called_carrier = :category', array(':category' => $category));
@@ -524,7 +531,7 @@ function ocs_fce_tariffplan($form, &$form_state, $condition='carrier')
 
 	// dpm( $category, 'category:');
 	// dpm( $form_state['values'], 'values');
-	list($records, $output, $carrier) = _get_voice_tariff($category, $condition);
+	list($records, $output, $carrier) = _get_voice_tariff( 'domestic:voice', $category, $condition);
 
 	$form['#carrier'] = $carrier;
 	$form['#attributes'] = array('class' => array('myform'));
