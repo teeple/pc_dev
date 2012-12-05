@@ -4,12 +4,12 @@ function ocs_migrate_fce_numberingplan($form, &$form_state, $domestic_or_intl, $
 {
 	$category = isset($form_state['values']['category']) ? $form_state['values']['category'] : 'null';
 
-	// dpm( $category, 'category:');
+	dpm( $category, 'category:');
 	// dpm( $form_state['values'], 'values');
 	$type = $domestic_or_intl. ':' . $call_type;
 
 	if ( $type == 'domestic:voice')  {
-		list($records, $output, $carrier) = _get_voice_tariff($type);
+		list($records, $output, $carrier) = _get_voice_tariff($type, $category);
 	}
 	else if ( $type == 'intl:voice')  {
 		list($records, $output) = _get_area_code( $type);
@@ -113,8 +113,8 @@ function ocs_migrate_fce_numberingplan($form, &$form_state, $domestic_or_intl, $
 		'#type' => 'fieldset',
 		'#title' => 'Migration Data',
 		'#collapsible' => TRUE,
-        //'#prefix' => '<div id="ocs_ajax_select_area_code_category_div">',
-        //'#suffix' => '</div>',
+        '#prefix' => '<div id="ocs_ajax_user_category_div">',
+        '#suffix' => '</div>',
 	);
 	
 	$form['data']['target'] = array(
@@ -167,7 +167,7 @@ function ocs_migrate_fce_numberingplan_submit($form, &$form_state)
 
 }
 
-function _update_numberingplan_for_domestic_voice( $carrier_info, $np, $rule_list, $check_only, $remove_flag = FALSE)
+function _update_numberingplan_for_domestic_voice( $carrier_info, $target_nid, $rule_list, $check_only, $remove_flag = FALSE)
 {
 	/*
 		if ($values['remove'] == '1') {
@@ -202,11 +202,14 @@ function _update_numberingplan_for_domestic_voice( $carrier_info, $np, $rule_lis
 		}
 			*/
 		
+	// load numbering plan
+	$np = node_load( $target_nid);
+
 	// find rating group list
 	$query = new EntityFieldQuery();
 	$result = $query->entityCondition('entity_type', 'node')
 		->entityCondition('bundle', 'domestic_ratinggroup')
-		->fieldCondition( 'field_ref_numberingplan_domestic', 'nid', $np->nid)
+		->fieldCondition( 'field_ref_numberingplan_domestic', 'nid', $target_nid)
 		->execute();
 		
 	$rating_group_list = array();
@@ -267,7 +270,7 @@ function _update_numberingplan_for_domestic_voice( $carrier_info, $np, $rule_lis
                         '@a' => implode( ',', $area_code))));
 				
 				_set_domestic_ratinggroup( $carrier_info, $r, $np, $rule, $need_area_code ? $area_code[$i++] : null, $rating_group_name);
-				if ( $update_flag) {
+				if ( ! $check_only) {
 					node_save( $r);
 					$nid_list = array_get_value( $np->field_ref_domestic_ratinggroup, FALSE);
 					if ( array_search( $r->nid, $nid_list) == FALSE) {
@@ -286,7 +289,7 @@ function _update_numberingplan_for_domestic_voice( $carrier_info, $np, $rule_lis
 				// make new rating group
 				$r = ocs_admin_get_new_node('domestic_ratinggroup');
 				_set_domestic_ratinggroup( $carrier_info, $r, $np, $rule, $code, $rating_group_name);
-				if ( $update_flag) {
+				if ( ! $check_only) {
 					node_save( $r);
 				
 					$np->field_ref_domestic_ratinggroup['und'][] = array('nid' => $r->nid);
