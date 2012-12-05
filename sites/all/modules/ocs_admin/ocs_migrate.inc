@@ -206,12 +206,10 @@ function ocs_migrate_fce_area($form, &$form_state, $domestic_or_intl = 'domestic
 
 	$form['#area'] = $records;
 	$form['#attributes'] = array('class' => array('myform'));
-	$form['#category'] = $domestic_or_intl . ' ' . $calltype;
-
 
     $form['info'] = array(
         '#type' => 'markup',
-        '#markup' => t( 'Migrate area table of @d @c', array( '@d' => $domestic_or_intl, '@c' => $calltype)),
+        '#markup' => t( 'Migrate area table of Domestic Numbering Plan.'),
     );
 
 	$form['remove'] = array(
@@ -246,20 +244,13 @@ function ocs_migrate_fce_area($form, &$form_state, $domestic_or_intl = 'domestic
 		'#value' => t('Cancel'),
 	);
 
-	$numbering_plan_list = _load_all_numbering_plan( $domestic_or_intl == 'intl' ? 'numberingplan_idd' : 'numberingplan_domestic');
-    $form['data'] = array(
+	$form['data'] = array(
 		'#type' => 'fieldset',
-		'#title' => 'Migration Data',
+		'#title' => 'Migration data',
 		'#collapsible' => TRUE,
-        //'#prefix' => '<div id="ocs_ajax_select_area_code_category_div">',
-        //'#suffix' => '</div>',
+		'#prefix' => '<div id="ocs_ajax_user_category_div">',
+		'#suffix' => '</div>',
 	);
-	
-	$form['data']['target'] = array(
-        '#type' => 'select',
-		'#title' => 'Target numbering plan',
-		'#options' => $numbering_plan_list,
-    );
 
 	$form['data']['list'] = array(
 		'#type' => 'markup',
@@ -279,14 +270,11 @@ function ocs_migrate_fce_area_submit($form, &$form_state)
 		$carrier_info = ocs_load_all_carrier();
 		dpm( $carrier_info, 'carrier info reloaded.');
 
-		if ( $form['#category'] == 'domestic voice') {
-            _update_area_code_for_domestic_voice( $carrier_info, $values['target'], $form['#area'], $values['check'] == '1');
-
-		}
+		_update_area_code_for_domestic_voice( $carrier_info, $form['#area'], $values['check'] == '1');
 	}
 }
 
-function _update_area_code_for_domestic_voice( $carrier_info, $target_nid, $records, $check_only, $remove_existing_data = FALSE)
+function _update_area_code_for_domestic_voice( $carrier_info, $records, $check_only)
 {
 	// add entities
 	foreach ($records as $r) {
@@ -320,6 +308,11 @@ function _update_area_code_for_domestic_voice( $carrier_info, $target_nid, $reco
 						
 					$node->field_area_code['und'][0]['value'] = $r['region_code'];
 				}
+				else {
+					dpm( t('Existing Area code of @carrier prefix:@prefix. Region code: @a', 
+						array( '@carrier' => $r['carrier'], '@prefix' => $r['second_prefix'],
+							'@a' => $node->field_area_code['und'][0]['value'] )));
+				}
 			}
 		}
 		else {
@@ -328,9 +321,13 @@ function _update_area_code_for_domestic_voice( $carrier_info, $target_nid, $reco
 			$node->field_prefix['und'][0]['value'] = $r['second_prefix'];
 			$node->field_area_code['und'][0]['value'] = $r['region_code'];
 			$node->field_ref_carrier_mobile['und'][0]['nid'] = $carrier_nid;
+
+			dpm( t('Add New area code for @carrier prefix:@prefix. Region code: @b', 
+				array( '@carrier' => $r['carrier'], '@prefix' => $r['second_prefix'],
+					'@b' => $r['region_code'])));
 		}
 		
-		node_save($node);
+		if ( ! $check_only) node_save($node);
 	}
 
 }
