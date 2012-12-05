@@ -49,10 +49,23 @@ function ocs_migrate_fce_numberingplan($form, &$form_state, $domestic_or_intl, $
 				"<li>update area set region_code'3' where carrier = 'info_123' and rating_group = '3';</li>".
 				"<li>update area set region_code='3' where carrier = 'info_123' and rating_group = '3';'</li></ol>".
 
-				'<li>INFO_4</li>'.
+				'<li>INFO_14</li>'.
+                "<ol><li>select ruleName, carrier, second_prefix, rating_group, region_code from area where carrier = 'INFO_14';</li>".
+                "<li>update area set region_code = '1' where carrier='INFO_14' and rating_group = '1';</li>".
+                "<li>update area set region_code = '2' where carrier='INFO_14' and rating_group = '2';</li></ol>".
+
 				'<li>INFO_3</li>'.
+                "<ol><li>select ruleName, carrier, second_prefix, rating_group, region_code from area where carrier = 'INFO_3';</li>".
+                "<li>update area set region_code = '3' where carrier = 'INFO_3' and rating_group = '3';</li></ol>".
+
 				'<li>INFO_5</li>'.
+                "<ol><li>select ruleName, carrier, second_prefix, rating_group, region_code from area where carrier = 'INFO_5';</li>".
+                "<li>update area set region_code = '1' where carrier = 'INFO_5' and rating_group = '1';</li>".
+                "<li>update area set region_code = '2' where carrier = 'INFO_5' and rating_group = '2';</li></ol>".
+
 				'<li>INFO_8</li>'.
+                "<ol><li>select ruleName, carrier, second_prefix, rating_group, region_code from area where carrier = 'INFO_8';</li>".
+                "<li>update area set region_code = '2' where carrier = 'INFO_8' and rating_group = '2';</li></ol>".
 				'</ol></p><br>'
 			,
 		);
