@@ -151,7 +151,7 @@ function build_navigation_bar()
                         array( '/product_designer/voip', 'VOIP'),
                         array( '/product_designer/satelite', 'Satelite'),
                         array( '/product_designer/cross', 'Bundle'))),
-			'relation' => array( 'href' => '/relation/product/priority', 'icon' => 'widgets', 
+			'relation' => array( 'href' => '/relation/product/hierarchy/Mobile', 'icon' => 'widgets', 
 					'prefix' => 'relation', 'title' => 'Relation Manager'),
 			'lifecycle' => array( 'href' => '/lifecycles/product', 'icon' => 'anlt', 
 					'prefix' => 'lifecycles', 'title' => 'Lifecycle'),
