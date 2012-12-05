@@ -59,7 +59,7 @@ function _add_ajax_submit_callback($form_id,&$form){
         case 'actionpricechargerecurring_node_form':
         case 'actionpricediscount_node_form':
         case 'actionpriceallowance_node_form':
-		case 'actionsetnotification_node_form':
+		// case 'actionsetnotification_node_form':
         case 'tariffplan_node_form':
         case 'treenodecounter_node_form':
         case 'prdattributeprefixrangeallowed_node_form':
@@ -99,9 +99,7 @@ function _add_ajax_submit_callback($form_id,&$form){
 	}
 
 	if($change){
-		
 // dsm($form, 'form_in_submitcallback');
-		
 		unset($form['actions']['submit']['#submit']);
 	    unset($form['#validate']);
 		unset($form['#action']);
@@ -134,7 +132,6 @@ function edit_pane_callback($form, &$form_state){
 	$newNode = node_load($form['nid']['#value']);
     $form_state['values']['changed'] = $newNode->changed;
 	
-	error_log('edit-pane_callback');
     node_form_validate($form, $form_state);
 
     if(!form_get_errors()) {
@@ -151,7 +148,7 @@ function edit_pane_callback($form, &$form_state){
 }
 
 function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
-
+	
     if(isset($form['#attributes']) && gettype($form['#attributes']['class']) == 'array') {
     	$form['#attributes']['class'][] = 'myform';
     	
@@ -433,18 +430,23 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			// unset($form['field_counter_list']);
 			// dsm($form, 'form');
 			_unset_menu_items($form,$form_id);
+
+			if(!isset($form['nid']['#value'])){
+				$form['field_service_type_of_provider']['und']['#default_value'][0] = $form_state['service_domain_tid'];
+				_alter_simpleproductoffering_node_form($form, $form_state);
+			}
 			
+			/*
 			if($form['edit_type'] == 'exclusive') {
-				
+			 
 			} else {
 				
-				// only for create
-				//
 				if(!isset($form['nid']['#value'])){
 					$form['field_service_type_of_provider']['und']['#default_value'][0] = $form_state['service_domain_tid'];
 					_alter_simpleproductoffering_node_form($form, $form_state);
 				}
 			}
+			*/
 			
 			break;
 		case 'balance_node_form':
@@ -871,11 +873,14 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			
 			_unset_menu_items($form,$form_id);
           	break;
+			/*
 		case 'actionsetnotification_node_form':
 			$form['field_ref_source_action']['#type'] = 'hidden';
 			
 			_unset_menu_items($form,$form_id);
 			break;
+			 * */
+			 
         case 'tariffplan_node_form':
 			unset($form['field_parent_node']);
             unset($form['field_weight']);

@@ -183,7 +183,7 @@ function _draggableviews_info($view, $info = NULL) {
 
     foreach ($results as $row) {
       if (is_numeric($row->{$info['order']['field']['field_alias']})) {
-        $info['nodes'][$row->{$view->base_field}]['order'][0] = $info['order']['field']['handler']->get((int) ($row->{$info['order']['field']['field_alias']}));
+      	$info['nodes'][$row->{$view->base_field}]['order'][0] = $info['order']['field']['handler']->get((int) ($row->{$info['order']['field']['field_alias']}));
       }
       else {
         // Default position of new nodes. We cannot use $view->total_rows instead of 99999999 because
@@ -193,11 +193,14 @@ function _draggableviews_info($view, $info = NULL) {
         $info['nodes'][$row->{$view->base_field}]['order'][0] = $info['default_on_top'] == 1 ? -1 : 99999999;
       }
       if (isset($info['hierarchy'])) {
-        $info['nodes'][$row->{$view->base_field}]['parent'] = $info['hierarchy']['field']['handler']->get((int) $row->{$info['hierarchy']['field']['field_alias']});
+
+		$info['nodes'][$row->{$view->base_field}]['parent'] = $info['hierarchy']['field']['handler']->get((int) $row->{$info['hierarchy']['field']['field_alias']});
+		// edited by youngmin
+		// $info['nodes'][$row->{$view->base_field}]['parent'] = $row->{$info['hierarchy']['field']['field_alias']};
       }
     }
   }
-
+  
   return $info;
 }
 
