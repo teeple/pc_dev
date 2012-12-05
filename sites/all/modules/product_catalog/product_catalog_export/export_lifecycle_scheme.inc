@@ -38,28 +38,31 @@ function _array_lifecycle_scheme($nid=NULL){
 			//dpm( $view_transition, 'transition');
 			
 			$transition = array();
-			foreach( $view_transition as $node) {
-				$rule['from'] = $node->field_field_ocs_from_state[0]['rendered']['#markup'];
-				$rule['to'] = $node->field_field_ocs_to_state[0]['rendered']['#markup'];
-				
-				foreach( $node->field_field_ocs_trigger_events as $event) {
-					$rule['event'][] = $event['rendered']['#markup'];
-				}
-				
+			foreach( $view_transition as $tr) {
+				$rule = array();
+				$rule['from'] = $tr->field_field_ocs_from_state[0]['rendered']['#markup'];
+				$rule['to'] = $tr->field_field_ocs_to_state[0]['rendered']['#markup'];
+
 				// get transition actions
-				$view_actions = views_get_view_result('ocs_list_transition_actions', 'panel_json', $node->nid);
+				$view_actions = views_get_view_result('ocs_list_transition_actions', 'panel_json', $tr->nid);
 				// dpm( $view_actions, 'view actions');
 				
 				$rule['actions'] = array();
-				foreach( $view_actions as $node) {
+				foreach( $view_actions as $a) {
 					$action = array();
-					$action['action'] = $node->field_field_ocs_action[0]['rendered']['#markup'];
-					$action['parameters'] = _decode_action_param_values( $node->field_field_ocs_action_param_values);
+					$action['action'] = $a->field_field_ocs_action[0]['rendered']['#markup'];
+					$action['parameters'] = _decode_action_param_values( $a->field_field_ocs_action_param_values);
 
 					$rule['actions'][] = $action;
 				}
 				
-				$transition[] = $rule;
+								
+				foreach( $tr->field_field_ocs_trigger_events as $event) {
+					$rule['event'] = $event['rendered']['#markup'];
+					
+					// 각 event 별로 transition rule을 넣기 위해 아래와 같이 처리함 
+					$transition[] = $rule;
+				}
 			}
 			
 			$scheme['transition'] = $transition;

@@ -631,7 +631,14 @@ function product_catalog_ajax_select_submit() {
       	
       	$js_data['append_to'] = 'inside';
       	break;
-      	
+      case 'mobile_nonusage_otheronetimecharge':
+        $child->type = 'treenodeotheronetimecharge';
+        $child->field_weight['und'][0]['value'] = $weight;
+        $child->field_ref_product['und'][0]['nid'] = $tmpProductNid[1];
+        $child->field_ref_otherontimecharge['und'][0]['tid'] = $childNid;
+        node_save($child);        
+        $js_data['append_to'] = 'inside';
+      break;
       }
       $js_data['children'][] = get_children_stored_procedure($child->nid,$parentNid);
   }
