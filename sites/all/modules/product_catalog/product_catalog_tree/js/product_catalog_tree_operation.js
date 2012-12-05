@@ -8,6 +8,9 @@
 		$.ajax({
 			url : loadLink,
 			success : function(data) {
+				console.log('loadSelectForm');
+    			console.log(data);
+    				
 				var output = $.parseJSON(data);
 				//console.log(output);
 				var settings = output[0].settings;
@@ -27,6 +30,57 @@
 			}
 		});
 	};
+	
+	$.fn.selectModalButtonBinding = function(renderOutput) {
+		
+		console.log('renderOutput');
+		console.log(renderOutput);
+		
+		$.fn.behaviorAttach(renderOutput);
+		alert('selectModalButtonBinding');
+		$('#vbo-message-select-button').bind('click',$.fn.selectMessageItemHandler);
+		
+		/*
+		$.ajax({
+			url : loadLink,
+			success : function(data) {
+				var output = $.parseJSON(data);
+				//console.log(output);
+				var settings = output[0].settings;
+				var context = output[1];
+				$('#tree_content_div').replaceWith(context);
+				//console.log(output);
+				if( typeof settings.views != 'undefined') {
+					$.extend(Drupal.settings.views.ajaxViews,settings.views.ajaxViews);
+				}
+				
+				$('#tree_content_div').append('<div style="clear:both;"><input id="vbo-select-button" type="button" value="Select"/></div>');
+				$('#vbo-select-button').bind('click',{rootId:rootId, node: node},$.fn.selectItemHandler);
+
+				$(".product_catalog_tree").unmask();
+			}
+		});
+		*/
+	};
+	
+	$.fn.selectMessageItemHandler = function(event) {
+		// var loadLink = '/product_catalog_ajax/select_modal_item';
+		var loadLink = '/product_catalog_ajax/nojs/select_modal/actionsetnotification';
+		
+		alert('selectMessageItemHandler');
+		var selectedItemNid = new Array();
+		selectedItemNid[0] = '123';
+		
+		$.ajax({
+			url : loadLink,
+			type: "post",
+			data: {'nids': selectedItemNid},
+			success : function(data) {
+				console.log('selectMessageItemHandler');
+				console.log(data);
+			}
+		});
+	}
 	
 	// select_load_form -> selectItemHandler
 	//
@@ -61,6 +115,8 @@
 				type: "post",
 		        data: {'product_nid': rootId, 'parent_nid': parent.attr('id'), 'child_nid': selectedItemNid, 'rel_type': parent.attr('rel'),'max_weight':max_weight, 'min_weight':min_weight,'parent_title':parent.children('a').text()},
 				success : function(data) {
+					console.log('selectItemHandler');
+					console.log(data);
 					var output = $.parseJSON(data);
 					
 					var product_catalog_ajax_result = output[0].settings.product_catalog_ajax_result;
@@ -232,6 +288,10 @@
     		$.ajax({
     			url : detailLink,
     			success : function(data) {
+    				
+    				console.log('loadForm');
+    				console.log(data);
+    				
     				var output = $.parseJSON(data);
     				var settings = output[0].settings;
     				var context = output[1];
