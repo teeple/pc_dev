@@ -197,6 +197,9 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			}
 			
 			break;
+        case 'views_form_list_tariffplan_idd_carrier_panel_pane_1':
+            unset($form['actions']['submit']);            
+            break;
         case 'views_form_list_treenodecounterforvoucher_panel_pane_1';
             //dsm($form, 'form');
             unset($form['actions']);
@@ -890,8 +893,8 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             unset($form['field_tree_child_voca_name']);
             unset($form['field_ref_numberingplan_domestic']);
             unset($form['field_ref_numberingplan_idd']);
-            unset($form['field_ref_timetable_domestic']);
-            unset($form['field_ref_timetable_idd']);
+            unset($form['field_ref_timetable_domestic']);            
+            unset($form['field_ref_tariffplan_idd_carrier']);
             _unset_menu_items($form,$form_id);
             
             if(!isset($form['nid']['#value'])){
