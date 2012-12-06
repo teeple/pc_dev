@@ -8,10 +8,7 @@
 
 			//bind ajax success callback. changes tree node's title		
 				
-			$(document).ajaxSuccess(function(event,request, settings) {
-	
-				console.log(event,request, settings);
-				
+			$(document).ajaxSuccess(function(event,request, settings) {	
 				if(settings.url === '/system/ajax'){
 					if(settings.extraData._triggering_element_name === 'op' && 
 							settings.extraData._triggering_element_value === 'Save'){
@@ -43,7 +40,7 @@
 					$.jstree._focused()._get_settings().json_data.data = treeData;
 					$.jstree._focused().refresh(-1);
 
-					$(".product_catalog_tree").unmask();
+					$.fn.unmasking();
 
 					$(".product_catalog_tree").jstree('open_all');
 					// window.location = "http://localhost:8888/product_designer/Mobile/Main/edit/19085";
@@ -97,7 +94,7 @@
 		
 			//bind load event for loading data from the server.
 			$(".product_catalog_tree").bind("loaded.jstree",function(e, data) {
-					$(".product_catalog_tree").mask('Loading...');
+					$.fn.masking('Loading...');
 	
 					var rootNid = settings.product_catalog_tree_data[0].attr.root_nid;
 					var ajaxUrl = '/product_catalog_ajax/nojs/loadTree/' + rootNid;
@@ -107,12 +104,10 @@
 						dataType : 'json',
 						success : function(data) {
 							//console.log('haha');
-							console.log('loadTree');
-							console.log(data);
 							$.jstree._focused()._get_settings().json_data.data = data;
 							$.jstree._focused().refresh(-1);
-
-							$(".product_catalog_tree").unmask();
+ 
+							$.fn.unmasking();
 
 							// 임시로 모두 오픈
 							$(".product_catalog_tree").jstree('open_all');
@@ -203,7 +198,7 @@
 					// send to server
 					editLink = '/product_catalog_ajax/nojs/move_node';
 	
-					$(".product_catalog_tree").mask();
+					$.fn.masking('Progress');
 					$.ajax({
 						url : editLink,
 						type : 'POST',
@@ -217,11 +212,11 @@
 								node = $('#' + children[i].nid);
 								node.attr('weight',children[i].weight);
 							}
-							$(".product_catalog_tree").unmask();
+							$.fn.unmasking();
 						},
 						error : function() {
 							$.jstree._focused().rollback(data.rlbk);
-							$(".product_catalog_tree").unmask();
+							$.fn.unmasking();
 						}
 					});
 
