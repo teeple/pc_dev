@@ -655,7 +655,7 @@ function ocs_load_all_rate()
 
 function ocs_migrate_fce_rate($form, &$form_state, $domestic_or_intl = 'domestic', $calltype = 'voice')
 {
-	$category = isset($form_state['values']['category']) ? $form_state['values']['category'] : 'All';
+	$category = isset($form_state['values']['category']) ? $form_state['values']['category'] : 'A';
 
 	$call_type = $domestic_or_intl . ':' . $calltype;
 	list($records, $output) = _get_voice_tariff( $call_type, $category);
@@ -801,16 +801,25 @@ function ocs_migrate_fce_rate_submit($form, &$form_state)
 		// tid list
 		$tid = array( 'tree_tid' => $nids[0]);
 
+		$processed_rate_list = array();
+
 		foreach( $plan_list as $plan_name) {
 			$plan_node = _get_first_node_by_title( 'tariffplan', $plan_name);
 
 			// add rating group records
-			foreach ($form['#rule'] as $rule) {
+			foreach ($form['#rule'] as $r) {
 				//dpm( $rule, 'rule');
-				$rate_list = _get_rate_list($form['#rate'], $rule['ruleName']);
+				$name = $r['ruleName'];
+				$rate_list = _get_rate_list($form['#rate'], $name);
 
 				//dpm( $rate_list, 'rate list:'.$rule['ruleName']);
-				_set_rate($plan_node->nid, $rule['ruleName'], $rate_list, $tid, $values['check'] == '1');
+				if ( !isset( $processed_rate_list[$name])) {
+					_set_rate($plan_node->nid, $name, $rate_list, $tid, $values['check'] == '1');
+					$processed_rate_list[$name] = TRUE;
+				}
+				else {
+					dpm( t('Rate @n already updated', array( '@n' => $name)));
+				}
 			}
 		}
 	}
@@ -836,29 +845,24 @@ function _set_rate($plan_nid, $name, $rate_list, $tid, $check_only = TRUE)
 		// add new rate
 		foreach ($rate_list as $rate) {
 			if ( $idx < count( $old_rate_list)) {
-				$charge = entity_load_single( 'field_collection_item', $old_rate_list[$idx++]);
+				$charge = entity_load_single( 'field_collection_item', $old_rate_list[$idx]);
+				//dpm( $charge, 'load rate collection:'. $old_rate_list[$idx]);
 			}
 			else {
 				$charge = entity_create('field_collection_item', array('field_name' => 'field_charge_collection'));
 				$charge->setHostEntity('node', $new_rate);
 			}
 
-			$charge->field_range_start = array('und' => array('0' => array('value' => $start, )));
-			$charge->field_uom_amount = array('und' => array('0' => array('value' => $rate['e2'], )));
-			$charge->field_price_amount_float = array('und' => array('0' => array('value' => $rate['e1'], )));
+			$range_end = ( $idx + 1 < count( $rate_list)) ?  ($start + $rate['e2']) : '*';
+			_set_single_rate( $charge, $start, $range_end, $rate['e1'], $rate['e2']);
 
-			if ( $idx + 1 < count( $rate_list)) {
-				$range_end = $start + $rate['e2'];
-				$charge->field_range_end = array('und' => array('0' => array('value' => $range_end )));
-			}
-			else {
-				$range_end = '*';
-			}
-			$charge->save();
-
-			dpm( t( 'update rate start=@s end=@e amount=@a price=@p', array( '@s' => $start, '@e' => $range_end,
+			dpm( t( 'update rate @n start=@s end=@e amount=@a price=@p', array( '@n' => $name, '@s' => $start, '@e' => $range_end,
 				'@a' => $rate['e2'], '@p' => $rate['e1'])));
+
+			//dpm( $charge, 'updated');
+
 			$start += $rate['e2'];
+			$idx ++;
 		}
 
 		// delete not used rate
@@ -875,20 +879,19 @@ function _set_rate($plan_nid, $name, $rate_list, $tid, $check_only = TRUE)
 
 		// add new rate
 		$start = 0;
+		$idx = 0;
 		foreach ($rate_list as $rate) {
 			if ( ! $check_only) {
 				$charge = entity_create('field_collection_item', array('field_name' => 'field_charge_collection'));
 				$charge->setHostEntity('node', $new_rate);
 
-				$charge->field_range_start = array('und' => array('0' => array('value' => $start, )));
-				$charge->field_range_end = array('und' => array('0' => array('value' => $start + $rate['e2'], )));
-				$charge->field_uom_amount = array('und' => array('0' => array('value' => $rate['e2'], )));
-				$charge->field_price_amount_float = array('und' => array('0' => array('value' => $rate['e1'], )));
-				$charge->save();
+				$range_end = ( $idx + 1 < count( $rate_list)) ?  ($start + $rate['e2']) : '*';
+				_set_single_rate( $charge, $start, $range_end, $rate['e1'], $rate['e2']);
 
-				dpm( t( 'add new rate start=@s end=@e amount=@a price=@p', array( '@s' => $start, '@e' => $start + $rate['e2'],
-								'@a' => $rate['e2'], '@p' => $rate['e1'])));
+				dpm( t( 'add new rate @n start=@s end=@e amount=@a price=@p', array( '@n' => $name, '@s' => $start, 
+								'@e' => $range_end, '@a' => $rate['e2'], '@p' => $rate['e1'])));
 				$start += $rate['e2'];
+				$idx ++;
 			}
 		}
 	}
@@ -908,6 +911,19 @@ function _set_rate($plan_nid, $name, $rate_list, $tid, $check_only = TRUE)
 	}
 }
 
+function _set_single_rate( &$charge, $start, $end, $e1, $e2)
+{
+	$charge->field_range_start['und'][0]['value'] = $start;
+	if ( $end == '*') {
+		unset( $charge->field_range_end['und']);
+	}
+	else {
+		$charge->field_range_end['und'][0]['value'] = $end;
+	}
 
+	$charge->field_uom_amount['und'][0]['value'] = $e2;
+	$charge->field_price_amount_float['und'][0]['value'] = $e1;
+	$charge->save();
+}
 
 
