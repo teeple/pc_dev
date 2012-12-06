@@ -3,7 +3,7 @@
 		var nodeId = node.attr('id');
 		var rootId = $('.product_catalog_tree > ul:first > li:first').attr('id');
 		var loadLink = '/product_catalog_ajax/load_select_form/' + nodeId + '/' + 'right_click' + '/' + rootId + '/' + node.attr('rel');
-		$(".product_catalog_tree").mask("Loading...");
+		$.fn.masking("Loading...");
 		//console.log(loadLink);
 		$.ajax({
 			url : loadLink,
@@ -26,7 +26,7 @@
 				$('#tree_content_div').append('<div style="clear:both;"><input id="vbo-select-button" type="button" value="Select"/></div>');
 				$('#vbo-select-button').bind('click',{rootId:rootId, node: node},$.fn.selectItemHandler);
 
-				$(".product_catalog_tree").unmask();
+				$.fn.unmasking();
 			}
 		});
 	};
@@ -96,8 +96,6 @@
 			alert('No Item Selected!');
 			
 		}else{
-			$(".product_catalog_tree").mask("Adding...");
-
 			var selectedItemNid = new Array();
 			for(var i=0;i<inputItems.length;i++) {
 				selectedItemNid[i] = inputItems[i].value;
@@ -109,7 +107,7 @@
 		    if(min_weight == 'undefined') min_weight = 0;
 		    
 			var selectItemUrl = '/product_catalog_ajax/select_item';
-			$(".product_catalog_tree").mask("Adding...");
+			$.fn.masking("Adding...");
 			$.ajax({
 				url : selectItemUrl,
 				type: "post",
@@ -136,7 +134,7 @@
 						+ product_catalog_ajax_result.data.parent_title + ' has been changed.</div></div>';
 					
 					$.fn.clearTreeContentDiv(message);
-					$(".product_catalog_tree").unmask();
+					$.fn.unmasking();
 				}
 			});
 			
@@ -151,7 +149,7 @@
 	$.fn.deleteFromView = function(parent_id,id,content_type){
 		var deleteUrl = '/product_catalog_ajax/delete_from_view/' + id;
 		var parentNode = $('#'+parent_id);
-		$(".product_catalog_tree").mask("Deleting...");
+		$.fn.masking("Deleting...");
 		$.ajax({
 			url : deleteUrl,
 			success : function(data) {
@@ -163,7 +161,7 @@
 					$.fn.loadForm(parentNode,null);
 					break;
 				}
-				$(".product_catalog_tree").unmask();
+				$.fn.unmasking();
 				//$.fn.loadForm(parent_id,content_type);
 			}
 		});	
@@ -262,7 +260,7 @@
         // �대� content type��edit form�������
         if(needToLoadEdit){
             var editLink = '/product_catalog_ajax/nojs/edit/' + content_type + '/' + id;
-            $(".product_catalog_tree").mask("Loading...");
+            $.fn.masking("Loading...");
     		$.ajax({
     			url : editLink,
     			success : function(data) {
@@ -271,7 +269,7 @@
     				var context = output[1];
     				$('#tree_content_div').replaceWith(context);
     				$.fn.behaviorAttach(settings);
-    				$(".product_catalog_tree").unmask();
+    				$.fn.unmasking();
     			}
     		});
         }
@@ -284,13 +282,13 @@
         		detailLink = detailLink + '/' + defaultTabIndex;
         	}
     		
-        	$(".product_catalog_tree").mask("Loading...");
+        	$.fn.masking("Loading...");
     		$.ajax({
     			url : detailLink,
     			success : function(data) {
     				
-    				console.log('loadForm');
-    				console.log(data);
+    				//console.log('loadForm');
+    				//console.log(data);
     				
     				var output = $.parseJSON(data);
     				var settings = output[0].settings;
@@ -334,7 +332,7 @@
     					$.fn.setFocuseSelectedRegion(collapsedIndex);
     				}
     				
-    				$(".product_catalog_tree").unmask();
+    				$.fn.unmasking();
     			} 
     		});
         }
@@ -375,6 +373,7 @@
 				// �ν� Drupal message ���濡�蹂�꼍??
 				alert('No Item Selected!');
 			}else{
+				$.fn.masking('Progress..');
 				var selectedItemNid = new Array();
 				for(var i=0;i<inputItems.length;i++){
 					selectedItemNid[i] = inputItems[i].value;
@@ -386,7 +385,7 @@
 					type: "post",
 			        data: {'type': data.type, 'tariffplanNid': data.tariffplanNid, 'refTreeTid': data.refTreeTid, 'selected_nid': selectedItemNid},
 					success : function(result) {
-						$.fn.reloadTreeContentDiv(data.node);											
+						$.fn.reloadTreeContentDiv(data.node);			
 					}
 				});
 				
@@ -522,7 +521,7 @@
         }
         */
         
-        $(".product_catalog_tree").mask("Adding...");
+        $.fn.masking("Adding...");
 		$.ajax({
 			url : addLink,
 			type: "post",
@@ -539,7 +538,7 @@
 						$.fn.behaviorAttach(settings);
 					}
 				}
-				$(".product_catalog_tree").unmask();
+				$.fn.unmasking();
 			}
 		});
 	};
@@ -592,7 +591,7 @@
 	};
 
 	$.fn.deleteNode = function(node) {
-		$(".product_catalog_tree").mask("Deleting...");
+		$.fn.masking("Deleting...");
 		var jsonData = $(".product_catalog_tree").jstree("get_json", node);
 		var children = $.fn.getChildren(jsonData[0]);
 		//console.log(jsonData[0]);
@@ -609,7 +608,7 @@
 				var rel_type = node.attr("rel");				
 				$.jstree._focused().delete_node(node);
 				$.fn.clearTreeContentDiv();
-				$(".product_catalog_tree").unmask();
+				$.fn.unmasking();
 				
 				if(rel_type === 'simpleproductoffering'){
 					$(location).attr('href',"/product_designer");
@@ -622,11 +621,19 @@
 		});
         //history.go(0);
 	};	
-	
+	 
 	$.fn.addTreeItemCallback = function(parentId, childId, title,contentType, weight) {
-		$(".product_catalog_tree").mask("Adding...");
+		$.fn.masking("Adding...");
 		$(".product_catalog_tree").jstree("create", $('#' + parentId),"inside", {"data" : title,"attr" : {"id" : childId,"node_type" : contentType,"rel" : contentType,"weight" : weight}}, function() {}, true);
-		$(".product_catalog_tree").unmask();
+		$.fn.unmasking();
 	};
+	
+	$.fn.masking = function(message){ 
+		$("#main-content").mask(message);
+	};
+	
+	$.fn.unmasking = function(){
+		$("#main-content").unmask();
+	}
 	
 })(jQuery);
