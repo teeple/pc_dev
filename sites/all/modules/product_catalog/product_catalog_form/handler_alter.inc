@@ -431,6 +431,10 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			unset($form['field_ref_number_sp_forbidden']);
 			unset($form['field_parent_node']);
 			unset($form['field_tpl_voca_machine_name']);
+			unset($form['field_ref_product']);
+			unset($form['field_parent_node_for_hr']);
+			unset($form['field_weight_for_hierarchy']);
+			
 			// unset($form['field_counter_list']);
 			// dsm($form, 'form');
 			_unset_menu_items($form,$form_id);
@@ -851,10 +855,29 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
         case 'actionpricediscount_node_form':
         case 'actionpricechargeonetime_node_form':
         case 'actionpricechargerecurring_node_form':
-        	unset($form['field_parent_node']);
+			unset($form['field_parent_node']);
         	unset($form['field_weight']);
         	unset($form['field_ref_product']);
         	unset($form['field_ref_tree_tid']);
+			
+			// in case EDIT
+			if(isset($form['nid']['#value'])) {
+				$product = node_load($form_state['build_info']['args'][0]->field_ref_product['und'][0]['nid']);
+				$currencyTid = $product->field_price_units['und'][0]['tid'];
+				
+			} else {
+				if(!empty($form_state['root_nid'])) {
+					$product = node_load($form_state['root_nid']);
+					$currencyTid = $product->field_price_units['und'][0]['tid'];
+				}
+			}
+			
+			if(isset($currencyTid)) {
+				$currencyTerm = taxonomy_term_load($currencyTid);
+				$form['field_price_amount']['und'][0]['value']['#field_suffix'] = $currencyTerm->name;
+			} else {
+				drupal_set_message(t('First ! you should set currency in product edit page'));
+			}
 			
 			_unset_menu_items($form,$form_id);
           	break;
@@ -947,8 +970,21 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
         case 'rate_node_form':
         	unset($form['field_ref_tariffplan']);
         	unset($form['field_ref_tree_tid']);
-        	
-        	$form['chart_button'] = array(
+
+			if(isset($form_state['build_info']['args'][0]->field_ref_tariffplan)) {
+				$tariffPlan = node_load($form_state['build_info']['args'][0]->field_ref_tariffplan['und'][0]['nid']);
+				$product = node_load($tariffPlan->field_ref_product['und'][0]['nid']);
+				$currencyTerm = taxonomy_term_load($product->field_price_units['und'][0]['tid']);
+				$currencyName = $currencyTerm->name;
+			}
+			unset($form['field_price_units']);
+			$form['Currency'] = array(
+				'#type' => 'markup',
+        		'#markup' => '<div class="form-item"> <label>Currency </label>'. $currencyName. '</div>',
+        		'#weight' => 2
+        	);
+			
+			$form['chart_button'] = array(
         			'#type' => 'markup',
         			'#markup' => '<input id="chart_show" type="button" value="Refresh Chart"/>',
         			'#weight' => 199
