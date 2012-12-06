@@ -19,17 +19,6 @@ function ocs_migrate_fce_tariff($form, &$form_state, $domestic_or_intl = 'domest
         '#markup' => 'Migrate tariff_decision table',
     );
 
-    $form['category'] = array(
-        '#type' => 'select',
-        '#title' => 'Category',
-		'#options' => drupal_map_assoc(array( 'voice', 'intl voice', 'sms', 'intl sms')),
-        '#default_value' => $category,
-        '#ajax' => array(
-            'callback' => 'ocs_ajax_select_area_code_category',
-            'wrapper' => 'ocs_ajax_select_area_code_category_div',
-        ),
-    );
-
 	$form['category'] = array(
 		'#type' => 'select',
 		'#title' => 'User Category to migrate',
@@ -98,8 +87,7 @@ function ocs_migrate_fce_tariff($form, &$form_state, $domestic_or_intl = 'domest
 		'#suffix' => '</div>',
 	);
 
-	$numbering_plan_list['IDD'] = _load_all_numbering_plan( 'numberingplan_idd');
-	$numbering_plan_list['Domestic'] = _load_all_numbering_plan( 'numberingplan_domestic');
+	$numbering_plan_list = _load_all_numbering_plan( ($call_type == 'domestic:voice') ?  'numberingplan_domestic': 'numberingplan_idd');
 
 	$form['data']['target'] = array(
         '#type' => 'select',
@@ -139,52 +127,62 @@ function ocs_migrate_fce_tariff_submit($form, &$form_state)
 		$timetable_list = _load_all_time_table();
         dpm( $timetable_list, 'time table');
 
-        $idd_ratinggroup = _load_all_idd_ratinggroup();
+		$rate_list = _load_all_rate();
+		dpm( $rate_list, 'rate list');
 
+        $ratinggroup_list = _load_all_ratinggroup( ($values['#call_type'] == 'intl:voice') ? 'idd_ratinggroup' : 'domestic_ratinggroup');
 
 		foreach( $plan_list as $plan_name) {
 			$plan_node = _get_first_node_by_title( 'tariffplan', $plan_name);
 
-            $rate_list = _load_all_rate( $plan_node->nid);
-            dpm( $rate_list, 'rate list');
-
-			// add rating group records
-			foreach ($form['#rule'] as $r) {
-                $rating_group = $r['intl_carrier'] . '_' . $r['rating_group'];
-
-                if ( ! isset( $idd_ratinggroup[$rating_group])) {
-                    dpm( 'rating group not found: '. $rating_group);
-                    continue;
-                }
-
-                if ( ! isset( $timetable_list[$r['intl_carrier']])) {
-                    dpm( 'time table not found: '. $r['intl_carrier']);
-                    continue;
-                }
-
-                $tt = $timetable_list[$r['intl_carrier']];
-                dpm( $tt, 'time table');
-
-                $idx = $r['intl_time_id'] - 1;
-                if ( ! isset( $tt->field_ref_timetablefactors['und'][$idx])) {
-                    dpm( 'time table factor not found for time_id:'. $r['intl_time_id']);
-                    continue;
-                }
-
-                if ( ! isset( $rate_list[$r['ruleName']])) {
-                    dpm( 'rate not found: '. $r['ruleName']);
-                    continue;
-                }
-
-                dpm( 'rating group:'.$rating_group);
-
-			    _set_tariff($plan_node->nid, 
-                    $rating_group, 
-                    $tt->field_ref_timetablefactors['und'][$idx]['nid'],
-                    $rate_list[$r['ruleName']],
-                    $values['check'] == '1');
+			if ( $values['#call_type'] == 'intl:voice') {
+				_update_idd_tariff( $form['#rule'], $plan_node->nid, $ratinggroup_list, $timetable_list, $rate_list, $values['check'] == '1');
 			}
+			else if ( $values['#call_type'] == 'domestic:voice') {
+				_update_domestic_tariff( $form['#rule'], $plan_node->nid, $ratinggroup_list, $timetable_list, $rate_list, $values['check'] == '1');
+			}
+
 		}
+	}
+}
+
+function _update_idd_tariff( $rule_list, $plan_nid, $ratinggroup_list, $timetable_list, $rate_list, $check_only)
+{
+	// add rating group records
+	foreach ($rule_list as $r) {
+		$rating_group = $r['intl_carrier'] . '_' . $r['rating_group'];
+
+		if ( ! isset( $ratinggroup_list[$rating_group])) {
+			dpm( 'rating group not found: '. $rating_group);
+			continue;
+		}
+
+		if ( ! isset( $timetable_list[$r['intl_carrier']])) {
+			dpm( 'time table not found: '. $r['intl_carrier']);
+			continue;
+		}
+
+		$tt = $timetable_list[$r['intl_carrier']];
+		dpm( $tt, 'time table');
+
+		$idx = $r['intl_time_id'] - 1;
+		if ( ! isset( $tt->field_ref_timetablefactors['und'][$idx])) {
+			dpm( 'time table factor not found for time_id:'. $r['intl_time_id']);
+			continue;
+		}
+
+		if ( ! isset( $rate_list[$r['ruleName']])) {
+			dpm( 'rate not found: '. $r['ruleName']);
+			continue;
+		}
+
+		dpm( 'rating group:'.$rating_group);
+
+		_set_tariff($plan_nid, 
+			$rating_group, 
+			$tt->field_ref_timetablefactors['und'][$idx]['nid'],
+			$rate_list[$r['ruleName']],
+			$check_only);
 	}
 }
 
@@ -247,11 +245,11 @@ function _load_all_time_table()
 	return $list;
 }
 
-function _load_all_idd_ratinggroup()
+function _load_all_ratinggroup( $type)
 {
 	$query = new EntityFieldQuery();
 	$result = $query->entityCondition('entity_type', 'node')
-		->entityCondition('bundle', 'idd_ratinggroup')
+		->entityCondition('bundle', $type)
 		->execute();
 
 	$list = array();
@@ -265,12 +263,11 @@ function _load_all_idd_ratinggroup()
 	return $list;
 }
 
-function _load_all_rate( $plan_nid)
+function _load_all_rate()
 {
 	$query = new EntityFieldQuery();
 	$result = $query->entityCondition('entity_type', 'node')
 		->entityCondition('bundle', 'rate')
-		->fieldCondition('field_ref_tariffplan', 'nid', $plan_nid)
 		->execute();
 
 	$list = array();
