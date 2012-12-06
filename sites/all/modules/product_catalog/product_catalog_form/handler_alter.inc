@@ -970,8 +970,21 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
         case 'rate_node_form':
         	unset($form['field_ref_tariffplan']);
         	unset($form['field_ref_tree_tid']);
-        	
-        	$form['chart_button'] = array(
+
+			if(isset($form_state['build_info']['args'][0]->field_ref_tariffplan)) {
+				$tariffPlan = node_load($form_state['build_info']['args'][0]->field_ref_tariffplan['und'][0]['nid']);
+				$product = node_load($tariffPlan->field_ref_product['und'][0]['nid']);
+				$currencyTerm = taxonomy_term_load($product->field_price_units['und'][0]['tid']);
+				$currencyName = $currencyTerm->name;
+			}
+			unset($form['field_price_units']);
+			$form['Currency'] = array(
+				'#type' => 'markup',
+        		'#markup' => '<div class="form-item"> <label>Currency </label>'. $currencyName. '</div>',
+        		'#weight' => 2
+        	);
+			
+			$form['chart_button'] = array(
         			'#type' => 'markup',
         			'#markup' => '<input id="chart_show" type="button" value="Refresh Chart"/>',
         			'#weight' => 199
