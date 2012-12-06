@@ -3,6 +3,7 @@ module_load_include('inc', 'product_catalog_form');
 module_load_include('inc', 'product_catalog_form', 'alter_simpleproductoffering_node_form');
 module_load_include('inc', 'product_catalog_form', 'handler_redirect');
 module_load_include('inc', 'product_catalog_form', 'handler_submit');
+module_load_include('inc', 'product_catalog_form', 'handler_update');
 module_load_include('inc', 'product_catalog_form', 'handler_validate');
 module_load_include('inc', 'product_catalog_form', 'handler_delete');
 module_load_include('inc', 'product_catalog_form', 'handler_alter');
