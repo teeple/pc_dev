@@ -11,8 +11,7 @@ function product_catalog_form_node_submit($node, $form, &$form_state)
 		case 'actionpricefactors_node_form':
 			$node->uid =  $user->uid;
 			break;
-		
-	}	
+	}
 }
 
 function timetable_submit_handler(&$form, &$form_state){
@@ -765,3 +764,4 @@ function _vouchercardtype_submit_handler($form, $form_state) {
 	node_save($loyaltyPoint);
 	
 }
+
