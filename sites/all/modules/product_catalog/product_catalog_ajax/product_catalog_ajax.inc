@@ -741,7 +741,7 @@ function _create_node_form_in_tree($contentType,$parentType,$parentNid,$weight,$
 	return $formRender;
 }
 
-function _edit_node_form_in_tree($nid){
+function _edit_node_form_in_tree($nid, $additionalParams){
 	module_load_include('inc','node','node.pages');
 	$node = node_load($nid);
 	
@@ -752,7 +752,10 @@ function _edit_node_form_in_tree($nid){
 			$form = drupal_build_form('_basicrate_timetablefactors_custom_form', $form_state);
 		}
 	}else{		
-		$form_state['build_info']['args'] = array($node);
+		// $form_state['build_info']['args'] = array($node);
+		$form_state['build_info']['args'][] = $node;
+		$form_state['build_info']['args'][] = $additionalParams;
+		
 		$form = drupal_build_form($node->type . '_node_form', $form_state);
 	}
 	
