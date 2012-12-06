@@ -500,19 +500,6 @@
 							},
 						};
 						break;
-					case 'mobile_nonusage_fee_recurring':
-						menus.custom_create._disabled = false;
-						menus.custom_create.submenu = {
-							"mobile_nonusage_fee_recurring" : {
-								"label" : "Charge Item",
-								action : function(node) {
-									$.fn.addNode(node, {
-										'childContentType' : 'actionpricechargerecurring'
-									});
-								}
-							},
-						};
-						break;
 					case 'iptv_nonusage_fee_recurring':
 						menus.custom_create._disabled = false;
 						menus.custom_create.submenu = {
