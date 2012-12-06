@@ -34,6 +34,12 @@ function _product_for_export($nid=NULL){
 			$attribute['is_bundle'] = '0';
 		}
 		
+		if(!empty($node->field_deferred_subscription_flag)) {
+			$attribute['deferred_change'] = $node->field_deferred_subscription_flag['und'][0]['value'];
+		}else {
+			$attribute['deferred_change'] = '0';
+		}
+		
         $productTypeTerm = taxonomy_term_load($node->field_product_type['und'][0]['tid']);      
         $attribute['product_type'] = _get_common_code($productTypeTerm);
         
@@ -77,7 +83,7 @@ function _product_for_export($nid=NULL){
         }else{
             $attribute['billing_cycle'] = NULL;
         }
-
+		
         $customerTypeTerm = taxonomy_term_load($node->field_customer_type['und'][0]['tid']);
         $attribute['customer_type'] = _get_common_code($customerTypeTerm);
 
