@@ -11,7 +11,6 @@ function rating_rules_export_by_content_type_loaded($export_list, $nid=NULL, $va
 	$jsonData = array();
     foreach($export_list as $export_item)
 	{
-
         if(property_exists($export_item , "field_export_disabled") && count($export_item->field_export_disabled)>0)
         {
             if($export_item->field_export_disabled['und'][0]['value'] == '1')
@@ -371,6 +370,11 @@ function generate_condition_string_by_condition_node($nid, &$factor_list )
 			{
 				$factor_list[$type->field_rating_factor_name['und'][0]['value']] = $type;
 				$newfunc = create_function('$data', $type->field_conversion_php_code['und'][0]['value'] );
+				if($newfunc == NULL)
+				{
+					dsm($type->field_conversion_php_code['und'][0]['value']);
+					return NULL;
+				}
 				$value = $newfunc($node);
 
 				if(is_array($value))
@@ -573,17 +577,20 @@ function view_get_field_value($view , $field_name , $record)
 				{
                     $value = $raw_items[0]['raw']['value'];
                     if(array_key_exists('date_type', $raw_items[0]['raw']) && $raw_items[0]['raw']['date_type'] =='datetime' )
-                    {
-                        //dsm(strtotime($value));
-                        $value = '\''. strftime('%Y-%m-%dT%H:%M', strtotime($value)) . '\'';
-                        //dsm($value);
+					{
+						$format_str = '%Y%m%d';
+						dsm($field_handler->field_info['settings']['granularity']);	
+						if($field_handler->field_info['settings']['granularity']['minute'] != 0)
+						{
+							$format_str = '%Y-%m-%dT%H:%M';
+						}
+                        $value = '\''. strftime($format_str, strtotime($value)) . '\'';
                     }
 
                     if(get_field_type_string($field_name) == 'list_integer')
                     {
                         $value = $field_handler->field_info['settings']['allowed_values'][$value];
                     }
-                //    if($field_handler->
 
 
                     if(array_key_exists('value2' , $raw_items[0]['raw']))
@@ -591,7 +598,12 @@ function view_get_field_value($view , $field_name , $record)
                         $value2 = $raw_items[0]['raw']['value2'];
                         if(array_key_exists('date_type', $raw_items[0]['raw']) && $raw_items[0]['raw']['date_type'] =='datetime' )
                         {
-                            $value2 = '\'' . strftime('%Y-%m-%dT%H:%M', strtotime($value2)) . '\'' ;
+							$format_str = '%Y%m%d';
+							if($field_handler->field_info['settings']['granularity']['minute'] != 0)
+							{
+								$format_str = '%Y-%m-%dT%H:%M';
+							}
+                            $value2 = '\'' . strftime($format_str, strtotime($value2)) . '\'' ;
                         }
 
                         if($value2 != $value)
@@ -767,12 +779,14 @@ function rating_rules_export_from_view($title, $view_name, $display_name, $nid=N
                             $factorMeta['is_result'] = 'true';
                         }
                         else
-                        {
-                            $kv = preg_split('/=/', $s);
-                            if(count($kv)>1)
-                            {
-                                $factorMeta[trim($kv[0])]=trim($kv[1]);
-                            }
+						{
+							$pos = strpos($s , '=');
+							if($pos!==false)
+							{
+								$key = substr($s , 0 , $pos);
+								$value = substr($s , $pos+1 );
+								$factorMeta[trim($key)]=trim($value);
+							}
                         }
                     }
                 }
@@ -921,6 +935,10 @@ function rating_rules_export_from_view($title, $view_name, $display_name, $nid=N
         $jsonData['field'] = $factor_meta_map;
         $jsonData['data'] = $rules;
         return $jsonData;
-    }
+	}
+	else
+	{
+		dsm("execute view query failed :" . $view_name. ".");
+	}
     return null;
 }
