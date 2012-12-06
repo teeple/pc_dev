@@ -262,7 +262,7 @@ function editablefields_forms($form_id) {
 function editablefields_form($form, &$form_state, $entity_type, $entity, $field, $instance, $langcode, $display) {
   // TODO: set a #action to a "safe" URL so that forms embedded in Views do not
   // break when the result set displayed in the Views changes.
-  error_log('editablefields_form');
+  //error_log('editablefields_form');
 
   // Set #parents to 'top-level' by default.
   $form += array('#parents' => array());
@@ -441,7 +441,7 @@ function editablefields_views_form($view, $views_field, &$form, &$form_state) {
  */
 function editablefields_form_update($form, $form_state) {
 
-  error_log('here');
+  //error_log('here');
   // Return the proper part of the form.
   $parents = $form_state['triggering_element']['#array_parents'];
   // Remove the 'actions' and 'link' elements.
