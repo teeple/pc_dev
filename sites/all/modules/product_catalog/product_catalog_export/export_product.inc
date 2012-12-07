@@ -187,9 +187,12 @@ function _get_recurring_charge($productNid) {
 	return $records;
 }
  */
+ 
+function _get_nonusage_rollover($productNid) {
+	
+}
 
 function _get_lifecyclescheme($productNid) {
-	
 	$view_name = 'list_tree_term_child_node_for_product';
 	$display = 'panel_pane_1';
 	$args = array('0' => $productNid);
