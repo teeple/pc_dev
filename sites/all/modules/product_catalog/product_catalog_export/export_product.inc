@@ -85,7 +85,7 @@ function _product_for_export($nid=NULL){
 
 		$product['rating_rules'] = rating_rules_export_by_content_type('rating_rule_export_product' ,  $products[$i]->nid);
 
-		$productNids[] = $attribute['product_id'];
+		$productNids[] = $node->field_product_id['und'][0]['value'];
 		$retDataTmp[] = $product;        
     }
     
@@ -243,12 +243,14 @@ function _get_onetime_charge($productNid) {
 function _get_attribute($product) {
 	
 	$result = array();
+	$result_attribute_general = array();
+	$result_attrbitue_exception = array();
 	
 	$reqArray = array(
 		'product_id' => array(
 			'through_common_code' => FALSE,
 			'field' => 'field_product_id',
-			'field_value' => "field_product_id['und'][0]['safe_value']",
+			'field_value' => "field_product_id['und'][0]['value']",
 			'field_default' => NULL
 		),
 		'product_name' => array(
@@ -264,6 +266,7 @@ function _get_attribute($product) {
 			'field_value_default' => '0'
 		),
 		'deferred_change' => array(
+			'through_common_code' => FALSE,
 			'field' => 'field_deferred_subscription_flag',
 			'field_value' => "field_deferred_subscription_flag['und'][0]['value']",
 			'field_value_default' => '0' 
@@ -272,7 +275,7 @@ function _get_attribute($product) {
 			'through_common_code' => FALSE,
 			'field' => 'field_description',
 			'field_value' => "field_description['und'][0]['safe_value']",
-			'field_value_default' => NULL
+			'field_value_default' => ''
 		),
 		'version' => array(
 			'through_common_code' => FALSE,
@@ -280,17 +283,11 @@ function _get_attribute($product) {
 			'field_value' => "field_version['und'][0]['value']",
 			'field_value_default' => '1.0'
 		),
-		'discount' => array(
+		'billing_cycle' => array(
 			'through_common_code' => FALSE,
-			'field' => 'field_attribute_discount',
-			'field_value' => "field_attribute_bonus['und'][0]['safe_value']",
-			'field_value_default' => NULL
-		),
-		'bonus' => array(
-			'through_common_code' => FALSE,
-			'field' => 'field_attribute_bonus',
-			'field_value' => "field_attribute_bonus['und'][0]['safe_value']",
-			'field_value_default' => NULL
+			'field' => 'field_billing_cycle',
+			'field_value' => "field_billing_cycle['und'][0]['value']",
+			'field_value_default' => '1.0'
 		),
 		'bill_type' => array(
 			'through_common_code' => TRUE,
@@ -330,7 +327,13 @@ function _get_attribute($product) {
 		),
 	);
 	
-	$result = _get_result($reqArray, $product);
+	$result_attribute_general = _get_result($reqArray, $product);
+	$result_attrbitue_exception = _get_attribute_exceptions($product);
+		
+	dsm($result_attribute_general, 'general');
+	dsm($result_attrbitue_exception, 'exception');
+	
+	$result = array_merge($result_attribute_general, $result_attrbitue_exception);
 	dsm($result, 'result');
 	
 	return $result;
@@ -338,53 +341,41 @@ function _get_attribute($product) {
 
 function _get_result($reqArray, $product) {
 	$retArray = array();
-	
 	foreach($reqArray as $key => $item) {
 		if($item['through_common_code']) {
-			$command = '$tempTerm = taxonomy_term_load($product->'.$item['field_value'].');';
-			dsm($command, 'command_4');
+			$command = '$field = $product->'.$item['field'].';';
 			eval($command);
-			$retArray[$key] = _get_common_code($tempTerm);
+			
+			if(!empty($field)) {
+				$command = '$tempTerm = taxonomy_term_load($product->'.$item['field_value'].');';
+				eval($command);
+				$retItem =  _get_common_code($tempTerm);
+			} else {
+				$retItem = $item['field_value_default'];
+			}
 			
 		} else {
 			$command = '$field = $product->'.$item['field'].';';
 			eval($command);
 			
-			dsm($command, 'command_1');
-			
 			if(!empty($field)) {
-				$command = '$retArray["'.$key.'"] = $product->'.$item['field_value'].';';
-				dsm($command, 'command_2'); 
+				$command = '$retItem = $product->'.$item['field_value'].';';
 				eval($command);
 				
 			} else {
-				$command = '$retArray["'.$key.'"] = $product->'.$item['field_value_default'].';';
-				dsm($command, 'command_3');
-				eval($command);
+				$retItem = $item['field_value_default'];
 			}
 		}
+		$retArray["'".$key."'"] = $retItem;
 	}
 	return $retArray;
 }
 
-function _get() {
-	
-	$billingTypeTerm = taxonomy_term_load($product->field_billing_type['und'][0]['tid']);
-
-    $attribute = array();
-    $attribute['product_id'] = $product->field_product_id['und'][0]['safe_value'];
-    $attribute['product_name'] = $product->title;
-	
-	$attribute['is_bundle'] = 
-		!empty($product->field_is_bundle)? $product->field_is_bundle['und'][0]['value']: '0';
+function _get_attribute_exceptions($product) {
 		
-	$attribute['deferred_change'] =
-		!empty($product->field_deferred_subscription_flag)? $product->field_deferred_subscription_flag['und'][0]['value']: '0';
-		
-	$productTypeTerm = taxonomy_term_load($product->field_product_type['und'][0]['tid']);      
-    $attribute['product_type'] = _get_common_code($productTypeTerm);
-    
-    $validForStr = 
+	$retArray = array();
+	
+	$validForStr = 
     	isset($product->field_validfor_product['und'][0]['value'])? 
     		$product->field_validfor_product['und'][0]['value']: '0001-01-01 00:00:00';
 			   
@@ -394,49 +385,18 @@ function _get() {
     }else{
         $validForStr .= '9999-12-31 23:59:59';
     }
+	$retArray['valid_for'] = $validForStr;
 	
-    $attribute['valid_for'] = $validForStr;
-	
-    $serviceTypeTerm = taxonomy_term_load($product->field_service_type_of_provider['und'][0]['tid']);
-    $attribute['service_domain'] = _get_common_code($serviceTypeTerm);
-	
-    $billTypeTerm = taxonomy_term_load($product->field_billing_type['und'][0]['tid']);
-    $attribute['bill_type'] = _get_common_code($billTypeTerm);
-    
-    $statusTerm = taxonomy_term_load($product->field_offering_status['und'][0]['tid']);
-    $attribute['status'] = _get_common_code($statusTerm);
-	
-    if(!empty($product->field_description['und'][0]['safe_value'])){
-        $attribute['description'] = $product->field_description['und'][0]['safe_value'];
-    }else{
-        $attribute['description'] = NULL;
-    }
-	
-    if(!empty($product->field_parent_node_for_rp['und'][0]['nid'])){
+	if(!empty($product->field_parent_node_for_rp['und'][0]['nid'])){
         $parentNode = node_load($product->field_parent_node_for_rp['und'][0]['nid']);
-        $attribute['parent_product_id'] = $parentNode->field_product_id['und'][0]['safe_value'];
+        $retArray['parent_product_id'] = $parentNode->field_product_id['und'][0]['safe_value'];
     }else{
-        $attribute['parent_product_id'] = NULL;
-    }
-
-    $attribute['version'] = $product->field_version['und'][0]['value'];
-    if(!empty($product->field_billing_cycle['und'][0]['value'])){
-        $attribute['billing_cycle'] = $product->field_billing_cycle['und'][0]['value'];
-    }else{
-        $attribute['billing_cycle'] = NULL;
+        $retArray['parent_product_id'] = NULL;
     }
 	
-    $customerTypeTerm = taxonomy_term_load($product->field_customer_type['und'][0]['tid']);
-    $attribute['customer_type'] = _get_common_code($customerTypeTerm);
-
-    if(!empty($node->field_customer_group_type['und'])){
-        $customerGroupType = taxonomy_term_load($product->field_customer_group_type['und'][0]['tid']);
-        $attribute['customer_group_type'] = _get_common_code($customerGroupType);
-    }
-
-    $view = views_get_view('list_product_child_node');
+	$view = views_get_view('list_product_child_node');
     $view->set_display('panel_pane_2');
-    $view->set_arguments(array('0' => $node->nid, '1' => 'prdattributeprefixrangeallowed'));
+    $view->set_arguments(array('0' => $product->nid, '1' => 'prdattributeprefixrangeallowed'));
     $view->execute();
     if(count($view->result) > 0){
         $allowedPrefixNode = node_load(current($view->result)->nid);
@@ -446,7 +406,7 @@ function _get() {
                 $allowedPrefix[] = $item['value'];
             }
         }
-        $attribute['prefix_allowed'] = $allowedPrefix;
+        $retArray['prefix_allowed'] = $allowedPrefix;
     }
             
     $operator = array();
@@ -454,7 +414,7 @@ function _get() {
         $operatorTerm = taxonomy_term_load($item['tid']);
         $operator[] = _get_common_code($operatorTerm);
     }
-    $attribute['service_operator'] = $operator;
+    $retArray['service_operator'] = $operator;
     
     $view = views_get_view('list_product_child_node');
     $view->set_display('panel_pane_2');
@@ -467,7 +427,7 @@ function _get() {
             $codeTerm = taxonomy_term_load($item['tid']);   
             $serviceFeatureCodes[] = _get_common_code($codeTerm);
         }
-        $attribute['service_feature_code'] = $serviceFeatureCodes;
+        $retArray['service_feature_code'] = $serviceFeatureCodes;
     }
     $view = views_get_view('list_product_child_node');
     $view->set_display('panel_pane_2');
@@ -486,16 +446,17 @@ function _get() {
     }else{
         $benefit['bonus'] = NULL;
     }
-    $attribute['benefit'] = $benefit;
+    $retArray['benefit'] = $benefit;
 	
 	// subscriber's lifecycle scheme과 연결
-	$attribute['lifecyclescheme'] = _get_lifecyclescheme($node->nid);
+	$retArray['lifecyclescheme'] = _get_lifecyclescheme($product->nid);
 	
-	return $attribute;
+	return $retArray;
 }
 
 function _get_common_code($term){
 	$data = array();
+	
 	$voca = taxonomy_vocabulary_machine_name_load($term->vocabulary_machine_name);
 	$data['codeGroup'] = $voca->name;
 	$data['code'] = isset($term->field_common_code['und'][0]['safe_value'])?$term->field_common_code['und'][0]['safe_value']:$term->name;
