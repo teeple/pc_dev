@@ -199,6 +199,7 @@ function _update_numberingplan_for_domestic_voice( $carrier_info, $target_nid, $
 
 	// load numbering plan
 	$np = node_load( $target_nid);
+	dpm( $np, 'numbering plan');
 
 	if ( $remove_flag) {
 
@@ -238,7 +239,9 @@ function _update_numberingplan_for_domestic_voice( $carrier_info, $target_nid, $
 	if ( count( $result) > 0) {		// find the ratinggroup first
 		foreach( array_keys( $result['node']) as $nid) {
 			$node = node_load( $nid);
-			$rating_group_list[$node->field_rating_group['und'][0]['value']][] = $node;
+			list( $carrier, $rg, $name) = explode( ':', $node->field_rating_group['und'][0]['value']);
+			$area_code = (isset($node->field_area_code_of_the_callee['und'])) ? $node->field_area_code_of_the_callee['und'][0]['value'] : '0';
+			$rating_group_list[$carrier][$rg][$area_code] = $node;
 		}
 	}
 	dpm( $rating_group_list, 'rating group list');	
@@ -352,15 +355,15 @@ function _update_numberingplan_for_domestic_voice( $carrier_info, $target_nid, $
 			continue;
 		}
 
-		$rating_group_name = $carrier_name . '_' . $rule['rating_group'];
-		$real_rating_group = (empty( $rule['user_category'])) ? $rating_group_name : $rule['ruleName'];
+		$rating_group_name = $carrier_name . ':' . $rule['rating_group'] . ':';
+		$rating_group_name .= ( empty($rule['user_category'])) ? $rule['ruleName'] : '';
 
 		$carrier_nid = $carrier_info[$carrier_name]['nid'];
 
-		if ( isset($rating_group_list[$rating_group_name])) {
+		if ( isset($rating_group_list[$carrier_name][$rule['rating_group']])) {
 			// rating group exist already
 			
-			$result = $rating_group_list[$rating_group_name];
+			$result = $rating_group_list[$carrier_name][$rule['rating_group']];
 			if ( $need_area_code && (count( $result) != count( $area_code))) {
 				dpm( $result, 'mismatch with area code');
 				dpm( $area_code, 'mismatch with area code');
@@ -374,15 +377,16 @@ function _update_numberingplan_for_domestic_voice( $carrier_info, $target_nid, $
 					    '@r' => $rule['rating_group'], 
                         '@ra' => $rule['ruleName'], 
                         '@a' => implode( ',', $area_code),
-						'@f' => $real_rating_group)));
+						'@f' => $rating_group_name)));
 				
-				_set_domestic_ratinggroup( $carrier_info, $r, $np, $rule, $need_area_code ? $area_code[$i++] : null, $real_rating_group);
+				_set_domestic_ratinggroup( $carrier_info, $r, $np, $rule, $need_area_code ? $area_code[$i++] : null, $rating_group_name);
 
 				if ( ! $check_only) {
 					node_save( $r);
 					$nid_list = array_get_value( $np->field_ref_domestic_ratinggroup, FALSE);
-					if ( array_search( $r->nid, $nid_list) == FALSE) {
-						dpm( 'update numbering plan. add nid:'.$r->nid);
+
+					if ( array_search( $r->nid, $nid_list) === FALSE) {
+						dpm( $nid_list, 'update numbering plan. add nid:'.$r->nid);
 						$np->field_ref_domestic_ratinggroup['und'][] = array( 'nid' => $r->nid);
 						node_save( $np);
 					}
@@ -393,11 +397,11 @@ function _update_numberingplan_for_domestic_voice( $carrier_info, $target_nid, $
 			foreach( $area_code as $code ) {
 				dpm( t('>>> new rating group "@nr": carrier=@c rating_group=@r area=@a final_rating_group=@f', 
 					array( '@nr' => $rating_group_name, '@c' => $rule['called_carrier'],
-					'@r' => $rule['rating_group'], '@a' => $code, '@f' => $real_rating_group)));
+					'@r' => $rule['rating_group'], '@a' => $code, '@f' => $rating_group_name)));
 				// make new rating group
 				$r = ocs_admin_get_new_node('domestic_ratinggroup');
 
-				_set_domestic_ratinggroup( $carrier_info, $r, $np, $rule, $code, $real_rating_group);
+				_set_domestic_ratinggroup( $carrier_info, $r, $np, $rule, $code, $rating_group_name);
 
 				if ( ! $check_only) {
 					node_save( $r);
@@ -405,7 +409,7 @@ function _update_numberingplan_for_domestic_voice( $carrier_info, $target_nid, $
 					$np->field_ref_domestic_ratinggroup['und'][] = array('nid' => $r->nid);
 					node_save( $np);
 									// update rating_group_list
-					$rating_group_list[$rating_group_name][] = $r;
+					$rating_group_list[$carrier_name][$rule['rating_group']][$code] = $r;
 				}
 			}
 		}
