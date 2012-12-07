@@ -10,7 +10,14 @@
 				
 			$(document).ajaxSuccess(function(event,request, settings) {	
 				if(settings.url === '/system/ajax'){
-					if(settings.extraData._triggering_element_name === 'op' && 
+					var triggeringElement = settings.extraData._triggering_element_name;
+					if(triggeringElement.match('submit-field_ref_timetable_idd') != null){
+						//refresh if tariffplan_idd_carrier has changed its timetable.
+						var nodeId = $('.product_catalog_tree').jstree('get_selected').attr('id');
+						var node = $('#'+nodeId);
+						$.fn.reloadTreeContentDiv(node, 0);						
+					}
+					else if(triggeringElement === 'op' && 
 							settings.extraData._triggering_element_value === 'Save'){
 						var op = $("#tree_node_op").val();
 						
@@ -60,7 +67,8 @@
 						$('#'+childId).trigger('click');	
 					}
 					
-				} else {
+				} 
+				else {
 					
 				}
 			});
