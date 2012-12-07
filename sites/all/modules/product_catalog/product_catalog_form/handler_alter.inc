@@ -200,7 +200,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			
 			break;
         case 'views_form_list_tariffplan_idd_carrier_panel_pane_1':
-            unset($form['actions']['submit']);            
+            unset($form['actions']['submit']);        
             break;
         case 'views_form_list_treenodecounterforvoucher_panel_pane_1';
             //dsm($form, 'form');

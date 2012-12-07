@@ -128,19 +128,7 @@ function _create_domestic_basicrate_node($type,$tariffplanNode){
             $targetQueryJoinNumberingPlanTableName = 'field_data_field_ref_numberingplan_domestic';
             $targetQueryJoinNumberingPlanFieldName = 'field_ref_numberingplan_domestic_nid';
             $targetQueryRatingGroupType = 'domestic_ratinggroup';
-			break;
-        /*
-		case 'select_timetable_idd':
-		case 'select_numberingplan_idd':
-			$targetTimetableFieldName = 'field_ref_timetable_idd';
-            $targetCreatedContentType = 'basicrate_idd';
-			$targetQueryArgNid = array('0' => $tariffplanNode->field_ref_numberingplan_idd['und'][0]['nid']);
-            $targetQueryNumberingPlanType = 'numberingplan_idd';
-            $targetQueryJoinNumberingPlanTableName = 'field_data_field_ref_numberingplan_idd';
-            $targetQueryJoinNumberingPlanFieldName = 'field_ref_numberingplan_idd_nid';
-            $targetQueryRatingGroupType = 'idd_ratinggroup';
-			break;
-        */ 
+			break;        
 	}
 	
 	//delete old children	
