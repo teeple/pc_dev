@@ -128,8 +128,10 @@ Drupal.ajax.prototype.commands.viewsScrollTop = function (ajax, response, status
     scrollTarget = $(scrollTarget).parent();
   }
   // Only scroll upward
-  if (offset.top - 10 < $(scrollTarget).scrollTop()) {
-    $(scrollTarget).animate({scrollTop: (offset.top - 10)}, 500);
+  if(offet != null) {
+	  if (offset.top - 10 < $(scrollTarget).scrollTop()) {
+	    $(scrollTarget).animate({scrollTop: (offset.top - 10)}, 500);
+	  }
   }
 };
 
