@@ -229,8 +229,8 @@ function _get_onetime_charge($productNid) {
     $fees = array();
     dsm($view,'view');
     foreach($view->result as $item){
-        $onetimeChargeNode = node_load($item->nid);
-        dsm($onetimeChargeNode,'node');
+        $onetimeChargeTerm = taxonomy_term_load($item->taxonomy_term_data_field_data_field_ref_otherontimecharge_ti);
+        dsm(_get_common_code($onetimeChargeTerm));
         /*
         $feeTerm = taxonomy_term_load($onetimeFeeNode->field_ref_tree_tid['und'][0]['value']);
         $priceUnitTerm = taxonomy_term_load($onetimeFeeNode->field_price_units['und'][0]['tid']);
@@ -246,7 +246,7 @@ function _get_onetime_charge($productNid) {
          * 
          */          
     }
-    $nonUsage['fees'] = $fees;
+    $nonUsage['fees'] = $fees; 
 }
 
 function _get_attribute($product) {
