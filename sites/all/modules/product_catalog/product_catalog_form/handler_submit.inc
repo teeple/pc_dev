@@ -212,7 +212,9 @@ function _offering_submit_handler(&$form, &$form_state){
 		// default attribute instance create
 		_create_default_prdattributes($offering, $voca_name);
 		// _create_default_prdattribute_relations($offering, $voca_name);
+		_create_default_prdnonusage($offering, $voca_name);
 		
+		// product basic counter setting
 		_create_default_prdcounterlist($offering, $voca_name);
 		
 		// #quickset-mobile_products=0
@@ -226,6 +228,22 @@ function _offering_submit_handler(&$form, &$form_state){
 		
         $redirectUrl = 'http://' .$_SERVER['HTTP_HOST'].base_path().'product_designer/'.$form_state['service_domain_name'].'/'.$form_state['product_type_name'].'/edit/'.$offering->nid.$urlSuffix;
         drupal_goto($redirectUrl);
+	}
+}
+
+function _create_default_prdnonusage($product, $voca_name) {
+	global $user;
+	
+	$contentTypes = array('prdnonusagerecurringchargescheme', 'prdnonusagerecurringbonusscheme');
+	
+	foreach($contentTypes as $contentType) {
+		$node = new StdClass();
+		$node->uid = $user->uid;
+		$node->type = $contentType;
+		$node->language = 'und';
+		$node->field_ref_product['und'][0]['nid'] = $product->nid;
+		// $node->field_ref_tree_tid['und'][0]['value'] = $term->tid;
+		node_save($node);
 	}
 }
 
