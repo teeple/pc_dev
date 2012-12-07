@@ -162,16 +162,15 @@ function ocs_migrate_fce_numberingplan($form, &$form_state, $domestic_or_intl, $
 function ocs_migrate_fce_numberingplan_submit($form, &$form_state)
 {
 	$values = $form_state['values'];
+	dpm($values, 'values');
+
 	if ($values['op'] == 'Save') {
-		
-		dpm($values, 'values');
 
 		$carrier_info = $form['#carrier'];
 
         if ( $form['#category'] == 'intl:voice') {
             _update_numberingplan_for_intl_voice( $carrier_info, $values['target'], $form['#rule'], 
 					$values['check'] == '1', $values['remove'] == '1');
-            return;
         }
 		else if ( $form['#category'] == 'domestic:voice') {
             _update_numberingplan_for_domestic_voice( $carrier_info, $values['target'], $form['#rule'], 
@@ -325,7 +324,8 @@ function _update_numberingplan_for_domestic_voice( $carrier_info, $target_nid, $
 		$carrier_name = $rule['called_carrier'];
 
 		if ( ! isset( $carrier_info[$carrier_name]['rating_group'][$rule['rating_group']])) {
-			dpm( t( 'Undefined rating group @r for carrier @c', array( '@r' => $rule['rating_group'], '@c' => $carrier_name)));
+			drupal_set_message( t( 'Undefined rating group @r for carrier @c', 
+						array( '@r' => $rule['rating_group'], '@c' => $carrier_name)), 'error');
 			continue;
 		}
 		
@@ -356,6 +356,7 @@ function _update_numberingplan_for_domestic_voice( $carrier_info, $target_nid, $
 		$real_rating_group = (empty( $rule['user_category'])) ? $rating_group_name : $rule['ruleName'];
 
 		$carrier_nid = $carrier_info[$carrier_name]['nid'];
+
 		if ( isset($rating_group_list[$rating_group_name])) {
 			// rating group exist already
 			
