@@ -500,7 +500,7 @@
 							},
 						};
 						break;
-					case 'iptv_nonusage_fee_recurring':
+					case 'mobile_nonusage_fee_recurring':
 						menus.custom_create._disabled = false;
 						menus.custom_create.submenu = {
 							"mobile_nonusage_fee_recurring" : {
