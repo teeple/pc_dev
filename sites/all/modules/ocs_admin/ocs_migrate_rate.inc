@@ -167,12 +167,20 @@ function ocs_migrate_fce_rate_submit($form, &$form_state)
 
 function _set_rate($plan_nid, $name, $rate_list, $tid, $check_only = TRUE)
 {
-	$list = entity_load('node', FALSE, array(
-		'type' => 'rate',
-		'title' => $name
-	));
-	if (count($list) >= 1) {
-		$rate_nids = array_keys($list);
+	$query = new EntityFieldQuery();
+	$result = $query->entityCondition('entity_type', 'node')
+		->entityCondition('bundle', 'rate')
+		->propertyCondition('title', $name)
+		->fieldCondition( 'field_ref_tariffplan', 'nid', $plan_nid)
+		->execute();
+
+	if (count($result) > 1) {
+		drupal_set_message( 'Duplicated rate in the same tariff plan:'. $name);
+		return;
+	}
+
+	if (count($result) == 1) {
+		$rate_nids = array_keys($result['node']);
 		$new_rate = node_load($rate_nids[0]);
 
 		// get the current rate
