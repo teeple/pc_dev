@@ -58,7 +58,7 @@ function _product_for_export($nid=NULL){
         $nonUsage = array();
 		
 		//one time fee
-		// $nonUsage['onetime_charge'] = _get_onetime_charge($productNid);
+		$nonUsage['onetime_charge'] = _get_onetime_charge($node->nid);
 		
         //threshold scheme
         $view = views_get_view('list_thresholdscheme');
@@ -219,13 +219,16 @@ function _get_recurring_bonus($productNid) {
 }
 
 function _get_onetime_charge($productNid) {
-
-    $view = views_get_view('list_product_child_node');
-    $view->set_display('panel_pane_2');
-    $view->set_arguments(array('0' => $node->nid, '1' => 'actionpricechargeonetime'));
+    $view = views_get_view('list_other_onetime_charge_by_product_id');
+    $view->set_display('panel_pane_1');
+    $view->set_arguments(array('0' => $productNid));
     $view->execute();
+    $fees = array();
+    dsm($view,'view');
     foreach($view->result as $item){
-        $onetimeFeeNode = node_load($item->nid);
+        $onetimeChargeNode = node_load($item->nid);
+        dsm($onetimeChargeNode,'node');
+        /*
         $feeTerm = taxonomy_term_load($onetimeFeeNode->field_ref_tree_tid['und'][0]['value']);
         $priceUnitTerm = taxonomy_term_load($onetimeFeeNode->field_price_units['und'][0]['tid']);
         
@@ -235,7 +238,10 @@ function _get_onetime_charge($productNid) {
             'price_amount' => $onetimeFeeNode->field_price_amount['und'][0]['value'],
             'valid_for' => $onetimeFeeNode->field_valid_for['und'][0]['value'].' ~ '.$onetimeFeeNode->field_valid_for['und'][0]['value2'],     
         );
-        $fees[] = $fee;               
+        
+        $fees[] = $fee;     
+         * 
+         */          
     }
     $nonUsage['fees'] = $fees;
 }
