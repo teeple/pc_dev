@@ -31,10 +31,7 @@
 		});
 	};
 	
-	$.fn.selectModalButtonBinding = function(renderOutput) {
-		console.log('renderOutput');
-		console.log(renderOutput);
-		
+	$.fn.selectModalButtonBinding = function(renderOutput) {		
 		$.fn.behaviorAttach(renderOutput);
 		$('#vbo-message-select-button').bind('click',$.fn.selectMessageItemHandler);
 		
