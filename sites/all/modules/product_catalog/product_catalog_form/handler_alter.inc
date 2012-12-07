@@ -203,7 +203,9 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             unset($form['actions']['submit']);        
             break;
         case 'views_form_list_treenodecounterforvoucher_panel_pane_1';
-            //dsm($form, 'form');
+            unset($form['actions']);
+            break;
+        case 'views_form_list_basicrate_panel_pane_3';
             unset($form['actions']);
             break;
         case 'conditionwhensubscriptionday_node_form';
