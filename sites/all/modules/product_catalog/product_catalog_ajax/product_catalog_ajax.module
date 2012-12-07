@@ -304,7 +304,7 @@ function product_catalog_ajax_select_modal_content($js = NULL, $contentType, $ni
 		$output[] = ctools_modal_command_dismiss();
 		
 	} else {
-		$renderOutput = '<div id="tree_content_div" style="overflow:scroll;height:700px;">'.$renderedView.'</div>';
+		$renderOutput = '<div id="modal_content" style="overflow:scroll;height:700px;">'.$renderedView.'</div>';
 		
 		$output[] = ctools_modal_command_display('Notification Message Selection', $renderOutput);
 		$output[] = ajax_command_invoke(NULL, 'selectModalButtonBinding', array('0' => $renderOutput));
