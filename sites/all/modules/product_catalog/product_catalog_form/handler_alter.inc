@@ -64,6 +64,8 @@ function _add_ajax_submit_callback($form_id,&$form){
         case 'treenodecounter_node_form':
         case 'prdattributeprefixrangeallowed_node_form':
         case 'prdattributeprefixrangenotallowe_node_form':
+		case 'prdnonusagerecurringchargescheme_node_form':
+		case 'prdnonusagerecurringbonusscheme_node_form':
 		case 'prdnonusagerollover_node_form':
 	    case 'unittransferfactors_node_form':
         case 'conditionwhatusagetypefactors_node_form':
@@ -280,7 +282,15 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			unset($form['field_weight']);
 			_unset_menu_items($form,$form_id);
             break;
-        
+			
+		case 'prdnonusagerecurringchargescheme_node_form':
+		case 'prdnonusagerecurringbonusscheme_node_form':
+			unset($form['field_ref_product']);
+			unset($form['field_weight']);
+			
+			_unset_menu_items($form,$form_id);
+			break;
+			
 		case 'prdnonusagerollover_node_form':
 			
 			unset($form['actions']);
@@ -1023,6 +1033,25 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             $form['field_ref_tree_tid']['#type'] = 'hidden'; 
             $form['field_weight']['#type'] = 'hidden';
             $form['field_ref_otherontimecharge']['#type'] = 'hidden';
+			
+			// in case EDIT
+			if(isset($form['nid']['#value'])) {
+				$product = node_load($form_state['build_info']['args'][0]->field_ref_product['und'][0]['nid']);
+				$currencyTid = $product->field_price_units['und'][0]['tid'];
+				
+			} else {
+				if(!empty($form_state['root_nid'])) {
+					$product = node_load($form_state['root_nid']);
+					$currencyTid = $product->field_price_units['und'][0]['tid'];
+				}
+			}
+			
+			if(isset($currencyTid)) {
+				$currencyTerm = taxonomy_term_load($currencyTid);
+				$form['field_price_amount']['und'][0]['value']['#field_suffix'] = $currencyTerm->name;
+			} else {
+				drupal_set_message(t('First ! you should set currency in product edit page'));
+			}
             
             $custom_title = $form['title']['#default_value'];
             $form['custom_title'] = array(

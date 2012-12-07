@@ -442,7 +442,7 @@ function product_catalog_ajax_select_submit() {
   $max_weight = $_POST['max_weight'];
   $min_weight = $_POST['min_weight'];
   $rel_type = $_POST['rel_type'];
-
+  
   $weightStep = -100;
   $weight = $min_weight;
   
@@ -564,15 +564,17 @@ function product_catalog_ajax_select_submit() {
         break;
       	 
       case 'mobile_packaged_hidden':
+		  
       	$child->type = 'prdattributepackaged';
       	$child->field_weight['und'][0]['value'] = $weight;
       	$child->field_ref_product['und'][0]['nid'] = $tmpProductNid[1];
       	$child->field_ref_connected_product['und'][0]['nid'] = $childNid;
       	
-      	$term = taxonomy_get_term_by_name('Mandatory_MarketHidden','prdrelationtype');
+		$term = taxonomy_get_term_by_name('Mandatory_MarketHidden','prdrelationtype');
       	$child->field_ref_prdrelationtype['und'][0]['tid'] = current($term)->tid;
       	
       	node_save($child);
+		
       	$js_data['append_to'] = 'inside';
       	break;
       	

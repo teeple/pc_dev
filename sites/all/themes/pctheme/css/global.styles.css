@@ -2398,3 +2398,13 @@ div.ctools-modal-content .description {
 	margin-top: 0.5em;
 	margin-left: 0.5em;
 }
+
+div.ctools-modal-content .form-item table thead label {
+	padding-left: 1em;
+	width: 150px;
+}
+
+div.ctools-modal-content .form-item table tbody label,
+div.ctools-modal-content .form-item table .form-type-textfield .form-text{
+	width: 150px;
+}
