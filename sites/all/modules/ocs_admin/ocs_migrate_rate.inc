@@ -268,15 +268,18 @@ function _set_single_rate( &$charge, $start, $end, $e1, $e2)
 
 function _load_all_tariffplan()
 {
-	$items = entity_load('node', FALSE, array(
-		'type' => 'tariffplan',
-	));
+	$query = new EntityFieldQuery();
+	$result = $query->entityCondition('entity_type', 'node')
+		->entityCondition('bundle', 'tariffplan')
+		->propertyOrderBy('title')
+		->execute();
 
 	$list = array();
 
-	if (count($items) > 0) {
-		foreach( $items as $nid => $value) {
-			$list[$nid] = $value->title;
+	if (count($result) > 0) {
+		foreach( array_keys($result['node']) as $nid ) {
+			$node = node_load( $nid);
+			$list[$nid] = $node->title;
 		}
 	}
 

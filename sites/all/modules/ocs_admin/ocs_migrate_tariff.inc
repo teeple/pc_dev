@@ -158,7 +158,8 @@ function _update_domestic_tariff( $rule_list, $plan_nid, $ratinggroup_list, $tim
 	$mapping = array();
 	foreach( $rule_list as $r) {
 		$rating_group = ( empty( $r['user_category'])) ? ($r['called_carrier'] . '_' . $r['rating_group']) : $r['ruleName'];
-		$mapping[$rating_group][($r['time_id'] == '1') ? 'normal' : 'discount'] = $r['ruleName'];
+		// if time_id is null, mapping shall be 'normal'
+		$mapping[$rating_group][($r['time_id'] == '2') ? 'discount' : 'normal'] = $r['ruleName'];
 	}
 
 	dpm( $mapping, 'mapping');
