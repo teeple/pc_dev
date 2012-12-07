@@ -226,27 +226,25 @@ function _get_onetime_charge($productNid) {
     $view->set_display('panel_pane_1');
     $view->set_arguments(array('0' => $productNid));
     $view->execute();
-    $fees = array();
-    dsm($view,'view');
+    $charges = array();
+    
     foreach($view->result as $item){
         $onetimeChargeTerm = taxonomy_term_load($item->taxonomy_term_data_field_data_field_ref_otherontimecharge_ti);
-        dsm(_get_common_code($onetimeChargeTerm));
-        /*
-        $feeTerm = taxonomy_term_load($onetimeFeeNode->field_ref_tree_tid['und'][0]['value']);
-        $priceUnitTerm = taxonomy_term_load($onetimeFeeNode->field_price_units['und'][0]['tid']);
-        
-        $fee = array(
-            'fee_type' => $feeTerm->name,
-            'price_unit' => _get_common_code($priceUnitTerm),
-            'price_amount' => $onetimeFeeNode->field_price_amount['und'][0]['value'],
-            'valid_for' => $onetimeFeeNode->field_valid_for['und'][0]['value'].' ~ '.$onetimeFeeNode->field_valid_for['und'][0]['value2'],     
+        $onetimeChargeNode = node_load($item->nid);
+        $chargeType = _get_common_code($onetimeChargeTerm);
+        if(isset($onetimeChargeNode->field_price_amount['und'][0]['value'])){
+            $price = $onetimeChargeNode->field_price_amount['und'][0]['value'];
+        }else{
+            $price = NULL;
+        }
+        $charge = array(
+            'charge_type' => $chargeType,
+            'price' => $price
         );
         
-        $fees[] = $fee;     
-         * 
-         */          
+        $charges[] = $charge; 
     }
-    $nonUsage['fees'] = $fees; 
+    return $charges; 
 }
 
 function _get_attribute($product) {
@@ -338,12 +336,8 @@ function _get_attribute($product) {
 	
 	$result_attribute_general = _get_result($reqArray, $product);
 	$result_attrbitue_exception = _get_attribute_exceptions($product);
-		
-	dsm($result_attribute_general, 'general');
-	dsm($result_attrbitue_exception, 'exception');
 	
-	$result = array_merge($result_attribute_general, $result_attrbitue_exception);
-	dsm($result, 'result');
+	$result = array_merge($result_attribute_general, $result_attrbitue_exception);	
 	
 	return $result;
 }
