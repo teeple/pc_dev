@@ -123,9 +123,6 @@ function ocs_migrate_fce_tariff_submit($form, &$form_state)
 	if ($values['op'] == 'Save') {
 		dpm($values, 'values');
 
-		$rate_list = _load_all_rate();
-		dpm( $rate_list, 'rate list');
-
         $ratinggroup_list = _load_all_ratinggroup( ($form['#call_type'] == 'intl:voice') ? 'idd_ratinggroup' : 'domestic_ratinggroup');
 		dpm( $ratinggroup_list, 'rating group list');
 
@@ -135,6 +132,9 @@ function ocs_migrate_fce_tariff_submit($form, &$form_state)
 		else if ( $form['#call_type'] == 'domestic:voice') {
 			$plan_node = node_load( $values['target']);
 			dpm( $plan_node, 'plan node');
+
+			$rate_list = _load_all_rate( $plan_node->nid);
+			dpm( $rate_list, 'rate list');
 
 			// find time table
 			$timetable = node_load( $plan_node->field_ref_timetable_domestic['und'][0]['nid']);
@@ -157,7 +157,8 @@ function _update_domestic_tariff( $rule_list, $plan_nid, $ratinggroup_list, $tim
 
 	$mapping = array();
 	foreach( $rule_list as $r) {
-		$rating_group = ( empty( $r['user_category'])) ? ($r['called_carrier'] . '_' . $r['rating_group']) : $r['ruleName'];
+		$rating_group = $r['called_carrier'] . ':' . $r['rating_group'] . ':';
+		$rating_group .= ( empty($r['user_category'])) ? $r['ruleName'] : '';
 		// if time_id is null, mapping shall be 'normal'
 		$mapping[$rating_group][($r['time_id'] == '2') ? 'discount' : 'normal'] = $r['ruleName'];
 	}
@@ -197,8 +198,8 @@ function _update_domestic_tariff( $rule_list, $plan_nid, $ratinggroup_list, $tim
 				continue;
 			}
 
-			dpm( t( 'mapping @rg -> @tt: @map', array( 
-					'@rg' => $rg, '@tt' => $tt->title, '@map' => $mapping_decision)));
+			dpm( t( 'mapping @rg -> @tt: @map, nid=@n', array( 
+					'@rg' => $rg, '@tt' => $tt->title, '@map' => $mapping_decision, '@n' => $rate_list[$mapping_decision])));
 
 			if ( ! isset( $rate_list[$mapping_decision])) {
 				dpm( 'Rate not found for : '. $mapping_decision);
@@ -206,6 +207,7 @@ function _update_domestic_tariff( $rule_list, $plan_nid, $ratinggroup_list, $tim
 			else if ( ! $check_only) {
 				$basicrate->field_ref_rate['und'][0]['nid'] = $rate_list[$mapping_decision];
 				node_save( $basicrate);
+				//dpm( $basicrate, 'basic rate');
 			}
         }
     }
@@ -332,11 +334,12 @@ function _load_all_ratinggroup( $type)
 	return $list;
 }
 
-function _load_all_rate()
+function _load_all_rate( $plan_nid)
 {
 	$query = new EntityFieldQuery();
 	$result = $query->entityCondition('entity_type', 'node')
 		->entityCondition('bundle', 'rate')
+		->fieldCondition('field_ref_tariffplan', 'nid', $plan_nid)
 		->execute();
 
 	$list = array();
