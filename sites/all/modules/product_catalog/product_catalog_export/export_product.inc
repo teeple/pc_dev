@@ -369,7 +369,7 @@ function _get_result($reqArray, $product) {
 				$retItem = $item['field_value_default'];
 			}
 		}
-		$retArray["'".$key."'"] = $retItem;
+		$retArray[$key] = $retItem;
 	}
 	return $retArray;
 }
