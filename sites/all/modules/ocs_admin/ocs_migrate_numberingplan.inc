@@ -8,12 +8,12 @@ function ocs_migrate_fce_numberingplan($form, &$form_state, $domestic_or_intl, $
 	// dpm( $form_state['values'], 'values');
 	$type = $domestic_or_intl. ':' . $call_type;
 
-	if ( $type == 'domestic:voice')  {
-		list($records, $output, $carrier) = _get_voice_tariff($type, $category);
-	}
-	else if ( $type == 'intl:voice')  {
+	if ( $type == 'intl:voice')  {
 		list($records, $output) = _get_area_code( $type);
 		$carrier = ocs_load_all_carrier();
+	}
+	else if ( $type == 'domestic:voice' || $type == 'domestic:sms')  {
+		list($records, $output, $carrier) = _get_voice_tariff($type, $category);
 	}
 	else {
 		drupal_set_message( 'Invalid configuration. ', 'error');
@@ -69,7 +69,9 @@ function ocs_migrate_fce_numberingplan($form, &$form_state, $domestic_or_intl, $
 				'</ol></p><br>'
 			,
 		);
+    }
 	
+    if ( $domestic_or_intl == 'domestic') {
 		$form['category'] = array(
 			'#type' => 'select',
 			'#title' => 'User Category to migrate',
@@ -169,14 +171,21 @@ function ocs_migrate_fce_numberingplan_submit($form, &$form_state)
 		$carrier_info = $form['#carrier'];
 
         if ( $form['#category'] == 'intl:voice') {
-            _update_numberingplan_for_intl_voice( $carrier_info, $values['target'], $form['#rule'], 
-					$values['check'] == '1', $values['remove'] == '1');
+            _update_numberingplan_for_intl_voice( $carrier_info, $values['target'], $form['#rule'], $values['check'] == '1');
         }
 		else if ( $form['#category'] == 'domestic:voice') {
-            _update_numberingplan_for_domestic_voice( $carrier_info, $values['target'], $form['#rule'], 
-					$values['check'] == '1', $values['remove'] == '1');
+            if ( $values['remove'] == '1') {
+                _remove_existing_data( $values['target']);
+            }
+            _update_numberingplan_for_domestic_voice( $carrier_info, $values['target'], $form['#rule'], $values['check'] == '1');
 
 		}
+        else if ( $form['#category'] == 'domestic:sms') {
+            if ( $values['remove'] == '1') {
+                _remove_existing_data( $values['target']);
+            }
+            _update_numberingplan_for_domestic_sms( $carrier_info, $values['target'], $form['#rule'], $values['check'] == '1');
+        }
 		else {
 			drupal_set_message( 'Undefined type: ' . $form['#category']);
 		}
@@ -185,49 +194,135 @@ function ocs_migrate_fce_numberingplan_submit($form, &$form_state)
 
 }
 
-function _update_numberingplan_for_domestic_voice( $carrier_info, $target_nid, $rule_list, $check_only, $remove_flag = FALSE)
+function _remove_existing_data( $target_nid)
 {
-	/*
-		if ($values['remove'] == '1') {
-			// remove all ratinggroup fields
-			foreach ($np->field_ref_domestic_ratinggroup['und'] as $nid) {
-				node_delete($nid['nid']);
-				dpm(t('Domestic rating group @id is removed', array('@id' => $nid['nid'])));
-			}
-		}
-			*/
+    // find dangling entity
+    $query = new EntityFieldQuery();
+    $result = $query->entityCondition('entity_type', 'node')
+        ->entityCondition('bundle', 'domestic_ratinggroup')
+        ->execute();
+
+    if ( count( $result) > 0) {		// find the ratinggroup first
+        foreach( array_keys( $result['node']) as $nid) {
+            $node = node_load( $nid);
+            //dpm( $node, 'node:'.$nid);
+            if ( ! isset($node->field_ref_numberingplan_domestic['und']) || 
+                $node->field_ref_numberingplan_domestic['und'][0]['nid'] == 0 ||
+                $node->field_ref_numberingplan_domestic['und'][0]['nid'] == $target_nid) {
+                    node_delete( $nid);
+                    dpm( 'dangling entity is removed: '. $nid);
+                }
+        }
+    }
+
+    $np = node_load( $target_nid);
+    unset($np->field_ref_domestic_ratinggroup);
+    node_save( $np);
+}
+
+function _load_all_call_type_terms()
+{
+    /* get vocabulary name */
+    $vid = taxonomy_vocabulary_machine_name_load( 'calltype');
+    $query = new EntityFieldQuery;
+    $result = $query->entityCondition('entity_type', 'taxonomy_term')
+        ->propertyCondition('vid', $vid->vid)
+        ->execute();
+
+    $terms = taxonomy_term_load_multiple( array_keys( $result['taxonomy_term']));
+    $list = array();
+    foreach( $terms as $t) {
+        $list[$t->name] = $t->tid;
+    }
+
+    return $list;
+}
+
+
+function _update_numberingplan_for_domestic_sms( $carrier_info, $target_nid, $rule_list, $check_only)
+{
+    dpm( $carrier_info, 'carrier info');
 
 	// load numbering plan
 	$np = node_load( $target_nid);
 	dpm( $np, 'numbering plan');
 
-	if ( $remove_flag) {
+    $rating_group_list = _load_all_rating_group( $target_nid, 'domestic:sms');	
 
-		// find dangling entity
-		$query = new EntityFieldQuery();
-		$result = $query->entityCondition('entity_type', 'node')
-			->entityCondition('bundle', 'domestic_ratinggroup')
-			->execute();
-	
-		if ( count( $result) > 0) {		// find the ratinggroup first
-			foreach( array_keys( $result['node']) as $nid) {
-				$node = node_load( $nid);
-				//dpm( $node, 'node:'.$nid);
-				if ( ! isset($node->field_ref_numberingplan_domestic['und']) || 
-					$node->field_ref_numberingplan_domestic['und'][0]['nid'] == 0 ||
-					$node->field_ref_numberingplan_domestic['und'][0]['nid'] == $np->nid) {
-						node_delete( $nid);
-						dpm( 'dangling entity is removed: '. $nid);
-					}
+    $type_of_call_terms = _load_all_call_type_terms();
+
+	foreach ($rule_list as $rule) {
+
+        if ( empty( $rule['called_carrier'])) {
+            continue;
+        }
+
+		$carrier_name = $rule['called_carrier'];
+		$rating_group_name = $carrier_name . ':' . $rule['ruleName'];
+
+        if ( ! isset( $carrier_info[$carrier_name]['nid'])) {
+            dpm( 'Carrier nid not found: '. $carrier_name);
+            continue;
+        }
+		$carrier_nid = $carrier_info[$carrier_name]['nid'];
+
+        // set type of call
+        if (strcasecmp(substr($carrier_name, 0, 6), 'UNITEL') == 0) {
+            // outgoing on net voice call
+            $type_of_call = $type_of_call_terms['Outgoing On net SMS'];
+        }
+        else if (substr($carrier_name, -1, 4) == '_INT') {
+            // outgoing international voice call
+            $type_of_call = $type_of_call_terms['Outgoing Intl SMS'];
+        }
+        else {
+            $type_of_call = $type_of_call_terms['Outgoing Off net SMS'];
+        }
+
+		if ( isset($rating_group_list[$carrier_name][$rule['ruleName']])) {
+			// rating group exist already
+            $r = $rating_group_list[$carrier_name][$rule['ruleName']];
+
+            dpm( t('existing rating group: carrier=@c rating group=@ra final_rating_group=@f', 
+                array( '@c' => $rule['called_carrier'],
+                    '@ra' => $rule['ruleName'], 
+                    '@f' => $rating_group_name)));
+            
+            _set_domestic_ratinggroup( $carrier_info, $r, $np, $rule, null, $rating_group_name, $type_of_call);
+
+            if ( ! $check_only) {
+                node_save( $r);
+                $nid_list = array_get_value( $np->field_ref_domestic_ratinggroup, FALSE);
+
+                if ( array_search( $r->nid, $nid_list) === FALSE) {
+                    dpm( $nid_list, 'update numbering plan. add nid:'.$r->nid);
+                    $np->field_ref_domestic_ratinggroup['und'][] = array( 'nid' => $r->nid);
+                    node_save( $np);
+                }
 			}
 		}
+		else {
+            dpm( t('>>> new rating group "@nr": carrier=@c final_rating_group=@f', 
+                array( '@nr' => $rating_group_name, '@c' => $rule['called_carrier'], '@f' => $rating_group_name)));
+            // make new rating group
+            $r = ocs_admin_get_new_node('domestic_ratinggroup');
 
-		unset($np->field_ref_domestic_ratinggroup);
+            _set_domestic_ratinggroup( $carrier_info, $r, $np, $rule, null, $rating_group_name, $type_of_call);
 
-		node_save( $np);
+            if ( ! $check_only) {
+                node_save( $r);
+            
+                $np->field_ref_domestic_ratinggroup['und'][] = array('nid' => $r->nid);
+                node_save( $np);
+                                // update rating_group_list
+                $rating_group_list[$carrier_name][$rule['ruleName']] = $r;
+			}
+		}
 	}
-		
+}
 
+function _load_all_rating_group( $target_nid, $type = 'domestic:voice')
+{
 	// find rating group list
 	$query = new EntityFieldQuery();
 	$result = $query->entityCondition('entity_type', 'node')
@@ -239,13 +334,32 @@ function _update_numberingplan_for_domestic_voice( $carrier_info, $target_nid, $
 	if ( count( $result) > 0) {		// find the ratinggroup first
 		foreach( array_keys( $result['node']) as $nid) {
 			$node = node_load( $nid);
-			list( $carrier, $rg, $name) = explode( ':', $node->field_rating_group['und'][0]['value']);
-			$area_code = (isset($node->field_area_code_of_the_callee['und'])) ? $node->field_area_code_of_the_callee['und'][0]['value'] : '0';
-			$rating_group_list[$carrier][$rg][$area_code] = $node;
+            if ( $type == 'domestic:sms') {
+                list( $carrier, $rg) = explode( ':', $node->field_rating_group['und'][0]['value']);
+                $rating_group_list[$carrier][$rg] = $node;
+            }
+            else {
+                list( $carrier, $rg, $name) = explode( ':', $node->field_rating_group['und'][0]['value']);
+                $area_code = (isset($node->field_area_code_of_the_callee['und'])) ? $node->field_area_code_of_the_callee['und'][0]['value'] : '0';
+                $rating_group_list[$carrier][$rg][$area_code] = $node;
+            }
 		}
 	}
 	dpm( $rating_group_list, 'rating group list');	
-				
+
+    return $rating_group_list;
+}
+	
+function _update_numberingplan_for_domestic_voice( $carrier_info, $target_nid, $rule_list, $check_only)
+{
+	// load numbering plan
+	$np = node_load( $target_nid);
+	dpm( $np, 'numbering plan');
+
+    $rating_group_list = _load_all_rating_group( $target_nid, 'domestic:voice');	
+
+    $type_of_call_terms = _load_all_call_type_terms();
+			
 	// for each user category, check if all the conditions are same
 	// category별로 분석하기 위해 잠시 사용한 코드 
 	/*
@@ -360,10 +474,25 @@ function _update_numberingplan_for_domestic_voice( $carrier_info, $target_nid, $
 
 		$carrier_nid = $carrier_info[$carrier_name]['nid'];
 
+        // set type of call
+        if (strcasecmp(substr($carrier_name, 0, 6), 'UNITEL') == 0) {
+            // outgoing on net voice call
+            $type_of_call = $type_of_call_terms['Outgoing On net Voice'];
+        }
+        else if (substr($carrier_name, -1, 4) == '_INT') {
+            // outgoing international voice call
+            $type_of_call = $type_of_call_terms['Outgoing Intl Voice'];;
+        }
+        else {
+            $type_of_call = $type_of_call_terms['Outgoing Off net Voice'];
+            // 1513 outgoing off net voice call
+        }
+
+
 		if ( isset($rating_group_list[$carrier_name][$rule['rating_group']])) {
 			// rating group exist already
-			
-			$result = $rating_group_list[$carrier_name][$rule['rating_group']];
+            $result = $rating_group_list[$carrier_name][$rule['rating_group']];
+
 			if ( $need_area_code && (count( $result) != count( $area_code))) {
 				dpm( $result, 'mismatch with area code');
 				dpm( $area_code, 'mismatch with area code');
@@ -379,7 +508,7 @@ function _update_numberingplan_for_domestic_voice( $carrier_info, $target_nid, $
                         '@a' => implode( ',', $area_code),
 						'@f' => $rating_group_name)));
 				
-				_set_domestic_ratinggroup( $carrier_info, $r, $np, $rule, $need_area_code ? $area_code[$i++] : null, $rating_group_name);
+				_set_domestic_ratinggroup( $carrier_info, $r, $np, $rule, $need_area_code ? $area_code[$i++] : null, $rating_group_name, $type_of_call);
 
 				if ( ! $check_only) {
 					node_save( $r);
@@ -392,6 +521,7 @@ function _update_numberingplan_for_domestic_voice( $carrier_info, $target_nid, $
 					}
 				}
 			}
+	
 		}
 		else {
 			foreach( $area_code as $code ) {
@@ -401,7 +531,7 @@ function _update_numberingplan_for_domestic_voice( $carrier_info, $target_nid, $
 				// make new rating group
 				$r = ocs_admin_get_new_node('domestic_ratinggroup');
 
-				_set_domestic_ratinggroup( $carrier_info, $r, $np, $rule, $code, $rating_group_name);
+				_set_domestic_ratinggroup( $carrier_info, $r, $np, $rule, $code, $rating_group_name, $type_of_call);
 
 				if ( ! $check_only) {
 					node_save( $r);
@@ -416,7 +546,7 @@ function _update_numberingplan_for_domestic_voice( $carrier_info, $target_nid, $
 	}
 }
 
-function _set_domestic_ratinggroup( $carrier_info, &$r, $np, $rule, $area_code, $name)
+function _set_domestic_ratinggroup( $carrier_info, &$r, $np, $rule, $area_code, $name, $type_of_call)
 {
 	$carrier_name = $rule['called_carrier'];
 
@@ -435,21 +565,8 @@ function _set_domestic_ratinggroup( $carrier_info, &$r, $np, $rule, $area_code, 
 	$r->field_ref_carrier_mobile['und'][0]['nid'] = $carrier_info[$carrier_name]['nid'];
 	$r->field_is_samezone['und'][0]['tid'] = 1988;		// All
 	$r->field_rating_group['und'][0]['value'] = $name;
+    $r->field_ref_type_of_call['und'][0]['tid'] = $type_of_call;
 	
-	// set type of call
-	if (strcasecmp(substr($carrier_name, 0, 6), 'UNITEL') == 0) {
-		$r->field_ref_type_of_call['und'][0]['tid'] = 725;
-		// outgoing on net voice call
-	}
-	else if (substr($carrier_name, -1, 4) == '_INT') {
-		$r->field_ref_type_of_call['und'][0]['tid'] = 1514;
-		// outgoing international voice call
-	}
-	else {
-		// 1513 outgoing off net voice call
-		$r->field_ref_type_of_call['und'][0]['tid'] = 1513;
-	}
-
 	// reset area_code_to
 	if ( ! empty( $area_code)) {
 		$r->field_area_code_of_the_callee['und'][0]['value'] = $area_code;
@@ -474,7 +591,7 @@ function _need_area_code( $carrier_info, $name)
 	return FALSE;
 }
 
-function _update_numberingplan_for_intl_voice( $carrier_info, $target_nid, $records, $check_only, $remove_existing_data = FALSE)
+function _update_numberingplan_for_intl_voice( $carrier_info, $target_nid, $records, $check_only)
 {
     // get country code
    	db_set_active('fce');
