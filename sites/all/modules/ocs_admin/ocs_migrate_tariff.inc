@@ -1,5 +1,9 @@
 <?php
 
+// TODO
+// 1. SMS rate에서 range start/end에 count가 없음
+// 2. SMS tariff plan에서 rate를 삭제했을 때 reloading이 안됨 
+
 module_load_include( 'inc', 'ocs_admin', 'product_catalog_ajax');
 
 
@@ -130,40 +134,50 @@ function ocs_migrate_fce_tariff_submit($form, &$form_state)
 			_update_idd_tariff( $form['#rule'], $values['target'], $ratinggroup_list, $timetable_list, $rate_list, $values['check'] == '1');
 		}
 		else if ( $form['#call_type'] == 'domestic:voice') {
-			$plan_node = node_load( $values['target']);
-			dpm( $plan_node, 'plan node');
 
-			$rate_list = _load_all_rate( $plan_node->nid);
-			dpm( $rate_list, 'rate list');
+            $mapping = array();
+            foreach( $form['#rule'] as $r) {
+                $rating_group = $r['called_carrier'] . ':' . $r['rating_group'] . ':';
+                $rating_group .= ( empty($r['user_category'])) ? $r['ruleName'] : '';
+                // if time_id is null, mapping shall be 'normal'
+                $mapping[$rating_group][($r['time_id'] == '2') ? 'discount' : 'normal'] = $r['ruleName'];
+            }
 
-			// find time table
-			$timetable = node_load( $plan_node->field_ref_timetable_domestic['und'][0]['nid']);
+            dpm( $mapping, 'mapping');
 
-			_update_domestic_tariff( $form['#rule'], $values['target'], $ratinggroup_list, $timetable, $rate_list, $values['check'] == '1');
+			_update_domestic_tariff( $form['#rule'], $values['target'], $ratinggroup_list, $mapping, $values['check'] == '1');
 		}
+        else if ( $form['#call_type'] == 'domestic:sms') {
+            $mapping = array();
+            foreach( $form['#rule'] as $r) {
+                $rating_group = $r['called_carrier'] . ':' . $r['ruleName'];
+                $mapping[$rating_group]['all day'] = $r['ruleName'];
+            }
+
+            dpm( $mapping, 'mapping');
+
+			_update_domestic_tariff( $form['#rule'], $values['target'], $ratinggroup_list, $mapping, $values['check'] == '1');
+        }
 
 	}
 }
 
 
-function _update_domestic_tariff( $rule_list, $plan_nid, $ratinggroup_list, $timetable, $rate_list, $check_only)
+function _update_domestic_tariff( $rule_list, $plan_nid, $ratinggroup_list, $mapping, $check_only)
 {
+    $rate_list = _load_all_rate( $plan_nid);
+    dpm( $rate_list, 'rate list');
+
+    // find time table
+    $plan_node = node_load( $plan_nid);
+    $timetable = node_load( $plan_node->field_ref_timetable_domestic['und'][0]['nid']);
+
 	// we have two time table factors: normal & discount
 	$timetable_factor = array();
-	for( $idx =0; $idx< 2; $idx++) {
-		$tt = node_load( $timetable->field_ref_timetablefactors['und'][$idx]['nid']);
+	foreach( $timetable->field_ref_timetablefactors['und'] as $nid) {
+		$tt = node_load( $nid['nid']);
 		$timetable_factor[$tt->title] = $tt->nid;
 	}
-
-	$mapping = array();
-	foreach( $rule_list as $r) {
-		$rating_group = $r['called_carrier'] . ':' . $r['rating_group'] . ':';
-		$rating_group .= ( empty($r['user_category'])) ? $r['ruleName'] : '';
-		// if time_id is null, mapping shall be 'normal'
-		$mapping[$rating_group][($r['time_id'] == '2') ? 'discount' : 'normal'] = $r['ruleName'];
-	}
-
-	dpm( $mapping, 'mapping');
 
 	$query = new EntityFieldQuery();
 	$result = $query->entityCondition('entity_type', 'node')
