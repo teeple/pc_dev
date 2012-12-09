@@ -171,7 +171,21 @@ function ocs_migrate_fce_numberingplan_submit($form, &$form_state)
 		$carrier_info = $form['#carrier'];
 
         if ( $form['#category'] == 'intl:voice') {
-            _update_numberingplan_for_intl_voice( $carrier_info, $values['target'], $form['#rule'], $values['check'] == '1');
+            if ( $values['remove'] == '1') {
+
+                // find rating group list
+                $query = new EntityFieldQuery();
+                $result = $query->entityCondition('entity_type', 'node')
+                    ->entityCondition('bundle', 'idd_ratinggroup')
+                    ->fieldCondition( 'field_ref_numberingplan_idd', 'nid', $values['target'])
+                    ->execute();
+                    
+                foreach( array_keys( $result['node']) as $nid) {
+                    node_delete( $nid);
+                    dpm( 'idd_ratinggroup instance is deleted. nid='. $nid);
+                }
+            }
+             _update_numberingplan_for_intl_voice( $carrier_info, $values['target'], $form['#rule'], $values['check'] == '1');
         }
 		else if ( $form['#category'] == 'domestic:voice') {
             if ( $values['remove'] == '1') {
@@ -622,18 +636,12 @@ function _update_numberingplan_for_intl_voice( $carrier_info, $target_nid, $reco
 	$rating_group_list = array();
 	if ( count( $result) > 0) {		// find the ratinggroup first
 		foreach( array_keys( $result['node']) as $nid) {
-			if ( $remove_existing_data) {
-				node_delete( $nid);
-				dpm( 'idd_ratinggroup instance is deleted. nid='. $nid);
-			}
-			else {
-				$node = node_load( $nid);
-				$prefix = $node->field_prefix['und'][0]['value'];
-				if ( isset( $rating_group_list[$prefix])) {
-					dpm( 'Rating group exist already: prefix=' . $prefix);
-				}
-				$rating_group_list[$node->field_prefix['und'][0]['value']] = $nid;
-			}
+            $node = node_load( $nid);
+            $prefix = $node->field_prefix['und'][0]['value'];
+            if ( isset( $rating_group_list[$prefix])) {
+                dpm( 'Rating group exist already: prefix=' . $prefix);
+            }
+            $rating_group_list[$node->field_prefix['und'][0]['value']] = $nid;
 		}
 	}
 	dpm( $rating_group_list, 'rating group list');	
@@ -652,7 +660,7 @@ function _update_numberingplan_for_intl_voice( $carrier_info, $target_nid, $reco
             $nid = $rating_group_list[$prefix];
             $c = node_load( $nid);
             _set_idd_ratinggroup( $carrier_info, $c, $np, $r, $prefix);
-            //dpm( $c, 'idd_ratinggroup');
+            dpm( 'idd_ratinggroup nid='.$nid. ' rg='.$c->field_rating_group['und'][0]['value']);
 
             if ( ! $check_only) {
                 node_save( $c);
@@ -686,7 +694,7 @@ function _set_idd_ratinggroup( $carrier_info, &$r, $np, $rule, $prefix)
 	$r->field_ref_carrier_mobile['und'][0]['nid'] = $carrier_info[$carrier_name]['nid'];
 	$r->field_prefix['und'][0]['value'] = $prefix;
 	$r->field_area_name['und'][0]['value'] = $rule['ruleName'];
-	$r->field_rating_group['und'][0]['value'] = $carrier_name . '_' . $rule['rating_group'];
+	$r->field_rating_group['und'][0]['value'] = $carrier_name . ':' . $rule['rating_group'];
 	
 	// set type of call
     // outgoing international voice call
