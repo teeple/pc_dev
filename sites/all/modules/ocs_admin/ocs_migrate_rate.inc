@@ -329,18 +329,19 @@ function _set_rate($plan_nid, $name, $rate_list, $tid, $check_only = TRUE)
 		$start = 0;
 		$idx = 0;
 		foreach ($rate_list as $rate) {
+            $range_end = ( $idx + 1 < count( $rate_list)) ?  ($start + $rate['e2']) : '*';
+
 			if ( ! $check_only) {
 				$charge = entity_create('field_collection_item', array('field_name' => 'field_charge_collection'));
 				$charge->setHostEntity('node', $new_rate);
 
-				$range_end = ( $idx + 1 < count( $rate_list)) ?  ($start + $rate['e2']) : '*';
 				_set_single_rate( $charge, $start, $range_end, $rate['e1'], $rate['e2']);
+            }
 
-				dpm( t( 'add new rate @n start=@s end=@e amount=@a price=@p', array( '@n' => $name, '@s' => $start, 
-								'@e' => $range_end, '@a' => $rate['e2'], '@p' => $rate['e1'])));
-				$start += $rate['e2'];
-				$idx ++;
-			}
+            dpm( t( 'add new rate @n start=@s end=@e amount=@a price=@p', array( '@n' => $name, '@s' => $start, 
+                '@e' => $range_end, '@a' => $rate['e2'], '@p' => $rate['e1'])));
+            $start += $rate['e2'];
+            $idx ++;
 		}
 	}
 
