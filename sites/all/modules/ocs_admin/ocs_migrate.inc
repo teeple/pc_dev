@@ -106,28 +106,29 @@ function ocs_migrate_fce_carrier_submit($form, &$form_state)
 			}
 		}
 
+        $prefix_type['domestic'] = array_keys( taxonomy_get_term_by_name( 'domestic', 'prefix_type'));
+
 		// add entities
 		foreach ($form['#carrier'] as $r) {
-			if ( isset( $carrier_info[$r['carrier']])) {
-				dpm( t( 'existing carrier=@c prefix=@p', array( '@c' => $r['carrier'], '@p' => $r['prefix'])));
-				if ( ! isset( $carrier_info[$r['carrier']]['nid'])) {
-					dpm( t( 'carrier info not exist for "@c" prefix=@p', array( '@c' => $r['carrier'], '@p' => $r['prefix'])));
+            $carrier_name = $r['ruleName'];
+			if ( isset( $carrier_info[$carrier_name])) {
+				dpm( t( 'existing carrier=@c prefix=@p', array( '@c' => $carrier_name, '@p' => $r['prefix'])));
+				if ( ! isset( $carrier_info[$carrier_name]['nid'])) {
+					dpm( t( 'carrier info not exist for "@c" prefix=@p', array( '@c' => $carrier_name, '@p' => $r['prefix'])));
 					continue;
 				}
-				$node = node_load( $carrier_info[$r['carrier']]['nid']);
+				$node = node_load( $carrier_info[$carrier_name]['nid']);
 			}
 			else {
-				dpm( t( '>>> new carrier=@c prefix=@p', array( '@c' => $r['carrier'], '@p' => $r['prefix'])));
+				dpm( t( '>>> new carrier=@c prefix=@p', array( '@c' => $arrier_name, '@p' => $r['prefix'])));
 				$node = ocs_admin_get_new_node('carrier_mobile');
-
-				$prefix = entity_create('field_collection_item', array('field_name' => 'field_prefix_collection'));
-				$prefix->setHostEntity('node', $node);
-				$prefix->field_prefix = array('und' => array('0' => array('value' => $r['prefix'], )));
-				$prefix->save();
 			}
-			$node->title = $r['carrier'];
 
 			if ( $values['check'] == '0') {
+                $node->title = $carrier_name;
+                $node->field_ref_prefix_type['und'][0]['tid'] = $prefix_type['domestic'][0];
+                $node->field_prefix_multiple['und'][0]['value'] = $r['prefix'];
+
 				node_save($node);
 			}
 		}
@@ -463,6 +464,11 @@ function _get_voice_tariff( $call_type, $category='All', $condition='user_catego
 		$table = 'intl_voice_tariff_decision';
 		$order = array( 'intl_carrier');
 	}
+    else if ( $call_type == 'domestic:sms') {
+        $fields = array( 'ruleName', 'call_type', 'called_carrier' ,'user_category', 'time_id', 'intl_time_id');
+        $table = 'sms_price_decision';
+        $order = array( 'user_category', 'called_carrier');
+    }
 	else {
 		dpm( 'Unknown call type : '. $call_type);
 		return array();

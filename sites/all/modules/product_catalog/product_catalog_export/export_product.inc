@@ -58,7 +58,7 @@ function _product_for_export($nid=NULL){
         $nonUsage = array();
 		
 		//one time fee
-		// $nonUsage['onetime_charge'] = _get_onetime_charge($productNid);
+		$nonUsage['onetime_charge'] = _get_onetime_charge($node->nid);
 		
         //threshold scheme
         $view = views_get_view('list_thresholdscheme');
@@ -222,25 +222,29 @@ function _get_recurring_bonus($productNid) {
 }
 
 function _get_onetime_charge($productNid) {
-
-    $view = views_get_view('list_product_child_node');
-    $view->set_display('panel_pane_2');
-    $view->set_arguments(array('0' => $node->nid, '1' => 'actionpricechargeonetime'));
+    $view = views_get_view('list_other_onetime_charge_by_product_id');
+    $view->set_display('panel_pane_1');
+    $view->set_arguments(array('0' => $productNid));
     $view->execute();
+    $charges = array();
+    
     foreach($view->result as $item){
-        $onetimeFeeNode = node_load($item->nid);
-        $feeTerm = taxonomy_term_load($onetimeFeeNode->field_ref_tree_tid['und'][0]['value']);
-        $priceUnitTerm = taxonomy_term_load($onetimeFeeNode->field_price_units['und'][0]['tid']);
-        
-        $fee = array(
-            'fee_type' => $feeTerm->name,
-            'price_unit' => _get_common_code($priceUnitTerm),
-            'price_amount' => $onetimeFeeNode->field_price_amount['und'][0]['value'],
-            'valid_for' => $onetimeFeeNode->field_valid_for['und'][0]['value'].' ~ '.$onetimeFeeNode->field_valid_for['und'][0]['value2'],     
+        $onetimeChargeTerm = taxonomy_term_load($item->taxonomy_term_data_field_data_field_ref_otherontimecharge_ti);
+        $onetimeChargeNode = node_load($item->nid);
+        $chargeType = _get_common_code($onetimeChargeTerm);
+        if(isset($onetimeChargeNode->field_price_amount['und'][0]['value'])){
+            $price = $onetimeChargeNode->field_price_amount['und'][0]['value'];
+        }else{
+            $price = NULL;
+        }
+        $charge = array(
+            'charge_type' => $chargeType,
+            'price' => $price
         );
-        $fees[] = $fee;               
+        
+        $charges[] = $charge; 
     }
-    $nonUsage['fees'] = $fees;
+    return $charges; 
 }
 
 function _get_attribute($product) {
@@ -332,8 +336,13 @@ function _get_attribute($product) {
 	
 	$result_attribute_general = _get_result($reqArray, $product);
 	$result_attrbitue_exception = _get_attribute_exceptions($product);
+<<<<<<< HEAD
 		
 	$result = array_merge($result_attribute_general, $result_attrbitue_exception);
+=======
+	
+	$result = array_merge($result_attribute_general, $result_attrbitue_exception);	
+>>>>>>> ccc4e8ae8359cc64cd25b4fab3b6f43f7b8ad00d
 	
 	return $result;
 }
