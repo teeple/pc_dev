@@ -42,7 +42,7 @@ function ocs_migrate_fce_rate($form, &$form_state, $domestic_or_intl = 'domestic
         '#markup' => 'Migrate Rate table',
     );
 
-	if ( $call_type == 'domestic:voice') {
+	if ( $domestic_or_intl == 'domestic') {
 		$form['category'] = array(
 			'#type' => 'select',
 			'#title' => 'User Category to migrate',
