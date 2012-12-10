@@ -5,6 +5,183 @@ require_once('ocs_migrate_tariff.inc');
 require_once('ocs_migrate_numberingplan.inc');
 require_once('ocs_migrate_rate.inc');
 
+
+function ocs_migrate_fce_product($form, &$form_state)
+{
+	db_set_active('fce');
+
+	$fields = array(
+		'user_category',
+	);
+	$table = 'voice_tariff_decision';
+
+	$query = db_select( $table, 'v');
+	$result = $query->fields( 'v', $fields)->distinct()
+        ->orderBy( 'user_category')
+		->execute();
+
+	$output = '<thead><tr>';
+    foreach( $fields as $f) {
+        $output .= '<td>'. $f . '</td>';
+    }
+	$output .= '</tr></thead>>';
+	$output .= '<tbody>';
+
+	$records = array();
+	while ($record = $result->fetchAssoc()) {
+		$records[] = $record;
+
+		$output .= '<tr>';
+		foreach (array_keys( $record) as $key) {
+			$output .= '<td>' . $record[$key] . '</td>';
+		}
+		$output .= '</tr>';
+	}
+	$output .= '</tbody>';
+	db_set_active('default');
+
+	$form['#rules'] = $records;
+	$form['#attributes'] = array('class' => array('myform'));
+
+	$form['remove'] = array(
+		'#type' => 'radios',
+		'#options' => array(
+			'No',
+			'Yes'
+		),
+		'#default_value' => '0',
+		'#title' => 'Remove all existing data',
+	);
+
+	$form['check'] = array(
+		'#type' => 'radios',
+		'#options' => array(
+			'No',
+			'Yes'
+		),
+		'#default_value' => '1',
+		'#title' => 'Check Only',
+	);
+
+	$form['data'] = array(
+		'#type' => 'fieldset',
+		'#title' => 'Carrier',
+		'#collapsible' => TRUE,
+	);
+
+	$form['data']['list'] = array(
+		'#type' => 'markup',
+		'#markup' => '<table>' . $output . '</table>'
+	);
+
+	$form['actions'] = array('#type' => 'actions');
+
+	$form['actions']['submit'] = array(
+		'#type' => 'submit',
+		'#value' => t('Save'),
+	);
+
+	$form['actions']['cancel'] = array(
+		'#type' => 'submit',
+		'#value' => t('Cancel'),
+	);
+
+	return $form;
+}
+
+/*
+   $type : idd or domestic
+   */
+function _load_all_products()
+{
+	$query = new EntityFieldQuery();
+	$result = $query->entityCondition('entity_type', 'node')
+		->entityCondition('bundle', 'simpleproductoffering')
+		->execute();
+
+	$list = array();
+	if ( count( $result) > 0) {
+		foreach( array_keys( $result['node']) as $nid) {
+			$node = node_load( $nid);
+			$list[$node->title] = $nid;
+		}
+	}
+
+	return $list;
+}
+
+
+
+function ocs_migrate_fce_product_submit($form, &$form_state)
+{
+	$values = $form_state['values'];
+	if ($values['op'] == 'Save') {
+		dpm($values, 'values');
+
+		if ( $values['remove'] == '1') {
+			// remove all existing values
+			drupal_set_message( 'not implemented', 'error');
+		}
+
+		$product_list = _load_all_products();
+		dpm( $product_list, 'product list');
+
+		// add entities
+		foreach ($form['#rules'] as $r) {
+			if ( empty( $r['user_category'])) continue;
+
+            $category = $r['user_category'];
+			$product_name = 'Prepaid ' . $category;
+
+			if ( isset( $product_list[$product_name])) {
+				dpm( t( 'existing product=@p ', array( '@p' => $product_name)));
+				$product = node_load( $product_list[$product_name]);
+			}
+			else {
+				dpm( t( '>>> new product=@p', array( '@p' => $product_name)));
+				$product = ocs_admin_get_new_node('simpleproductoffering');
+			}
+
+			if ( $values['check'] == '0') {
+				$product->title = $product_name;
+				$product->field_description['und'][0]['value'] = 'FCE Product for Category '. $category;
+				$product->field_offering_status['und'][0]['tid'] = 19;	//editing
+				$product->field_product_type['und'][0]['tid'] = 479;
+				$product->field_product_id['und'][0]['value'] = 'fce_prepaid_'.$category;
+				$product->field_customer_type['und'][0]['tid'] = 1636;
+				node_save($product);
+			}
+
+			$tariffplan_list = array( 
+					array( 'name' => 'voice_plan_'.$category, 'tid' => 664, 'voca' => 'tpl_tariffplan_mobile_voice'),
+					array( 'name' => 'sms_plan_'.$category, 'tid' => 665, 'voca' => 'tpl_tariffplan_mobile_sms'));
+
+			// check if it has tariff plan
+			foreach( $tariffplan_list as $plan) {
+				$query = new EntityFieldQuery();
+				$result = $query->entityCondition('entity_type', 'node')
+					->entityCondition('bundle', 'tariffplan')
+					->propertyCondition('title', $plan['name'])
+					->execute();
+
+				if ( count( $result) == 0) {
+					// add new tariff plan
+					$p = ocs_admin_get_new_node('tariffplan');
+					$p->title = $plan['name'];
+					$p->field_ref_product['und'][0]['nid'] = $product->nid;
+					$p->field_ref_tree_tid['und'][0]['value'] = $plan['tid'];
+					$p->field_tree_child_voca_name['und'][0]['value'] = $plan['voca'];
+					node_save( $p);
+
+					dpm( '>>> new tariff plan : '. $plan['name']);
+				}
+			}
+
+		}
+	}
+}
+
+
 function ocs_migrate_fce_carrier($form, &$form_state)
 {
 	db_set_active('fce');
