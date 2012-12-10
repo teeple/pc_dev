@@ -333,11 +333,7 @@ function _get_attribute($product) {
 	$result_attribute_general = _get_result($reqArray, $product);
 	$result_attrbitue_exception = _get_attribute_exceptions($product);
 		
-	dsm($result_attribute_general, 'general');
-	dsm($result_attrbitue_exception, 'exception');
-	
 	$result = array_merge($result_attribute_general, $result_attrbitue_exception);
-	dsm($result, 'result');
 	
 	return $result;
 }
