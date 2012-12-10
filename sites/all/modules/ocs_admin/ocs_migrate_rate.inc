@@ -1,5 +1,25 @@
 <?php
 
+function _load_all_price()
+{
+	$rate = &drupal_static(__FUNCTION__, NULL);
+	if (empty($rate)) {
+		db_set_active('fce');
+
+		$query = db_select('price_data', 'c');
+		$result = $query->fields('c')->execute();
+
+		$rate = array();
+		while ($record = $result->fetchAssoc()) {
+			$rate[$record['price_name']] = $record['price'];
+		}
+
+		db_set_active('default');
+	}
+
+	return $rate;
+}
+
 function ocs_migrate_fce_rate($form, &$form_state, $domestic_or_intl = 'domestic', $calltype = 'voice')
 {
 	$category = isset($form_state['values']['category']) ? $form_state['values']['category'] : 'A';
@@ -12,7 +32,7 @@ function ocs_migrate_fce_rate($form, &$form_state, $domestic_or_intl = 'domestic
 	$form['#rule'] = $records;
 	$form['#call_type'] = $call_type;
 	
-	$rate = ocs_load_all_rate();
+	$rate = ($call_type == 'domestic:sms') ? _load_all_price() : ocs_load_all_rate();
 	dpm($rate, 'rate');
 	$form['#rate'] = $rate;
 	$form['#attributes'] = array('class' => array('myform'));
@@ -139,40 +159,128 @@ function ocs_migrate_fce_rate_submit($form, &$form_state)
 		dpm($values, 'values');
 
 		// get tree tid 
-		$term_name = ( substr( $form['#call_type'], 0, 4) == 'intl') ? 'International' : 'Domestic' ;
-		$nids = array_keys( taxonomy_get_term_by_name( $term_name, 'tpl_tariffplan_mobile_voice'));
+        // $a:intl or domestic, $b:voice or sms
+        list( $a, $b) = explode( ':', $form['#call_type']);
+		$nids = array_keys( taxonomy_get_term_by_name( 
+            ($a == 'intl') ? 'International' : 'Domestic',
+            ($b == 'voice') ? 'tpl_tariffplan_mobile_voice' : 'tpl_tariffplan_mobile_sms'));
 
 		// tid list
 		$tid = array( 'tree_tid' => $nids[0]);
 
 		$processed_rate_list = array();
 
-		// add rating group records
-		foreach ($form['#rule'] as $r) {
-			//dpm( $rule, 'rule');
-			$name = $r['ruleName'];
-			$rate_list = _get_rate_list($form['#rate'], $name);
+        if ( $form['#call_type'] == 'domestic:sms') {
+            $price_list = $form['#rate'];
+            foreach ($form['#rule'] as $r) {
+                $name = $r['ruleName'];
 
-			//dpm( $rate_list, 'rate list:'.$rule['ruleName']);
-			if ( !isset( $processed_rate_list[$name])) {
-				_set_rate($values['target'], $name, $rate_list, $tid, $values['check'] == '1');
-				$processed_rate_list[$name] = TRUE;
-			}
-			else {
-				dpm( t('Rate @n already updated', array( '@n' => $name)));
-			}
+                if ( ! isset( $price_list[$name])) {
+                    drual_set_message( 'price not found for '. $name);
+                    continue;
+                }
+
+                $price = $price_list[$name];
+
+                //dpm( $rate_list, 'rate list:'.$rule['ruleName']);
+                if ( !isset( $processed_rate_list[$name])) {
+                    _set_price($values['target'], $name, $price, $tid, $values['check'] == '1');
+                    $processed_rate_list[$name] = TRUE;
+                }
+                else {
+                    dpm( t('Rate @n already updated', array( '@n' => $name)));
+                }
+            }
+        }
+        else {
+            // add rating group records
+            foreach ($form['#rule'] as $r) {
+                //dpm( $rule, 'rule');
+                $name = $r['ruleName'];
+                $rate_list = _get_rate_list($form['#rate'], $name);
+
+                //dpm( $rate_list, 'rate list:'.$rule['ruleName']);
+                if ( !isset( $processed_rate_list[$name])) {
+                    _set_rate($values['target'], $name, $rate_list, $tid, $values['check'] == '1');
+                    $processed_rate_list[$name] = TRUE;
+                }
+                else {
+                    dpm( t('Rate @n already updated', array( '@n' => $name)));
+                }
+            }
+        }
+	}
+}
+
+function _set_price($plan_nid, $name, $price, $tid, $check_only = TRUE)
+{
+	$query = new EntityFieldQuery();
+	$result = $query->entityCondition('entity_type', 'node')
+		->entityCondition('bundle', 'rate')
+		->propertyCondition('title', $name)
+		->fieldCondition( 'field_ref_tariffplan', 'nid', $plan_nid)
+		->execute();
+
+	if (count($result) > 1) {
+		drupal_set_message( 'Duplicated rate in the same tariff plan:'. $name);
+		return;
+	}
+
+	if (count($result) == 1) {
+		$rate_nids = array_keys($result['node']);
+		$new_rate = node_load($rate_nids[0]);
+		$old_rate_list = array_get_value( $new_rate->field_charge_collection, FALSE);
+
+        $charge = entity_load_single( 'field_collection_item', $old_rate_list[0]);
+        $charge->field_uom_amount['und'][0]['value'] = '1';
+        $charge->field_price_amount_float['und'][0]['value'] = $price;
+        $charge->save();
+
+		node_save( $new_rate);
+	}
+	else {
+		$new_rate = ocs_admin_get_new_node('rate');
+
+		// add new rate
+        if ( ! $check_only) {
+            $charge = entity_create('field_collection_item', array('field_name' => 'field_charge_collection'));
+            $charge->setHostEntity('node', $new_rate);
+
+            $charge->field_uom_amount['und'][0]['value'] = '1';
+            $charge->field_price_amount_float['und'][0]['value'] = $price;
+            $charge->save();
+
+            dpm( t( 'add new price @n amount=1 price=@p', array( '@n' => $name, '@p' => $price)));
 		}
+	}
+
+	$new_rate->title = $name;
+    // count
+	$new_rate->field_uom_units['und'][0]['tid'] = 1551;     
+	$new_rate->field_ref_tariffplan['und'][0]['nid'] = $plan_nid;
+	$new_rate->field_ref_tree_tid['und'][0]['value'] = $tid['tree_tid'];
+
+	if ( ! $check_only) {
+		node_save($new_rate);
 	}
 }
 
 function _set_rate($plan_nid, $name, $rate_list, $tid, $check_only = TRUE)
 {
-	$list = entity_load('node', FALSE, array(
-		'type' => 'rate',
-		'title' => $name
-	));
-	if (count($list) >= 1) {
-		$rate_nids = array_keys($list);
+	$query = new EntityFieldQuery();
+	$result = $query->entityCondition('entity_type', 'node')
+		->entityCondition('bundle', 'rate')
+		->propertyCondition('title', $name)
+		->fieldCondition( 'field_ref_tariffplan', 'nid', $plan_nid)
+		->execute();
+
+	if (count($result) > 1) {
+		drupal_set_message( 'Duplicated rate in the same tariff plan:'. $name);
+		return;
+	}
+
+	if (count($result) == 1) {
+		$rate_nids = array_keys($result['node']);
 		$new_rate = node_load($rate_nids[0]);
 
 		// get the current rate
@@ -221,18 +329,19 @@ function _set_rate($plan_nid, $name, $rate_list, $tid, $check_only = TRUE)
 		$start = 0;
 		$idx = 0;
 		foreach ($rate_list as $rate) {
+            $range_end = ( $idx + 1 < count( $rate_list)) ?  ($start + $rate['e2']) : '*';
+
 			if ( ! $check_only) {
 				$charge = entity_create('field_collection_item', array('field_name' => 'field_charge_collection'));
 				$charge->setHostEntity('node', $new_rate);
 
-				$range_end = ( $idx + 1 < count( $rate_list)) ?  ($start + $rate['e2']) : '*';
 				_set_single_rate( $charge, $start, $range_end, $rate['e1'], $rate['e2']);
+            }
 
-				dpm( t( 'add new rate @n start=@s end=@e amount=@a price=@p', array( '@n' => $name, '@s' => $start, 
-								'@e' => $range_end, '@a' => $rate['e2'], '@p' => $rate['e1'])));
-				$start += $rate['e2'];
-				$idx ++;
-			}
+            dpm( t( 'add new rate @n start=@s end=@e amount=@a price=@p', array( '@n' => $name, '@s' => $start, 
+                '@e' => $range_end, '@a' => $rate['e2'], '@p' => $rate['e1'])));
+            $start += $rate['e2'];
+            $idx ++;
 		}
 	}
 
