@@ -148,7 +148,7 @@ Drupal.tableDrag.prototype.initColumns = function () {
         });
         if (index > 0) {
           cell = cells.filter(':nth-child(' + index + ')');
-          if (cell[0].colSpan && cell[0].colSpan > 1) {
+          if (cell.length > 0 && cell[0].colSpan && cell[0].colSpan > 1) {
             // If this cell has a colspan, mark it so we can reduce the colspan.
             cell.addClass('tabledrag-has-colspan');
           }
