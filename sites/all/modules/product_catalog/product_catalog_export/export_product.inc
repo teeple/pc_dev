@@ -336,13 +336,8 @@ function _get_attribute($product) {
 	
 	$result_attribute_general = _get_result($reqArray, $product);
 	$result_attrbitue_exception = _get_attribute_exceptions($product);
-<<<<<<< HEAD
-		
+
 	$result = array_merge($result_attribute_general, $result_attrbitue_exception);
-=======
-	
-	$result = array_merge($result_attribute_general, $result_attrbitue_exception);	
->>>>>>> ccc4e8ae8359cc64cd25b4fab3b6f43f7b8ad00d
 	
 	return $result;
 }
