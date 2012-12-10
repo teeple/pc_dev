@@ -131,16 +131,34 @@ function product_catalog_ajax_menu() {
 
 } 
 
-function product_catalog_ajax_select_modal_item_submit($args) {
-  ctools_include('node.pages', 'node', '');
-  ctools_include('modal');
-  ctools_include('ajax');
+function product_catalog_ajax_select_modal_item_submit($contentTypes) {
+	global $user;
+	ctools_include('node.pages', 'node', '');
+	ctools_include('modal');
+	ctools_include('ajax');
+	  
+	$source_nid = $_POST['source_nid'];
+	$nids = $_POST['nids'];
+	$defaultTabIndex = $_POST['default_tab_index'];
+	  
+	foreach($nids as $nid) {
+		$actionsetnotification = new StdClass(); 
+  	
+		$actionsetnotification->uid = $user->uid;
+		$actionsetnotification->type = 'actionsetnotification';
+		$actionsetnotification->language = 'und';
 		
-  $output[] = ctools_modal_command_dismiss(t('Success'));
-  $output = ajax_render($output);
+		$actionsetnotification->field_ref_source_action['und'][0]['nid'] = $source_nid;
+		$actionsetnotification->field_ref_messages['und'][0]['nid'] = $nid;
+		
+		node_save($actionsetnotification);
+	}
   
-  print $output;
-  exit;	
+	$output[] = ctools_modal_command_dismiss(t('Success'));
+	$output = ajax_render($output);
+	  
+	print $output;
+	exit;	
 }
  
 function _create_qtabs_for_counter($nid, $args) {
@@ -287,29 +305,22 @@ function product_catalog_ajax_set_rollover() {
 	exit;
 }
 
-function product_catalog_ajax_select_modal_content($js = NULL, $contentType, $nid) {
+function product_catalog_ajax_select_modal_content($js = NULL, $contentType, $nid, $defaultTabIndex) {
 	ctools_include('node.pages', 'node', '');
 	ctools_include('modal');
 	ctools_include('ajax');
 	ctools_modal_add_js();
 	
-	$nids = $_POST['nids'];
-	
 	if($contentType == 'actionsetnotification') {
 		$renderedView = views_embed_view('list_messages', 'panel_pane_1');
 	}
-	$output = array();
 	
-	if(!empty($nids)) {
-		$output[] = ctools_modal_command_dismiss();
-		
-	} else {
-		$renderOutput = '<div id="modal_content" style="overflow:scroll;height:700px;">'.$renderedView.'</div>';
-		
-		$output[] = ctools_modal_command_display('Notification Message Selection', $renderOutput);
-		$output[] = ajax_command_invoke(NULL, 'selectModalButtonBinding', array('0' => $renderOutput));
-		
-	}
+	$output = array();
+	$renderOutput = '<div id="modal_content" style="overflow:scroll;height:700px;">'.$renderedView.'</div>';
+	
+	$output[] = ctools_modal_command_display('Notification Message Selection', $renderOutput);
+	$output[] = ajax_command_invoke(NULL, 'selectModalButtonBinding', array('0' => $renderOutput, '1' => $nid, '2' => $defaultTabIndex));
+	
 	$output = ajax_render($output);
 	print $output;
 	exit;
