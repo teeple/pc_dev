@@ -2,7 +2,7 @@
 CONTENTS OF THIS FILE
 ---------------------
 
- * About Drupal
+ * About Drupal haha
  * Configuration and features
  * Appearance
  * Developing for Drupal
