@@ -31,25 +31,47 @@
 		});
 	};
 	
-	$.fn.selectModalButtonBinding = function(renderOutput) {		
-		$.fn.behaviorAttach(renderOutput);
-		$('#vbo-message-select-button').bind('click',$.fn.selectMessageItemHandler);
+	$.fn.selectModalButtonBinding = function(renderOutput, nid, defaultTabIndex) {		
+		
+		// $.fn.behaviorAttach(renderOutput);
+		console.log('source action nid');
+		console.log(nid);
+		
+		$('#vbo-message-select-button').bind('click', {nid:nid, defaultTabIndex: defaultTabIndex}, $.fn.selectMessageItemHandler);
 		
 	};
 	
 	$.fn.selectMessageItemHandler = function(event) {
-		var loadLink = '/product_catalog_ajax/nojs/select_modal/actionsetnotification';
-		var selectedItemNid = new Array();
-		selectedItemNid[0] = '123';
+		var loadLink = '/product_catalog_ajax/select_modal_item/actionsetnotification';
 		
+		var inputItems = $('input[name^=views_bulk_operations]:checked');
+		if(inputItems.length == 0) {
+			// �ν� Drupal message ���濡�蹂�꼍??
+			alert('No Item Selected!');
+			
+		}else{
+			var selectedItemNid = new Array();
+			for(var i=0;i<inputItems.length;i++) {
+				selectedItemNid[i] = inputItems[i].value;
+			}
+		}
 		$.fn.modalMasking('Selecting ...');
 		$.ajax({
 			url : loadLink,
 			type: "post",
-			data: {'nids': selectedItemNid},
+			data: {'nids': selectedItemNid, 'source_nid': event.data.nid, 'default_tab_index': event.data.defaultTabIndex},
 			success : function(data) {
-				Drupal.CTools.Modal.dismiss();
 				$.fn.modalUnmasking();
+				Drupal.CTools.Modal.dismiss();
+				
+				node = $('#node_' + event.data.nid);
+				
+				console.log('selectedItemNid');
+				console.log(selectedItemNid);
+				console.log('source action nid');
+				console.log(event.data.nid);
+				
+				$.fn.loadForm(node,null,event.data.defaultTabIndex);
 			}
 		});
 	}
