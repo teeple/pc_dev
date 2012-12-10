@@ -176,6 +176,8 @@ function _update_domestic_tariff( $rule_list, $plan_nid, $ratinggroup_list, $map
 
     // find time table
     $plan_node = node_load( $plan_nid);
+	dpm( $plan_node, 'tariff plan');
+
     $timetable = node_load( $plan_node->field_ref_timetable_domestic['und'][0]['nid']);
 
 	// we have two time table factors: normal & discount
