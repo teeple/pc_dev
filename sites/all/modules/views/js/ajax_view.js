@@ -118,7 +118,6 @@ Drupal.ajax.prototype.commands.viewsScrollTop = function (ajax, response, status
   // Scroll to the top of the view. This will allow users
   // to browse newly loaded content after e.g. clicking a pager
   // link.
-  console.log(response);
   var offset = $(response.selector).offset();
   // We can't guarantee that the scrollable object should be
   // the body, as the view could be embedded in something
@@ -127,7 +126,7 @@ Drupal.ajax.prototype.commands.viewsScrollTop = function (ajax, response, status
   var scrollTarget = response.selector;
   while ($(scrollTarget).scrollTop() == 0 && $(scrollTarget).parent()) {
     scrollTarget = $(scrollTarget).parent();
-  }
+  } 
   // Only scroll upward
   if(offset != null) { 
 	  if (offset.top - 10 < $(scrollTarget).scrollTop()) {
