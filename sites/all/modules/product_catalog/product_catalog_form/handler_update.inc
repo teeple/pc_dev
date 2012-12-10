@@ -27,9 +27,13 @@ function _tariffplan_idd_update_handler($entity){
    node_delete_multiple($delNids);
    
    //2. search used rating group
+   $tariffplanNode = node_load($entity->field_ref_tariffplan['und'][0]['nid']);
+   $numberingplanNid = $tariffplanNode->field_ref_numberingplan_idd['und'][0]['nid'];
+   
    $query = db_select('field_data_field_rating_group', 'rg');
    $query->condition('rg.bundle', 'idd_ratinggroup','=');
    $query->join('field_data_field_ref_numberingplan_idd','idd','rg.entity_id = idd.entity_id');
+   $query->condition('idd.field_ref_numberingplan_idd_nid',$numberingplanNid,'=');
    $query->join('field_data_field_ref_carrier_mobile','carrier','rg.entity_id = carrier.entity_id');
    $query->condition('carrier.field_ref_carrier_mobile_nid',$entity->field_ref_carrier_mobile['und'][0]['nid'],'=');
    $query->fields('rg',array('field_rating_group_value'));
@@ -38,11 +42,15 @@ function _tariffplan_idd_update_handler($entity){
    
    $result = $query->execute();
    $ratingGroups = array();
-   while($record = $result->fetchAssoc()) {
+   while($record = $result->fetchAssoc()) { 
       $ratingGroups[] = current($record);
        
    } 
-   
+   /*
+   foreach($ratingGroups as $item){
+       error_log($item);
+   }
+   */
    //3. find timetable factors for the carrier
    $timetableNode = node_load($entity->field_ref_timetable_idd['und'][0]['nid']);
    $timetableFactors = array();
