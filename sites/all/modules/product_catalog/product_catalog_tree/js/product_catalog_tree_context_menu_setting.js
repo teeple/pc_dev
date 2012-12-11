@@ -1408,6 +1408,19 @@
 							},
 						};
 						break;
+					case "voice_tariffplan_specialnumber":
+					case "sms_tariffplan_specialnumber":
+						menus.custom_create._disabled = false;
+						menus.custom_create.submenu = {
+							"tariffplan_specialnumber" : {
+								"label" : "Select",
+								action : function(node) {
+									//$.fn.addNode(node,"tariffplan");
+									$.fn.loadSelectForm(node);
+								}
+							},
+						};
+						break;
 					default:
 						menus.custom_create = null;
 						menus.custom_copy = null;
