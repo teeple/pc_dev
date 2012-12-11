@@ -8,9 +8,8 @@
 		$.ajax({
 			url : loadLink,
 			success : function(data) {
-				console.log('loadSelectForm');
-    			console.log(data);
-    				
+				//console.log('loadSelectForm');
+    		//console.log(data);
 				var output = $.parseJSON(data);
 				//console.log(output);
 				var settings = output[0].settings;
@@ -107,8 +106,8 @@
 				type: "post",
 		        data: {'product_nid': rootId, 'parent_nid': parent.attr('id'), 'child_nid': selectedItemNid, 'rel_type': parent.attr('rel'),'max_weight':max_weight, 'min_weight':min_weight,'parent_title':parent.children('a').text()},
 				success : function(data) {
-					console.log('selectItemHandler');
-					console.log(data);
+					//console.log('selectItemHandler');
+					//console.log(data);
 					var output = $.parseJSON(data);
 					
 					var product_catalog_ajax_result = output[0].settings.product_catalog_ajax_result;
@@ -193,6 +192,7 @@
             case 'conditioncommonand':
             case 'defaulttreenode':
             case 'conditionwhatincomingcall':
+            case 'treenodespecialnumberscheme':
             	needToLoadEdit = false;
             	needToLoadDetail = false;
             	break;
