@@ -652,6 +652,25 @@ function product_catalog_ajax_select_submit() {
         node_save($child);        
         $js_data['append_to'] = 'inside';
       break;
+      case 'voice_tariffplan_specialnumber':
+      case 'sms_tariffplan_specialnumber':
+        $planNode = node_load($tmpParentNid[2]);
+        if(isset($planNode->field_ref_numberspecial['und'][0]['nid'])){
+            node_delete($planNode->field_ref_numberspecial['und'][0]['nid']);
+        }
+        
+        $child->type = 'treenodespecialnumberscheme';
+        $child->field_weight['und'][0]['value'] = $weight;
+        $child->field_ref_product['und'][0]['nid'] = $tmpProductNid[1];
+        $child->field_ref_numberspecial['und'][0]['nid'] = $childNid;
+        $child->field_ref_tree_nid['und'][0]['nid'] = $planNode->nid;
+        node_save($child);        
+        $planNode->field_ref_numberspecial['und'][0]['nid'] = $child->nid;
+        node_save($planNode);
+        $js_data['parent_title'] = $child->title;
+        $js_data['append_to'] = 'inside';
+        $js_data['replace_or_append'] = 'replace';
+        break;
       }
       $js_data['children'][] = get_children_stored_procedure($child->nid,$parentNid);
   }
