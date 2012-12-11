@@ -192,7 +192,6 @@
             case 'conditioncommonand':
             case 'defaulttreenode':
             case 'conditionwhatincomingcall':
-            case 'treenodespecialnumberscheme':
             	needToLoadEdit = false;
             	needToLoadDetail = false;
             	break;
@@ -207,6 +206,9 @@
             case 'conditionwhenfirstmonth':
             	needToLoadEdit = false;
             	needToLoadDetail = false;
+            	break;
+            case 'treenodespecialnumberscheme':
+            	needToLoadEdit = false;
             	break;
             case 'treenodewithnodereference':
             	switch(rel_type){
