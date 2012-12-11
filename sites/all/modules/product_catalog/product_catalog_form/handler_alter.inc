@@ -151,7 +151,7 @@ function edit_pane_callback($form, &$form_state){
 }
 
 function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
-	
+	//dsm($form_id);
     if(isset($form['#attributes']) && gettype($form['#attributes']['class']) == 'array') {
     	$form['#attributes']['class'][] = 'myform';
     	
@@ -176,7 +176,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			break;
 			
 		case 'views_form_list_basicrate_panel_pane_2':
-			unset($form['actions']['submit']);
+        	unset($form['actions']['submit']);
 			
 			//get related rates..
 			$tariffplanNid = $form_state['build_info']['args'][0]->args[1];
@@ -197,17 +197,37 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			for($i=0;$i<$rowCount;$i++){
 				$form['field_ref_rate'][$i]['field_ref_rate']['und']['#options'] = $rateOptions;
 			}
-			
 			break;
+        case 'views_form_list_basicrate_panel_pane_3':
+            unset($form['actions']['submit']);
+            
+            //get related rates..
+            $tariffplanNid = $form_state['build_info']['args'][0]->args[0];
+            $refTreeTid = $form_state['build_info']['args'][0]->args[1];
+            
+            $rateView = views_get_view('list_rates');
+            $rateView->set_display('panel_pane_2');
+            $rateView->set_arguments(array('0' => $tariffplanNid, '1' => $refTreeTid));
+            $rateView->execute();
+            
+            $rateOptions = array();
+            $rateOptions['_none' ] = '- None -';
+            foreach($rateView->result as $rateItem){
+                $rateOptions[$rateItem->nid] = $rateItem -> node_title;
+            }
+            
+            $rowCount = count($form['field_ref_rate']);
+            for($i=0;$i<$rowCount;$i++){
+                $form['field_ref_rate'][$i]['field_ref_rate']['und']['#options'] = $rateOptions;
+            }
+            break;
+            break;
         case 'views_form_list_tariffplan_idd_carrier_panel_pane_1':
             unset($form['actions']['submit']);        
             break;
         case 'views_form_list_treenodecounterforvoucher_panel_pane_1';
             unset($form['actions']);
-            break;
-        case 'views_form_list_basicrate_panel_pane_3';
-            unset($form['actions']);
-            break;
+            break;       
         case 'conditionwhensubscriptionday_node_form';
             _unset_menu_items($form,$form_id);
 			$form['field_weight']['#type'] = 'hidden';
@@ -747,6 +767,18 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
         	$form['field_ref_product']['#type'] = 'hidden';
         	$form['field_ref_tree_tid']['#type'] = 'hidden';
         	$form['field_ref_tree_nid']['#type'] = 'hidden';
+            
+            $parentTerm = taxonomy_term_load($form_state['build_info']['args'][0]->field_ref_tree_tid['und'][0]['value']);
+            if($parentTerm->vocabulary_machine_name == 'tpl_tariffplan_mobile_sms'){ //for single price such as sms
+                unset($form['field_range_units']);
+                unset($form['field_uom_units']);
+                unset($form['field_threshold']);   
+                unset($form['field_threshold_unit']);  
+                unset($form['field_charge_collection']);                               
+            }else{
+                unset($form['field_price']);
+                unset($form['field_discount_type']);
+            }
             break;
         case 'actionbonustransfer_node_form':
         	unset($form['field_parent_node']);
@@ -846,23 +878,32 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             unset($form['field_ref_tree_tid']);
             unset($form['field_ref_tree_nid']);            
             _unset_menu_items($form,$form_id);        
-            $form['chart_button'] = array(
-            		'#type' => 'markup',
-            		'#markup' => '<input id="chart_show" type="button" value="Refresh Chart"/>',
-            		'#weight' => 199
-            );
-             
-            $form['chart_fieldset'] = array(
-            		'#type' => 'fieldset',
-            		'#title' => 'Chart',
-            		'#weight' => 200,
-            );
-            $form['chart_fieldset']['chart'] = array(
-            		'#type' => 'markup',
-            		//'#markup' => '<div id="flot_div" class="hidden" style="height:500px;width:90%;" ></div>',
-            		'#markup' => '<div id="flot_div" style="height:500px;width:90%;" ></div>',
-            		'#weight' => 0
-            );
+            
+            $parentTerm = taxonomy_term_load($form_state['build_info']['args'][0]->field_ref_tree_tid['und'][0]['value']);
+            if($parentTerm->vocabulary_machine_name == 'tpl_tariffplan_mobile_sms'){ //for single price such as sms
+                unset($form['field_range_units']);
+                unset($form['field_uom_units']);
+                unset($form['field_charge_collection']);                
+            }else{
+                unset($form['field_price']);
+                $form['chart_button'] = array(
+                		'#type' => 'markup',
+                		'#markup' => '<input id="chart_show" type="button" value="Refresh Chart"/>',
+                		'#weight' => 199
+                );
+                 
+                $form['chart_fieldset'] = array(
+                		'#type' => 'fieldset',
+                		'#title' => 'Chart',
+                		'#weight' => 200,
+                );
+                $form['chart_fieldset']['chart'] = array(
+                		'#type' => 'markup',
+                		//'#markup' => '<div id="flot_div" class="hidden" style="height:500px;width:90%;" ></div>',
+                		'#markup' => '<div id="flot_div" style="height:500px;width:90%;" ></div>',
+                		'#weight' => 0
+                );
+            }
             break;
         case 'actionpricediscount_node_form':
         case 'actionpricechargeonetime_node_form':
@@ -982,7 +1023,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
         case 'rate_node_form':
         	unset($form['field_ref_tariffplan']);
         	unset($form['field_ref_tree_tid']);
-
+            
 			if(isset($form_state['build_info']['args'][0]->field_ref_tariffplan)) {
 				$tariffPlan = node_load($form_state['build_info']['args'][0]->field_ref_tariffplan['und'][0]['nid']);
 				$product = node_load($tariffPlan->field_ref_product['und'][0]['nid']);
@@ -996,23 +1037,32 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
         		'#weight' => 2
         	);
 			
-			$form['chart_button'] = array(
-        			'#type' => 'markup',
-        			'#markup' => '<input id="chart_show" type="button" value="Refresh Chart"/>',
-        			'#weight' => 199
-        	);
-        	
-        	$form['chart_fieldset'] = array(
-        		'#type' => 'fieldset',
-        		'#title' => 'Chart',        		       							
-	    		'#weight' => 200,
-        	);        	
-        	$form['chart_fieldset']['chart'] = array(
-				'#type' => 'markup',
-        		//'#markup' => '<div id="flot_div" class="hidden" style="height:500px;width:90%;" ></div>',
-        		'#markup' => '<div id="flot_div" style="height:500px;width:90%;" ></div>',
-        		'#weight' => 0
-        	);
+            $parentTerm = taxonomy_term_load($form_state['build_info']['args'][0]->field_ref_tree_tid['und'][0]['value']);
+           
+            if($parentTerm->vocabulary_machine_name == 'tpl_tariffplan_mobile_sms'){ //for single price such as sms
+                unset($form['field_range_units']);
+                unset($form['field_uom_units']);
+                unset($form['field_charge_collection']);
+            }else{ //for voice
+                unset($form['field_price']);
+    			$form['chart_button'] = array(
+            			'#type' => 'markup',
+            			'#markup' => '<input id="chart_show" type="button" value="Refresh Chart"/>',
+            			'#weight' => 199
+            	);
+            	
+            	$form['chart_fieldset'] = array(
+            		'#type' => 'fieldset',
+            		'#title' => 'Chart',        		       							
+    	    		'#weight' => 200,
+            	);        	
+            	$form['chart_fieldset']['chart'] = array(
+    				'#type' => 'markup',
+            		//'#markup' => '<div id="flot_div" class="hidden" style="height:500px;width:90%;" ></div>',
+            		'#markup' => '<div id="flot_div" style="height:500px;width:90%;" ></div>',
+            		'#weight' => 0
+            	);
+            }
         	_unset_menu_items($form,$form_id);
         	break;
         case 'carrier_mobile_node_form':
