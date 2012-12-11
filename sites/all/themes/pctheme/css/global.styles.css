@@ -2040,10 +2040,20 @@ input.form-text,
     margin-top: 1.6em; 
 }
 
-.views-exposed-form .form-item,
+/* for accordion menu */
+.ui-accordion-content .view .views-exposed-form .views-exposed-widget .form-submit {
+    margin-top: 0px; 
+}
+
+.views-exposed-form .form-item ,
 .views-exposed-form .form-submit {
     margin-top: 2em;
     margin-bottom: 0; 
+}
+
+.views-exposed-form .form-item.form-item-items-per-page {
+    margin-left: 20px;
+	margin-top: 0;
 }
 
 .view-footer {
