@@ -146,10 +146,15 @@ function product_catalog_form_form_redirect_handler(&$form, &$form_state){
         case 'carrier_mobile_node_form':
         	$redirect_url = 'common/carrier_mobile/'.$form_state['values']['nid'].'#quickset-qtabs_common_data=11';
         	break;
+        case 'packetdynamicl4_node_form':
+            $redirect_url = 'common/packet/dynamic/l4/'.$form_state['values']['nid'].'#quickset-packet=2';
+            //dsm($redirect_url);
+            break;
         	
 	}
 
 	if(!empty($redirect_url)){
 		$form_state['redirect'] = 'http://'.$_SERVER['HTTP_HOST'].base_path().$redirect_url;
+        dsm($form_state['redirect']);
 	}
 }
