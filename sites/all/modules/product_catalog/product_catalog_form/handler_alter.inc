@@ -15,6 +15,7 @@ function _unset_menu_items(&$form,$formId){
 		case 'numberingplan_domestic_node_form':
 		case 'numberingplan_idd_node_form':
 		case 'carrier_mobile_node_form':
+        case 'packetdynamicl4_node_form':
 			$unsetDeleteButton = FALSE;
 			//dsm($form);
 			break;
@@ -1060,6 +1061,10 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
         	break;
         case 'lifecyclescheme_node_form':
             _unset_menu_items($form,$form_id);
+            break;
+        case 'packetdynamicl4_node_form':
+            _unset_menu_items($form,$form_id);
+            $form['actions']['submit']['#submit'][] = 'product_catalog_form_form_redirect_handler';           
             break;
         case 'treenodeotheronetimecharge_node_form':
             _unset_menu_items($form,$form_id);
