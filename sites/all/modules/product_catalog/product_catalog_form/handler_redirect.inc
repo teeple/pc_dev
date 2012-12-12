@@ -148,12 +148,13 @@ function product_catalog_form_form_redirect_handler(&$form, &$form_state){
         	break;
         case 'packetdynamicl4_node_form':
             $redirect_url = 'common/packet/dynamic/l4/'.$form_state['values']['nid'].'#quickset-packet=2';
-            dsm($redirect_url);
+            //dsm($redirect_url);
             break;
         	
 	}
 
 	if(!empty($redirect_url)){
 		$form_state['redirect'] = 'http://'.$_SERVER['HTTP_HOST'].base_path().$redirect_url;
+        dsm($form_state['redirect']);
 	}
 }
