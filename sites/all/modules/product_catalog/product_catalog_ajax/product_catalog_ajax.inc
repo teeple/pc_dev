@@ -719,7 +719,7 @@ function _create_node_form_in_tree($contentType,$parentType,$parentNid,$weight,$
 					'language' => 'und',
 					'field_weight' => array('und' => array(0 => array('value' => $weight))),
 					'field_ref_product' => array('und' => array(0 => array('nid' => $rootNid))),
-					'field_ref_numberspecial' => array('und' => array(0 => array('nid' => $rootNid))),
+					'field_ref_numberspecial' => array('und' => array(0 => array('nid' => ($contentType == 'tariffplan')?NULL:$rootNid))),
 					'field_ref_tree_nid' => array('und' => array(0 => array('nid' => $refTreeNid))),
 			);
 			
