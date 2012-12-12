@@ -85,6 +85,7 @@ function _product_for_export($nid=NULL){
 		$product['rating_rules'] = rating_rules_export_by_content_type('rating_rule_export_product' ,  $products[$i]->nid);
 
 		$productNids[] = $node->field_product_id['und'][0]['value'];
+		
 		$retDataTmp[] = $product;        
     }
     
@@ -201,7 +202,9 @@ function _get_lifecyclescheme($productNid) {
 	$vocaName = _get_vocabulary_name($contentType, $productNode);
 	
 	$term = taxonomy_get_term_by_name('Subscriber Lifecycle Scheme', $vocaName);
-	$args[] = current($term)->tid;
+	if(!empty($term)) {
+		$args[] = current($term)->tid;
+	}
 	
 	$req_labels = array(
 		'lifecyclescheme_id' => 'Nid',
@@ -448,7 +451,13 @@ function _get_attribute_exceptions($product) {
     }else{
         $benefit['bonus'] = NULL;
     }
-    $retArray['benefit'] = $benefit;
+	$benefit['cug_flag'] = $benefitNode->field_cug_flag['und'][0]['value'];
+	$benefit['cug_discount'] = array();
+	foreach($benefitNode->field_discount_for_cug['und'] as $discount_value) {
+		$benefit['cug_discount'][] = $discount_value['value'];
+	}
+	
+	$retArray['benefit'] = $benefit;
 	
 	// subscriber's lifecycle scheme과 연결
 	$retArray['lifecyclescheme'] = _get_lifecyclescheme($product->nid);
