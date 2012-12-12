@@ -956,6 +956,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             unset($form['field_ref_numberingplan_idd']);
             unset($form['field_ref_timetable_domestic']);            
             unset($form['field_ref_tariffplan_idd_carrier']);
+            unset($form['field_ref_numberspecial']);
             _unset_menu_items($form,$form_id);
             
             if(!isset($form['nid']['#value'])){
