@@ -76,6 +76,7 @@ function _add_ajax_submit_callback($form_id,&$form){
         case 'actionbonustransfer_node_form':
         case 'conditionwhatcalltype_node_form':
         case 'conditionwhatcounter_node_form':
+		case 'conditionwhatcounterfortracking_node_form':
 		case 'conditionwhensubscriptionday_node_form':
 		case 'numberspecialrate_node_form':
 		case 'actionpriceallowanceonetime_node_form':
@@ -365,10 +366,6 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             unset($form['field_ref_tree_tid']);
             _unset_menu_items($form,$form_id);
 			
-			// service domain怨�billing type��留�� counter list留�� 媛���⑤�.
-			// $form['field_counter_list']['und']['#options'] = 'aaa';
-			// 
-			// $counterList = _get_available_counter_list($form_state['product_nid'], array_values($form_state['build_info']['args'][0]->field_counter_list['und']));
 			$counterList = _get_available_counter_list($form_state['product_nid']);
 			
 			$options = $counterList;
@@ -380,15 +377,6 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			$form['field_counter_list']['und']['#prefix'] = $widget['prefix_pre'] . $widget['prefix_options'] . $widget['prefix_post'];
 			$form['field_counter_list']['und']['#options'] = $counterList;
 			
-			/*
-			unset($form['field_counter_list']['und']['#options']);
-			
-			foreach($counterList as $key => $value) {
-				$form['field_counter_list']['und']['#options'][$key] = $value;
-			}
-			*/
-			
-					
             break;
             
         case 'treenodecounter_node_form':
@@ -797,20 +785,16 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             	$rootNid = $form['#node']->field_ref_product['und'][0]['nid'];
             }
            
-        	unset($form['field_ref_treenodecounter']['und']['#options']);
-        	$form['field_ref_counter']['und']['#options']['_none'] = '- None -';
-        	
-        	$productCountView = views_get_view('list_treenodecounter');
-        	$productCountView->set_display('panel_pane_2');
-        	$productCountView->set_arguments(array(0 => $rootNid ));
-			$productCountView->execute();
-        	$counters = $productCountView->result;
-        	
-        	//dsm($counters,'counters');
-            foreach($counters as $counter){
-            	$form['field_ref_treenodecounter']['und']['#options'][$counter->nid] = $counter->node_field_data_field_ref_counter_title;
-            }        	
-        	
+			$existingCounterList = _get_existing_counter_list($form_state['product_nid']);
+			$form['field_ref_counter']['und']['#options'] = $existingCounterList;
+        	break;
+			
+        case 'conditionwhatcounterfortracking_node_form':
+			unset($form['field_parent_node']);
+        	unset($form['field_weight']);
+        	$form['field_ref_product']['#type'] = 'hidden';
+        	_unset_menu_items($form,$form_id);
+    		
         	break;
 			
 		case'actionpriceallowanceonetime_node_form':
