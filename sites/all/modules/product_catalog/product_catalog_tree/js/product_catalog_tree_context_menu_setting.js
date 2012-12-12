@@ -914,6 +914,33 @@
 													});
 												}
 											},
+											"crbt" : {
+												"label" : "crbt",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhatusagetypefactors',
+														'usageType' : 'crbt'
+													});
+												}
+											},
+											"mms" : {
+												"label" : "mms",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhatusagetypefactors',
+														'usageType' : 'mms'
+													});
+												}
+											},
+											"loyalty_point_deduct" : {
+												"label" : "loyalty_point_deduct",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhatusagetypefactors',
+														'usageType' : 'loyalty_point_deduct'
+													});
+												}
+											},																																	
 										},
 									},
 									"nonusage_type" : {
@@ -1050,6 +1077,14 @@
 										action : function(node) {
 											$.fn.addNode(node, {
 												'childContentType' : 'conditionwhatcounter'
+											});
+										}
+									},
+									"TrackingCounter" : {
+										"label" : "TrackingCounter",
+										action : function(node) {
+											$.fn.addNode(node, {
+												'childContentType' : 'conditionwhatcounterfortracking'
 											});
 										}
 									},
