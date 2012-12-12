@@ -3,3 +3,4 @@ sites/default/files/ctools/css
 sites/default/files/ctools/style
 *.swp
 .DS_Store
+sites/default/settings.php
