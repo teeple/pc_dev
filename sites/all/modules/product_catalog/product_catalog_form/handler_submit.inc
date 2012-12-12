@@ -188,17 +188,13 @@ function _offering_submit_handler(&$form, &$form_state){
 	node_save($offering);
 	
 	if(!isset($form['nid']['#value'])) { //create
-		/*
-        $voca_name  = 'default_tree_node_'.strtolower($form_state['service_domain_name']);
-		_create_default_tree_node($voca_name,$offering->nid);
-        */
-		
+				
 		//main counter create
 		//
 		$voca_name = _get_vocabulary_name('simpleproductoffering', $offering);
 		
 		// vocabulary에서 'Main' counter에 해당하는 부분에 basic counter를 자동으로 생성하게 해준다. 
-		$mainTerm = taxonomy_get_term_by_name('Main', $voca_name);
+		$mainTerm = taxonomy_get_term_by_name('Charging', $voca_name);
 		
 		// main 상품을 생성하는 경우가 아니면 basic counter를 초기에 생성시켜줄 필요가 없다.
 		$prdTypeTerm = taxonomy_term_load($form_state['product_type_tid']);
