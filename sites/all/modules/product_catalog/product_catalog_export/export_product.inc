@@ -16,10 +16,10 @@ function _product_for_export($nids=NULL){
         
         //Basic Attributes
         $product = array();
-		$product['type'] = 'product';
+        $product['type'] = 'product';
         $node = node_load($products[$i]->nid);
 		
-		$product['attribute'] = _get_attribute($node);
+	$product['attribute'] = _get_attribute($node);
 		
         //Packaged Products
         $packagedProducts = Array();
