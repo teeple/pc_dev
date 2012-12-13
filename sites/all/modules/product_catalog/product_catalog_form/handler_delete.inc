@@ -22,6 +22,8 @@ function product_catalog_form_node_delete($node){
 				foreach($node->field_ref_idd_ratinggroup['und'] as $child){
 					$childNodes[] = $child['nid'];
 				}
+                unset($node->field_ref_idd_ratinggroup);
+                node_save($node);
 			}
 			break;				
 		case 'numberingplan_domestic':	
@@ -30,6 +32,8 @@ function product_catalog_form_node_delete($node){
 				foreach($node->field_ref_domestic_ratinggroup['und'] as $child){
 					$childNodes[] = $child['nid'];
 				}
+                unset($node->field_ref_domestic_ratinggroup);
+                node_save($node);
 			}
 			break;	
 		case 'domestic_ratinggroup':
