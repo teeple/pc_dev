@@ -232,6 +232,10 @@ function to_rating_rule_string($value)
 	{
 		return '\'' . $value . '\'';
 	}
+	else if(strstr($value, ':') != FALSE)
+	{
+		return '\'' . $value . '\'';
+	}
 	return $value;
 }
 
@@ -262,8 +266,8 @@ function get_drupal_field_tids($obj , $field_name)
 {
 	$ret = array();
 	$temp = $obj->$field_name;
-	dsm($field_name);
-	dsm($temp);
+	//dsm($field_name);
+	//dsm($temp);
 	foreach($temp['und'] as $und)
 	{
 		$tid = $und['tid'];
@@ -366,7 +370,7 @@ function generate_condition_string_by_condition_node($nid, &$factor_list )
 	{
 		foreach($types as $type)
 		{
-			if(count($type->field_rating_factor_name['und'])>0)
+			if(array_key_exists('und' , $type->field_rating_factor_name) && count($type->field_rating_factor_name['und'])>0)
 			{
 				$factor_list[$type->field_rating_factor_name['und'][0]['value']] = $type;
 				$newfunc = create_function('$data', $type->field_conversion_php_code['und'][0]['value'] );
@@ -416,10 +420,7 @@ function generate_condition_string_by_condition_node($nid, &$factor_list )
 				}
 				else
 				{
-					if(strstr($value, ' ') != FALSE)
-					{
-						$value = '\'' . $value . '\'';
-					}
+					$value = to_rating_rule_string($value);
 					return $type->field_rating_factor_name['und'][0]['value'] . ' ' . $type->field_rating_factor_op['und'][0]['value'] . ' ' . $value;
 				}
 			}
@@ -427,18 +428,18 @@ function generate_condition_string_by_condition_node($nid, &$factor_list )
 			{
 				//$factor_list[$type->field_rating_factor_name['und'][0]['value']] = $type;
 				$newfunc = create_function('$data', $type->field_conversion_php_code['und'][0]['value'] );
-                if($newfunc!=NULL)
-                {
-                    $value = $newfunc($node);
+				if($newfunc!=NULL)
+				{
+					$value = $newfunc($node);
 
-                    $factor_list[$value[0]['label']] = $value[0];
-                    return $value[1];
-                }
-                else
-                {
-                    dsm($type->field_conversion_php_code['und'][0]['value']);
-                }
-                return NULL;
+					$factor_list[$value[0]['label']] = $value[0];
+					return $value[1];
+				}
+				else
+				{
+					dsm($type->field_conversion_php_code['und'][0]['value']);
+				}
+				return NULL;
 			}
 		}
 	}
@@ -579,7 +580,7 @@ function view_get_field_value($view , $field_name , $record)
                     if(array_key_exists('date_type', $raw_items[0]['raw']) && $raw_items[0]['raw']['date_type'] =='datetime' )
 					{
 						$format_str = '%Y%m%d';
-						dsm($field_handler->field_info['settings']['granularity']);	
+						//dsm($field_handler->field_info['settings']['granularity']);	
 						if($field_handler->field_info['settings']['granularity']['minute'] != 0)
 						{
 							$format_str = '%Y-%m-%dT%H:%M';
