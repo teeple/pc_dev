@@ -671,6 +671,17 @@ function product_catalog_ajax_select_submit() {
         $js_data['append_to'] = 'inside';
         $js_data['replace_or_append'] = 'replace';
         break;
+      case 'data_tariffplan_predefined':
+        $planNode = node_load($tmpParentNid[2]);
+        $child->type = 'treenodepacketpredefined';
+        $child->field_weight['und'][0]['value'] = $weight;
+        $child->field_ref_product['und'][0]['nid'] = $tmpProductNid[1];
+        $child->field_ref_tree_nid['und'][0]['nid'] = $planNode->nid;
+        $child->field_ref_packet_predefined['und'][0]['nid'] = $childNid;
+        $child->field_ref_tariffplan['und'][0]['nid'] = $planNode->nid;
+        node_save($child);        
+        $js_data['append_to'] = 'inside'; 
+        break;
       }
       $js_data['children'][] = get_children_stored_procedure($child->nid,$parentNid);
   }
@@ -861,6 +872,8 @@ function _replace_arguments($origArgs, $qtabConfig, $args) {
 				break;
 		}
 	}
+//dsm($args,'args');
+//dsm($newArgString,'new argstring');
 	return $newArgString;
 }
 
@@ -939,8 +952,7 @@ function product_catalog_ajax_load_select_form($nid,$eventType,$rootNid,$relType
 					'id' => $id,
 					'rootId' => $rootId
 			);
-			$newArgs = _replace_arguments($qtabConfig['args'],  $qtabConfig, $args);
-			
+            $newArgs = _replace_arguments($qtabConfig['args'],  $qtabConfig, $args);
 		}else {
 			$newArgs = array();
 		}
