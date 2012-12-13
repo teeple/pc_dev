@@ -16,7 +16,7 @@ function _load_tree_item_mixed_with_node_and_term($rootNode){
 		case 'tariffplan':
 		case 'vouchercardtype':
 			$vocaName = $rootNode->field_tree_child_voca_name['und'][0]['value'];
-			break;
+            break;
 		case 'number_special':
 			$vocaName = 'tpl_numberspecial';
 			break;
