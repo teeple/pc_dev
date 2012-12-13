@@ -94,10 +94,8 @@ function export_deploy($tid,$termName,$refNid=NULL){
 	
 	foreach($term->field_export_url['und'] as $item){
 		$url = $item['safe_value'];
-		$result = drupal_http_request($url, $options); 
-		//TODO: 寃곌낵 ��� �� 媛������� ��� ����댄� 異���댁� �� 
-		//dsm($url,'url');
-		//dsm($options,'request options');
+		$result = drupal_http_request($url, $options);
+		 
 		dsm($result,'deploy result');
 
 		if($result->code === '200'){
@@ -111,5 +109,4 @@ function export_deploy($tid,$termName,$refNid=NULL){
 	
 	$redirect_url = 'lifecycles/history/'.$tid;
 	drupal_goto($redirect_url);
-	
 }
