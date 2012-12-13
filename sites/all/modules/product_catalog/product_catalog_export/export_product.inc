@@ -1,12 +1,12 @@
 <?php
 
-function _product_for_export($nid=NULL){
+function _product_for_export($nids=NULL){
     $retData = array();
 	$retDataTmp = array();
 	$productNids = array();
 	
     $productView = views_get_view('query_product_export');
-    $productView->set_arguments(array('0'=>$nid));
+    $productView->set_arguments(array('0'=>$nids));
     $productView->execute();
 
     $products = $productView->result;
@@ -41,48 +41,21 @@ function _product_for_export($nid=NULL){
         // Counter
         // 상품에서 사용하는 counter list만 정의함. Charging용인지 Accumulating용인지는 구분할 필요 없음.
         // 
-        $counters = array(); 
-        $view = views_get_view('list_prdcounterlist');
-        $view->set_display('panel_pane_3');
-        $view->set_arguments(array('0' => $node->nid));
-        $view->execute();
-        
-		$counters = array();
-        foreach($view->result as $item){
-        	$counters[] = array('counter_id'=> $item->field_data_field_counter_list_field_counter_list_nid);
-        }       
-        $product['counters'] = $counters;
-
+        $product['counters'] = _get_counter_list($node);
+		
         //nonusage
         $nonUsage = array();
 		
-		//one time fee
+		$nonUsage['thresdhold_scheme'] = _get_thresdhold_scheme($node);
+		$nonUsage['deposit_scheme'] = _get_deposit_scheme($node);
+        $nonUsage['recurring_scheme'] = _get_recurring_scheme($node->nid);
 		$nonUsage['onetime_charge'] = _get_onetime_charge($node->nid);
 		
-        //threshold scheme
-        $view = views_get_view('list_thresholdscheme');
-        $view->set_display('panel_pane_3');
-        $view->set_arguments(array('0' => $node->nid));
-        $view->execute();
-        if(!empty($view->result)){
-            $nonUsage['threshold_scheme_id'] = $view->result[0]->nid;    
-        }
-        
-        //deposit scheme
-        $view = views_get_view('list_depositscheme');
-        $view->set_display('panel_pane_4');
-        $view->set_arguments(array('0' => $node->nid));
-        $view->execute();
-        if(!empty($view->result)){
-            $nonUsage['deposit_scheme_id'] = $view->result[0]->node_field_data_field_ref_depositscheme_nid;    
-        }
-		$nonUsage['recurring_scheme'] = _get_recurring_scheme($node->nid);
-		
         $product['nonusage'] = $nonUsage;
-
 		$product['usage'] = array();
 
-		$product['rating_rules'] = rating_rules_export_by_content_type('rating_rule_export_product' ,  $products[$i]->nid);
+		// $product['rating_rules'] = rating_rules_export_by_content_type('rating_rule_export_product' ,  $products[$i]->nid);
+		$product['rating_rules'] = rating_rules_export_by_content_type('rating_rule_export_product' ,  $node->nid);
 
 		$productNids[] = $node->field_product_id['und'][0]['value'];
 		
@@ -93,7 +66,7 @@ function _product_for_export($nid=NULL){
     //if($nid==NULL) return $retData['products'][0];
     //else return $retData;
         
-    if($nid!=NULL) {
+    if($nids!=NULL) {
     	$retData['ifvalues']['resources'] = array_values($productNids);
 	} else {
     	$retData['ifvalues']['resources'] = '';
@@ -103,6 +76,48 @@ function _product_for_export($nid=NULL){
 	
 	return $retData;
 }
+
+function _get_deposit_scheme($product) {
+	
+	$scheme = array();
+    $view = views_get_view('list_depositscheme');
+    $view->set_display('panel_pane_4');
+    $view->set_arguments(array('0' => $product->nid));
+    $view->execute();
+    if(!empty($view->result)){
+        $scheme['deposit_scheme_id'] = $view->result[0]->node_field_data_field_ref_depositscheme_nid;    
+    }
+	return $scheme;
+	
+}
+
+function _get_counter_list($product) {
+    $counters = array(); 
+    $view = views_get_view('list_prdcounterlist');
+    $view->set_display('panel_pane_3');
+    $view->set_arguments(array('0' => $product->nid));
+    $view->execute();
+    $counters = array();
+    foreach($view->result as $item){
+    	$counters[] = array('counter_id'=> $item->field_data_field_counter_list_field_counter_list_nid);
+    }
+	return $counters;
+}
+
+function _get_thresdhold_scheme($product) {
+	
+	$scheme = array();
+	//threshold scheme
+    $view = views_get_view('list_thresholdscheme');
+    $view->set_display('panel_pane_3');
+    $view->set_arguments(array('0' => $product->nid));
+    $view->execute();
+    if(!empty($view->result)){
+        $scheme['threshold_scheme_id'] = $view->result[0]->nid;    
+    }
+	return $scheme;
+}
+		
 
 function _get_recurring_scheme($productNid) {
 	$retArray = array();
@@ -338,7 +353,8 @@ function _get_attribute($product) {
 	
 	$result_attribute_general = _get_result($reqArray, $product);
 	$result_attrbitue_exception = _get_attribute_exceptions($product);
-
+	$result_attribute_exception = null;
+	
 	$result = array_merge($result_attribute_general, $result_attrbitue_exception);
 	
 	return $result;
@@ -438,27 +454,30 @@ function _get_attribute_exceptions($product) {
     $view->set_display('panel_pane_2');
     $view->set_arguments(array('0' => $product->nid, '1' => 'prdattributebenefit'));
     $view->execute();
-    $benefitNode = node_load(current($view->result)->nid);
     $benefit = array();
 	
-    if(!empty($benefitNode->field_attribute_discount['und'][0]['safe_value'])){
+	if(!empty($view->result)) {
+	    $benefitNode = node_load(current($view->result)->nid);
+		    if(!empty($benefitNode->field_attribute_discount['und'][0]['safe_value'])){
         $benefit['discount'] = $benefitNode->field_attribute_discount['und'][0]['safe_value'];
-    }else{
-        $benefit['discount'] = NULL;
-    }
-    if(!empty($benefitNode->field_attribute_bonus['und'][0]['safe_value'])){
-        $benefit['bonus'] = $benefitNode->field_attribute_bonus['und'][0]['safe_value'];
-    }else{
-        $benefit['bonus'] = NULL;
-    }
-	$benefit['cug_flag'] = $benefitNode->field_cug_flag['und'][0]['value'];
-	$benefit['cug_discount'] = array();
-	foreach($benefitNode->field_discount_for_cug['und'] as $discount_value) {
-		$benefit['cug_discount'][] = $discount_value['value'];
+	    }else{
+	        $benefit['discount'] = NULL;
+	    }
+	    if(!empty($benefitNode->field_attribute_bonus['und'][0]['safe_value'])){
+	        $benefit['bonus'] = $benefitNode->field_attribute_bonus['und'][0]['safe_value'];
+	    }else{
+	        $benefit['bonus'] = NULL;
+	    }
+		$benefit['cug_flag'] = $benefitNode->field_cug_flag['und'][0]['value'];
+		$benefit['cug_discount'] = array();
+		if(!empty($benefitNode->field_discount_for_cug)) {
+			foreach($benefitNode->field_discount_for_cug['und'] as $discount_value) {
+				$benefit['cug_discount'][] = $discount_value['value'];
+			}
+		}
+		$retArray['benefit'] = $benefit;
 	}
-	
-	$retArray['benefit'] = $benefit;
-	
+		
 	// subscriber's lifecycle scheme과 연결
 	$retArray['lifecyclescheme'] = _get_lifecyclescheme($product->nid);
 	
