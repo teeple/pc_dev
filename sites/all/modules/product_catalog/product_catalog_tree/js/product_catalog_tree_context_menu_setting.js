@@ -865,6 +865,23 @@
 							$.fn.deleteNode(node);
 						};
 					  break;
+					case 'treenodepacketdynamic':
+						menus.custom_create._disabled = false;
+						menus.custom_create.submenu = {
+							"treenodepacketdynamic" : {
+								"label" : "ConditionSet",
+								action : function(node) {
+									$.fn.addNode(node, {
+										'childContentType' : 'conditioncommonand'
+									});
+								}
+							},
+						};
+						menus.custom_delete._disabled = false;
+						menus.custom_delete.action = function(node) {
+							$.fn.deleteNode(node);
+						};
+					  break;
 					case 'conditionwhatincomingcall':
 						menus.custom_delete._disabled = false;
 						menus.custom_delete.action = function(node) {
