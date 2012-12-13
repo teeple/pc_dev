@@ -160,7 +160,7 @@ function build_navigation_bar()
 					'sub' => array( 
 						array( '/common/numberingplan/domestic/list', 'Numbering Plan'),
                         array( '/common/counter/list', 'Counters'),
-                        array( '/common/packet/predefined','Packet'),
+                        array( '/common/packet/predefined/charging_rule','Packet'),
 					    array( '/common/vouchercardtype', 'ETC'),
                         )),
 			'ocs' => array( 'href' => '/config/ocs', 'icon' => 'tb', 
