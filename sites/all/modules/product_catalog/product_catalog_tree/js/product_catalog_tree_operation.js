@@ -186,12 +186,13 @@
             case 'prdnonusagerollover':
             case 'treenodelifecyclescheme':
                	needToLoadEdit = false;
-                break;
+                break; 
             case 'usage':
             case 'conditioncommonor':
             case 'conditioncommonand':
             case 'defaulttreenode':
             case 'conditionwhatincomingcall':
+            case 'treenodepacketpredefined': 
             	needToLoadEdit = false;
             	needToLoadDetail = false;
             	break;

@@ -848,6 +848,23 @@
 							$.fn.deleteNode(node);
 						};
 						break;
+					case 'treenodepacketpredefined':
+						menus.custom_create._disabled = false;
+						menus.custom_create.submenu = {
+							"treenodepacketpredefined" : {
+								"label" : "ConditionSet",
+								action : function(node) {
+									$.fn.addNode(node, {
+										'childContentType' : 'conditioncommonand'
+									});
+								}
+							},
+						};
+						menus.custom_delete._disabled = false;
+						menus.custom_delete.action = function(node) {
+							$.fn.deleteNode(node);
+						};
+					  break;
 					case 'conditionwhatincomingcall':
 						menus.custom_delete._disabled = false;
 						menus.custom_delete.action = function(node) {
@@ -1300,6 +1317,41 @@
 									$.fn.addNode(node, {
 										'childContentType' : 'tariffplan'
 									});
+								}
+							},
+						};
+						break;
+					case "mobile_usage_data":
+						menus.custom_create._disabled = false;
+						menus.custom_create.submenu = {
+							"mobile_usage_sms" : {
+								"label" : "Tariff Plan",
+								action : function(node) {
+									$.fn.addNode(node, {
+										'childContentType' : 'tariffplan'
+									});
+								}
+							},
+						};
+						break;
+					case "data_tariffplan_predefined":
+						menus.custom_create._disabled = false;
+						menus.custom_create.submenu = {
+							"data_tariffplan_predefined" : {
+								"label" : "Select Rule",
+								action : function(node) {
+									$.fn.loadSelectForm(node);
+								}
+							},
+						};
+						break;
+					case "data_tariffplan_dynamic":
+						menus.custom_create._disabled = false;
+						menus.custom_create.submenu = {
+							"data_tariffplan_dynamic" : {
+								"label" : "Select Rule",
+								action : function(node) {
+									$.fn.loadSelectForm(node);
 								}
 							},
 						};
