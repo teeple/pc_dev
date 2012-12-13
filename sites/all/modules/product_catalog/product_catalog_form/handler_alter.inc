@@ -771,12 +771,14 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
                 unset($form['field_discount_type']);
             }
             break;
+			
         case 'actionbonustransfer_node_form':
         	unset($form['field_parent_node']);
         	unset($form['field_weight']);
         	_unset_menu_items($form,$form_id);
         	$form['field_ref_product']['#type'] = 'hidden';
-        	break;        
+        	break;
+			
         case 'conditionwhatcounter_node_form':
         	unset($form['field_parent_node']);
         	unset($form['field_weight']);
@@ -788,7 +790,8 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             	$rootNid = $form['#node']->field_ref_product['und'][0]['nid'];
             }
            
-			$existingCounterList = _get_existing_counter_list($form_state['product_nid']);
+			// $existingCounterList = _get_existing_counter_list($form_state['product_nid']);
+			$existingCounterList = _get_existing_counter_list($rootNid);
 			$form['field_ref_counter']['und']['#options'] = $existingCounterList;
         	break;
 			
