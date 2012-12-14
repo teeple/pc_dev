@@ -645,7 +645,7 @@
 								"label" : "Bonus Item",
 								action : function(node) {
 									$.fn.addNode(node, {
-										'childContentType' : 'actionpriceallowancerecurring'
+										'childContentType' : 'actionpriceallowanceonetime'
 									});
 								}
 							},
