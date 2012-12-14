@@ -1,8 +1,21 @@
 <?php
+
+function simpleproductoffering_redirect_handler(&$form, &$form_state){
+	$productTerm = taxonomy_term_load($form_state['product_type_tid']);
+    $redirectUrl = 'product_designer/'.$form_state['service_domain_name'].'/'.$form_state['product_type_name'].'/edit/'.$form_state['values']['nid'];
+	$urlFragment = !empty($productTerm->field_menu_fragment)? $productTerm->field_menu_fragment['und'][0]['value']: '';
+	$form_state['redirect'] = array(
+  		$redirectUrl,
+  		array(
+			NULL,
+  			'fragment' => $urlFragment,
+  		)
+  	);
+}
+
 function product_catalog_form_form_redirect_handler(&$form, &$form_state){
 	$redirect_url = '';
 	switch($form['#form_id']){
-		case 'simpleproductoffering_node_form':
 		case 'balance_node_form':
 		case 'conditionwhaturlgroupfactors_node_form':
 		case 'context_admin_node_form_wrapper':

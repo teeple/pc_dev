@@ -71,7 +71,8 @@ function _add_ajax_submit_callback($form_id,&$form){
 		case 'prdnonusagerecurringchargescheme_node_form':
 		case 'prdnonusagerecurringbonusscheme_node_form':
 		case 'prdnonusagerollover_node_form':
-	    case 'unittransferfactors_node_form':
+		case 'prdnonusagerechargeblock_node_form':
+		case 'unittransferfactors_node_form':
         case 'conditionwhatusagetypefactors_node_form':
         case 'conditionwhatnonusagetypefactors_node_form':
         case 'prdattributefeaturecode_node_form':
@@ -299,14 +300,18 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
         case 'prdattributeprefixrangenotallowe_node_form':
         case 'prdattributefeaturecode_node_form':
 			
-//dsm($form, 'form');
-// dsm($form_state, 'form_state');
 			$form['field_parent_node']['#type'] = 'hidden';
             unset($form['field_ref_product']);
             unset($form['field_ref_tree_tid']);
 			unset($form['field_weight']);
 			_unset_menu_items($form,$form_id);
             break;
+			
+		case 'prdnonusagerechargeblock_node_form':
+			unset($form['field_ref_product']);
+            unset($form['field_ref_tree_tid']);
+			_unset_menu_items($form,$form_id);
+			break;
 			
 		case 'prdnonusagerecurringchargescheme_node_form':
 		case 'prdnonusagerecurringbonusscheme_node_form':
@@ -445,6 +450,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			if(isset($form['field_r_productofferingprice']))unset($form['field_r_productofferingprice']);
 			
 			unset($form['field_product_type']);
+			unset($form['field_service_type_of_provider']);
 			unset($form['field_parent_node_for_rp']);
 			unset($form['field_weight_for_ratingpriority']);
 			unset($form['field_weight']);
@@ -459,26 +465,12 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			unset($form['field_parent_node_for_hr']);
 			unset($form['field_weight_for_hierarchy']);
 			
-			// unset($form['field_counter_list']);
-			// dsm($form, 'form');
 			_unset_menu_items($form,$form_id);
 
+			// 새로 생성 시 
 			if(!isset($form['nid']['#value'])){
-				$form['field_service_type_of_provider']['und']['#default_value'][0] = $form_state['service_domain_tid'];
-				_alter_simpleproductoffering_node_form($form, $form_state);
+				$form['actions']['submit']['#submit'][] = 'simpleproductoffering_redirect_handler';
 			}
-			
-			/*
-			if($form['edit_type'] == 'exclusive') {
-			 
-			} else {
-				
-				if(!isset($form['nid']['#value'])){
-					$form['field_service_type_of_provider']['und']['#default_value'][0] = $form_state['service_domain_tid'];
-					_alter_simpleproductoffering_node_form($form, $form_state);
-				}
-			}
-			*/
 			
 			break;
 		case 'balance_node_form':
