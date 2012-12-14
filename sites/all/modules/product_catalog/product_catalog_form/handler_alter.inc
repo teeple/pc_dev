@@ -18,7 +18,7 @@ function _unset_menu_items(&$form,$formId){
         case 'packetdynamicl4_node_form':
         case 'packetdynamicchargingrule_node_form':
         case 'packetpredefinedchargingrule_node_form':
-			$unsetDeleteButton = FALSE;
+        	$unsetDeleteButton = FALSE;
 			//dsm($form);
 			break;
 	}
@@ -86,6 +86,7 @@ function _add_ajax_submit_callback($form_id,&$form){
 		case 'actionpriceallowancerecurring_node_form':
         case 'treenodeotheronetimecharge_node_form':
         case 'treenodepacketdynamic_node_form':
+        case 'basicrate_data_node_form';
 		  	$change = TRUE;
         	break;
         	
@@ -761,7 +762,8 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
         	$form['field_ref_tree_nid']['#type'] = 'hidden';
             
             $parentTerm = taxonomy_term_load($form_state['build_info']['args'][0]->field_ref_tree_tid['und'][0]['value']);
-            if($parentTerm->vocabulary_machine_name == 'tpl_tariffplan_mobile_sms'){ //for single price such as sms
+            if($parentTerm->vocabulary_machine_name == 'tpl_tariffplan_mobile_sms' || 
+                $parentTerm->vocabulary_machine_name == 'tpl_tariffplan_mobile_data'){ //for single price such as sms
                 unset($form['field_range_units']);
                 unset($form['field_uom_units']);
                 unset($form['field_threshold']);   
@@ -1130,32 +1132,15 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
                 '#type' => 'markup',
                 '#markup' => $refAttributeMarkupStr,
                 '#weight' => -100
-            );
-            /*
-            $form['L4'] = array(
-                '#type' => 'markup',
-                '#markup' => '<div class="form-item"> <label>L4 </label>'. $l4Node->title. '</div>',
-                '#weight' => -100
-            );
-            
-            $form['Rating Group'] = array(
-                '#type' => 'markup',
-                '#markup' => '<div class="form-item"> <label>Rating Group </label>'. $ruleNode->field_rating_group_integer['und'][0]['value']. '</div>',
-                '#weight' => -99
-            );
-            
-            $form['SID'] = array(
-                '#type' => 'markup',
-                '#markup' => '<div class="form-item"> <label>SID </label>'. $ruleNode->field_sid['und'][0]['value']. '</div>',
-                '#weight' => -98
-            );
-            
-            $form['Metering Method'] = array(
-                '#type' => 'markup',
-                '#markup' => '<div class="form-item"> <label>SID </label>'. $meteringMethodTerm->name. '</div>',
-                '#weight' => -97
-            );
-            */
+            );            
+            break;
+        case 'basicrate_data_node_form';
+            _unset_menu_items($form,$form_id);
+            $form['field_ref_product']['#type'] = 'hidden';
+            $form['field_ref_tree_tid']['#type'] = 'hidden'; 
+            $form['field_ref_tree_nid']['#type'] = 'hidden';
+            $form['field_ref_tariffplan']['#type'] = 'hidden';
+            $form['field_weight']['#type'] = 'hidden';
             break;
         /*
         case 'views_form_list_numberingplan_domestic_for_product_default':
