@@ -328,10 +328,8 @@ function _create_default_prdattributes($product, $voca_name) {
 	
 }
 
-// 상품 생성시 global에 있는 basic counter는 
-// 
-function _create_default_basic_counters($productNid, $refTreeTid) {
-    global $user;
+function _get_default_basic_counters($productNid) {
+	global $user;
     
     $product = node_load($productNid);
 
@@ -354,12 +352,21 @@ function _create_default_basic_counters($productNid, $refTreeTid) {
     $view = views_get_view('query_list_counter');
     $view->set_display('panel_pane_1');
     $view->set_arguments($args);
-    $view->execute();
+	$view->execute();
+	
+	return $view->result;
+}
+
+// 상품 생성시 global에 있는 basic counter는 
+// 
+function _create_default_basic_counters($productNid, $refTreeTid) {
     
+	$basicCounters = _get_default_basic_counters($productNid);
+	
     $weightStep = 100;
     $weight = 0;
 
-    foreach($view->result as $record){
+    foreach($basicCounters as $record){
     	$dtn_basic_counter = new StdClass();
         $dtn_basic_counter->uid = $user->uid;
         $dtn_basic_counter->type = 'treenodecounter';
