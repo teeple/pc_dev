@@ -166,78 +166,43 @@ function create_default_tree_node_submit_handler(&$form, &$form_state){
 	add_js_settings_after_node_save($rootNode);
 }
 
-function _offering_submit_handler(&$form, &$form_state){
+function _create_default_items_in_product($product){
 
-	global $user;
-
-    $spec_characters = array();
-    $productSpecification = new stdClass();
-
-    // _offering_submit_characteristic_handler($form, $form_state, $spec_characters, $productSpecification);
-
-	// offering 관련 저장
-	//
-	$offering = node_load($form_state['values']['nid']);
-    /*
-	$offering->field_r_prodspeccharvalueuse['und'] = $spec_characters['valueuse'];
-	$offering->field_r_productspecification['und'][0]['nid'] = $productSpecification->nid;
-    */
-
-	$offering->field_service_type_of_provider['und'][0]['tid'] = $form_state['service_domain_tid'];
-	$offering->field_product_type['und'][0]['tid'] = $form_state['product_type_tid'];
-	node_save($offering);
+	//main counter create
+	$voca_name = _get_vocabulary_name('simpleproductoffering', $product);
 	
-	if(!isset($form['nid']['#value'])) { //create
-				
-		//main counter create
-		//
-		$voca_name = _get_vocabulary_name('simpleproductoffering', $offering);
-		
-		// vocabulary에서 'Main' counter에 해당하는 부분에 basic counter를 자동으로 생성하게 해준다. 
-		$mainTerm = taxonomy_get_term_by_name('Charging', $voca_name);
-		
-		// main 상품을 생성하는 경우가 아니면 basic counter를 초기에 생성시켜줄 필요가 없다.
-		$prdTypeTerm = taxonomy_term_load($form_state['product_type_tid']);
-		
-		if(!empty($mainTerm) && ($prdTypeTerm->name == 'Main')) {
-			_create_default_basic_counters($offering->nid, current($mainTerm)->tid);
-		}
-		
-		// 자동으로 생성해주어야 하는 instance를 만들어준다. 
-		// default attribute instance create
-		_create_default_prdattributes($offering, $voca_name);
-		// _create_default_prdattribute_relations($offering, $voca_name);
-		_create_default_prdnonusage($offering, $voca_name);
-		
-		// product basic counter setting
-		_create_default_prdcounterlist($offering, $voca_name);
-		
-		// #quickset-mobile_products=0
-		$constUrlSuffix = array(
-				'Main' => '',
-				'Additional' => '#quickset-mobile_products=1',
-				'VAS' => '#quickset-mobile_products=2',
-				'Bundle' => '#quickset-mobile_products=3'
-		);
-		$urlSuffix = $constUrlSuffix[$form_state['product_type_name']];
-		
-        $redirectUrl = 'http://' .$_SERVER['HTTP_HOST'].base_path().'product_designer/'.$form_state['service_domain_name'].'/'.$form_state['product_type_name'].'/edit/'.$offering->nid.$urlSuffix;
-        drupal_goto($redirectUrl);
+	// vocabulary에서 'Main' counter에 해당하는 부분에 basic counter를 자동으로 생성하게 해준다. 
+	$mainTerm = taxonomy_get_term_by_name('Charging', $voca_name);
+	
+	// main 상품을 생성하는 경우가 아니면 basic counter를 초기에 생성시켜줄 필요가 없다.
+	$prdTypeTerm = taxonomy_term_load($product->field_product_type['und'][0]['tid']);
+	
+	if(!empty($mainTerm) && ( $prdTypeTerm->name == 'Main')) {
+		_create_default_basic_counters($product->nid, current($mainTerm)->tid);
 	}
+	
+	_create_default_prdattributes($product, $voca_name);
+	// _create_default_prdattribute_relations($offering, $voca_name);
+	_create_default_prdnonusage($product, $voca_name);
+	
+	_create_default_recharge_block_item($product, $voca_name);
+	
+	// product basic counter setting
+	_create_default_prdcounterlist($product, $voca_name);
 }
 
-function _create_default_recurring_item($product, $voca_name) {
+function _create_default_recharge_block_item($product, $voca_name) {
 	global $user;
 	
-	$term = taxonomy_term_by_name('Recurring', $voca_name);
+	$term = taxonomy_get_term_by_name('Recharge', $voca_name);
 	
 	if(isset($term)) {
 		$node = new StdClass();
 		$node->uid = $user->uid;
-		$node->type = 'prdnonusagerecurringblock';
+		$node->type = 'prdnonusagerechargeblock';
 		$node->language = 'und';
 		$node->field_ref_product['und'][0]['nid'] = $product->nid;
-		// $node->field_ref_tree_tid['und'][0]['value'] = $term->tid;
+		$node->field_ref_tree_tid['und'][0]['value'] = current($term)->tid;
 		node_save($node);
 	}	
 }
