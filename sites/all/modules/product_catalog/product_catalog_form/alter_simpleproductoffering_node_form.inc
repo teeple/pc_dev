@@ -1,19 +1,8 @@
 <?php
+
+// 현재 더이상 사용되지 않음. 필요없을 듯 함.
 function _alter_simpleproductoffering_node_form(&$form, &$form_state) {
 	$formDefaultValues = array();
-
-    // product type에서 DEVICE는 선택할 수 없도록 없앤다.
-    //
-    unset($form['field_product_type']['und']['#options'][528]);
-
-    // in case EDIT
-    //
-    $valid_for_1;
-    $valid_for_2;
-
-    $valueUseNidList = array();
-    $valueUseCharTitleList = array();
-    $valueUseCustomValueList = array();
 
     // 일단 characteristic은 없애본다. 향후에 좀 더 심플하게 생각해보자.
     // 
@@ -224,6 +213,6 @@ function _alter_simpleproductoffering_node_form(&$form, &$form_state) {
     // $form['characteristic']['#value'] = $charItems;
     // dsm($form, 'from');
     
-  	$form['actions']['submit']['#submit'][] = '_offering_submit_handler';
-    $form['actions']['submit']['#submit'][] = 'product_catalog_form_form_redirect_handler';
+  	// $form['actions']['submit']['#submit'][] = '_offering_submit_handler';
+    //$form['actions']['submit']['#submit'][] = 'product_catalog_form_form_redirect_handler';
 }
