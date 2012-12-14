@@ -151,17 +151,8 @@ function ocs_migrate_fce_product_submit($form, &$form_state)
 				$product->field_customer_type['und'][0]['tid'] = 1636;
 				node_save($product);
 				
-				$voca_name = _get_vocabulary_name('simpleproductoffering', $product);
-				$mainTerm = taxonomy_get_term_by_name('Main', $voca_name);
-				$prdTypeTerm = taxonomy_term_load($product->field_product_type['und'][0]['tid']);
-				
-				if(!empty($mainTerm) && ($prdTypeTerm->name == 'Main')) {
-					_create_default_basic_counters($product->nid, current($mainTerm)->tid);
-				}
-				_create_default_prdattributes($product, $voca_name);
-				_create_default_prdnonusage($product, $voca_name);
-				_create_default_prdcounterlist($product, $voca_name);
-				
+				// youngmin, 상품 생성시 기본적으로 추가되는 항목 자동 생성.
+				_create_default_items_in_product($product);
 			}
 
 			$tariffplan_list = array( 
