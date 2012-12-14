@@ -226,6 +226,22 @@ function _offering_submit_handler(&$form, &$form_state){
 	}
 }
 
+function _create_default_recurring_item($product, $voca_name) {
+	global $user;
+	
+	$term = taxonomy_term_by_name('Recurring', $voca_name);
+	
+	if(isset($term)) {
+		$node = new StdClass();
+		$node->uid = $user->uid;
+		$node->type = 'prdnonusagerecurringblock';
+		$node->language = 'und';
+		$node->field_ref_product['und'][0]['nid'] = $product->nid;
+		// $node->field_ref_tree_tid['und'][0]['value'] = $term->tid;
+		node_save($node);
+	}	
+}
+
 function _create_default_prdnonusage($product, $voca_name) {
 	global $user;
 	
@@ -360,7 +376,8 @@ function _get_default_basic_counters($productNid) {
 // 상품 생성시 global에 있는 basic counter는 
 // 
 function _create_default_basic_counters($productNid, $refTreeTid) {
-    
+	global $user;
+	
 	$basicCounters = _get_default_basic_counters($productNid);
 	
     $weightStep = 100;
