@@ -1373,6 +1373,26 @@
 							},
 						};
 						break;
+					case 'data_tariffplan_basicrate':
+						menus.custom_create._disabled = false;
+						menus.custom_create.submenu = {
+							"data_tariffplan_basicrate" : {
+								"label" : "BasicRate",
+								action : function(node) {
+									$.fn.addNode(node, {
+										'childContentType' : 'basicrate_data' 
+									});
+								}
+							},
+						};
+						break;
+				  case 'basicrate_data':
+				  	menus.custom_delete._disabled = false;
+						menus.custom_delete.action = function(node) {
+							$.fn.deleteNode(node);
+						};
+						break
+				  	break;
 					case "iptv_usage_vod":
 						menus.custom_create._disabled = false;
 						menus.custom_create.submenu = {
