@@ -158,9 +158,10 @@ function build_navigation_bar()
 			'common' => array( 'href' => '/common/numberingplan/domestic/list', 'icon' => 'typ', 
 					'prefix' => 'common', 'title' => 'Common Data',
 					'sub' => array( 
+						array( '/common/counter/list', 'Counters'),
 						array( '/common/numberingplan/domestic/list', 'Numbering Plan'),
-                        array( '/common/counter/list', 'Counters'),
-                        array( '/common/packet/predefined/charging_rule','Packet'),
+						array( '/common/roaming/country', 'Roaming'),
+                        array( '/common/packet/predefined/charging_rule','Packet'),					    
 					    array( '/common/vouchercardtype', 'ETC'),
                         )),
 			'ocs' => array( 'href' => '/config/ocs', 'icon' => 'tb', 
