@@ -32,7 +32,7 @@ function _array_export_counter($nid=NULL){
     foreach($viewResult as $record) {
 
         // $jsonCounter['ID'] = !empty($record->field_field_code[0]['raw']['value']) ? $record->field_field_code[0]['raw']['value'] : null;
-        $jsonCounter['counter_id'] = $record->nid;
+        $jsonCounter['counter_id'] = $record->field_field_counter_id[0]['raw']['value'];
         $jsonCounter['counter_name'] = isset($record->node_title) ? $record->node_title: null;
 
 		$jsonCounter['service_domain'] = _add_commoncode($record->field_field_service_domain);

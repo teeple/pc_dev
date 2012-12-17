@@ -150,6 +150,9 @@ function ocs_migrate_fce_product_submit($form, &$form_state)
 				$product->field_product_id['und'][0]['value'] = 'fce_prepaid_'.$category;
 				$product->field_customer_type['und'][0]['tid'] = 1636;
 				node_save($product);
+				
+				// youngmin, 상품 생성시 기본적으로 추가되는 항목 자동 생성.
+				_create_default_items_in_product($product);
 			}
 
 			$tariffplan_list = array( 
