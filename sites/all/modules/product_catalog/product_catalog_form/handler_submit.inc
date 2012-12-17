@@ -149,8 +149,7 @@ function _offering_submit_characteristic_handler(&$form, &$form_state, &$spec_ch
 	$productSpecification->field_product_number = $form_state['values']['field_id'];
 	$productSpecification->field_r_productspeccharuse['und'] = $spec_characters['charuse'];
 	node_save($productSpecification);
-
-
+	
 }
 
 function _node_save_handler_for_add_js_settings_after_node_save(&$form, &$form_state){
