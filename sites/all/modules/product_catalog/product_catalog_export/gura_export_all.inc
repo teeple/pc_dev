@@ -254,10 +254,51 @@ function get_drupal_field_refs($obj , $field_name)
 {
 	$ret = array();
 	$temp = $obj->$field_name;
-	foreach($temp['und'] as $und)
+	if(array_key_exists('und' , $temp))
 	{
-		$nid = $und['nid'];
-		$ret[] = node_load($nid);
+		foreach($temp['und'] as $und)
+		{
+			if(array_key_exists('nid' , $und))
+			{
+				$nid = $und['nid'];
+				$ret[] = node_load($nid);
+			}
+			else
+			{
+				$nid = $und['raw']['nid'];
+				if(array_key_exists('node' , $und['raw']))
+				{
+					$ret[] = $und['raw']['node'];
+				}
+				else
+				{
+					$ret[] = node_load($nid);
+				}
+			}
+		}
+	}
+	else
+	{
+		foreach($temp as $und)
+		{
+			if(array_key_exists('nid' , $und))
+			{
+				$nid = $und['nid'];
+				$ret[] = node_load($nid);
+			}
+			else
+			{
+				$nid = $und['raw']['nid'];
+				if(array_key_exists('node' , $und['raw']))
+				{
+					$ret[] = $und['raw']['node'];
+				}
+				else
+				{
+					$ret[] = node_load($nid);
+				}
+			}
+		}
 	}
 	return $ret;
 }
