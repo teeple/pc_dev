@@ -168,6 +168,9 @@ function product_catalog_form_form_redirect_handler(&$form, &$form_state){
         case 'packetpredefinedchargingrule_node_form':
             $redirect_url = 'common/packet/predefined/charging_rule/'.$form_state['values']['nid'].'#quickset-packet=0';
             break;
+        case 'roaming_country_node_form':
+            $redirect_url = 'common/roaming/country/'.$form_state['values']['nid'].'#quickset-roaming=0';
+            break;
     }
 
 	if(!empty($redirect_url)){
