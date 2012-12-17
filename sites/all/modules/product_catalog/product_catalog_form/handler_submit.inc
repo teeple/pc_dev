@@ -492,6 +492,12 @@ function _ratinggroup_link_to_numberingplan_idd($form, $form_state){
 	node_save($numberingplan_idd);
 }
 
+function _ratinggroup_link_to_roaming_plan($form, $form_state){
+    $roamingplanNode = node_load($form_state['roamingplan_nid']);
+    $roamingplanNode->field_ref_roaming_ratinggroup['und'][] = array('nid' => $form_state['values']['nid']);
+    node_save($roamingplanNode);
+}
+
 function _country_link_to_numberingplan_idd($form, $form_state){
 	$numberingplan_idd = node_load($form_state['numberingplan_idd_nid']);
 	$numberingplan_idd->field_ref_idd_country['und'][] = array('nid' => $form_state['values']['nid']);
