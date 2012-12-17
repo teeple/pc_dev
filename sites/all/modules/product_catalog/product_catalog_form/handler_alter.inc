@@ -18,6 +18,7 @@ function _unset_menu_items(&$form,$formId){
         case 'packetdynamicl4_node_form':
         case 'packetdynamicchargingrule_node_form':
         case 'packetpredefinedchargingrule_node_form':
+        case 'roaming_country_node_form':
 			$unsetDeleteButton = FALSE;
 			//dsm($form);
 			break;
@@ -87,6 +88,8 @@ function _add_ajax_submit_callback($form_id,&$form){
 		case 'actionpriceallowanceonetime_node_form':
 		case 'actionpriceallowancerecurring_node_form':
         case 'treenodeotheronetimecharge_node_form':
+        case 'treenodepacketdynamic_node_form':
+        case 'basicrate_data_node_form';
 		  	$change = TRUE;
         	break;
         	
@@ -786,9 +789,9 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
         	$form['field_ref_tree_nid']['#type'] = 'hidden';
             
             $parentTerm = taxonomy_term_load($form_state['build_info']['args'][0]->field_ref_tree_tid['und'][0]['value']);
-            if($parentTerm->vocabulary_machine_name == 'tpl_tariffplan_mobile_sms'){ //for single price such as sms
-            	dsm($form['field_range_units'], 'field_range_units');
-			    unset($form['field_range_units']);
+            if($parentTerm->vocabulary_machine_name == 'tpl_tariffplan_mobile_sms' 
+                || $parentTerm->vocabulary_machine_name == 'tpl_tariffplan_mobile_data'){ //for single price such as sms
+                unset($form['field_range_units']);
                 unset($form['field_uom_units']);
                 unset($form['field_discount_collection']);                               
             } else {
@@ -894,7 +897,8 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             _unset_menu_items($form,$form_id);        
             
             $parentTerm = taxonomy_term_load($form_state['build_info']['args'][0]->field_ref_tree_tid['und'][0]['value']);
-            if($parentTerm->vocabulary_machine_name == 'tpl_tariffplan_mobile_sms'){ //for single price such as sms
+            if($parentTerm->vocabulary_machine_name == 'tpl_tariffplan_mobile_sms'
+                || $parentTerm->vocabulary_machine_name == 'tpl_tariffplan_mobile_data'){ //for single price such as sms
                 unset($form['field_range_units']);
                 unset($form['field_uom_units']);
                 unset($form['field_charge_collection']);                
@@ -1049,7 +1053,8 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			
             $parentTerm = taxonomy_term_load($form_state['build_info']['args'][0]->field_ref_tree_tid['und'][0]['value']);
            
-            if($parentTerm->vocabulary_machine_name == 'tpl_tariffplan_mobile_sms'){ //for single price such as sms
+            if($parentTerm->vocabulary_machine_name == 'tpl_tariffplan_mobile_sms'
+                || $parentTerm->vocabulary_machine_name == 'tpl_tariffplan_mobile_data'){ //for single price such as sms
                 unset($form['field_range_units']);
                 unset($form['field_uom_units']);
                 unset($form['field_charge_collection']);
@@ -1090,6 +1095,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
         case 'packetdynamicl4_node_form':
         case 'packetdynamicchargingrule_node_form':
         case 'packetpredefinedchargingrule_node_form':
+        case 'roaming_country_node_form':
             _unset_menu_items($form,$form_id);
             $form['actions']['submit']['#submit'][] = 'product_catalog_form_form_redirect_handler';           
             break;
@@ -1125,6 +1131,40 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
                 '#markup' => '<h3>'.$custom_title.'</h3>',
                 '#weight' => 0
             );
+            break;
+        case 'treenodepacketdynamic_node_form':
+             _unset_menu_items($form,$form_id);
+            $form['field_ref_product']['#type'] = 'hidden';
+            $form['field_ref_tree_tid']['#type'] = 'hidden'; 
+            $form['field_ref_tree_nid']['#type'] = 'hidden';
+            $form['field_ref_tariffplan']['#type'] = 'hidden';
+            $form['field_ref_packet_dynamic']['#type'] = 'hidden';
+            $form['field_weight']['#type'] = 'hidden';
+            
+            $ruleNode = node_load($form_state['build_info']['args'][0]->field_ref_packet_dynamic['und'][0]['nid']);
+            $l4Node = node_load($ruleNode->field_ref_packet_dynamic_l4['und'][0]['nid']);
+            $meteringMethodTerm = taxonomy_term_load($ruleNode->field_ref_metering_method['und'][0]['tid']);
+            
+            $refAttributeMarkupStr = '<div class="form-item">';
+            $refAttributeMarkupStr .= '<table >';
+            $refAttributeMarkupStr .= '<tr><td width="150px">'.'<label>L4</label></td><td>'.$l4Node->title.'</td></tr>';
+            $refAttributeMarkupStr .= '<tr><td width="150px">'.'<label>Rating Group</label></td><td>'.$ruleNode->field_rating_group_integer['und'][0]['value'].'</td></tr>';
+            $refAttributeMarkupStr .= '<tr><td width="150px">'.'<label>SID</label></td><td>'.$ruleNode->field_sid['und'][0]['value'].'</td></tr>';
+            $refAttributeMarkupStr .= '</table>';
+            $refAttributeMarkupStr .= '</div>';
+            $form['ref_attribute'] = array(
+                '#type' => 'markup',
+                '#markup' => $refAttributeMarkupStr,
+                '#weight' => -100
+            );            
+            break;
+        case 'basicrate_data_node_form';
+            _unset_menu_items($form,$form_id);
+            $form['field_ref_product']['#type'] = 'hidden';
+            $form['field_ref_tree_tid']['#type'] = 'hidden'; 
+            $form['field_ref_tree_nid']['#type'] = 'hidden';
+            $form['field_ref_tariffplan']['#type'] = 'hidden';
+            $form['field_weight']['#type'] = 'hidden';
             break;
         /*
         case 'views_form_list_numberingplan_domestic_for_product_default':
