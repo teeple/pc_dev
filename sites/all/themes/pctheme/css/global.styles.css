@@ -2418,3 +2418,7 @@ div.ctools-modal-content .form-item table tbody label,
 div.ctools-modal-content .form-item table .form-type-textfield .form-text{
 	width: 150px;
 }
+
+div.div_float_left {
+	float:left;
+}
