@@ -795,7 +795,10 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
                 unset($form['field_uom_units']);
                 unset($form['field_discount_collection']);                               
             } else {
-                unset($form['field_discount_']); 
+				$termTid = array_search('Seconds', $form['field_range_units']['und']['#options']);
+				$form_state['build_info']['args'][0]->field_range_units['und'][0]['tid'] = $termTid;
+			    unset($form['field_discount_']); 
+				$form['field_range_units']['und']['#disabled'] = TRUE;
 			}
             break;
 			
