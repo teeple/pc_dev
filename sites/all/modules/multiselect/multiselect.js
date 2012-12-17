@@ -22,6 +22,8 @@
       $('#multiselect_custom_button').click($.fn.eventSetSelectAll);
       
       $('#multiselect_custom_button_rollover').click($.fn.eventSetSelectAllRollover);
+      
+      //$('#multiselect_custom_button_trackingcounter').click($.fn.eventSetSelectAllTrackingCounter);
             
       // Moves selection if it's double clicked to selected box
       $('select.multiselect_unsel:not(.multiselect-unsel-processed)', context).addClass('multiselect-unsel-processed').dblclick(function() {
@@ -119,6 +121,36 @@ jQuery.fn.eventSetSelectAllRollover = function() {
 		},
 	});
 }
+
+/*
+jQuery.fn.eventSetSelectAllTrackingCounter = function() {
+	
+	jQuery(".product_catalog_tree").mask("Selecting...");
+	
+	var multiselect_sel = jQuery('select.multiselect_sel');
+	multiselect_sel.selectAll();
+	
+	var selectCounters = new Array();
+	multiselect_sel.each(function(index, element) {
+		for (var x=0;x<element.options.length;x++) {
+			selectCounters[x] = element.options[x].value;
+		};
+	});
+	
+	var rootId = jQuery('.product_catalog_tree > ul:first > li:first').attr('id');
+	var counterListUrl = '/product_catalog_ajax/trackingcounter_list';
+	
+	jQuery.ajax({
+		url : counterListUrl,
+		type: "post",
+		data: {'product_nid': rootId, 'counter_nids':selectCounters},
+		success : function(data) {
+			jQuery(".product_catalog_tree").unmask();
+		},
+	});
+}
+*/
+
 
 // Selects all the items in the select box it is called from.
 // usage $('nameofselectbox').selectAll();

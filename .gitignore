@@ -1,5 +1,7 @@
 sites/default/files/ctools/css
 sites/default/files/ctools/css
 sites/default/files/ctools/style
+sites/default/settings.php
 *.swp
 .DS_Store
+sites/default/settings.php

@@ -645,7 +645,7 @@
 								"label" : "Bonus Item",
 								action : function(node) {
 									$.fn.addNode(node, {
-										'childContentType' : 'actionpriceallowancerecurring'
+										'childContentType' : 'actionpriceallowanceonetime'
 									});
 								}
 							},
@@ -848,6 +848,40 @@
 							$.fn.deleteNode(node);
 						};
 						break;
+					case 'treenodepacketpredefined':
+						menus.custom_create._disabled = false;
+						menus.custom_create.submenu = {
+							"treenodepacketpredefined" : {
+								"label" : "ConditionSet",
+								action : function(node) {
+									$.fn.addNode(node, {
+										'childContentType' : 'conditioncommonand'
+									});
+								}
+							},
+						};
+						menus.custom_delete._disabled = false;
+						menus.custom_delete.action = function(node) {
+							$.fn.deleteNode(node);
+						};
+					  break;
+					case 'treenodepacketdynamic':
+						menus.custom_create._disabled = false;
+						menus.custom_create.submenu = {
+							"treenodepacketdynamic" : {
+								"label" : "ConditionSet",
+								action : function(node) {
+									$.fn.addNode(node, {
+										'childContentType' : 'conditioncommonand'
+									});
+								}
+							},
+						};
+						menus.custom_delete._disabled = false;
+						menus.custom_delete.action = function(node) {
+							$.fn.deleteNode(node);
+						};
+					  break;
 					case 'conditionwhatincomingcall':
 						menus.custom_delete._disabled = false;
 						menus.custom_delete.action = function(node) {
@@ -914,6 +948,33 @@
 													});
 												}
 											},
+											"crbt" : {
+												"label" : "crbt",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhatusagetypefactors',
+														'usageType' : 'crbt'
+													});
+												}
+											},
+											"mms" : {
+												"label" : "mms",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhatusagetypefactors',
+														'usageType' : 'mms'
+													});
+												}
+											},
+											"loyalty_point_deduct" : {
+												"label" : "loyalty_point_deduct",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhatusagetypefactors',
+														'usageType' : 'loyalty_point_deduct'
+													});
+												}
+											},																																	
 										},
 									},
 									"nonusage_type" : {
@@ -1050,6 +1111,14 @@
 										action : function(node) {
 											$.fn.addNode(node, {
 												'childContentType' : 'conditionwhatcounter'
+											});
+										}
+									},
+									"TrackingCounter" : {
+										"label" : "TrackingCounter",
+										action : function(node) {
+											$.fn.addNode(node, {
+												'childContentType' : 'conditionwhatcounterfortracking'
 											});
 										}
 									},
@@ -1269,6 +1338,61 @@
 							},
 						};
 						break;
+					case "mobile_usage_data":
+						menus.custom_create._disabled = false;
+						menus.custom_create.submenu = {
+							"mobile_usage_sms" : {
+								"label" : "Tariff Plan",
+								action : function(node) {
+									$.fn.addNode(node, {
+										'childContentType' : 'tariffplan'
+									});
+								}
+							},
+						};
+						break;
+					case "data_tariffplan_predefined":
+						menus.custom_create._disabled = false;
+						menus.custom_create.submenu = {
+							"data_tariffplan_predefined" : {
+								"label" : "Select Rule",
+								action : function(node) {
+									$.fn.loadSelectForm(node);
+								}
+							},
+						};
+						break;
+					case "data_tariffplan_dynamic":
+						menus.custom_create._disabled = false;
+						menus.custom_create.submenu = {
+							"data_tariffplan_dynamic" : {
+								"label" : "Select Rule",
+								action : function(node) {
+									$.fn.loadSelectForm(node);
+								}
+							},
+						};
+						break;
+					case 'data_tariffplan_basicrate':
+						menus.custom_create._disabled = false;
+						menus.custom_create.submenu = {
+							"data_tariffplan_basicrate" : {
+								"label" : "BasicRate",
+								action : function(node) {
+									$.fn.addNode(node, {
+										'childContentType' : 'basicrate_data' 
+									});
+								}
+							},
+						};
+						break;
+				  case 'basicrate_data':
+				  	menus.custom_delete._disabled = false;
+						menus.custom_delete.action = function(node) {
+							$.fn.deleteNode(node);
+						};
+						break
+				  	break;
 					case "iptv_usage_vod":
 						menus.custom_create._disabled = false;
 						menus.custom_create.submenu = {
