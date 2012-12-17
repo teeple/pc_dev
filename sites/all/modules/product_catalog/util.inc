@@ -160,7 +160,7 @@ function build_navigation_bar()
 					'sub' => array( 
 						array( '/common/counter/list', 'Counters'),
 						array( '/common/numberingplan/domestic/list', 'Numbering Plan'),
-						array( '/common/roaming/country', 'Roaming'),
+						array( '/common/roaming/country', 'Roaming Plan'),
                         array( '/common/packet/predefined/charging_rule','Packet'),					    
 					    array( '/common/vouchercardtype', 'ETC'),
                         )),
