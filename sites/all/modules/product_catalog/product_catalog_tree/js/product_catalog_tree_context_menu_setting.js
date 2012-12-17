@@ -685,7 +685,15 @@
 						};
 						menus.custom_create._disabled = false;
 						menus.custom_create.submenu = {
-							"actionpricechargeonetime" : {
+							"actionpricechargeonetime_discount" : {
+								"label" : "Discount",
+								action : function(node) {
+									$.fn.addNode(node, {
+										'childContentType' : 'actionpricediscount'
+									});
+								}
+							},
+							"actionpricechargeonetime_condition" : {
 								"label" : "ConditionSet",
 								action : function(node) {
 									$.fn.addNode(node, {
@@ -768,6 +776,10 @@
 						break;
 
 					case "actionpricediscount":
+						menus.custom_delete._disabled = false;
+						menus.custom_delete.action = function(node) {
+							$.fn.deleteNode(node);
+						};
 						menus.custom_create._disabled = false;
 						menus.custom_create.submenu = {
 							"actionpricediscount" : {
@@ -1114,14 +1126,7 @@
 											});
 										}
 									},
-									"TrackingCounter" : {
-										"label" : "TrackingCounter",
-										action : function(node) {
-											$.fn.addNode(node, {
-												'childContentType' : 'conditionwhatcounterfortracking'
-											});
-										}
-									},
+									/*
 									"what custom" : {
 										"label" : "Custom",
 										action : function(node) {
@@ -1130,6 +1135,7 @@
 											});
 										}
 									},
+									*/
 								}
 							},
 							"when" : {
@@ -1236,6 +1242,7 @@
 											});
 										}
 									},
+									/*
 									"where custom" : {
 										"label" : "Custom",
 										action : function(node) {
@@ -1244,6 +1251,7 @@
 											});
 										}
 									},
+									*/
 								}
 							},
 							"who" : {
@@ -1273,6 +1281,7 @@
 											});
 										}
 									},
+									/*
 									"who custom" : {
 										"label" : "Custom",
 										action : function(node) {
@@ -1281,6 +1290,7 @@
 											});
 										}
 									},
+									*/
 								}
 							},
 						};
