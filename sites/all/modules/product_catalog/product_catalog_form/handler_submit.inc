@@ -179,13 +179,12 @@ function _create_default_items_in_product($product){
 	
 	if(!empty($mainTerm) && ( $prdTypeTerm->name == 'Main')) {
 		_create_default_basic_counters($product->nid, current($mainTerm)->tid);
+		_create_default_recharge_block_item($product, $voca_name);
 	}
 	
 	_create_default_prdattributes($product, $voca_name);
 	// _create_default_prdattribute_relations($offering, $voca_name);
 	_create_default_prdnonusage($product, $voca_name);
-	
-	_create_default_recharge_block_item($product, $voca_name);
 	
 	// product basic counter setting
 	_create_default_prdcounterlist($product, $voca_name);
