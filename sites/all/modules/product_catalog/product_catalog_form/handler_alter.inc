@@ -15,6 +15,9 @@ function _unset_menu_items(&$form,$formId){
 		case 'numberingplan_domestic_node_form':
 		case 'numberingplan_idd_node_form':
 		case 'carrier_mobile_node_form':
+        case 'packetdynamicl4_node_form':
+        case 'packetdynamicchargingrule_node_form':
+        case 'packetpredefinedchargingrule_node_form':
 			$unsetDeleteButton = FALSE;
 			//dsm($form);
 			break;
@@ -34,6 +37,7 @@ function _add_ajax_submit_callback($form_id,&$form){
 		case 'conditionwhaturlgroupfactors_node_form':
 		case 'conditionwhencustomfactors_node_form':
 		case 'conditionwhendurationfactors_node_form':
+		case 'conditionwhendayofmonth_node_form':
 		case 'conditionwhendayfactors_node_form':
 		case 'conditionwhentimeslotfactors_node_form':
 		case 'conditionwhenholidayfactors_node_form':
@@ -67,7 +71,8 @@ function _add_ajax_submit_callback($form_id,&$form){
 		case 'prdnonusagerecurringchargescheme_node_form':
 		case 'prdnonusagerecurringbonusscheme_node_form':
 		case 'prdnonusagerollover_node_form':
-	    case 'unittransferfactors_node_form':
+		case 'prdnonusagerechargeblock_node_form':
+		case 'unittransferfactors_node_form':
         case 'conditionwhatusagetypefactors_node_form':
         case 'conditionwhatnonusagetypefactors_node_form':
         case 'prdattributefeaturecode_node_form':
@@ -76,6 +81,7 @@ function _add_ajax_submit_callback($form_id,&$form){
         case 'actionbonustransfer_node_form':
         case 'conditionwhatcalltype_node_form':
         case 'conditionwhatcounter_node_form':
+		case 'conditionwhatcounterfortracking_node_form':
 		case 'conditionwhensubscriptionday_node_form':
 		case 'numberspecialrate_node_form':
 		case 'actionpriceallowanceonetime_node_form':
@@ -294,14 +300,18 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
         case 'prdattributeprefixrangenotallowe_node_form':
         case 'prdattributefeaturecode_node_form':
 			
-//dsm($form, 'form');
-// dsm($form_state, 'form_state');
 			$form['field_parent_node']['#type'] = 'hidden';
             unset($form['field_ref_product']);
             unset($form['field_ref_tree_tid']);
 			unset($form['field_weight']);
 			_unset_menu_items($form,$form_id);
             break;
+			
+		case 'prdnonusagerechargeblock_node_form':
+			unset($form['field_ref_product']);
+            unset($form['field_ref_tree_tid']);
+			_unset_menu_items($form,$form_id);
+			break;
 			
 		case 'prdnonusagerecurringchargescheme_node_form':
 		case 'prdnonusagerecurringbonusscheme_node_form':
@@ -365,10 +375,6 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             unset($form['field_ref_tree_tid']);
             _unset_menu_items($form,$form_id);
 			
-			// service domain怨�billing type��留�� counter list留�� 媛���⑤�.
-			// $form['field_counter_list']['und']['#options'] = 'aaa';
-			// 
-			// $counterList = _get_available_counter_list($form_state['product_nid'], array_values($form_state['build_info']['args'][0]->field_counter_list['und']));
 			$counterList = _get_available_counter_list($form_state['product_nid']);
 			
 			$options = $counterList;
@@ -380,15 +386,6 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			$form['field_counter_list']['und']['#prefix'] = $widget['prefix_pre'] . $widget['prefix_options'] . $widget['prefix_post'];
 			$form['field_counter_list']['und']['#options'] = $counterList;
 			
-			/*
-			unset($form['field_counter_list']['und']['#options']);
-			
-			foreach($counterList as $key => $value) {
-				$form['field_counter_list']['und']['#options'][$key] = $value;
-			}
-			*/
-			
-					
             break;
             
         case 'treenodecounter_node_form':
@@ -453,6 +450,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			if(isset($form['field_r_productofferingprice']))unset($form['field_r_productofferingprice']);
 			
 			unset($form['field_product_type']);
+			unset($form['field_service_type_of_provider']);
 			unset($form['field_parent_node_for_rp']);
 			unset($form['field_weight_for_ratingpriority']);
 			unset($form['field_weight']);
@@ -467,26 +465,12 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			unset($form['field_parent_node_for_hr']);
 			unset($form['field_weight_for_hierarchy']);
 			
-			// unset($form['field_counter_list']);
-			// dsm($form, 'form');
 			_unset_menu_items($form,$form_id);
 
+			// 새로 생성 시 
 			if(!isset($form['nid']['#value'])){
-				$form['field_service_type_of_provider']['und']['#default_value'][0] = $form_state['service_domain_tid'];
-				_alter_simpleproductoffering_node_form($form, $form_state);
+				$form['actions']['submit']['#submit'][] = 'simpleproductoffering_redirect_handler';
 			}
-			
-			/*
-			if($form['edit_type'] == 'exclusive') {
-			 
-			} else {
-				
-				if(!isset($form['nid']['#value'])){
-					$form['field_service_type_of_provider']['und']['#default_value'][0] = $form_state['service_domain_tid'];
-					_alter_simpleproductoffering_node_form($form, $form_state);
-				}
-			}
-			*/
 			
 			break;
 		case 'balance_node_form':
@@ -500,6 +484,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 		case 'conditionwhaturlgroupfactors_node_form':
 		case 'conditionwhencustomfactors_node_form':
 		case 'conditionwhendurationfactors_node_form':
+		case 'conditionwhendayofmonth_node_form':
 		case 'conditionwhendayfactors_node_form':
 		case 'conditionwhentimeslotfactors_node_form':
 		case 'conditionwhenholidayfactors_node_form':
@@ -780,12 +765,14 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
                 unset($form['field_discount_type']);
             }
             break;
+			
         case 'actionbonustransfer_node_form':
         	unset($form['field_parent_node']);
         	unset($form['field_weight']);
         	_unset_menu_items($form,$form_id);
         	$form['field_ref_product']['#type'] = 'hidden';
-        	break;        
+        	break;
+			
         case 'conditionwhatcounter_node_form':
         	unset($form['field_parent_node']);
         	unset($form['field_weight']);
@@ -797,20 +784,17 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             	$rootNid = $form['#node']->field_ref_product['und'][0]['nid'];
             }
            
-        	unset($form['field_ref_treenodecounter']['und']['#options']);
-        	$form['field_ref_counter']['und']['#options']['_none'] = '- None -';
-        	
-        	$productCountView = views_get_view('list_treenodecounter');
-        	$productCountView->set_display('panel_pane_2');
-        	$productCountView->set_arguments(array(0 => $rootNid ));
-			$productCountView->execute();
-        	$counters = $productCountView->result;
-        	
-        	//dsm($counters,'counters');
-            foreach($counters as $counter){
-            	$form['field_ref_treenodecounter']['und']['#options'][$counter->nid] = $counter->node_field_data_field_ref_counter_title;
-            }        	
-        	
+			// $existingCounterList = _get_existing_counter_list($form_state['product_nid']);
+			$existingCounterList = _get_existing_counter_list($rootNid);
+			$form['field_ref_counter']['und']['#options'] = $existingCounterList;
+        	break;
+			
+        case 'conditionwhatcounterfortracking_node_form':
+			unset($form['field_parent_node']);
+        	unset($form['field_weight']);
+        	$form['field_ref_product']['#type'] = 'hidden';
+        	_unset_menu_items($form,$form_id);
+    		
         	break;
 			
 		case'actionpriceallowanceonetime_node_form':
@@ -935,33 +919,30 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			_unset_menu_items($form,$form_id);
           	break;
 		case 'actionsetcounter_node_form':
-			$form['field_ref_source_action']['#type'] = 'hidden';
-			
-			$existingCounterList = _get_existing_counter_list($form_state['product_nid']);
-			
-			$form['field_ref_counter']['und']['#options'] = $existingCounterList;
-			
-			_unset_menu_items($form,$form_id);
-          	break;
-		
 		case 'actionsetcounteronbonus_node_form':
 			$form['field_ref_source_action']['#type'] = 'hidden';
+			$productNid = $form_state['product_nid'];
 			
-			$existingCounterList = _get_existing_counter_list($form_state['product_nid']);
+			$basicCounterList = array();
+			$tempList = _get_default_basic_counters($productNid);
+			foreach($tempList as $record){
+				$counterUnitType = $record->field_field_counter_unit_type[0]['rendered']['#options']['entity']->name;
+				$basicCounterList[$record->nid] = $record->node_title.'('.$counterUnitType.')';
+			}
+			$existingCounterList = _get_existing_counter_list($productNid);
 			
-			$form['field_ref_counter']['und']['#options'] = $existingCounterList;
+			foreach($basicCounterList as $key => $value) {
+				$mergedCounterList[$key] = $value;
+			}
+			foreach($existingCounterList as $key => $value) {
+				$mergedCounterList[$key] = $value;
+			}
+			$form['field_ref_counter']['und']['#options'] = $mergedCounterList;
 			
 			_unset_menu_items($form,$form_id);
           	break;
-			/*
-		case 'actionsetnotification_node_form':
-			$form['field_ref_source_action']['#type'] = 'hidden';
 			
-			_unset_menu_items($form,$form_id);
-			break;
-			 * */
-			 
-        case 'tariffplan_node_form':
+		case 'tariffplan_node_form':
 			unset($form['field_parent_node']);
             unset($form['field_weight']);
             $form['field_ref_product']['#type'] = hidden;
@@ -969,8 +950,9 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             unset($form['field_tree_child_voca_name']);
             unset($form['field_ref_numberingplan_domestic']);
             unset($form['field_ref_numberingplan_idd']);
-            unset($form['field_ref_timetable_domestic']);            
+            unset($form['field_ref_timetable_domestic']);
             unset($form['field_ref_tariffplan_idd_carrier']);
+            unset($form['field_ref_numberspecial']);
             _unset_menu_items($form,$form_id);
             
             if(!isset($form['nid']['#value'])){
@@ -984,9 +966,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             	$serviceTypeTerm = taxonomy_term_load($form_state['build_info']['args'][0]->field_ref_tree_tid['und'][0]['value']);
             	$voca_name = _get_vocabulary_name('tariffplan', $productNode, $serviceTypeTerm->name);
             	$form_state['build_info']['args'][0]->field_tree_child_voca_name['und'][0]['value'] = $voca_name;
-            	
-            	
-            	$form_state['ajax_actions'][] = '_node_save_handler_for_add_js_settings_after_node_save'; 
+            	$form_state['ajax_actions'][] = '_node_save_handler_for_add_js_settings_after_node_save';
             }
 
         	break;
@@ -1076,6 +1056,12 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
         	break;
         case 'lifecyclescheme_node_form':
             _unset_menu_items($form,$form_id);
+            break;
+        case 'packetdynamicl4_node_form':
+        case 'packetdynamicchargingrule_node_form':
+        case 'packetpredefinedchargingrule_node_form':
+            _unset_menu_items($form,$form_id);
+            $form['actions']['submit']['#submit'][] = 'product_catalog_form_form_redirect_handler';           
             break;
         case 'treenodeotheronetimecharge_node_form':
             _unset_menu_items($form,$form_id);

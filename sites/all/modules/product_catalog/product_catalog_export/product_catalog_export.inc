@@ -55,7 +55,6 @@ function _make_json_string($termName,$refNid=NULL){
 }
 
 function export_json($tid,$termName,$refNid=NULL){
-	dpm( $termName, 'term name');
 	$jsonString = _make_json_string($termName,$refNid);
 	$output = _indent_json_string($jsonString);
 	return $output;
@@ -70,10 +69,16 @@ function export_deploy($tid,$termName,$refNid=NULL){
     $historyNode->uid = $user->uid;
     $historyNode->type = 'export_history';
     $historyNode->language = 'und';
-    if($refNid != NULL){
-    	$historyNode->field_reference_node['und'][0]['nid'] = $refNid;
+	
+    if($refNid != NULL) {
+		$tempNids = explode('+', $refNid);
+				
+		if(!empty($tempNids) && count($tempNids) == 1) {
+			$historyNode->field_reference_node['und'][0]['nid'] = $refNid;	
+		}
     }
-    $historyNode->field_export_data['und'][0]['safe_value'] = $jsonString;
+	
+	$historyNode->field_export_data['und'][0]['safe_value'] = $jsonString;
     $historyNode->field_export_data['und'][0]['value'] = $jsonString;
     $historyNode->field_export_type['und'][0]['tid'] = $tid;
     node_save($historyNode);
@@ -87,14 +92,12 @@ function export_deploy($tid,$termName,$refNid=NULL){
 	$options['headers']['User-Agent'] = 'Product Catalog';
 	$options['data'] = $jsonString;
 	
-	
 	foreach($term->field_export_url['und'] as $item){
 		$url = $item['safe_value'];
-		$result = drupal_http_request($url, $options); 
-		//TODO: 寃곌낵 ��� �� 媛������� ��� ����댄� 異���댁� �� 
-		//dsm($url,'url');
-		//dsm($options,'request options');
+		$result = drupal_http_request($url, $options);
+		 
 		dsm($result,'deploy result');
+
 		if($result->code === '200'){
 			$historyNode = node_load($historyNodeNid);
 			if(strpos($result->request,'/cs/') !== FALSE) $historyNode->field_deployed_cs['und'][0]['value'] = TRUE;
@@ -106,5 +109,4 @@ function export_deploy($tid,$termName,$refNid=NULL){
 	
 	$redirect_url = 'lifecycles/history/'.$tid;
 	drupal_goto($redirect_url);
-	
 }

@@ -186,13 +186,13 @@
             case 'prdnonusagerollover':
             case 'treenodelifecyclescheme':
                	needToLoadEdit = false;
-                break;
+                break; 
             case 'usage':
             case 'conditioncommonor':
             case 'conditioncommonand':
             case 'defaulttreenode':
             case 'conditionwhatincomingcall':
-            case 'treenodespecialnumberscheme':
+            case 'treenodepacketpredefined': 
             	needToLoadEdit = false;
             	needToLoadDetail = false;
             	break;
@@ -207,6 +207,9 @@
             case 'conditionwhenfirstmonth':
             	needToLoadEdit = false;
             	needToLoadDetail = false;
+            	break;
+            case 'treenodespecialnumberscheme':
+            	needToLoadEdit = false;
             	break;
             case 'treenodewithnodereference':
             	switch(rel_type){
