@@ -787,7 +787,8 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
         	$form['field_ref_tree_nid']['#type'] = 'hidden';
             
             $parentTerm = taxonomy_term_load($form_state['build_info']['args'][0]->field_ref_tree_tid['und'][0]['value']);
-            if($parentTerm->vocabulary_machine_name == 'tpl_tariffplan_mobile_sms'){ //for single price such as sms
+            if($parentTerm->vocabulary_machine_name == 'tpl_tariffplan_mobile_sms' 
+                || $parentTerm->vocabulary_machine_name == 'tpl_tariffplan_mobile_data'){ //for single price such as sms
                 unset($form['field_range_units']);
                 unset($form['field_uom_units']);
                 unset($form['field_threshold']);   
@@ -897,7 +898,8 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             _unset_menu_items($form,$form_id);        
             
             $parentTerm = taxonomy_term_load($form_state['build_info']['args'][0]->field_ref_tree_tid['und'][0]['value']);
-            if($parentTerm->vocabulary_machine_name == 'tpl_tariffplan_mobile_sms'){ //for single price such as sms
+            if($parentTerm->vocabulary_machine_name == 'tpl_tariffplan_mobile_sms'
+                || $parentTerm->vocabulary_machine_name == 'tpl_tariffplan_mobile_data'){ //for single price such as sms
                 unset($form['field_range_units']);
                 unset($form['field_uom_units']);
                 unset($form['field_charge_collection']);                
@@ -1052,7 +1054,8 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			
             $parentTerm = taxonomy_term_load($form_state['build_info']['args'][0]->field_ref_tree_tid['und'][0]['value']);
            
-            if($parentTerm->vocabulary_machine_name == 'tpl_tariffplan_mobile_sms'){ //for single price such as sms
+            if($parentTerm->vocabulary_machine_name == 'tpl_tariffplan_mobile_sms'
+                || $parentTerm->vocabulary_machine_name == 'tpl_tariffplan_mobile_data'){ //for single price such as sms
                 unset($form['field_range_units']);
                 unset($form['field_uom_units']);
                 unset($form['field_charge_collection']);
