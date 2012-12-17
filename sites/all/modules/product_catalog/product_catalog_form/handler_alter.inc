@@ -19,6 +19,8 @@ function _unset_menu_items(&$form,$formId){
         case 'packetdynamicchargingrule_node_form':
         case 'packetpredefinedchargingrule_node_form':
         case 'roaming_country_node_form':
+        case 'roaming_carrier_node_form':
+        case 'roaming_plan_node_form':
 			$unsetDeleteButton = FALSE;
 			//dsm($form);
 			break;
@@ -700,7 +702,22 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
         	unset($form['field_ref_domestic_ratinggroup']);
         	_unset_menu_items($form,$form_id);
         	break;
-
+        case 'roaming_plan_node_form':
+            $form['actions']['submit']['#submit'][] = 'product_catalog_form_form_redirect_handler';
+            unset($form['field_ref_roaming_ratinggroup']);
+            _unset_menu_items($form,$form_id);
+            break;
+        case 'roaming_ratinggroup_node_form':
+            // only for create
+            //
+            if(!isset($form['nid']['#value'])){
+                if(isset($form_state['roamingplan_nid'])){
+                    $form['actions']['submit']['#submit'][] = '_ratinggroup_link_to_roaming_plan';
+                }
+            }
+            unset($form['field_ref_roaming_plan']);
+            _unset_menu_items($form,$form_id);            
+            break;
         case 'depositschemefactors_node_form':
             _unset_menu_items($form,$form_id);
             $form['field_ref_depositscheme']['#type'] = 'hidden';
@@ -1097,6 +1114,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
         case 'packetdynamicchargingrule_node_form':
         case 'packetpredefinedchargingrule_node_form':
         case 'roaming_country_node_form':
+        case 'roaming_carrier_node_form':
             _unset_menu_items($form,$form_id);
             $form['actions']['submit']['#submit'][] = 'product_catalog_form_form_redirect_handler';           
             break;
