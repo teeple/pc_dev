@@ -216,6 +216,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			}
 			break;
         case 'views_form_list_basicrate_panel_pane_3':
+        case 'views_form_list_basicrate_panel_pane_5':
             unset($form['actions']['submit']);
             
             //get related rates..
@@ -237,8 +238,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             for($i=0;$i<$rowCount;$i++){
                 $form['field_ref_rate'][$i]['field_ref_rate']['und']['#options'] = $rateOptions;
             }
-            break;
-            break;
+            break;                  
         case 'views_form_list_tariffplan_idd_carrier_panel_pane_1':
             unset($form['actions']['submit']);        
             break;
@@ -1007,6 +1007,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             unset($form['field_ref_timetable_domestic']);
             unset($form['field_ref_tariffplan_idd_carrier']);
             unset($form['field_ref_numberspecial']);
+            unset($form['field_ref_roaming_plan']);
             _unset_menu_items($form,$form_id);
             
             if(!isset($form['nid']['#value'])){
