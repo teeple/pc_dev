@@ -1,5 +1,5 @@
 <?php
-function _load_tree_item_mixed_with_node_and_term($rootNode){
+function _load_tree_item_mixed_with_node_and_term($rootNode,$grandParentNode=NULL){
 	$children = array(
 			'attr' => array('id' => 'node_'.$rootNode->nid,
 					'node_type' => $rootNode->type,
@@ -30,7 +30,18 @@ function _load_tree_item_mixed_with_node_and_term($rootNode){
 
 	foreach($tree as $item){
 		$term = taxonomy_term_load($item->tid);
-			
+        
+        if($term->name == 'Roaming'){ //skip roaming term in case of not prepaid
+            if($grandParentNode != NULL){
+                if($grandParentNode->type == 'simpleproductoffering'){
+                    $productBillTypeTerm = taxonomy_term_load($grandParentNode->field_billing_type['und'][0]['tid']);
+                    if($productBillTypeTerm->name != 'Prepaid'){
+                        continue;
+                    }
+                }
+            }
+        }       
+        
 		$itemArray = array(
 				'attr' => array('id' => 'term_'.$item->tid.'_'.$rootNode->nid,
 						'node_type' => 'term',
@@ -81,7 +92,7 @@ function _load_tree_item_mixed_with_node_and_term($rootNode){
 				
 				if($child->node_type == 'tariffplan'){
 					$childNode = node_load($child->nid);
-					$itemArray['children'][] = _load_tree_item_mixed_with_node_and_term($childNode);
+					$itemArray['children'][] = _load_tree_item_mixed_with_node_and_term($childNode,$rootNode);
 				} else {
 					$itemArray['children'][] = get_children_stored_procedure($child->nid,'term_'.$item->tid.'_'.$rootNode->nid);
 				}
@@ -339,7 +350,8 @@ function add_js_settings_after_node_save($node){
 	}
 	
 	if($node->type == 'tariffplan'){
-		$js_data = _load_tree_item_mixed_with_node_and_term($node);		
+	    $productNode = node_load($node->field_ref_product['und'][0]['nid']);
+		$js_data = _load_tree_item_mixed_with_node_and_term($node,$productNode);		
 	}else{
 		$js_data = get_children_stored_procedure($node->nid,$parentId);
 	}
