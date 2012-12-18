@@ -24,11 +24,20 @@ function _array_lifecycle_scheme($nid=NULL){
 			// get permissions
 			$view_perm = views_get_view_result('ocs_svc_perm', 'panel_json', $record->nid);
 			
+			dsm($view_perm, 'view_perm');
+			
 			$perm = array();
 			foreach( $view_perm as $node) {
-				if ( !empty( $node->field_field_service_permission))
-					$perm[ $node->field_field_lifecycle_state[0]['rendered']['#markup']][] = 
-						$node->field_field_service_permission[0]['rendered']['#markup'];
+				if (!empty( $node->field_field_service_permission))
+					foreach($node->field_field_service_permission as $item) {
+						$perm['service_permission'][ $node->field_field_lifecycle_state[0]['rendered']['#markup']][] = 
+							 $item['rendered']['#markup'];
+					}
+				if (!empty( $node->field_field_nonusage_permission))
+					foreach($node->field_field_nonusage_permission as  $item) {
+						$perm['nonusage_permission'][ $node->field_field_lifecycle_state[0]['rendered']['#markup']][] = 
+							 $item['rendered']['#title'];	
+					}
 			}
 			
 			$scheme['permission'] = $perm;
