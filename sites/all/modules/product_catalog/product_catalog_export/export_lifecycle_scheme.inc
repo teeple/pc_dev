@@ -24,8 +24,6 @@ function _array_lifecycle_scheme($nid=NULL){
 			// get permissions
 			$view_perm = views_get_view_result('ocs_svc_perm', 'panel_json', $record->nid);
 			
-			dsm($view_perm, 'view_perm');
-			
 			$perm = array();
 			foreach( $view_perm as $node) {
 				if (!empty( $node->field_field_service_permission))
