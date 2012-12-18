@@ -231,8 +231,10 @@
             	switch(rel_type){
             	case 'voice_tariffplan_domestic':
             	case 'voice_tariffplan_international':   
+            	case 'voice_tariffplan_roaming':
             	case 'sms_tariffplan_domestic':
             	case 'sms_tariffplan_international': 
+            	case 'sms_tariffplan_roaming':
             	case 'mobile_counter':
             	case 'mobile_nonusage_rollover':
             		needToLoadEdit = false;
@@ -322,6 +324,12 @@
     							,'tariffplanNid':tariffplanNid
     							,'refTreeTid':refTreeTid}
     					   ,$.fn.customSubmitButtonHandler);
+    					$('#select_roamingplan').bind('click',
+    							{'type':'select_roamingplan'
+    							,'node':node
+    							,'tariffplanNid':tariffplanNid
+    							,'refTreeTid':refTreeTid} 
+    					   ,$.fn.customSubmitButtonHandler);
     				}    		
     				
     				//selected region
@@ -358,6 +366,7 @@
 		case 'select_numberingplan_idd':			
 		case 'select_timetable_domestic':
 		case 'select_timetable_idd':
+		case 'select_roamingplan':
 			isSelect = true;
 			break;
 		}
