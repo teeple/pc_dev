@@ -194,7 +194,7 @@ function _create_default_recharge_block_item($product, $voca_name) {
 	
 	$term = taxonomy_get_term_by_name('Recharge', $voca_name);
 	
-	if(isset($term)) {
+	if(!empty($term)) {
 		$node = new StdClass();
 		$node->uid = $user->uid;
 		$node->type = 'prdnonusagerechargeblock';
