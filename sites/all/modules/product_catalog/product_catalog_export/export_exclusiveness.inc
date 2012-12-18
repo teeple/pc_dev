@@ -1,9 +1,7 @@
 <?php
-
 function _json_exclusiveness($nid=NULL){
 	$jsonData = array();
 
-	//fetch data		
 	$viewExclusiveness = views_get_view('list_exclusiveness');
 	$viewExclusiveness->set_display('panel_pane_1');
 	$viewExclusiveness->execute();
