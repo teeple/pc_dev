@@ -439,8 +439,6 @@ function generate_condition_string_by_condition_node($nid, &$factor_list )
 						/*
 						if(count($value) == 2)
 						{
-							array_apply($value , 'to_rating_rule_string');
-							return $factor_name . ' ' . $op . ' ' . join(',' , $value);
 						}
 						else
 						{
@@ -453,9 +451,9 @@ function generate_condition_string_by_condition_node($nid, &$factor_list )
 								$condstr = $condstr . $factor_name . ' ' . $op . ' ' . $value[$i] . ',' . $value[$i+1];
 							}
 							return $condstr;
-							/* TODO */
-					}
 						 */
+							/* TODO */
+						}
 					}
 					else
 					{
