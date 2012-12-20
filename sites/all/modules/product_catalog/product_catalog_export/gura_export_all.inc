@@ -434,25 +434,27 @@ function generate_condition_string_by_condition_node($nid, &$factor_list )
 					}
 					else if($op == 'between')
 					{
+						/*
 						array_apply($value , 'to_rating_rule_string');
 						return $factor_name . ' ' . $op . ' ' . join(',' , $value);
-						/*
+						 */
 						if(count($value) == 2)
 						{
+							array_apply($value , 'to_rating_rule_string');
+							return $factor_name . ' ' . $op . ' ' . join(',' , $value);
 						}
-						else
+						else if(count($value) >=4)
 						{
 							array_apply($value , 'to_rating_rule_string');
-							$condstr = "";
+							$condstr = "(";
 							for($i = 0;$i<count($value);$i=$i+2)
 							{
-								if($condstr!="")
+								if($i!=0)
 									$condstr = $condstr . " or ";
 								$condstr = $condstr . $factor_name . ' ' . $op . ' ' . $value[$i] . ',' . $value[$i+1];
 							}
-							return $condstr;
+							return $condstr . ")";
 						}
-						 */
 					}
 					else
 					{
