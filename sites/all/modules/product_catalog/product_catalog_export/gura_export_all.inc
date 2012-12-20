@@ -441,6 +441,15 @@ function generate_condition_string_by_condition_node($nid, &$factor_list )
 						}
 						else
 						{
+							array_apply($value , 'to_rating_rule_string');
+							$condstr = "";
+							for($i = 0;$i<count($value);$i=$i+2)
+							{
+								if($condstr!="")
+									$condstr = $condstr . " or ";
+								$condstr = $condstr . $factor_name . ' ' . $op . ' ' . $value[$i] . ',' . $value[$i+1];
+							}
+							return $condstr;
 							/* TODO */
 						}
 					}
