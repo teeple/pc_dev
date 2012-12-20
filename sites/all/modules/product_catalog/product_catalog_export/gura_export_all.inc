@@ -434,6 +434,9 @@ function generate_condition_string_by_condition_node($nid, &$factor_list )
 					}
 					else if($op == 'between')
 					{
+						array_apply($value , 'to_rating_rule_string');
+						return $factor_name . ' ' . $op . ' ' . join(',' , $value);
+						/*
 						if(count($value) == 2)
 						{
 							array_apply($value , 'to_rating_rule_string');
@@ -451,7 +454,8 @@ function generate_condition_string_by_condition_node($nid, &$factor_list )
 							}
 							return $condstr;
 							/* TODO */
-						}
+					}
+						 */
 					}
 					else
 					{
