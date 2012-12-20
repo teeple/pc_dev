@@ -451,9 +451,8 @@ function generate_condition_string_by_condition_node($nid, &$factor_list )
 								$condstr = $condstr . $factor_name . ' ' . $op . ' ' . $value[$i] . ',' . $value[$i+1];
 							}
 							return $condstr;
-						 */
-							/* TODO */
 						}
+						 */
 					}
 					else
 					{
