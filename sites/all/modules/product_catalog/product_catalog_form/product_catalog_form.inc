@@ -432,3 +432,15 @@ function numberingplan_idd_view_form($form, &$form_state) {
 	);
 	return $form;
 }
+
+function roamingplan_view_form($form, &$form_state) {
+    $view = views_get_view('list_roaming_plan_ratinggroup');
+    $view->execute_display('panel_pane_2', array('0' => $form_state['param']['plan_nid']));
+    $output = $view->render();
+
+    $form['view'] = array(
+            '#type' => 'markup',
+            '#markup' => $output,
+    );
+    return $form;    
+}
