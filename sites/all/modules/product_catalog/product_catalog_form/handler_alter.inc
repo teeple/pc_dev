@@ -1165,12 +1165,21 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             $form['field_weight']['#type'] = 'hidden';
             
             $ruleNode = node_load($form_state['build_info']['args'][0]->field_ref_packet_dynamic['und'][0]['nid']);
+            $l4Text = '';
+            
+            if(isset($ruleNode->field_ref_packet_dynamic_l4)){
+                foreach($ruleNode->field_ref_packet_dynamic_l4['und'] as $item){
+                    $l4Node = node_load($item['nid']);
+                    $l4Text .= $l4Node->title.'<br/>';
+                }    
+            }
+            
             $l4Node = node_load($ruleNode->field_ref_packet_dynamic_l4['und'][0]['nid']);
             $meteringMethodTerm = taxonomy_term_load($ruleNode->field_ref_metering_method['und'][0]['tid']);
             
             $refAttributeMarkupStr = '<div class="form-item">';
             $refAttributeMarkupStr .= '<table >';
-            $refAttributeMarkupStr .= '<tr><td width="150px">'.'<label>L4</label></td><td>'.$l4Node->title.'</td></tr>';
+            $refAttributeMarkupStr .= '<tr><td width="150px">'.'<label>L4</label></td><td>'.$l4Text.'</td></tr>';
             $refAttributeMarkupStr .= '<tr><td width="150px">'.'<label>Rating Group</label></td><td>'.$ruleNode->field_rating_group_integer['und'][0]['value'].'</td></tr>';
             $refAttributeMarkupStr .= '<tr><td width="150px">'.'<label>SID</label></td><td>'.$ruleNode->field_sid['und'][0]['value'].'</td></tr>';
             $refAttributeMarkupStr .= '</table>';
