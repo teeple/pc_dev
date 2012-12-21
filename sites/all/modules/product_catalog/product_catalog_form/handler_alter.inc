@@ -120,8 +120,7 @@ function _add_ajax_submit_callback($form_id,&$form){
 	  				)
 	  			);
 			} else if (isset($form['nid']['#value'])) { //edit 
-			    dsm($form,'form');
-                $form['field_billing_type']['#disabled'] = TRUE;
+			    $form['field_billing_type']['#disabled'] = TRUE;
 				$change = TRUE;
 			}
         	break;
