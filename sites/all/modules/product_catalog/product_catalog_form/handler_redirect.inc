@@ -144,6 +144,9 @@ function product_catalog_form_form_redirect_handler(&$form, &$form_state){
        case 'numberingplan_domestic_node_form':
        	   	$redirect_url = 'common/numberingplan_domestic/'.$form_state['values']['nid'].'/ratinggroup#quickset-qtabs_common_data=3';
         	break;
+       case 'roaming_plan_node_form':
+           $redirect_url = 'common/roaming/plan/'.$form_state['values']['nid'].'/ratinggroup#quickset-roaming=2';
+           break;
         case 'country_code_node_form':
        	   	$redirect_url = 'common/country_code';
         	break;        
@@ -167,6 +170,12 @@ function product_catalog_form_form_redirect_handler(&$form, &$form_state){
             break;
         case 'packetpredefinedchargingrule_node_form':
             $redirect_url = 'common/packet/predefined/charging_rule/'.$form_state['values']['nid'].'#quickset-packet=0';
+            break;
+        case 'roaming_country_node_form':
+            $redirect_url = 'common/roaming/country/'.$form_state['values']['nid'].'#quickset-roaming=0';
+            break;
+        case 'roaming_carrier_node_form':
+            $redirect_url = 'common/roaming/carrier/'.$form_state['values']['nid'].'#quickset-roaming=1';
             break;
     }
 

@@ -351,6 +351,9 @@ function product_catalog_ajax_add_modal_content($js = NULL, $contentType, $refNo
 		case 'idd_ratinggroup':
 			$node->field_ref_numberingplan_idd['und'][0]['nid'] = $refNodeNid;
 			break;
+        case 'roaming_ratinggroup':
+            $node->field_ref_roaming_plan['und'][0]['nid'] = $refNodeNid;
+            break;
 		case 'depositschemefactors':
 		case 'depositschemeadjustment':
 			$node->field_ref_depositscheme['und'][0]['nid'] = $refNodeNid;
@@ -409,6 +412,12 @@ function product_catalog_ajax_add_modal_content($js = NULL, $contentType, $refNo
 				node_save($planNode);
 				$output[] = ctools_ajax_command_reload();
 				break;
+            case 'roaming_ratinggroup':
+                $planNode = node_load($refNodeNid);
+                $planNode->field_ref_roaming_ratinggroup['und'][] = array('nid' => $form_state['values']['nid']);
+                node_save($planNode);
+                $output[] = ctools_ajax_command_reload();
+                break;
 			case 'numberspecialfactors':
 				$output[] = _add_command_after_dismiss_modal($refNodeNid,$refTreeTid);
 				break;
@@ -1249,6 +1258,7 @@ function product_catalog_modal_form_view($formName,$param1=NULL){
 			break;
 		case 'numberingplan_domestic_view_form':
 		case 'numberingplan_idd_view_form':
+        case 'roamingplan_view_form':
 			$param['plan_nid'] = $param1;
 			break;
 		case 'depositscheme_view_form':
@@ -1367,6 +1377,7 @@ function product_catalog_modal_form_edit_modal_content($js = NULL, $contentType,
 				break;	
         	case 'domestic_ratinggroup':
         	case 'idd_ratinggroup':
+            case 'roaming_ratinggroup':
         	case 'depositschemefactors':
         	case 'depositschemeadjustment':
         	case 'thresholdschemefactors':
@@ -1406,6 +1417,7 @@ function product_catalog_ajax_delete_from_view($nodeNid, $refNodeNid, $defaultTa
 			break;
 		case 'domestic_ratinggroup':
 		case 'idd_ratinggroup':
+        case 'roaming_ratinggroup':
 		case 'depositschemefactors':
 		case 'depositschemeadjustment':
 		case 'thresholdschemefactors':

@@ -26,9 +26,16 @@ function _array_lifecycle_scheme($nid=NULL){
 			
 			$perm = array();
 			foreach( $view_perm as $node) {
-				if ( !empty( $node->field_field_service_permission))
-					$perm[ $node->field_field_lifecycle_state[0]['rendered']['#markup']][] = 
-						$node->field_field_service_permission[0]['rendered']['#markup'];
+				if (!empty( $node->field_field_service_permission))
+					foreach($node->field_field_service_permission as $item) {
+						$perm['service_permission'][ $node->field_field_lifecycle_state[0]['rendered']['#markup']][] = 
+							 $item['rendered']['#markup'];
+					}
+				if (!empty( $node->field_field_nonusage_permission))
+					foreach($node->field_field_nonusage_permission as  $item) {
+						$perm['nonusage_permission'][ $node->field_field_lifecycle_state[0]['rendered']['#markup']][] = 
+							 $item['rendered']['#title'];	
+					}
 			}
 			
 			$scheme['permission'] = $perm;
