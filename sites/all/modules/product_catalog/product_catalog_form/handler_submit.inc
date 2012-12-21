@@ -149,8 +149,7 @@ function _offering_submit_characteristic_handler(&$form, &$form_state, &$spec_ch
 	$productSpecification->field_product_number = $form_state['values']['field_id'];
 	$productSpecification->field_r_productspeccharuse['und'] = $spec_characters['charuse'];
 	node_save($productSpecification);
-
-
+	
 }
 
 function _node_save_handler_for_add_js_settings_after_node_save(&$form, &$form_state){
@@ -179,13 +178,12 @@ function _create_default_items_in_product($product){
 	
 	if(!empty($mainTerm) && ( $prdTypeTerm->name == 'Main')) {
 		_create_default_basic_counters($product->nid, current($mainTerm)->tid);
+		_create_default_recharge_block_item($product, $voca_name);
 	}
 	
 	_create_default_prdattributes($product, $voca_name);
 	// _create_default_prdattribute_relations($offering, $voca_name);
 	_create_default_prdnonusage($product, $voca_name);
-	
-	_create_default_recharge_block_item($product, $voca_name);
 	
 	// product basic counter setting
 	_create_default_prdcounterlist($product, $voca_name);
@@ -196,7 +194,7 @@ function _create_default_recharge_block_item($product, $voca_name) {
 	
 	$term = taxonomy_get_term_by_name('Recharge', $voca_name);
 	
-	if(isset($term)) {
+	if(!empty($term)) {
 		$node = new StdClass();
 		$node->uid = $user->uid;
 		$node->type = 'prdnonusagerechargeblock';
@@ -492,6 +490,12 @@ function _ratinggroup_link_to_numberingplan_idd($form, $form_state){
 	$numberingplan_idd = node_load($form_state['numberingplan_idd_nid']);
 	$numberingplan_idd->field_ref_idd_ratinggroup['und'][] = array('nid' => $form_state['values']['nid']);
 	node_save($numberingplan_idd);
+}
+
+function _ratinggroup_link_to_roaming_plan($form, $form_state){
+    $roamingplanNode = node_load($form_state['roamingplan_nid']);
+    $roamingplanNode->field_ref_roaming_ratinggroup['und'][] = array('nid' => $form_state['values']['nid']);
+    node_save($roamingplanNode);
 }
 
 function _country_link_to_numberingplan_idd($form, $form_state){

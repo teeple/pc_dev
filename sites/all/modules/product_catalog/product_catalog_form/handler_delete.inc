@@ -36,6 +36,15 @@ function product_catalog_form_node_delete($node){
                 node_save($node);
 			}
 			break;	
+        case 'roaming_plan':  
+            if(!empty($node->field_ref_roaming_ratinggroup)){
+                foreach($node->field_ref_roaming_ratinggroup['und'] as $child){
+                    $childNodes[] = $child['nid'];
+                }
+                unset($node->field_ref_roaming_ratinggroup);
+                node_save($node);
+            }
+            break;  
 		case 'domestic_ratinggroup':
 			// unlink numberingplan_domestic's link
 			if(isset($node->field_ref_numberingplan_domestic['und'][0]['nid'])){
@@ -68,6 +77,21 @@ function product_catalog_form_node_delete($node){
     			node_save($parent);
             }
 			break;
+        case 'roaming_ratinggroup':
+            if(isset($node->field_ref_roaming_plan['und'][0]['nid'])){
+                $parent = node_load($node->field_ref_roaming_plan['und'][0]['nid']);
+                $searchTargets = $parent->field_ref_roaming_ratinggroup['und'];
+                $totalSearchTargets = count($searchTargets);
+                for($i = 0; $i < $totalSearchTargets; $i++){
+                    if($searchTargets[$i]['nid'] == $node->nid){
+                        unset($searchTargets[$i]);
+                        break;
+                    }
+                }
+                $parent->field_ref_roaming_ratinggroup['und'] = $searchTargets;
+                node_save($parent);
+            }
+            break;
 		case 'timetable':
 			//delete child nodes
 			if(!empty($node->field_ref_timetablefactors)){
