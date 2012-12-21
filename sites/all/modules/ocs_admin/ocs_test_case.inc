@@ -93,11 +93,13 @@ function ocs_run_testcase_http( $url, $ts_data, $field)
         'total_time' => $info['total_time']);
 
     */
-	dpm( $data, 'http data');
+	$body = json_encode( array( 'subscriptoin' => array( $data))); 
     $response = drupal_http_request( $url, array( 
 				'method' => 'POST',
-				'data' => json_encode( $data), 
+				'data' => $body,
 				'timeout'=>1));
+
+	dpm( 'http body:' . $body);
 
     $output = array( 'response' => $response);
 
