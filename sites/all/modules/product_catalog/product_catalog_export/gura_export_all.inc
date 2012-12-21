@@ -254,10 +254,51 @@ function get_drupal_field_refs($obj , $field_name)
 {
 	$ret = array();
 	$temp = $obj->$field_name;
-	foreach($temp['und'] as $und)
+	if(array_key_exists('und' , $temp))
 	{
-		$nid = $und['nid'];
-		$ret[] = node_load($nid);
+		foreach($temp['und'] as $und)
+		{
+			if(array_key_exists('nid' , $und))
+			{
+				$nid = $und['nid'];
+				$ret[] = node_load($nid);
+			}
+			else
+			{
+				$nid = $und['raw']['nid'];
+				if(array_key_exists('node' , $und['raw']))
+				{
+					$ret[] = $und['raw']['node'];
+				}
+				else
+				{
+					$ret[] = node_load($nid);
+				}
+			}
+		}
+	}
+	else
+	{
+		foreach($temp as $und)
+		{
+			if(array_key_exists('nid' , $und))
+			{
+				$nid = $und['nid'];
+				$ret[] = node_load($nid);
+			}
+			else
+			{
+				$nid = $und['raw']['nid'];
+				if(array_key_exists('node' , $und['raw']))
+				{
+					$ret[] = $und['raw']['node'];
+				}
+				else
+				{
+					$ret[] = node_load($nid);
+				}
+			}
+		}
 	}
 	return $ret;
 }
@@ -393,14 +434,26 @@ function generate_condition_string_by_condition_node($nid, &$factor_list )
 					}
 					else if($op == 'between')
 					{
+						/*
+						array_apply($value , 'to_rating_rule_string');
+						return $factor_name . ' ' . $op . ' ' . join(',' , $value);
+						 */
 						if(count($value) == 2)
 						{
 							array_apply($value , 'to_rating_rule_string');
 							return $factor_name . ' ' . $op . ' ' . join(',' , $value);
 						}
-						else
+						else if(count($value) >=4)
 						{
-							/* TODO */
+							array_apply($value , 'to_rating_rule_string');
+							$condstr = "(";
+							for($i = 0;$i<count($value);$i=$i+2)
+							{
+								if($i!=0)
+									$condstr = $condstr . " or ";
+								$condstr = $condstr . $factor_name . ' ' . $op . ' ' . $value[$i] . ',' . $value[$i+1];
+							}
+							return $condstr . ")";
 						}
 					}
 					else
@@ -622,10 +675,17 @@ function view_get_field_value($view , $field_name , $record)
 				}
 				else if(array_key_exists('taxonomy_term' , $raw_items[0]['raw']))
 				{
-					$t = $raw_items[0]['raw']['taxonomy_term'];
-					if(property_exists($t , "field_rating_operation_code"))
-						return $t->field_rating_operation_code['und'][0]['value'];
-					return $raw_items[0]['raw']['taxonomy_term']->name;
+					//dsm($raw_items);
+					$arr = array();
+					foreach($raw_items as $raw_item)
+					{
+						$t = $raw_item['raw']['taxonomy_term'];
+						if(property_exists($t , "field_rating_operation_code"))
+							$arr[]=$t->field_rating_operation_code['und'][0]['value'];
+						else
+							$arr[]= $raw_item['raw']['taxonomy_term']->name;
+					}
+					return join(',' , $arr);
 				}
                 else if(array_key_exists('nid' , $raw_items[0]['raw']) && array_key_exists('node' , $raw_items[0]['raw']))
                 {
