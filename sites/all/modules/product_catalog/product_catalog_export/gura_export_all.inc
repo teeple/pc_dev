@@ -434,14 +434,26 @@ function generate_condition_string_by_condition_node($nid, &$factor_list )
 					}
 					else if($op == 'between')
 					{
+						/*
+						array_apply($value , 'to_rating_rule_string');
+						return $factor_name . ' ' . $op . ' ' . join(',' , $value);
+						 */
 						if(count($value) == 2)
 						{
 							array_apply($value , 'to_rating_rule_string');
 							return $factor_name . ' ' . $op . ' ' . join(',' , $value);
 						}
-						else
+						else if(count($value) >=4)
 						{
-							/* TODO */
+							array_apply($value , 'to_rating_rule_string');
+							$condstr = "(";
+							for($i = 0;$i<count($value);$i=$i+2)
+							{
+								if($i!=0)
+									$condstr = $condstr . " or ";
+								$condstr = $condstr . $factor_name . ' ' . $op . ' ' . $value[$i] . ',' . $value[$i+1];
+							}
+							return $condstr . ")";
 						}
 					}
 					else
@@ -612,79 +624,87 @@ function view_get_field_value($view , $field_name , $record)
 		if(count($raw_items)>0)
 		{
             //dsm($field_handler);
-            //dsm($raw_items);
-			if(array_key_exists('raw', $raw_items[0]))
+			//dsm($raw_items);
+
+			$arr = array();
+			foreach($raw_items as $raw_item)
 			{
-				if(array_key_exists('value' , $raw_items[0]['raw']))
+				if(array_key_exists('raw', $raw_item))
 				{
-                    $value = $raw_items[0]['raw']['value'];
-                    if(array_key_exists('date_type', $raw_items[0]['raw']) && $raw_items[0]['raw']['date_type'] =='datetime' )
+					if(array_key_exists('value' , $raw_item['raw']))
 					{
-						$format_str = '%Y%m%d';
-						//dsm($field_handler->field_info['settings']['granularity']);	
-						if($field_handler->field_info['settings']['granularity']['minute'] != 0)
+						$value = $raw_item['raw']['value'];
+						if(array_key_exists('date_type', $raw_item['raw']) && $raw_item['raw']['date_type'] =='datetime' )
 						{
-							$format_str = '%Y-%m-%dT%H:%M';
-						}
-                        $value = '\''. strftime($format_str, strtotime($value)) . '\'';
-                    }
-
-                    if(get_field_type_string($field_name) == 'list_integer')
-                    {
-                        $value = $field_handler->field_info['settings']['allowed_values'][$value];
-                    }
-
-
-                    if(array_key_exists('value2' , $raw_items[0]['raw']))
-                    {
-                        $value2 = $raw_items[0]['raw']['value2'];
-                        if(array_key_exists('date_type', $raw_items[0]['raw']) && $raw_items[0]['raw']['date_type'] =='datetime' )
-                        {
 							$format_str = '%Y%m%d';
+							//dsm($field_handler->field_info['settings']['granularity']);	
 							if($field_handler->field_info['settings']['granularity']['minute'] != 0)
 							{
 								$format_str = '%Y-%m-%dT%H:%M';
 							}
-                            $value2 = '\'' . strftime($format_str, strtotime($value2)) . '\'' ;
-                        }
+							$value = '\''. strftime($format_str, strtotime($value)) . '\'';
+						}
 
-                        if($value2 != $value)
-                        {
-                            // $field_handler->options["settings"]["fromto"]=="both"
-                            //dsm($raw_items);
-                            return 'between ' . $value . ',' . $value2;
-                        }
-                        else
-                        {
-                            return '>= ' . $value;
-                        }
-                    }
-                    return $value;
+						if(get_field_type_string($field_name) == 'list_integer')
+						{
+							$value = $field_handler->field_info['settings']['allowed_values'][$value];
+						}
+
+
+						if(array_key_exists('value2' , $raw_item['raw']))
+						{
+							$value2 = $raw_item['raw']['value2'];
+							if(array_key_exists('date_type', $raw_item['raw']) && $raw_item['raw']['date_type'] =='datetime' )
+							{
+								$format_str = '%Y%m%d';
+								if($field_handler->field_info['settings']['granularity']['minute'] != 0)
+								{
+									$format_str = '%Y-%m-%dT%H:%M';
+								}
+								$value2 = '\'' . strftime($format_str, strtotime($value2)) . '\'' ;
+							}
+
+							if($value2 != $value)
+							{
+								// $field_handler->options["settings"]["fromto"]=="both"
+								//dsm($raw_items);
+								return 'between ' . $value . ',' . $value2;
+							}
+							else
+							{
+								return '>= ' . $value;
+							}
+						}
+						$arr[]= $value;
+					}
+					else if(array_key_exists('taxonomy_term' , $raw_item['raw']))
+					{
+						//dsm($raw_items);
+						$t = $raw_item['raw']['taxonomy_term'];
+						if(property_exists($t , "field_rating_operation_code"))
+							$arr[]=$t->field_rating_operation_code['und'][0]['value'];
+						else
+							$arr[]= $raw_item['raw']['taxonomy_term']->name;
+					}
+					else if(array_key_exists('nid' , $raw_item['raw']) && array_key_exists('node' , $raw_item['raw']))
+					{
+						//dsm($raw_items[0]['raw']['node']);
+						$arr[]= $raw_item['raw']['node']->title;
+					}
+					else
+					{
+						// dsm($raw_items);
+						$arr[] = $raw_item['rendered']['#markup'];
+						// return "unknown";
+					}
 				}
-				else if(array_key_exists('taxonomy_term' , $raw_items[0]['raw']))
-				{
-					$t = $raw_items[0]['raw']['taxonomy_term'];
-					if(property_exists($t , "field_rating_operation_code"))
-						return $t->field_rating_operation_code['und'][0]['value'];
-					return $raw_items[0]['raw']['taxonomy_term']->name;
-				}
-                else if(array_key_exists('nid' , $raw_items[0]['raw']) && array_key_exists('node' , $raw_items[0]['raw']))
-                {
-                    //dsm($raw_items[0]['raw']['node']);
-                    return $raw_items[0]['raw']['node']->title;
-                }
 				else
 				{
-					// dsm($raw_items);
-					return $raw_items[0]['rendered']['#markup'];
-					// return "unknown";
+					dsm($raw_items);
+					return "unknown";
 				}
 			}
-			else
-			{
-				dsm($raw_items);
-				return "unknown";
-			}
+			return join(',' , $arr);
 		}
 		//dsm($field_name);
 		//dsm($record);
