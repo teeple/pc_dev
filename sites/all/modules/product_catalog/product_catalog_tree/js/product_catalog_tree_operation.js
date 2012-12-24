@@ -1,4 +1,32 @@
 (function($) {
+	$.fn.pasteNode = function(node){
+		var nodeId = node.attr('id');
+		var pasteLink = '/product_catalog_ajax/paste_node/' + nodeId;
+		$.fn.masking("Pasting...");
+		$.ajax({
+			url : pasteLink,
+			success : function(data) {
+				var output = $.parseJSON(data);				
+				//console.log(output);
+				$.fn.unmasking();
+			}
+		});
+	};
+	
+	$.fn.copyNode = function(node){
+		var nodeId = node.attr('id');
+		var copyLink = '/product_catalog_ajax/copy_node/' + nodeId;
+		$.fn.masking("Copying...");
+		$.ajax({
+			url : copyLink,
+			success : function(data) {
+				var output = $.parseJSON(data);				
+				//console.log(output);
+				$.fn.unmasking();
+			}
+		});
+	};
+	
 	$.fn.loadSelectForm = function(node){
 		var nodeId = node.attr('id');
 		var rootId = $('.product_catalog_tree > ul:first > li:first').attr('id');
@@ -33,8 +61,8 @@
 	$.fn.selectModalButtonBinding = function(renderOutput, nid, defaultTabIndex) {		
 		
 		// $.fn.behaviorAttach(renderOutput);
-		console.log('source action nid');
-		console.log(nid);
+		//console.log('source action nid');
+		//console.log(nid);
 		
 		$('#vbo-message-select-button').bind('click', {nid:nid, defaultTabIndex: defaultTabIndex}, $.fn.selectMessageItemHandler);
 		

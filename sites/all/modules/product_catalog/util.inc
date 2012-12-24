@@ -236,3 +236,13 @@ function _get_records_from_views_by_label($view_name, $display, $args, $req_labe
 	}
 	return $retArray;
 }
+
+function session_get($session_name, $default=NULL) {
+    if (isset($_SESSION[$session_name])) {
+        return $_SESSION[$session_name];
+    }
+    return $default;
+}
+function session_set($session_name, $session_value) {
+    $_SESSION[$session_name] = $session_value;
+}
