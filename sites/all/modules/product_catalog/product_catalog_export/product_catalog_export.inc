@@ -52,6 +52,9 @@ function _make_json_string($termName,$refNid=NULL){
 		case 'EXCLUSIVENESS':
 			$jsonString = export_exclusiveness();
 			break;
+		case 'PCRF_COMMON_DATA':
+			$jsonString = json_encode(rating_rules_export_by_content_type('pcrf_rule_export',  array()));
+			break;
 		
 	}
 	
