@@ -1,13 +1,22 @@
 (function($) {
 	$.fn.pasteNode = function(node){
 		var nodeId = node.attr('id');
-		var pasteLink = '/product_catalog_ajax/paste_node/' + nodeId;
+		var productId = $('.product_catalog_tree > ul:first > li:first').attr('id');
+		var max_weight = node.children('ul').children('li').first().attr('weight');
+		if(max_weight == undefined) max_weight = 0;
+		var pasteLink = '/product_catalog_ajax/paste_node/' + nodeId + '/' + productId + '/' + max_weight;
 		$.fn.masking("Pasting...");
 		$.ajax({
 			url : pasteLink,
 			success : function(data) {
 				var output = $.parseJSON(data);				
 				//console.log(output);
+				//console.log(output.success);
+				if(output.success){
+					
+				}else{
+					alert(output.reason);
+				}
 				$.fn.unmasking();
 			}
 		});
@@ -93,10 +102,10 @@
 				
 				node = $('#node_' + event.data.nid);
 				
-				console.log('selectedItemNid');
-				console.log(selectedItemNid);
-				console.log('source action nid');
-				console.log(event.data.nid);
+				//console.log('selectedItemNid');
+				//console.log(selectedItemNid);
+				//console.log('source action nid');
+				//console.log(event.data.nid);
 				
 				$.fn.loadForm(node,null,event.data.defaultTabIndex);
 			}
@@ -108,7 +117,7 @@
 	$.fn.selectItemHandler = function(event){
 		
 		var parent = event.data.node; 
-        var rootId = event.data.rootId;
+    var rootId = event.data.rootId;
 		//jQuery('input[name=views_bulk_operations]:checked')		
 		var inputItems = $('input[name^=views_bulk_operations]:checked');
 		
