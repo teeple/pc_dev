@@ -251,7 +251,18 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			$form['field_weight']['#type'] = 'hidden';
             $form['field_parent_node']['#type'] = 'hidden';
             break; 
-            
+        
+		case 'holidaylist_specific_node_form':
+		case 'holidaylist_repeatable_node_form':
+			_unset_menu_items($form,$form_id);
+			$form['field_ref_holidaylist']['#type'] = 'hidden';
+			
+			// in case create 
+			if(!isset($form['nid']['#value'])){
+				$form['field_ref_holidaylist']['und'][0]['nid']['#default_value'] = $form_state['holidaylist_nid'];
+			}
+			break;
+			
         case 'depositscheme_node_form':
         	// unset($form['field_service_domain']);
         	unset($form['field_ref_depositschemefactors']);
@@ -538,7 +549,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 		case 'conditionwhoprefixfactors_node_form':
 		case 'conditioncommoncounterfactors_node_form':
 		case 'conditionwhatqos_node_form':
-
+		
 			_unset_menu_items($form,$form_id);
 			unset($form['field_weight']);
 			unset($form['field_parent_node']);
