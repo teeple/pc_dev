@@ -1,4 +1,18 @@
 (function($) {
+	$.fn.pasteNode = function(node){
+		var nodeId = node.attr('id');
+		var pasteLink = '/product_catalog_ajax/paste_node/' + nodeId;
+		$.fn.masking("Pasting...");
+		$.ajax({
+			url : pasteLink,
+			success : function(data) {
+				var output = $.parseJSON(data);				
+				//console.log(output);
+				$.fn.unmasking();
+			}
+		});
+	};
+	
 	$.fn.copyNode = function(node){
 		var nodeId = node.attr('id');
 		var copyLink = '/product_catalog_ajax/copy_node/' + nodeId;
@@ -6,9 +20,8 @@
 		$.ajax({
 			url : copyLink,
 			success : function(data) {
-				var output = $.parseJSON(data);
-				console.log('copy ajax');
-				console.log(output);
+				var output = $.parseJSON(data);				
+				//console.log(output);
 				$.fn.unmasking();
 			}
 		});
