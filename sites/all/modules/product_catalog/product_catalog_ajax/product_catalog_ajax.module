@@ -452,6 +452,12 @@ function product_catalog_ajax_add_modal_content($js = NULL, $contentType, $refNo
 			$refNode = node_load($refNodeNid);
 			$form_state['product_nid'] = $refNode->field_ref_product['und'][0]['nid'];
 			break;
+
+		case 'holidaylist_repeatable':
+		case 'holidaylist_specific':
+			$form_state['holidaylist_nid']= $refNodeNid;
+			
+			break;
 		
 		case 'numberspecialfactors':
 			$node->field_ref_numberspecial['und'][0]['nid'] = $refNodeNid;
@@ -501,6 +507,8 @@ function product_catalog_ajax_add_modal_content($js = NULL, $contentType, $refNo
 			case 'thresholdschemefactors':
 			case 'area_code':
 			case 'ocs_state_machine':
+			case 'holidaylist_repeatable':
+			case 'holidaylist_specific':
 				$output[] = ctools_ajax_command_reload();
 				break;
 			case 'actionsetcounter':
@@ -1456,7 +1464,8 @@ function product_catalog_modal_form_edit_modal_content($js = NULL, $contentType,
         	case 'depositschemefactors':
         	case 'depositschemeadjustment':
         	case 'thresholdschemefactors':
-			
+			case 'holidaylist_specific':
+			case 'holidaylist_repeatable':
         	case 'area_code':
         		$output[] = ctools_ajax_command_reload();
 				break;
@@ -1497,6 +1506,8 @@ function product_catalog_ajax_delete_from_view($nodeNid, $refNodeNid, $defaultTa
 		case 'depositschemeadjustment':
 		case 'thresholdschemefactors':
 		case 'area_code':
+		case 'holidaylist_repeatable':
+		case 'holidaylist_specific':
 			$output[] = ctools_ajax_command_reload();
 			break;
 		case 'actionsetcounter':
