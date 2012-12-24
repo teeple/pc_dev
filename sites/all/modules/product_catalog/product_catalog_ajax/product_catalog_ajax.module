@@ -127,10 +127,25 @@ function product_catalog_ajax_menu() {
   		'access callback' => TRUE,
   		'type' => MENU_CALLBACK,
   );
+  $items['product_catalog_ajax/copy_node/%'] = array(
+      'title' => 'Copy',
+      'page callback' => 'product_catalog_ajax_copy_node',
+      'page arguments' => array(2),
+      'access callback' => TRUE,
+      'type' => MENU_CALLBACK,
+  );
   return $items;
 
 } 
 
+function product_catalog_ajax_copy_node($nodeId){
+    ctools_include('ajax');
+    dsm($nodeId);
+    $output = 'haha';
+
+    print json_encode($output);
+    exit;
+}
 function product_catalog_ajax_select_modal_item_submit($contentTypes) {
 	global $user;
 	ctools_include('node.pages', 'node', '');
