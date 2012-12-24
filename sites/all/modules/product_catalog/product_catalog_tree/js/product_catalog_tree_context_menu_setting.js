@@ -1430,6 +1430,10 @@
 						menus.custom_delete.action = function(node) {
 							$.fn.deleteNode(node);
 						};
+						menus.custom_copy._disabled = false;
+						menus.custom_copy.action = function(node) {
+							$.fn.copyNode(node);
+						};
 						break;
 					case "treeNodeNumberingPlanDomestic":
 						menus.custom_create._disabled = false;
