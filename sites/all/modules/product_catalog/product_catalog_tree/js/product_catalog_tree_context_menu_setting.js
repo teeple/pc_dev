@@ -271,7 +271,7 @@
 									$.fn.loadSelectForm(node);
 								}
 							},
-						};
+						};						
 						break;
 					case 'mobile_nonusage_otheronetimecharge':
 						menus.custom_create._disabled = false;
@@ -1343,6 +1343,10 @@
 								}
 							},
 						};
+						menus.custom_paste._disabled = false;
+						menus.custom_paste.action = function(node) {
+							$.fn.pasteNode(node);
+						};
 						break;
 					case "mobile_usage_sms":
 						menus.custom_create._disabled = false;
@@ -1356,6 +1360,10 @@
 								}
 							},
 						};
+						menus.custom_paste._disabled = false;
+						menus.custom_paste.action = function(node) {
+							$.fn.pasteNode(node);
+						};
 						break;
 					case "mobile_usage_data":
 						menus.custom_create._disabled = false;
@@ -1368,6 +1376,10 @@
 									});
 								}
 							},
+						};
+						menus.custom_paste._disabled = false;
+						menus.custom_paste.action = function(node) {
+							$.fn.pasteNode(node);
 						};
 						break;
 					case "data_tariffplan_predefined":
@@ -1424,11 +1436,19 @@
 								}
 							},
 						};
+						menus.custom_paste._disabled = false;
+						menus.custom_paste.action = function(node) {
+							$.fn.pasteNode(node);
+						};
 						break;
 					case "tariffplan":
 						menus.custom_delete._disabled = false;
 						menus.custom_delete.action = function(node) {
 							$.fn.deleteNode(node);
+						};
+						menus.custom_copy._disabled = false;
+						menus.custom_copy.action = function(node) {
+							$.fn.copyNode(node);
 						};
 						break;
 					case "treeNodeNumberingPlanDomestic":
@@ -1570,7 +1590,7 @@
 						menus.custom_paste = null;
 						menus.custom_delete = null;
 						break;
-				}
+				}  
 				break;
 
 			case "numberspecial_tree":
