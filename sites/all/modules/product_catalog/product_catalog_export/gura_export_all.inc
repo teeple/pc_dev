@@ -638,7 +638,7 @@ function view_get_field_value($view , $field_name , $record)
 						{
 							$format_str = '%Y%m%d';
 							//dsm($field_handler->field_info['settings']['granularity']);	
-							if($field_handler->field_info['settings']['granularity']['minute'] != 0)
+							if($field_handler->field_info['settings']['granularity']['minute'] !== 0)
 							{
 								$format_str = '%Y-%m-%dT%H:%M';
 							}
@@ -657,7 +657,7 @@ function view_get_field_value($view , $field_name , $record)
 							if(array_key_exists('date_type', $raw_item['raw']) && $raw_item['raw']['date_type'] =='datetime' )
 							{
 								$format_str = '%Y%m%d';
-								if($field_handler->field_info['settings']['granularity']['minute'] != 0)
+								if($field_handler->field_info['settings']['granularity']['minute'] !== 0)
 								{
 									$format_str = '%Y-%m-%dT%H:%M';
 								}
