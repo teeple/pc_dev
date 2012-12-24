@@ -145,11 +145,49 @@ function product_catalog_ajax_menu() {
 
 } 
 
-function product_catalog_ajax_paste_node($nodeId){
+function product_catalog_ajax_paste_node($nodeId,$productId,$weight){
     ctools_include('ajax');
     $targetNid = session_get('copy_target_nid');
-    dsm($targetNid,'target');
-    $output = 'success';
+    $productNid = explode('_', $productId);
+    $productNid = $productNid[1];
+    $baseId = explode('_',$nodeId);
+    $baseIdType = $baseId[0];
+    $baseIdValue = $baseId[1];
+    
+    if($targetNid == NULL){
+        $output['success'] = FALSE;
+        $output['reason'] = 'There is no copied item';
+    }else{
+        $targetNode = node_load($targetNid);    
+        if($targetNode->type == 'tariffplan'){
+            $targetRefTreeTid = $targetNode->field_ref_tree_tid['und'][0]['value'];
+            if($targetRefTreeTid != $baseIdValue){
+                $output['success'] = FALSE;
+                $targetRefTreeTerm = taxonomy_term_load($targetRefTreeTid);
+                $baseIdTerm = taxonomy_term_load($baseIdValue);
+                if($targetRefTreeTerm->name != $baseIdTerm->name){
+                    $output['reason'] = $targetRefTreeTerm->name . ' tariffplan can not be pasted to '. $baseIdTerm->name . ' tariffplan';
+                     dsm($targetRefTreeTerm,'target term');
+                }else{
+                    $targetRefTermVocaName = $targetRefTreeTerm->vocabulary_machine_name;
+                    $baseTermVocaName = $baseIdTerm->vocabulary_machine_name;
+                    $targetRefTermVocaName = explode('_',$targetRefTermVocaName);
+                    $baseTermVocaName = explode('_',$baseTermVocaName);
+                    
+                    if($targetRefTermVocaName[3] != $baseTermVocaName[3]){//service domain
+                        $output['reason'] = 'tariffplan of '. $targetRefTermVocaName[3]. ' service domain can not be pasted to '. $baseTermVocaName[3] .' service domain';
+                    }else if($targetRefTermVocaName[5] != $baseTermVocaName[5]){// billing type
+                          $output['reason'] = 'tariffplan of '. $targetRefTermVocaName[5]. ' billtype can not be pasted to '. $baseTermVocaName[5] .' billtype';
+                    }
+                }                
+            }else{
+                dsm($targetNode,'target node');
+                dsm($weight,'weight');
+                dsm($nodeId,'node id');
+                $output['success'] = TRUE;    
+            }            
+        }
+    }
     print json_encode($output);
     exit;
 };
