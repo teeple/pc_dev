@@ -134,18 +134,40 @@ function product_catalog_ajax_menu() {
       'access callback' => TRUE,
       'type' => MENU_CALLBACK,
   );
+  $items['product_catalog_ajax/paste_node/%'] = array(
+      'title' => 'Paste',
+      'page callback' => 'product_catalog_ajax_paste_node',
+      'page arguments' => array(2),
+      'access callback' => TRUE,
+      'type' => MENU_CALLBACK,
+  );
   return $items;
 
 } 
 
+function product_catalog_ajax_paste_node($nodeId){
+    ctools_include('ajax');
+    $targetNid = session_get('copy_target_nid');
+    dsm($targetNid,'target');
+    $output = 'success';
+    print json_encode($output);
+    exit;
+};
+
 function product_catalog_ajax_copy_node($nodeId){
     ctools_include('ajax');
-    dsm($nodeId);
-    $output = 'haha';
-
+    $nid = explode('_',$nodeId);
+    $nid = $nid[1];
+    
+    //$copyNode = node_load($nid);
+    session_set('copy_target_nid',$nid);
+        
+    //$output = $copyNode->title . ' has been copied';
+    $output = 'success';
     print json_encode($output);
     exit;
 }
+
 function product_catalog_ajax_select_modal_item_submit($contentTypes) {
 	global $user;
 	ctools_include('node.pages', 'node', '');
