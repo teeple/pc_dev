@@ -1395,10 +1395,11 @@
 							$.fn.pasteNode(node);
 						};
 						break;
-					case "mobile_usage_data":
+						
+					case "mobile_usage_mms":
 						menus.custom_create._disabled = false;
 						menus.custom_create.submenu = {
-							"mobile_usage_sms" : {
+							"mobile_usage_mms" : {
 								"label" : "Tariff Plan",
 								action : function(node) {
 									$.fn.addNode(node, {
@@ -1412,6 +1413,24 @@
 							$.fn.pasteNode(node);
 						};
 						break;
+					case "mobile_usage_data":
+						menus.custom_create._disabled = false;
+						menus.custom_create.submenu = {
+							"mobile_usage_data" : {
+								"label" : "Tariff Plan",
+								action : function(node) {
+									$.fn.addNode(node, {
+										'childContentType' : 'tariffplan'
+									});
+								}
+							},
+						};
+						menus.custom_paste._disabled = false;
+						menus.custom_paste.action = function(node) {
+							$.fn.pasteNode(node);
+						};
+						break;
+						
 					case "data_tariffplan_predefined":
 						menus.custom_create._disabled = false;
 						menus.custom_create.submenu = {
