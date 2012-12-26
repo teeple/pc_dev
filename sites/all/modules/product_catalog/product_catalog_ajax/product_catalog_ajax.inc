@@ -365,6 +365,8 @@ function add_js_settings_after_node_save($node){
 	);
 	
 	drupal_add_js(array('product_catalog_ajax_result' => $js_settings), 'setting');
+    
+    return $js_settings;
 }
 
 function add_js_settings_after_node_update($node) {
