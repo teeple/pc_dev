@@ -448,6 +448,36 @@
 							},
 						};
 						break;
+					case "treeNodeCustomBlock":
+						menus.custom_create._disabled = false;
+						menus.custom_create.submenu = {
+							"treeNodeCustomBlock" : {
+								"label" : "Block Service Factors",
+								action : function(node) {
+									$.fn.addNode(node, {
+										'childContentType' : 'actionblockfactors'
+									});
+								}
+							},
+						};
+						break;
+					case 'actionblockfactors':
+						menus.custom_create._disabled = false;
+						menus.custom_create.submenu = {
+							"actionblockfactors" : {
+								"label" : "ConditionSet",
+								action : function(node) {
+									$.fn.addNode(node, {
+										'childContentType' : 'conditioncommonand'
+									});
+								}
+							},
+						};
+						menus.custom_delete._disabled = false;
+						menus.custom_delete.action = function(node) {
+							$.fn.deleteNode(node);
+						};
+						break;
 					case "treeNodeCustomAllowance":
 						menus.custom_create._disabled = false;
 						menus.custom_create.submenu = {

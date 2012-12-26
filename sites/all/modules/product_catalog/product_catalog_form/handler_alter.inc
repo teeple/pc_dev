@@ -66,6 +66,7 @@ function _add_ajax_submit_callback($form_id,&$form){
         case 'actionpricechargerecurring_node_form':
         case 'actionpricediscount_node_form':
         case 'actionpriceallowance_node_form':
+		case 'actionblockfactors_node_form':
 		// case 'actionsetnotification_node_form':
         case 'tariffplan_node_form':
         case 'treenodecounter_node_form':
@@ -431,6 +432,28 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             break;
             
         case 'treenodecounter_node_form':
+			
+			$refTreeTerm = taxonomy_term_load($form['field_ref_tree_tid']['und'][0]['value']['#default_value']);
+			/*
+			$product = node_load($form['field_ref_product']['und'][0]['nid']['#default_value']);
+			$billingTypeTerm  = taxonomy_term_load($product->field_billing_type['und'][0]['tid']);
+			*/
+			
+			if($refTreeTerm->name == 'Charging') {
+				$form['field_counter']['#type'] = 'hidden';
+				$form['field_startdate_option1']['#type'] = 'hidden';
+				$form['field_enddate_option1']['#type'] = 'hidden';
+				$form['field_enddate_option2']['#type'] = 'hidden';
+				$form['field_enddate_option3']['#type'] = 'hidden';
+				$form['field_enddate_option4']['#type'] = 'hidden';
+				unset($form['#groups']);
+				unset($form['#fieldgroups']);
+				unset($form['#group_children']);
+				
+			} else if($refTreeTerm->name == 'Accumulating') {
+				$form['field_threshold_on_counter']['#type'] = 'hidden';
+			}
+			
 			$form['title']['#type'] = 'hidden';
             $form['field_ref_counter']['#type'] = 'hidden';
             $form['field_parent_node']['#type'] = 'hidden';
@@ -439,7 +462,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             $form['field_ref_product']['#type'] = 'hidden';
             $form['field_main_or_accumulated']['#type'] = 'hidden';
 			
-            _unset_menu_items($form,$form_id);
+			_unset_menu_items($form,$form_id);
 
             break;
         case 'conditionwhatcalltype_node_form':
@@ -804,6 +827,14 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
                     $form['actions']['submit']['#submit'][] = '_timetablefactors_link_to_timetable';
                 }
             }
+        	break;
+		case 'actionblockfactors_node_form':
+			unset($form['field_parent_node']);
+            unset($form['field_weight']);
+			$form['field_ref_product']['#type'] = 'hidden';
+        	$form['field_ref_tree_tid']['#type'] = 'hidden';
+        	$form['field_ref_tree_nid']['#type'] = 'hidden';
+            _unset_menu_items($form,$form_id);
         	break;
         case 'conditioncommoncarrieridd_node_form':
         case 'conditioncommoncarrierdomestic_node_form':
