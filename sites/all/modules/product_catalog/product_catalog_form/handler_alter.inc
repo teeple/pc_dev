@@ -495,13 +495,20 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			
 		case 'simpleproductoffering_node_form':
 			
+			dsm($form, 'form');
+			dsm($form_state, 'form-state');
+			
 			if(isset($form['field_r_prodofferingrel']))unset($form['field_r_prodofferingrel']);
 			if(isset($form['field_r_productspecification']))unset($form['field_r_productspecification']);
 			if(isset($form['field_r_prodspeccharvalueuse']))unset($form['field_r_prodspeccharvalueuse']);
 			if(isset($form['field_r_productofferingprice']))unset($form['field_r_productofferingprice']);
 			if(isset($form['field_r_productofferingprice']))unset($form['field_r_productofferingprice']);
 			
-			unset($form['field_product_type']);
+			$paths = explode('/', current_path());
+			$productTypeTerm = taxonomy_get_term_by_name($paths[2], 'prdtype');
+			$form['field_product_type']['und']['#default_value'][0] = current($productTypeTerm)->tid;
+			$form['field_product_type']['#type'] = 'hidden';
+			
 			unset($form['field_service_type_of_provider']);
 			unset($form['field_parent_node_for_rp']);
 			unset($form['field_weight_for_ratingpriority']);
