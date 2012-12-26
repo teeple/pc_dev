@@ -1408,11 +1408,50 @@
 								}
 							},
 						};
+						break;
+					case "mobile_usage_crbt":
+						menus.custom_create._disabled = false;
+						menus.custom_create.submenu = {
+							"mobile_usage_crbt" : {
+								"label" : "Tariff Plan",
+								action : function(node) {
+									$.fn.addNode(node, {
+										'childContentType' : 'tariffplan'
+									});
+								}
+							},
+						};
 						menus.custom_paste._disabled = false;
 						menus.custom_paste.action = function(node) {
 							$.fn.pasteNode(node);
 						};
 						break;
+					case "mobile_usage_vod":
+						menus.custom_create._disabled = false;
+						menus.custom_create.submenu = {
+							"mobile_usage_vod" : {
+								"label" : "Tariff Plan",
+								action : function(node) {
+									$.fn.addNode(node, {
+										'childContentType' : 'tariffplan'
+									});
+								}
+							},
+						};
+						break;
+					case "mobile_usage_loyaltypoint":
+						menus.custom_create._disabled = false;
+						menus.custom_create.submenu = {
+							"mobile_usage_loyaltypoint" : {
+								"label" : "Tariff Plan",
+								action : function(node) {
+									$.fn.addNode(node, {
+										'childContentType' : 'tariffplan'
+									});
+								}
+							},
+						};
+						break;				
 					case "mobile_usage_data":
 						menus.custom_create._disabled = false;
 						menus.custom_create.submenu = {
