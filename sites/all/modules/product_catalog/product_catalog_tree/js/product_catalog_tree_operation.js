@@ -13,7 +13,7 @@
 				//console.log(output);
 				//console.log(output.success);
 				if(output.success){
-					
+						$.fn.addNestedMultipleChildren(output.product_catalog_ajax_result);
 				}else{
 					alert(output.reason);
 				}
