@@ -145,8 +145,60 @@ function product_catalog_ajax_menu() {
 
 } 
 
+function _paste_tariffplan($targetNode,$productNid,$baseIdType,$baseIdValue,$weight){
+    $targetRefTreeTid = $targetNode->field_ref_tree_tid['und'][0]['value'];
+    if($targetRefTreeTid != $baseIdValue){//error
+        $output['success'] = FALSE;
+        $targetRefTreeTerm = taxonomy_term_load($targetRefTreeTid);
+        $baseIdTerm = taxonomy_term_load($baseIdValue);
+        if($targetRefTreeTerm->name != $baseIdTerm->name){
+            $output['reason'] = $targetRefTreeTerm->name . ' tariffplan can not be pasted to '. $baseIdTerm->name . ' tariffplan';
+        }else{
+            $targetRefTermVocaName = $targetRefTreeTerm->vocabulary_machine_name;
+            $baseTermVocaName = $baseIdTerm->vocabulary_machine_name;
+            $targetRefTermVocaName = explode('_',$targetRefTermVocaName);
+            $baseTermVocaName = explode('_',$baseTermVocaName);
+            
+            if($targetRefTermVocaName[3] != $baseTermVocaName[3]){//service domain
+                $output['reason'] = 'tariffplan of '. $targetRefTermVocaName[3]. ' service domain can not be pasted to '. $baseTermVocaName[3] .' service domain';
+            }else if($targetRefTermVocaName[5] != $baseTermVocaName[5]){// billing type
+                $output['reason'] = 'tariffplan of '. $targetRefTermVocaName[5]. ' billtype can not be pasted to '. $baseTermVocaName[5] .' billtype';
+            }
+        }                
+    }else{//success
+        dsm($targetNode,'target node');
+        //create tariffplan node
+        $tariffplanNode = new StdClass();     
+        $tariffplanNode->uid = $user->uid;
+        $tariffplanNode->type = 'tariffplan';
+        $tariffplanNode->language = 'und';
+        $tariffplanNode->field_weight['und'][0]['value'] = $weight;
+        $tariffplanNode->field_ref_product['und'][0]['nid'] = $productNid;
+        $tariffplanNode->field_ref_tree_tid = $targetNode->field_ref_tree_tid;
+        $tariffplanNode->field_tree_child_voca_name = $targetNode->field_tree_child_voca_name;
+        $tariffplanNode->field_ref_numberingplan_domestic = $targetNode->field_ref_numberingplan_domestic;
+        $tariffplanNode->field_ref_numberingplan_idd = $targetNode->field_ref_numberingplan_idd;
+        $tariffplanNode->field_ref_timetable_domestic = $targetNode->field_ref_timetable_domestic;
+        $tariffplanNode->field_valid_date_ymd = $targetNode->field_valid_date_ymd;
+        $tariffplanNode->field_valid_date_hour = $targetNode->field_valid_date_hour;
+        $tariffplanNode->field_ref_numberspecial = $targetNode->field_ref_numberspecial;
+        $tariffplanNode->field_ref_roaming_plan = $targetNode->field_ref_roaming_plan;
+        
+        //$tariffplanNode->field_ref_tariffplan_idd_carrier = $targetNode->field_ref_tariffplan_idd_carrier;
+        
+        //node_save($tariffplanNode);
+        
+        $output['success'] = TRUE;    
+    }  
+
+    return $output;
+};
+
 function product_catalog_ajax_paste_node($nodeId,$productId,$weight){
+    ctools_include('node.pages', 'node', '');
     ctools_include('ajax');
+    global $user;
+    
     $targetNid = session_get('copy_target_nid');
     $productNid = explode('_', $productId);
     $productNid = $productNid[1];
@@ -160,32 +212,7 @@ function product_catalog_ajax_paste_node($nodeId,$productId,$weight){
     }else{
         $targetNode = node_load($targetNid);    
         if($targetNode->type == 'tariffplan'){
-            $targetRefTreeTid = $targetNode->field_ref_tree_tid['und'][0]['value'];
-            if($targetRefTreeTid != $baseIdValue){
-                $output['success'] = FALSE;
-                $targetRefTreeTerm = taxonomy_term_load($targetRefTreeTid);
-                $baseIdTerm = taxonomy_term_load($baseIdValue);
-                if($targetRefTreeTerm->name != $baseIdTerm->name){
-                    $output['reason'] = $targetRefTreeTerm->name . ' tariffplan can not be pasted to '. $baseIdTerm->name . ' tariffplan';
-                     dsm($targetRefTreeTerm,'target term');
-                }else{
-                    $targetRefTermVocaName = $targetRefTreeTerm->vocabulary_machine_name;
-                    $baseTermVocaName = $baseIdTerm->vocabulary_machine_name;
-                    $targetRefTermVocaName = explode('_',$targetRefTermVocaName);
-                    $baseTermVocaName = explode('_',$baseTermVocaName);
-                    
-                    if($targetRefTermVocaName[3] != $baseTermVocaName[3]){//service domain
-                        $output['reason'] = 'tariffplan of '. $targetRefTermVocaName[3]. ' service domain can not be pasted to '. $baseTermVocaName[3] .' service domain';
-                    }else if($targetRefTermVocaName[5] != $baseTermVocaName[5]){// billing type
-                          $output['reason'] = 'tariffplan of '. $targetRefTermVocaName[5]. ' billtype can not be pasted to '. $baseTermVocaName[5] .' billtype';
-                    }
-                }                
-            }else{
-                dsm($targetNode,'target node');
-                dsm($weight,'weight');
-                dsm($nodeId,'node id');
-                $output['success'] = TRUE;    
-            }            
+            $output = _paste_tariffplan($targetNode,$productNid,$baseIdType,$baseIdValue,$weight);              
         }
     }
     print json_encode($output);
