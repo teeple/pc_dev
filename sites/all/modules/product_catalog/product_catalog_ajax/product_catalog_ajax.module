@@ -1107,7 +1107,18 @@ function product_catalog_ajax_load_select_form($nid,$eventType,$rootNid,$relType
             	break;
             	
             case 'callback':
-            	$args = array(
+				
+				// treenodecounter에서 선불이 PostPaid일 때에는 필요없음.
+				if($nodeOrTerm == 'node') {
+					dsm($relType, 'relType');
+					if($relType == 'tree_node_counter_main_basic' || $relType == 'tree_node_counter_main_optional') {
+						$treeNodeCounter = node_load($id);
+						$refCounter = node_load($treeNodeCounter->field_ref_counter['und'][0]['nid']);
+						$billingTypeCounter = taxonomy_term_load($refCounter->field_billing_type_counter['und'][0]['tid']);
+						if($billingTypeCounter->name == 'Prepaid') continue;
+					}
+				}
+				$args = array(
             			'qtabIndex' => $qtabIndex,
             			'termInTree' => $termInTree,
             			'id' => $id,
