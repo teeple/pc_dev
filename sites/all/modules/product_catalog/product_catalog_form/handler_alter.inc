@@ -21,6 +21,7 @@ function _unset_menu_items(&$form,$formId){
         case 'roaming_country_node_form':
         case 'roaming_carrier_node_form':
         case 'roaming_plan_node_form':
+		case 'counter_node_form':
 			$unsetDeleteButton = FALSE;
 			//dsm($form);
 			break;
@@ -67,6 +68,7 @@ function _add_ajax_submit_callback($form_id,&$form){
         case 'actionpricediscount_node_form':
         case 'actionpriceallowance_node_form':
 		case 'actionblockfactors_node_form':
+		case 'counter_node_form':
 		// case 'actionsetnotification_node_form':
         case 'tariffplan_node_form':
         case 'treenodecounter_node_form':
@@ -170,7 +172,9 @@ function edit_pane_callback($form, &$form_state){
 }
 
 function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
-	//dsm($form_id);
+
+// dsm($form_id, 'form_id');
+	
     if((isset($form['#attributes']) && isset($form['#attributes']['class'])) 
         && gettype($form['#attributes']['class']) == 'array') {
     	$form['#attributes']['class'][] = 'myform';
@@ -408,7 +412,6 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			
 			unset($form['actions']);
 			$form['field_parent_node']['#type'] = 'hidden';
-			
 			$form['multiselect_custom'] = array('#type'=> 'markup',
 				'#markup' => "<input type='button' id='multiselect_custom_button' value='Save'></input>",
 				'#weight' => 100,
@@ -430,6 +433,25 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			$form['field_counter_list']['und']['#options'] = $counterList;
 			
             break;
+			
+		case 'counter_node_form':
+			
+			// in case edit
+			if(isset($form['nid']['#value'])) {
+				$form['field_counter_id']['und']['#disabled'] = TRUE;
+				$form['field_scale']['und']['#disabled'] = TRUE;
+				$form['field_counter_type']['und']['#disabled'] = TRUE;
+				$form['field_service_domain']['und']['#disabled'] = TRUE;
+				$form['field_billing_type_counter']['und']['#disabled'] = TRUE;
+				$form['field_counter_unit_type']['und']['#disabled'] = TRUE;
+				$form['field_default_usage_type']['und']['#disabled'] = TRUE;	
+			}
+			
+			unset($form['field_weight']);
+			unset($form['field_parent_node']);
+			
+			_unset_menu_items(&$form, 'counter_node_form');
+			break;
             
         case 'treenodecounter_node_form':
 			
@@ -494,9 +516,6 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             break;
 			
 		case 'simpleproductoffering_node_form':
-			
-			dsm($form, 'form');
-			dsm($form_state, 'form-state');
 			
 			if(isset($form['field_r_prodofferingrel']))unset($form['field_r_prodofferingrel']);
 			if(isset($form['field_r_productspecification']))unset($form['field_r_productspecification']);
@@ -856,8 +875,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
         	$form['field_ref_tree_nid']['#type'] = 'hidden';
             
             $parentTerm = taxonomy_term_load($form_state['build_info']['args'][0]->field_ref_tree_tid['und'][0]['value']);
-            if($parentTerm->vocabulary_machine_name == 'tpl_tariffplan_mobile_sms' 
-                || $parentTerm->vocabulary_machine_name == 'tpl_tariffplan_mobile_data'){ //for single price such as sms
+            if($parentTerm->vocabulary_machine_name != 'tpl_tariffplan_mobile_voice'){ //for single price such as sms
                 unset($form['field_range_units']);
                 unset($form['field_uom_units']);
                 unset($form['field_discount_collection']);                               
@@ -1023,7 +1041,6 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			_unset_menu_items($form,$form_id);
           	break;
 		case 'actionsetcounter_node_form':
-		case 'actionsetcounteronbonus_node_form':
 			$form['field_ref_source_action']['#type'] = 'hidden';
 			$productNid = $form_state['product_nid'];
 			
@@ -1038,6 +1055,38 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			foreach($basicCounterList as $key => $value) {
 				$mergedCounterList[$key] = $value;
 			}
+			foreach($existingCounterList as $key => $value) {
+				$mergedCounterList[$key] = $value;
+			}
+			$form['field_ref_counter']['und']['#options'] = $mergedCounterList;
+			
+			_unset_menu_items($form,$form_id);
+          	break;
+			
+		case 'actionsetcounteronbonus_node_form':
+			$form['field_ref_source_action']['#type'] = 'hidden';
+			$productNid = $form_state['product_nid'];
+			
+			$product = node_load($productNid);
+			$billingTypeTerm = taxonomy_term_load($product->field_billing_type['und'][0]['tid']);
+			if($billingTypeTerm->name == 'Postpaid') {
+				$tempTerm = taxonomy_get_term_by_name('Prepaid', 'billtypecounter');
+				$existingCounterList = _get_existing_counter_list($productNid, current($tempTerm)->tid);
+				
+			} else {
+				$basicCounterList = array();
+				$tempList = _get_default_basic_counters($productNid);
+				foreach($tempList as $record){
+					$counterUnitType = $record->field_field_counter_unit_type[0]['rendered']['#options']['entity']->name;
+					$basicCounterList[$record->nid] = $record->node_title.'('.$counterUnitType.')';
+				}
+				$existingCounterList = _get_existing_counter_list($productNid);
+				
+				foreach($basicCounterList as $key => $value) {
+					$mergedCounterList[$key] = $value;
+				}
+			}
+			
 			foreach($existingCounterList as $key => $value) {
 				$mergedCounterList[$key] = $value;
 			}
@@ -1274,8 +1323,6 @@ function _get_existing_counter_list($productNid) {
 	$view->execute();
 	
 	$counterList = array();
-	dsm($productNid, 'productNid');
-	dsm($view->result, 'view list');
 	
 	foreach($view->result as $record) {
 		$existingCounterList[]= view_get_field_value_by_label($view, 'qtabConfigNid', $record);
@@ -1316,7 +1363,7 @@ function _get_available_counter_list($productNid, $existingCounterNids) {
 	// service domain
 	$args[1] = $product->field_service_type_of_provider['und'][0]['tid'];
 	 
-	if($term_billing_type_product == 'Hybrid') {
+	if($term_billing_type_product->name == 'Hybrid' || $term_billing_type_product->name == 'Postpaid') {
 		$args[2] = 'all';
 	} else {
 		$term_billing_type_counter = taxonomy_get_term_by_name($term_billing_type_product->name, 'billtypecounter');
@@ -1326,6 +1373,7 @@ function _get_available_counter_list($productNid, $existingCounterNids) {
 	if(isset($existingCounterNids)) {
 		$args[3] = join('+', $existingCounterNids);
 	}
+	dsm($args, 'args');
 	
 	$view = views_get_view('query_list_counter');
 	$view->set_display('panel_pane_1');
