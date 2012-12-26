@@ -151,6 +151,10 @@ function rating_rule_export($ruleset_template , $export_item,  $nid=NULL, $vars 
             }
             $data = rating_rules_export_from_view($ruleset_name, $export_item->field_view_name['und'][0]['value'] , $display_name, $nid);
 			$data['individual_ruleset'] = $individual_ruleset;
+			if(property_exists($export_item , 'field_export_target') && count($export_item->field_export_target)>0)
+			{
+				$data['export_target'] = $export_item->field_export_target['und'][0]['value'];
+			}
 			return $data;
 		}
 		return NULL;
