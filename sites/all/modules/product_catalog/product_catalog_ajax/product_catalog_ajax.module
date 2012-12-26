@@ -146,6 +146,7 @@ function product_catalog_ajax_menu() {
 } 
 
 function _paste_tariffplan($targetNode,$productNid,$baseIdType,$baseIdValue,$weight){
+    global $user;
     $targetRefTreeTid = $targetNode->field_ref_tree_tid['und'][0]['value'];
     if($targetRefTreeTid != $baseIdValue){//error
         $output['success'] = FALSE;
@@ -166,12 +167,12 @@ function _paste_tariffplan($targetNode,$productNid,$baseIdType,$baseIdValue,$wei
             }
         }                
     }else{//success
-        dsm($targetNode,'target node');
         //create tariffplan node
         $tariffplanNode = new StdClass();     
         $tariffplanNode->uid = $user->uid;
         $tariffplanNode->type = 'tariffplan';
         $tariffplanNode->language = 'und';
+        $tariffplanNode->title = $targetNode->title;
         $tariffplanNode->field_weight['und'][0]['value'] = $weight;
         $tariffplanNode->field_ref_product['und'][0]['nid'] = $productNid;
         $tariffplanNode->field_ref_tree_tid = $targetNode->field_ref_tree_tid;
@@ -182,13 +183,119 @@ function _paste_tariffplan($targetNode,$productNid,$baseIdType,$baseIdValue,$wei
         $tariffplanNode->field_valid_date_ymd = $targetNode->field_valid_date_ymd;
         $tariffplanNode->field_valid_date_hour = $targetNode->field_valid_date_hour;
         $tariffplanNode->field_ref_numberspecial = $targetNode->field_ref_numberspecial;
-        $tariffplanNode->field_ref_roaming_plan = $targetNode->field_ref_roaming_plan;
+        $tariffplanNode->field_ref_roaming_plan = $targetNode->field_ref_roaming_plan;        
+        $tariffplanNode->title = $targetNode->title;
+        node_save($tariffplanNode);        
         
-        //$tariffplanNode->field_ref_tariffplan_idd_carrier = $targetNode->field_ref_tariffplan_idd_carrier;
+        //create children for the new tariffplan
+        //covers for basicrate_domestic, basicrate_idd, basicrate_data,basicrate_roaming,tariffplan_idd_carrier,rate content type        
+        $view = views_get_view('query_tariffplan_children');
+        $view->set_display('panel_pane_1');
+        $view->set_arguments(array('0' => $targetNode->nid));
+        $view->execute(); 
         
-        //node_save($tariffplanNode);
+        $basicRates = array();
+        $newTariffplanIddCarriers = array();
+        $newRates = array();
         
-        $output['success'] = TRUE;    
+        foreach($view->result as $record){
+            $targetChildNid = $record->nid;
+            $targetChildNode = node_load($targetChildNid);
+            
+            //default values
+            $childNode = new StdClass();     
+            $childNode->uid = $user->uid;
+            $childNode->title = $targetChildNode->title;
+            $childNode->type = $targetChildNode->type;
+            $childNode->language = 'und';
+            $childNode->field_ref_product['und'][0]['nid'] = $productNid;
+            $childNode->field_ref_tariffplan['und'][0]['nid'] = $tariffplanNode->nid;
+            
+            //type specific values
+            $childNode->field_ref_timetablefactors = isset($targetChildNode->field_ref_timetablefactors)?$targetChildNode->field_ref_timetablefactors:NULL;
+            $childNode->field_ref_rate = isset($targetChildNode->field_ref_rate)?$targetChildNode->field_ref_rate:NULL;
+            $childNode->field_rating_group = isset($targetChildNode->field_rating_group)?$targetChildNode->field_rating_group:NULL;
+            $childNode->field_rating_group_integer = isset($targetChildNode->field_rating_group_integer)?$targetChildNode->field_rating_group_integer:NULL;
+            $childNode->field_ref_tree_tid = isset($targetChildNode->field_ref_tree_tid)?$targetChildNode->field_ref_tree_tid:NULL;
+            $childNode->field_ref_tree_nid = isset($targetChildNode->field_ref_tree_nid)?$targetChildNode->field_ref_tree_nid:NULL;
+            $childNode->field_weight = isset($targetChildNode->field_weight)?$targetChildNode->field_weight:NULL;
+            $childNode->field_price_amount_float = isset($targetChildNode->field_price_amount_float)?$targetChildNode->field_price_amount_float:NULL;
+            $childNode->field_ref_metering_method = isset($targetChildNode->field_ref_metering_method)?$targetChildNode->field_ref_metering_method:NULL;
+            $childNode->field_uom_amount = isset($targetChildNode->field_uom_amount)?$targetChildNode->field_uom_amount:NULL;
+            $childNode->field_ref_carrier_mobile = isset($targetChildNode->field_ref_carrier_mobile)?$targetChildNode->field_ref_carrier_mobile:NULL;
+            $childNode->field_ref_timetable_idd = isset($targetChildNode->field_ref_timetable_idd)?$targetChildNode->field_ref_timetable_idd:NULL;
+            $childNode->field_ref_tariffplan_idd_carrier = isset($targetChildNode->field_ref_tariffplan_idd_carrier)?$targetChildNode->field_ref_tariffplan_idd_carrier:NULL;
+            $childNode->field_price = isset($targetChildNode->field_price)?$targetChildNode->field_price:NULL;
+            $childNode->field_range_units = isset($targetChildNode->field_range_units)?$targetChildNode->field_range_units:NULL;
+            $childNode->field_uom_units = isset($targetChildNode->field_uom_units)?$targetChildNode->field_uom_units:NULL;
+            $childNode->field_charge_collection = isset($targetChildNode->field_charge_collection)?$targetChildNode->field_charge_collection:NULL;
+            
+            switch($childNode->type){
+                case 'basicrate_idd':                   
+                case 'basicrate_domestic':
+                case 'basicrate_data':
+                case 'basicrate_roaming':
+                    $basicRates[] = $childNode;
+                    break;
+                case 'tariffplan_idd_carrier':
+                    node_save($childNode);
+                    $newTariffplanIddCarriers[$targetChildNode->nid] = $childNode->nid;
+                    $tariffplan_idd_carriers[] = array('nid' => $childNode->nid);
+                    break;
+                case 'rate':
+                    node_save($childNode);
+                    $newRates[$targetChildNode->nid] = $childNode->nid;
+                    break;
+            }
+        }
+
+        foreach($basicRates as $newBasicRateNode){
+            switch($newBasicRateNode->type){
+                case 'basicrate_idd':
+                    $newBasicRateNode->field_ref_tariffplan_idd_carrier['und'][0]['nid'] = $newTariffplanIddCarriers[$newBasicRateNode->field_ref_tariffplan_idd_carrier['und'][0]['nid']];
+                break;
+            }
+            $newBasicRateNode->field_ref_rate['und'][0]['nid'] = $newRates[$newBasicRateNode->field_ref_rate['und'][0]['nid']];
+            node_save($newBasicRateNode);
+        }
+        
+        //covers for actionpricechargefactors, actionpricediscountfactors, treenodespecialnumberscheme,
+        //treenodepacketpredefined,treenodepacketdynamic,actionblockfactors content type        
+        $view = views_get_view('query_tariffplan_children');
+        $view->set_display('panel_pane_2');
+        $view->set_arguments(array('0' => $targetNode->nid));
+        $view->execute(); 
+        foreach($view->result as $record){
+           $targetChildNid = $record->nid;
+           $targetChildNode = node_load($targetChildNid);
+            
+           //default values
+           $childNode = new StdClass();     
+           $childNode->uid = $user->uid;
+           $childNode->title = $targetChildNode->title;
+           $childNode->type = $targetChildNode->type;
+           $childNode->language = 'und';
+           $childNode->field_ref_product['und'][0]['nid'] = $productNid;
+           $childNode->field_ref_tree_nid['und'][0]['nid'] = $tariffplanNode->nid;
+           
+           //type specific values
+           $childNode->field_range_units = isset($targetChildNode->field_range_units)?$targetChildNode->field_range_units:NULL;
+           $childNode->field_uom_units = isset($targetChildNode->field_uom_units)?$targetChildNode->field_uom_units:NULL;
+           $childNode->field_charge_collection = isset($targetChildNode->field_charge_collection)?$targetChildNode->field_charge_collection:NULL;
+           $childNode->field_parent_node = isset($targetChildNode->field_parent_node)?$targetChildNode->field_parent_node:NULL;
+           $childNode->field_weight = isset($targetChildNode->field_weight)?$targetChildNode->field_weight:NULL;
+           $childNode->field_ref_tree_tid = isset($targetChildNode->field_ref_tree_tid)?$targetChildNode->field_ref_tree_tid:NULL;
+           $childNode->field_price = isset($targetChildNode->field_price)?$targetChildNode->field_price:NULL;
+        }
+        
+        //save new tariffplan
+        $tariffplanNode = node_load($tariffplanNode->nid);
+        $tariffplanNode->field_ref_tariffplan_idd_carrier['und'] = $tariffplan_idd_carriers;
+        node_save($tariffplanNode);    
+        $output['success'] = TRUE;   
+        
+        //add new tariffplan json object in order to display in JS
+        $output['product_catalog_ajax_result'] = add_js_settings_after_node_save($tariffplanNode);
     }  
 
     return $output;
@@ -199,6 +306,8 @@ function product_catalog_ajax_paste_node($nodeId,$productId,$weight){
     ctools_include('ajax');
     global $user;
     
+    $weightStep = 100;
+    $weight += $weightStep;
     $targetNid = session_get('copy_target_nid');
     $productNid = explode('_', $productId);
     $productNid = $productNid[1];
@@ -211,10 +320,18 @@ function product_catalog_ajax_paste_node($nodeId,$productId,$weight){
         $output['reason'] = 'There is no copied item';
     }else{
         $targetNode = node_load($targetNid);    
-        if($targetNode->type == 'tariffplan'){
-            $output = _paste_tariffplan($targetNode,$productNid,$baseIdType,$baseIdValue,$weight);              
+        if($targetNode == NULL){
+            $output['success'] = FALSE;
+            $output['reason'] = 'The original item has been deleted';
+        }else{
+            switch($targetNode->type){
+                case 'tariffplan':
+                    $output = _paste_tariffplan($targetNode,$productNid,$baseIdType,$baseIdValue,$weight);
+                    break;
+            }
         }
     }
+    
     print json_encode($output);
     exit;
 };
