@@ -258,12 +258,14 @@ function get_rating_factor_values_from_drupal_field($obj , $field_name)
 			if(property_exists($taxo , 'field_common_code'))
 			{
 				dsm($taxo);
-				$value = get_drupal_field_values($taxo , 'field_common_code')[0];
+				$temp = get_drupal_field_values($taxo , 'field_common_code');
+				$value = $temp[0];
 				dsm($value);
 			}
 			if(property_exists($taxo , 'field_rating_operation_code'))
 			{
-				$value = get_drupal_field_values($taxo , 'field_rating_operation_code')[0];
+				$temp = get_drupal_field_values($taxo , 'field_rating_operation_code');
+				$value = $temp[0];
 			}
 		}
 		else
@@ -486,8 +488,10 @@ function generate_condition_string_by_condition_node($nid, &$factor_list )
 
 					if(property_exists($node, 'field_rating_operation'))
 					{
-						$tid_node = get_drupal_field_tids($node , 'field_rating_operation')[0];
-						$op = get_drupal_field_values($tid_node , 'field_rating_operation_code')[0];
+						$temp = get_drupal_field_tids($node , 'field_rating_operation');
+						$tid_node = $temp[0];
+						$temp = get_drupal_field_values($tid_node , 'field_rating_operation_code');
+						$op = $temp[0];
 					}
 					else
 					{
@@ -543,8 +547,10 @@ function generate_condition_string_by_condition_node($nid, &$factor_list )
 
 					if(property_exists($node, 'field_rating_operation'))
 					{
-						$tid_node = get_drupal_field_tids($node , 'field_rating_operation')[0];
-						$op = get_drupal_field_values($tid_node , 'field_rating_operation_code')[0];
+						$temp = get_drupal_field_tids($node , 'field_rating_operation');
+						$tid_node = $temp[0];
+						$temp = get_drupal_field_values($tid_node , 'field_rating_operation_code');
+						$op = $temp[0];
 					}
 					else
 					{
