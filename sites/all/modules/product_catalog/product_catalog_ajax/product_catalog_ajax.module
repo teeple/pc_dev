@@ -157,6 +157,8 @@ function product_catalog_ajax_clone_product($targetProductId){
     ctools_include('ajax');
     global $user;
     
+    $maxFieldLength = 60;
+    
     $targetProductNid = explode('_', $targetProductId);
     $targetProductNid = $targetProductNid[1];
     $targetProductNode = node_load($targetProductNid);
@@ -165,11 +167,11 @@ function product_catalog_ajax_clone_product($targetProductId){
     $clonedTime = time();
     $productNode = clone $targetProductNode;
     $productNode->uid = $user->uid;
-    $productNode->title = substr($productNode->title.'_'.$clonedTime,0,60);
-    $productNode->field_product_id['und'][0]['value'] = substr($productNode->field_product_id['und'][0]['value'].'_'.$clonedTime,0,60);
-    $productNode->field_product_id['und'][0]['safe_value'] = substr($productNode->field_product_id['und'][0]['safe_value'].'_'.$clonedTime,0,60);
+    $productNode->title = substr($productNode->title.'_'.$clonedTime,0,$maxFieldLength);
+    $productNode->field_product_id['und'][0]['value'] = substr($productNode->field_product_id['und'][0]['value'].'_'.$clonedTime,0,$maxFieldLength);
+    $productNode->field_product_id['und'][0]['safe_value'] = substr($productNode->field_product_id['und'][0]['safe_value'].'_'.$clonedTime,0,$maxFieldLength);
     _unset_unused_field_of_cloned_node($productNode);
-    node_save($productNode);        
+    //node_save($productNode);        
     
     $view = views_get_view('list_product_child_node');
     $view->set_display('panel_pane_3');
@@ -178,9 +180,10 @@ function product_catalog_ajax_clone_product($targetProductId){
     
     foreach($view->result as $record){
         $targetChildNode = node_load($record->nid);
+        
         switch($targetChildNode->type){
             case 'tariffplan':
-                _paste_tariffplan($targetChildNode,$productNode->nid,$targetChildNode->ref_tree_tid['und'][0]['tid']
+                _paste_tariffplan($targetChildNode,$productNode->nid,$targetChildNode->field_ref_tree_tid['und'][0]['value']
                     ,$targetChildNode->field_weight['und'][0]['value']);
                 break;
             default:
@@ -191,7 +194,7 @@ function product_catalog_ajax_clone_product($targetProductId){
                 node_save($childNode);
                 _clone_nested_child_node($targetChildNode,$childNode);
                 break;
-        }
+        }        
     }
     $output = '';
     print json_encode($output);
@@ -296,7 +299,6 @@ function _paste_tariffplan($targetNode,$productNid,$baseTid,$weight){
            node_save($childNode);
            _clone_nested_child_node($targetChildNode,$childNode);
         }
-        
         
         //save new tariffplan
         $tariffplanNode = node_load($tariffplanNode->nid);
