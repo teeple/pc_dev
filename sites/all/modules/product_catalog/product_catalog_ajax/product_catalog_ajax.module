@@ -220,12 +220,12 @@ function _paste_tariffplan($targetNode,$productNid,$baseIdType,$baseIdValue,$wei
             $childNode->uid = $user->uid;
             $childNode->field_ref_product['und'][0]['nid'] = $productNid;
             $childNode->field_ref_tariffplan['und'][0]['nid'] = $tariffplanNode->nid;
+            $childNode->field_ref_tree_nid['und'][0]['nid'] = $tariffplanNode->nid;
             _unset_unused_field_of_cloned_node($childNode);
             
             switch($childNode->type){
                 case 'basicrate_idd':                   
                 case 'basicrate_domestic':
-                case 'basicrate_data':
                 case 'basicrate_roaming':
                     $basicRates[] = $childNode;
                     break;
@@ -237,7 +237,7 @@ function _paste_tariffplan($targetNode,$productNid,$baseIdType,$baseIdValue,$wei
                 case 'rate':
                     node_save($childNode);
                     $newRates[$targetChildNode->nid] = $childNode->nid;
-                    break;
+                    break;                
             }
         }
 
@@ -252,7 +252,7 @@ function _paste_tariffplan($targetNode,$productNid,$baseIdType,$baseIdValue,$wei
         }
         
         //covers for actionpricechargefactors, actionpricediscountfactors, treenodespecialnumberscheme,
-        //treenodepacketpredefined,treenodepacketdynamic,actionblockfactors content type
+        //treenodepacketpredefined,treenodepacketdynamic,actionblockfactors, basicrate_data content type
         $view = views_get_view('query_tariffplan_children');
         $view->set_display('panel_pane_2');
         $view->set_arguments(array('0' => $targetNode->nid));
