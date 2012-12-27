@@ -23,6 +23,8 @@
       
       $('#multiselect_custom_button_rollover').click($.fn.eventSetSelectAllRollover);
       
+      $('#multiselect_custom_button_cardtype').click($.fn.eventSetSelectAllCardType);
+      
       //$('#multiselect_custom_button_trackingcounter').click($.fn.eventSetSelectAllTrackingCounter);
             
       // Moves selection if it's double clicked to selected box
@@ -116,6 +118,35 @@ jQuery.fn.eventSetSelectAllRollover = function() {
 		data: {'product_nid': rootId, 'rollover_nid': rolloverNid, 'rollover_weight': rolloverWeight 
 			,'rollover_ref_product': rolloverRefProduct, 'rollover_ref_tree_nid':rolloverRefTreeNid, 'rollover_ref_tree_tid': rolloverRefTreeTid
 			,'counter_nids':selectCounters, 'rollover_flag': rolloverFlag, 'happens': happens, 'add_or_replace': addOrReplace},
+		success : function(data) {
+			jQuery(".product_catalog_tree").unmask();
+		},
+	});
+}
+
+jQuery.fn.eventSetSelectAllCardType = function() {
+	
+	jQuery(".product_catalog_tree").mask("Selecting...");
+	
+	var multiselect_sel = jQuery('select.multiselect_sel');
+	multiselect_sel.selectAll();
+	
+	var selectCards = new Array();
+	multiselect_sel.each(function(index, element) {
+		for (var x=0;x<element.options.length;x++) {
+			selectCards[x] = element.options[x].value;
+		};
+	});
+	
+	var parentNid = jQuery('#cardtype_parent_nid').attr('value');
+	
+	var rootId = jQuery('.product_catalog_tree > ul:first > li:first').attr('id');
+	var cardtypeSetUrl = '/product_catalog_ajax/set_cardtype';
+	
+	jQuery.ajax({
+		url : cardtypeSetUrl,
+		type: "post",
+		data: {'product_nid': rootId, 'parent_nid': parentNid, 'cardtype_nids': selectCards},
 		success : function(data) {
 			jQuery(".product_catalog_tree").unmask();
 		},

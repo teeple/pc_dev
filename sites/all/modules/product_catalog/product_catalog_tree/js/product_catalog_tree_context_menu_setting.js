@@ -1129,7 +1129,14 @@
 											},
 										},
 									},
-
+									"voucher_card_type" : {
+										"label" : "Card Types",
+										action : function(node) {
+											$.fn.addNode(node, {
+												'childContentType' : 'conditionwhatcardtype'
+											});
+										}
+									},
 									"incomingcall" : {
 										"label" : "Incoming Call",
 										action : function(node) {
@@ -1378,6 +1385,7 @@
 					case "conditionwhonumberfactors":
 					case "conditionwhoprefixfactors":
 					case "conditionwhocustom":
+					case 'conditionwhatcardtype':
 						menus.custom_delete._disabled = false;
 						menus.custom_delete.action = function(node) {
 							$.fn.deleteNode(node);
