@@ -81,7 +81,7 @@
 							title = title[0];
 						}
 						$(".product_catalog_tree").jstree("set_text", $('#' + childId), title);
-						$('#'+childId).trigger('click');
+						// $('#'+childId).trigger('click');
 					// In case Create
 					} else {
 						$.fn.addTreeItemCallback(parentId, childId, title, contentType, weight);
