@@ -75,6 +75,10 @@ function _get_vocabulary_name($contentType, $productNode, $serviceType = NULL){
 							'Voice' => 'tpl_tariffplan_mobile_voice',
 							'SMS'   => 'tpl_tariffplan_mobile_sms',
 							'Data'  => 'tpl_tariffplan_mobile_data',
+							'MMS'	=> 'tpl_tariffplan_mobile_mms',
+							'CRBT'	=> 'tpl_tariffplan_mobile_crbt',
+							'Loyalty Point' => 'tpl_tariffplan_mobile_loyalty_point_deduct',
+							'VOD'	=> 'tpl_tariffplan_mobile_vod',
 						),
 					
 					"IPTV" => array(
