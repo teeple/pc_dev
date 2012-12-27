@@ -147,43 +147,70 @@ function product_catalog_ajax_menu() {
       'access callback' => TRUE,
       'type' => MENU_CALLBACK,
   );
+  $items['product_catalog_ajax/clone_product/%'] = array(
+      'title' => 'Paste',
+      'page callback' => 'product_catalog_ajax_clone_product',
+      'page arguments' => array(2),
+      'access callback' => TRUE,
+      'type' => MENU_CALLBACK,
+  );
   return $items;
 
 } 
 
-function _unset_unused_field_of_cloned_node($node){
-    unset($node->vid);
-    unset($node->nid);
-    unset($node->log);
-    unset($node->status);
-    unset($node->comment);
-    unset($node->promote);
-    unset($node->sticky);
-    unset($node->created);
-    unset($node->changed);
-    unset($node->tnid);
-    unset($node->translate);
-    unset($node->revision_timestamp);
-    unset($node->revision_uid);
-    unset($node->rdf_mapping);
-    unset($node->cid);
-    unset($node->last_comment_timestamp);
-    unset($node->last_comment_name);
-    unset($node->last_comment_uid);
-    unset($node->comment_count);
-    unset($node->name);
-    unset($node->picture);
-    unset($node->data);    
-    return $node;
-}
+function product_catalog_ajax_clone_product($targetProductId){
+    ctools_include('node.pages', 'node', '');
+    ctools_include('ajax');
+    global $user;
+    
+    $targetProductNid = explode('_', $targetProductId);
+    $targetProductNid = $targetProductNid[1];
+    $targetProductNode = node_load($targetProductNid);
+    //dsm($targetProductNode,'$targetProductNode');
+    
+    $clonedTime = time();
+    $productNode = clone $targetProductNode;
+    $productNode->uid = $user->uid;
+    $productNode->title = substr($productNode->title.'_'.$clonedTime,0,60);
+    $productNode->field_product_id['und'][0]['value'] = substr($productNode->field_product_id['und'][0]['value'].'_'.$clonedTime,0,60);
+    $productNode->field_product_id['und'][0]['safe_value'] = substr($productNode->field_product_id['und'][0]['safe_value'].'_'.$clonedTime,0,60);
+    _unset_unused_field_of_cloned_node($productNode);
+    node_save($productNode);        
+    
+    $view = views_get_view('list_product_child_node');
+    $view->set_display('panel_pane_3');
+    $view->set_arguments(array('0' => $targetProductNode->nid));
+    $view->execute(); 
+    
+    foreach($view->result as $record){
+        $targetChildNode = node_load($record->nid);
+        switch($targetChildNode->type){
+            case 'tariffplan':
+                _paste_tariffplan($targetChildNode,$productNode->nid,$targetChildNode->ref_tree_tid['und'][0]['tid']
+                    ,$targetChildNode->field_weight['und'][0]['value']);
+                break;
+            default:
+                $childNode = clone $targetChildNode;
+                $childNode->uid = $user->uid;
+                $childNode->field_ref_product['und'][0]['nid'] = $productNode->nid;
+                _unset_unused_field_of_cloned_node($childNode);
+                node_save($childNode);
+                _clone_nested_child_node($targetChildNode,$childNode);
+                break;
+        }
+    }
+    $output = '';
+    print json_encode($output);
+    exit;
+};
 
-function _paste_tariffplan($targetNode,$productNid,$baseIdType,$baseIdValue,$weight){
+function _paste_tariffplan($targetNode,$productNid,$baseTid,$weight){
     global $user;
     $targetRefTreeTid = $targetNode->field_ref_tree_tid['und'][0]['value'];
-    if($targetRefTreeTid != $baseIdValue){//error
+    if($targetRefTreeTid != $baseTid){//error
         $output['success'] = FALSE;
         $targetRefTreeTerm = taxonomy_term_load($targetRefTreeTid);
-        $baseIdTerm = taxonomy_term_load($baseIdValue);
+        $baseIdTerm = taxonomy_term_load($baseTid);
         if($targetRefTreeTerm->name != $baseIdTerm->name){
             $output['reason'] = $targetRefTreeTerm->name . ' tariffplan can not be pasted to '. $baseIdTerm->name . ' tariffplan';
         }else{
@@ -284,7 +311,8 @@ function _paste_tariffplan($targetNode,$productNid,$baseIdType,$baseIdValue,$wei
         $output['success'] = TRUE;   
         
         //add new tariffplan json object in order to display in JS
-        $output['product_catalog_ajax_result'] = add_js_settings_after_node_save($tariffplanNode);
+        //$output['product_catalog_ajax_result'] = add_js_settings_after_node_save($tariffplanNode);
+        $output['product_catalog_ajax_result_node'] = $tariffplanNode;
     }  
 
     return $output;
@@ -314,9 +342,8 @@ function product_catalog_ajax_paste_node($nodeId,$productId,$weight){
     $targetNid = session_get('copy_target_nid');
     $productNid = explode('_', $productId);
     $productNid = $productNid[1];
-    $baseId = explode('_',$nodeId);
-    $baseIdType = $baseId[0];
-    $baseIdValue = $baseId[1];
+    $baseId = explode('_',$nodeId);    
+    $baseTid = $baseId[1];
     
     if($targetNid == NULL){
         $output['success'] = FALSE;
@@ -329,7 +356,9 @@ function product_catalog_ajax_paste_node($nodeId,$productId,$weight){
         }else{
             switch($targetNode->type){
                 case 'tariffplan':
-                    $output = _paste_tariffplan($targetNode,$productNid,$baseIdType,$baseIdValue,$weight);
+                    $output = _paste_tariffplan($targetNode,$productNid,$baseTid,$weight);
+                    $output['product_catalog_ajax_result'] = add_js_settings_after_node_save($output['product_catalog_ajax_result_node']);
+                    unset($output['product_catalog_ajax_result_node']);
                     break;
             }
         }
@@ -1718,5 +1747,31 @@ function product_catalog_ajax_delete_from_view($nodeNid, $refNodeNid, $defaultTa
 	print ajax_render($output);
 	//print json_encode($output);
 	exit;
+}
+
+function _unset_unused_field_of_cloned_node($node){
+    unset($node->vid);
+    unset($node->nid);
+    unset($node->log);
+    unset($node->status);
+    unset($node->comment);
+    unset($node->promote);
+    unset($node->sticky);
+    unset($node->created);
+    unset($node->changed);
+    unset($node->tnid);
+    unset($node->translate);
+    unset($node->revision_timestamp);
+    unset($node->revision_uid);
+    unset($node->rdf_mapping);
+    unset($node->cid);
+    unset($node->last_comment_timestamp);
+    unset($node->last_comment_name);
+    unset($node->last_comment_uid);
+    unset($node->comment_count);
+    unset($node->name);
+    unset($node->picture);
+    unset($node->data);    
+    return $node;
 }
 ?>
