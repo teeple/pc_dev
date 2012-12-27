@@ -141,9 +141,30 @@ function product_catalog_ajax_menu() {
       'access callback' => TRUE,
       'type' => MENU_CALLBACK,
   );
+  $items['product_catalog_ajax/clone_product/%'] = array(
+      'title' => 'Paste',
+      'page callback' => 'product_catalog_ajax_clone_product',
+      'page arguments' => array(2),
+      'access callback' => TRUE,
+      'type' => MENU_CALLBACK,
+  );
   return $items;
 
 } 
+
+function product_catalog_ajax_clone_product($targetProductId){
+    ctools_include('node.pages', 'node', '');
+    ctools_include('ajax');
+    global $user;
+    
+    $targetProductNid = explode('_', $targetProductId);
+    $targetProductNid = $targetProductNid[1];
+    $targetProductNode = node_load($targetProductNid);
+    dsm($targetProductNode,'$targetProductNode');
+    $output = '';
+    print json_encode($output);
+    exit;
+};
 
 function _unset_unused_field_of_cloned_node($node){
     unset($node->vid);
