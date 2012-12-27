@@ -275,9 +275,9 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			_unset_menu_items($form,$form_id);
 			unset($form['actions']);
 			
-			dsm($form, 'form');
 			$form['custom_markup'] = array('#type'=> 'markup',
 				'#markup' => "<input type='hidden' id='cardtype_parent_nid' value='".$form['#node']->field_parent_node['und'][0]['nid']."'></input>
+							<input type='hidden' id='cardtype_nid' value='".$form['#node']->nid."'></input>
 							<input type='hidden' id='cardtype_weight' value='".$form['#node']->field_weight['und'][0]['value']."'></input>",
 				'#weight' => 200,
 			);
