@@ -22,7 +22,24 @@ function product_catalog_form_node_validate($node, $form, &$form_state){
 				form_set_error('Reference','FROM Hour(24) is not allowed');
 			}
 		case 'counter_node_form';
-			break;        
+			break;
+		case 'conditionwhenactivationday_node_form':
+		case 'conditionwhensubscriptionday_node_form':
+			$operationTerm = taxonomy_term_load($form_state['values']['field_rating_operation_for_date']['und'][0]['tid']);
+			if($operationTerm->name == 'Is between' && 
+				($form_state['values']['field_start_date']['und'][0]['value'] > $form_state['values']['field_end_date']['und'][0]['value'])) {
+				drupal_set_message("Start date should be less than End Date", "error");
+				form_set_error('Start date should be less than End Date');
+			}
+			break;
+		case 'conditionwhenactivedays_node_form':
+			$operationTerm = taxonomy_term_load($form_state['values']['field_rating_operation_for_date']['und'][0]['tid']);
+			if($operationTerm->name == 'Is between' && 
+				$form_state['values']['field_activedays_start']['und'][0]['value'] > $form_state['values']['field_activedays_end']['und'][0]['value']) {
+				drupal_set_message("Start days should be less than End days", "error");
+				form_set_error('Start days should be less than End days');
+			}
+			break;
 	}
 //dsm($form_state,'node validate formstate');
 }
