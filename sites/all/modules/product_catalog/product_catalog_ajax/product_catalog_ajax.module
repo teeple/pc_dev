@@ -177,7 +177,7 @@ function product_catalog_ajax_clone_product($targetProductId){
     $productNode->field_product_id['und'][0]['value'] = substr($productNode->field_product_id['und'][0]['value'].'_'.$clonedTime,0,$maxFieldLength);
     $productNode->field_product_id['und'][0]['safe_value'] = substr($productNode->field_product_id['und'][0]['safe_value'].'_'.$clonedTime,0,$maxFieldLength);
     _unset_unused_field_of_cloned_node($productNode);
-    //node_save($productNode);        
+    node_save($productNode);        
     
     $view = views_get_view('list_product_child_node');
     $view->set_display('panel_pane_3');
@@ -301,6 +301,7 @@ function _paste_tariffplan($targetNode,$productNid,$baseTid,$weight){
            $childNode->uid = $user->uid;
            $childNode->field_ref_product['und'][0]['nid'] = $productNid;
            $childNode->field_ref_tree_nid['und'][0]['nid'] = $tariffplanNode->nid;
+           
            _unset_unused_field_of_cloned_node($childNode);
            node_save($childNode);
            _clone_nested_child_node($targetChildNode,$childNode);
