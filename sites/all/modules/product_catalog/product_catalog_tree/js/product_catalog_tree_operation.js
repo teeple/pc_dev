@@ -1,4 +1,18 @@
-(function($) {
+(function($) {	
+	$.fn.cloneProduct = function(){
+		var productId = $('.product_catalog_tree > ul:first > li:first').attr('id');
+		var cloneLink = '/product_catalog_ajax/clone_product/' + productId;
+		$.fn.masking("Cloning...");
+		$.ajax({
+			url : cloneLink,
+			success : function(data) {
+				var output = $.parseJSON(data);				
+				console.log(output);
+				$.fn.unmasking();
+			}
+		});
+	};
+	
 	$.fn.pasteNode = function(node){
 		var nodeId = node.attr('id');
 		var productId = $('.product_catalog_tree > ul:first > li:first').attr('id');
@@ -305,6 +319,8 @@
     				var context = output[1];
     				$('#tree_content_div').replaceWith(context);
     				$.fn.behaviorAttach(settings);
+    				//bind product clone button
+    				$('#product_clone_button').bind('click',$.fn.cloneProduct);
     				$.fn.unmasking();
     			}
     		});
