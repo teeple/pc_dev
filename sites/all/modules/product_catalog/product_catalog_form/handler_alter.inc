@@ -481,10 +481,6 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
         case 'treenodecounter_node_form':
 			
 			$refTreeTerm = taxonomy_term_load($form['field_ref_tree_tid']['und'][0]['value']['#default_value']);
-			/*
-			$product = node_load($form['field_ref_product']['und'][0]['nid']['#default_value']);
-			$billingTypeTerm  = taxonomy_term_load($product->field_billing_type['und'][0]['tid']);
-			*/
 			
 			if($refTreeTerm->name == 'Charging') {
 				$form['field_counter']['#type'] = 'hidden';
