@@ -127,6 +127,12 @@ function product_catalog_ajax_menu() {
   		'access callback' => TRUE,
   		'type' => MENU_CALLBACK,
   );
+  $items['product_catalog_ajax/set_cardtype'] = array(
+  		'title' => 'Set Rollover',
+  		'page callback' => 'product_catalog_ajax_set_cardtype',
+  		'access callback' => TRUE,
+  		'type' => MENU_CALLBACK,
+  );
   $items['product_catalog_ajax/copy_node/%'] = array(
       'title' => 'Copy',
       'page callback' => 'product_catalog_ajax_copy_node',
@@ -490,12 +496,6 @@ function product_catalog_ajax_set_rollover() {
 	$prdnonusagerollover->field_rollover_add_or_replace['und'][0]['value'] = isset($addOrReplace)? $addOrReplace: '0';
 	$prdnonusagerollover->field_happens['und'][0]['value'] = isset($happens)? $happens: 'week';
 	
-	/*
-	$product = node_load($productNid);
-	$voca_name = _get_vocabulary_name('simpleproductoffering', $product);
-	$terms = taxonomy_get_term_by_name('Rollover', $voca_name);
-	$rollover_tid = current($terms)->tid;
-	*/
 	node_save($prdnonusagerollover);
 	
 	$jquery_select_id = 'node_'.$nodeNid;
@@ -511,6 +511,53 @@ function product_catalog_ajax_set_rollover() {
 			),
 	);
 		  
+	drupal_add_js(array('product_catalog_ajax_result' => $js_settings), 'setting');
+	  
+	$renderOutput = '';
+	$output[] = $renderOutput;
+	$output = ajax_render($output);
+	
+	print $output;
+	exit;
+}
+
+function product_catalog_ajax_set_cardtype() {
+	
+	global $user;
+	$tempProductNid = explode('_',$_POST['product_nid']);
+	$productNid = $tempProductNid[1];
+	
+	$parentNid = $_POST['parent_nid'];
+	$cardTypeNids = $_POST['cardtype_nids'];
+	
+	if(empty($nodeNid)) {
+		$cardtype = new StdClass();
+		$cardtype->uid = $user->uid;
+		$cardtype->type = 'conditionwhatcardtype';
+		$cardtype->language = 'und';
+		
+		$cardtype->field_parent_node['und'][0]['nid'] = $parentNid;
+		
+	} else {
+		$cardtype = node_load($nodeNid);
+	}
+	
+	foreach($cardTypeNids as $cardTypeNid) {
+		$cardtype->field_ref_cardtype['und'][] = array('nid' => $cardTypeNid);
+	}
+	node_save($cardtype);
+	
+	$jquery_select_id = 'node_'.$nodeNid;
+	$js_settings = array(
+		'success' => TRUE,
+		'data' => array(
+				'parentId' => 'node_'.$parentNid,
+				'childId' => 'node_'.$cardtype->nid,
+				'title' => $cardtype->title,
+				'contentType' => 'conditionwhatcardtype',
+				'weight' => '100',
+			),
+	);
 	drupal_add_js(array('product_catalog_ajax_result' => $js_settings), 'setting');
 	  
 	$renderOutput = '';
