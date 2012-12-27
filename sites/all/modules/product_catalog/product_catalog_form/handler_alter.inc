@@ -90,6 +90,7 @@ function _add_ajax_submit_callback($form_id,&$form){
         case 'conditionwhatcounter_node_form':
 		case 'conditionwhatcounterfortracking_node_form':
 		case 'conditionwhensubscriptionday_node_form':
+		// case 'conditionwhatcardtype_node_form':
 		case 'conditionwhenactivationday_node_form':
 		case 'numberspecialrate_node_form':
 		case 'actionpriceallowanceonetime_node_form':
@@ -264,16 +265,32 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 		case 'conditionwhenactivationday_node_form':
         case 'conditionwhensubscriptionday_node_form';
 		case 'conditionwhenactivedays_node_form';
-            _unset_menu_items($form,$form_id);
+		    _unset_menu_items($form,$form_id);
 			$form['field_weight']['#type'] = 'hidden';
             $form['field_parent_node']['#type'] = 'hidden';
             break; 
-        
+		case 'conditionwhatcardtype_node_form':
+		    $form['field_weight']['#type'] = 'hidden';
+            $form['field_parent_node']['#type'] = 'hidden';
+			_unset_menu_items($form,$form_id);
+			unset($form['actions']);
+			
+			$form['custom_markup'] = array('#type'=> 'markup',
+				'#markup' => "<input type='hidden' id='cardtype_parent_nid' value='".$form['#node']->field_parent_node['und'][0]['nid']."'></input>
+							<input type='hidden' id='cardtype_nid' value='".$form['#node']->nid."'></input>
+							<input type='hidden' id='cardtype_weight' value='".$form['#node']->field_weight['und'][0]['value']."'></input>",
+				'#weight' => 200,
+			);
+			$form['multiselect_custom'] = array('#type'=> 'markup',
+				'#markup' => "<input type='button' id='multiselect_custom_button_cardtype' value='Save'></input>",
+				'#weight' => 100,
+			);
+			break;
+			
 		case 'holidaylist_specific_node_form':
 		case 'holidaylist_repeatable_node_form':
 			_unset_menu_items($form,$form_id);
 			$form['field_ref_holidaylist']['#type'] = 'hidden';
-			
 			// in case create 
 			if(!isset($form['nid']['#value'])){
 				$form['field_ref_holidaylist']['und'][0]['nid']['#default_value'] = $form_state['holidaylist_nid'];
@@ -381,26 +398,22 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			break;
 			
 		case 'prdnonusagerollover_node_form':
-			
 			unset($form['actions']);
 			unset($form['field_parent_node']);
 			unset($form['field_weight']);
 			unset($form['field_ref_product']);
 			unset($form['field_ref_tree_tid']);
-			
 			_unset_menu_items($form,$form_id);
 			
 			// in case of update
-			// if(isset($form['nid']['#value'])) {
-				$form['custom'] = array('#type'=> 'markup',
-					'#markup' => "<input type='hidden' id='rollover_nid' value='".$form['nid']['#value']."'></input>
-								<input type='hidden' id='rollover_weight' value='".$form['#node']->field_weight['und'][0]['value']."'></input>
-								<input type='hidden' id='rollover_ref_product' value='".$form['#node']->field_ref_product['und'][0]['nid']."'></input>
-								<input type='hidden' id='rollover_ref_tree_nid' value='".$form['#node']->field_ref_tree_nid['und'][0]['nid']."'></input>
-								<input type='hidden' id='rollover_ref_tree_tid' value='".$form['#node']->field_ref_tree_tid['und'][0]['value']."'></input>",
-					'#weight' => 200,
-				);
-			// }
+			$form['custom'] = array('#type'=> 'markup',
+				'#markup' => "<input type='hidden' id='rollover_nid' value='".$form['nid']['#value']."'></input>
+							<input type='hidden' id='rollover_weight' value='".$form['#node']->field_weight['und'][0]['value']."'></input>
+							<input type='hidden' id='rollover_ref_product' value='".$form['#node']->field_ref_product['und'][0]['nid']."'></input>
+							<input type='hidden' id='rollover_ref_tree_nid' value='".$form['#node']->field_ref_tree_nid['und'][0]['nid']."'></input>
+							<input type='hidden' id='rollover_ref_tree_tid' value='".$form['#node']->field_ref_tree_tid['und'][0]['value']."'></input>",
+				'#weight' => 200,
+			);
 			$form['multiselect_custom'] = array('#type'=> 'markup',
 				'#markup' => "<input type='button' id='multiselect_custom_button_rollover' value='Save'></input>",
 				'#weight' => 100,
