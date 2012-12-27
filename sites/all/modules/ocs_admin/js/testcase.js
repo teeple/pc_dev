@@ -18,28 +18,11 @@
 		'</table>'
 		);
 		 */
-		var ts = $('.testcase_status').each(
-				function(index) {
-					$(this).text('Requesting');
-
-					// first, get the number of test cases
-					var nid = $(this).attr('node');
-					var testOcsUrl = '/ajax/test/ocs/count/' + nid;
-					$.ajax({
-						url : testOcsUrl,
-						type : "get",
-						success : function(data) {
-							var output = data;
-							//                $('#run-test-ocs-result > ul').append( '<li>' + output + '</li>');
-							$.fn.runOcsTestCase(nid, data);
-						},
-						error : function() {
-							$('#run-test-ocs-result > ul').append(
-									'<li> Fail: ' + testOcsUrl + '</li>');
-						}
-					});
-
-				});
+		var idx = 0;
+		var ts = $('.testcase_status[order=' + idx + ']').each(
+			function(index) {
+				$.fn.runOneTestCase( this, idx +1);
+			});
 	};
 
 	$.fn.runOneTestOcsHandler = function(event) {
@@ -53,7 +36,12 @@
 		);
 		*/
 		var $target = $(event.target);
-		var nid = $target.attr('node');
+		$.fn.runOneTestCase( $target, 0);
+	};
+
+	$.fn.runOneTestCase = function( target, next) {
+		console.log( 'target', target);
+		var nid = $(target).attr('node');
 		console.log('test: ', nid);
 		$('.testcase_status[node=' + nid + ']').text('Requesting');
 
@@ -73,6 +61,14 @@
 					append( '<li>' + result.result_code + '</li>').
 					append( '<li>' + result.result_reason + '</li>') ;
 			//	$.fn.runOcsTestCase(nid, data);
+
+				if ( next > 0) {
+					// run next test case
+					var $target = $('.testcase_status[order=' + next + ']');
+					if ( $target.length > 0) {
+						$.fn.runOneTestCase( $target, next+1);
+					}
+				}
 			},
 			error : function() {
 				$('#run-test-ocs-result > ul').append(
