@@ -139,6 +139,7 @@ jQuery.fn.eventSetSelectAllCardType = function() {
 	});
 	
 	var parentNid = jQuery('#cardtype_parent_nid').attr('value');
+	var cardTypeNid = jQuery('#cardtype_nid').attr('value');
 	
 	var rootId = jQuery('.product_catalog_tree > ul:first > li:first').attr('id');
 	var cardtypeSetUrl = '/product_catalog_ajax/set_cardtype';
@@ -146,7 +147,7 @@ jQuery.fn.eventSetSelectAllCardType = function() {
 	jQuery.ajax({
 		url : cardtypeSetUrl,
 		type: "post",
-		data: {'product_nid': rootId, 'parent_nid': parentNid, 'cardtype_nids': selectCards},
+		data: {'product_nid': rootId, 'parent_nid': parentNid, 'cardtype_nid': cardTypeNid, 'cardtype_nids': selectCards},
 		success : function(data) {
 			jQuery(".product_catalog_tree").unmask();
 		},
