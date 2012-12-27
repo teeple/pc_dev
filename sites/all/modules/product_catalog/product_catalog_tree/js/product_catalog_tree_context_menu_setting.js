@@ -945,6 +945,12 @@
 							$.fn.deleteNode(node);
 						};
 						break;
+					case 'conditionwhenactivationday':
+						menus.custom_delete._disabled = false;
+						menus.custom_delete.action = function(node) {
+							$.fn.deleteNode(node);
+						};
+						break;
 					case 'conditionwhenfirstmonth':
 						menus.custom_delete._disabled = false;
 						menus.custom_delete.action = function(node) {
@@ -1189,10 +1195,26 @@
 										}
 									},
 									"subscription_day" : {
-										"label" : "Subscription Day",
+										"label" : "Subscription Date",
 										action : function(node) {
 											$.fn.addNode(node, {
 												'childContentType' : 'conditionwhensubscriptionday'
+											});
+										}
+									},
+									"activation_day" : {
+										"label" : "Activation Date",
+										action : function(node) {
+											$.fn.addNode(node, {
+												'childContentType' : 'conditionwhenactivationday'
+											});
+										}
+									},
+									"active_days" : {
+										"label" : "Active Days",
+										action : function(node) {
+											$.fn.addNode(node, {
+												'childContentType' : 'conditionwhenactivedays'
 											});
 										}
 									},
