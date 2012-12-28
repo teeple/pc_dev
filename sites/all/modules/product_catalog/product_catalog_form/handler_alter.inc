@@ -421,16 +421,30 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			);
 			
 			$productNid = $form['#node']->field_ref_product['und'][0]['nid'];
-			$counterList = _get_available_counter_list($productNid);
 			
-			$options = $counterList;
+			$basicCounterList = array();
+			$tempList = _get_default_basic_counters($productNid);
+			foreach($tempList as $record){
+				$counterUnitType = $record->field_field_counter_unit_type[0]['rendered']['#options']['entity']->name;
+				$basicCounterList[$record->nid] = $record->node_title.'('.$counterUnitType.')';
+			}
+			$existingCounterList = _get_existing_counter_list($productNid);
+			
+			foreach($basicCounterList as $key => $value) {
+				$mergedCounterList[$key] = $value;
+			}
+			foreach($existingCounterList as $key => $value) {
+				$mergedCounterList[$key] = $value;
+			}
+			
+			$options = $mergedCounterList;
 			$element = $form['field_counter_list']['und'];
 			
 			$items = $form_state['build_info']['args'][0]->field_counter_list['und'];
 			
 			$widget = _multiselect_build_widget_code($options, $items, $element, NULL);
 			$form['field_counter_list']['und']['#prefix'] = $widget['prefix_pre'] . $widget['prefix_options'] . $widget['prefix_post'];
-			$form['field_counter_list']['und']['#options'] = $counterList;
+			$form['field_counter_list']['und']['#options'] = $mergedCounterList;
 			
 			break;
         
@@ -480,12 +494,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			break;
             
         case 'treenodecounter_node_form':
-			
 			$refTreeTerm = taxonomy_term_load($form['field_ref_tree_tid']['und'][0]['value']['#default_value']);
-			/*
-			$product = node_load($form['field_ref_product']['und'][0]['nid']['#default_value']);
-			$billingTypeTerm  = taxonomy_term_load($product->field_billing_type['und'][0]['tid']);
-			*/
 			
 			if($refTreeTerm->name == 'Charging') {
 				$form['field_counter']['#type'] = 'hidden';
@@ -499,7 +508,37 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 				unset($form['#group_children']);
 				
 			} else if($refTreeTerm->name == 'Accumulating') {
+				
 				$form['field_threshold_on_counter']['#type'] = 'hidden';
+				$productNid = $form['#node']->field_ref_product['und'][0]['nid'];
+				
+				$basicCounterList = array();
+				$tempList = _get_default_basic_counters($productNid);
+				foreach($tempList as $record){
+					$counterUnitType = $record->field_field_counter_unit_type[0]['rendered']['#options']['entity']->name;
+					$basicCounterList[$record->nid] = $record->node_title.'('.$counterUnitType.')';
+				}
+				$existingCounterList = _get_existing_counter_list($productNid);
+				
+				foreach($basicCounterList as $key => $value) {
+					$mergedCounterList[$key] = $value;
+				}
+				foreach($existingCounterList as $key => $value) {
+					$mergedCounterList[$key] = $value;
+				}
+				
+				$options = $mergedCounterList;
+				$element = $form['field_counter']['und'];
+				
+				/*
+				$items = $form_state['build_info']['args'][0]->field_counter['und'];
+				$widget = _multiselect_build_widget_code($options, $items, $element, NULL);
+				 
+				$form['field_counter']['und']['#prefix'] = $widget['prefix_pre'] . $widget['prefix_options'] . $widget['prefix_post'];
+				 */
+				$form['field_counter']['und']['#options'] = $mergedCounterList;
+				dsm($form, 'after form');
+				
 			}
 			
 			$form['title']['#type'] = 'hidden';
@@ -523,9 +562,6 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             unset($form['field_weight']);
 			_unset_menu_items($form,$form_id);
 			
-// dsm($form, 'form');
-// dsm($form_state, 'form_state');
-// ��� ��
 			if(!isset($form['nid']['#value'])){
 				$view = views_get_view('query_counter_max_id');
 				$view->execute();

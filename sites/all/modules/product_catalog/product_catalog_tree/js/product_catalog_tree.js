@@ -61,6 +61,7 @@
 					var weight = $.parseJSON(request.responseText)[0].settings.product_catalog_ajax_result.data.weight;
 					
 					if( $('#'+childId).length >0 ) {
+						$(".product_catalog_tree").jstree("set_text", $('#' + childId), title);
 						$('#'+childId).trigger('click');
 					} else {
 						$.fn.addTreeItemCallback(parentId, childId, title,contentType, weight);
@@ -76,8 +77,11 @@
 					
 					// In case Edit
 					if( $('#'+childId).length >0 ) {
+						if( title instanceof Array) {
+							title = title[0];
+						}
 						$(".product_catalog_tree").jstree("set_text", $('#' + childId), title);
-						$('#'+childId).trigger('click');
+						// $('#'+childId).trigger('click');
 					// In case Create
 					} else {
 						$.fn.addTreeItemCallback(parentId, childId, title, contentType, weight);
