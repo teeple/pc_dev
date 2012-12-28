@@ -38,7 +38,8 @@ function ocs_run_one_testcase_for_ocs( $nid, $tc_nid)
         $field = field_info_instances( 'node', $ts_data->type);
     }
 
-    $output = ocs_run_testcase_http( $url, $ts_data, $field);
+    $output = ocs_run_testcase_http( $url, $ts_data, $field, $node->field_ts_method['und'][0]['value'],
+			$node->field_ts_json_prefix['und'][0]['value'], $node->field_ts_json_suffix['und'][0]['value']);
     $output['url'] = current_path();
     $output['nid'] = $nid;
     $output['tc_nid'] = $tc_nid;
@@ -52,6 +53,8 @@ function ocs_run_all_testcase_for_ocs( $nid)
     // content type test_case_ocs
     $node = node_load( $nid);
 
+	dpm( $node, 'test');
+
     $url = 'http://' . $node->field_ts_host['und'][0]['value'] . $node->field_ts_api['und'][0]['value']; 
 
     $output = array();
@@ -61,14 +64,15 @@ function ocs_run_all_testcase_for_ocs( $nid)
         $ts_data = node_load( $value);
         if ( $field == NULL) $field = field_info_instances( 'node', $ts_data->type);
 
-        $output[] = ocs_run_testcase_http( $url, $ts_data, $field);
+        $output[] = ocs_run_testcase_http( $url, $ts_data, $field, $node->field_ts_method['und'][0]['value'],
+				$node->field_ts_json_prefix['und'][0]['value'], $node->field_ts_json_suffix['und'][0]['value']);
     }
 
     return json_encode($output);
 }
 
 
-function ocs_run_testcase_http( $url, $ts_data, $field)
+function ocs_run_testcase_http( $url, $ts_data, $field, $method = 'POST', $prefix='', $suffix='')
 {
     $data = ocs_build_ts_json( $ts_data, $field);
 
@@ -93,13 +97,15 @@ function ocs_run_testcase_http( $url, $ts_data, $field)
         'total_time' => $info['total_time']);
 
     */
-	$body = json_encode( array( 'subscriptoin' => array( $data))); 
+	$body = ($method == 'POST') ? $prefix . json_encode( $data) . $suffix : NULL; 
     $response = drupal_http_request( $url, array( 
-				'method' => 'POST',
+				'method' => $method,
 				'data' => $body,
+				'headers' => array('Content-Type' => 'application/json', 'Accept' => 'application/json'),
 				'timeout'=>1));
 
 	dpm( 'http body:' . $body);
+	dpm( $response, 'response');
 
     $output = array( 'response' => $response);
 
@@ -124,8 +130,26 @@ function ocs_build_ts_json( $node, $field=NULL)
 	$obj = array();
 	foreach( $field as $key => $value) {
 		$v = $node->$key;
-		$obj[ $value['label']] = is_array( $v) ? ( empty($v) ? null : $v['und'][0]['value']) : $v;
-//		$obj[ $value['label']] = $v;
+		$label = $value['label'];
+		if ( is_array( $v)) {
+			if ( empty($v)) {
+				$va = null;
+			}
+			else {
+				if ( isset( $v['und'][0]['date_type']) && $v['und'][0]['date_type'] == 'datetime') {
+					$date = new DateTime( $v['und'][0]['value']);
+					$va = $date->format( 'YmdHis');
+				}
+				else {
+					$va = $v['und'][0]['value'];
+				}
+			}
+		}
+		else {
+			$va = $v;
+		}
+
+		$obj[ $label] = $va;
 	}
 
     return $obj;

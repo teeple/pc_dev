@@ -562,19 +562,19 @@ function product_catalog_ajax_set_cardtype() {
 	$productNid = $tempProductNid[1];
 	
 	$parentNid = $_POST['parent_nid'];
+	$cardTypeNid = $_POST['cardtype_nid'];
 	$cardTypeNids = $_POST['cardtype_nids'];
 	
-	if(empty($nodeNid)) {
+	if(empty($cardTypeNid)) {
 		$cardtype = new StdClass();
 		$cardtype->uid = $user->uid;
 		$cardtype->type = 'conditionwhatcardtype';
 		$cardtype->language = 'und';
-		
 		$cardtype->field_parent_node['und'][0]['nid'] = $parentNid;
-		
 	} else {
-		$cardtype = node_load($nodeNid);
+		$cardtype = node_load($cardTypeNid);
 	}
+	unset($cardtype->field_ref_cardtype);
 	
 	foreach($cardTypeNids as $cardTypeNid) {
 		$cardtype->field_ref_cardtype['und'][] = array('nid' => $cardTypeNid);
