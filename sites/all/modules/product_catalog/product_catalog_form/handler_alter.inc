@@ -112,6 +112,7 @@ function _add_ajax_submit_callback($form_id,&$form){
             }
             break;
         case 'simpleproductoffering_node_form':
+            unset($form['field_is_cloned']);
             if(isset($form['nid']['#value'])) { // edit
                 $form['clone_button'] = array(
                     '#type' => 'markup',
