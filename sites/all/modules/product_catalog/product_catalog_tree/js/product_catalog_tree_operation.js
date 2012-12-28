@@ -7,8 +7,9 @@
 			url : cloneLink,
 			success : function(data) {
 				var output = $.parseJSON(data);				
-				console.log(output);
+				//console.log(output);
 				$.fn.unmasking();
+				$(location).attr('href',output);
 			}
 		});
 	};
