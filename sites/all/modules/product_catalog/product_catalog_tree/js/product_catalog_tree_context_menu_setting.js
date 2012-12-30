@@ -1499,7 +1499,23 @@
 							$.fn.pasteNode(node);
 						};
 						break;
-						
+					case "attribute_required_device":
+						menus.custom_create._disabled = false;
+						menus.custom_create.submenu = {
+							"attribute_required_device" : {
+								"label" : "Select Required Device",
+								action : function(node) {
+									$.fn.loadSelectForm(node);
+								}
+							},
+						};
+						break;	
+					case "prdattributerequireddevice":
+						menus.custom_delete._disabled = false;
+						menus.custom_delete.action = function(node) {
+							$.fn.deleteNode(node);
+						};
+						break;
 					case "data_tariffplan_predefined":
 						menus.custom_create._disabled = false;
 						menus.custom_create.submenu = {
@@ -1540,8 +1556,7 @@
 						menus.custom_delete.action = function(node) {
 							$.fn.deleteNode(node);
 						};
-						break
-				  	break;
+						break;
 					case "iptv_usage_vod":
 						menus.custom_create._disabled = false;
 						menus.custom_create.submenu = {

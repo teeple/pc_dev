@@ -44,23 +44,36 @@
 		var nid = $(target).attr('node');
 		console.log('test: ', nid);
 		$('.testcase_status[node=' + nid + ']').text('Requesting');
+		$('.testcase_check_result[node=' + nid + ']').text( 'RESULT:');
+
+		var pathname = window.location.pathname.split('/');
+		var testsuite = pathname[pathname.length-1];
+		console.log('path:', pathname, testsuite);
 
 		// first, get the number of test cases
-		var testOcsUrl = '/ajax/test/ocs/' + nid + '/0';
+		var testOcsUrl = '/ajax/test/ocs/' + testsuite + '/' + nid;
 		$.ajax({
 			url : testOcsUrl,
 			type : "get",
 			success : function(data) {
 				var output = $.parseJSON(data);
 				console.log( 'response', output);
-			    $('#run-test-ocs-result > ul').append( '<li>' + data + '</li>');
+			    //$('#run-test-ocs-result').append( '<div>' + JSON.stringify( output, undefined, 2)  + '</div>');
 				var rsp = output[0].response;
 				var result = $.parseJSON( rsp.data);
+			    $('#run-test-ocs-result').append( '<br>').append( prettyPrint( rsp.request)).
+					append( prettyPrint( result, { expanded : false, maxDepth: 5}));
+				var desc = ( typeof( result.result_desc) == 'undefined') ? '' : result.result_desc;
 				$('.testcase_status[node=' + nid + ']').append( '<li> Code: ' + rsp.code + '</li>').
-					append( '<li>' + result.result_desc + '</li>').
-					append( '<li>' + result.result_code + '</li>').
-					append( '<li>' + result.result_reason + '</li>') ;
+					append( '<li> Code: ' + result.result_code + '</li>').
+					append( '<li> Reason: ' + result.result_reason + '(' + desc +')</li>') ;
 			//	$.fn.runOcsTestCase(nid, data);
+
+				// check result
+				var check_target = $('.testcase_check[node=' + nid + ']');
+				var check_result = eval( $(check_target).text());
+				console.log( 'check', $(check_target).text(), check_result);
+				$('.testcase_check_result[node=' + nid + ']').text( 'RESULT:' +(check_result ? "SUCCESS" : "FAIL") );
 
 				if ( next > 0) {
 					// run next test case

@@ -19,7 +19,7 @@ function _product_for_export($nids=NULL){
         $product['type'] = 'product';
         $node = node_load($products[$i]->nid);
 		
-	$product['attribute'] = _get_attribute($node);
+	    $product['attribute'] = _get_attribute($node);
 		
         //Packaged Products
         $packagedProducts = Array();
@@ -353,7 +353,7 @@ function _get_attribute($product) {
 	
 	$result_attribute_general = _get_result($reqArray, $product);
 	$result_attrbitue_exception = _get_attribute_exceptions($product);
-	$result_attribute_exception = null;
+	//$result_attribute_exception = null;
 	
 	$result = array_merge($result_attribute_general, $result_attrbitue_exception);
 	
@@ -480,6 +480,25 @@ function _get_attribute_exceptions($product) {
 		
 	// subscriber's lifecycle scheme과 연결
 	$retArray['lifecyclescheme'] = _get_lifecyclescheme($product->nid);
+    
+    $view = views_get_view('list_product_child_node');
+    $view->set_display('panel_pane_2');
+    $view->set_arguments(array('0' => $product->nid, '1' => 'prdattributerequireddevice'));
+    $view->execute();
+    $requiredDevice = array();
+    
+    if(!empty($view->result)) {        
+        foreach($view->result as $record){
+            $requiredDeviceNode = node_load($record->nid);
+            $requiredDeviceInfo = array();            
+            $deviceClassTerm = taxonomy_term_load($requiredDeviceNode->field_ref_device_class['und'][0]['tid']);
+            $requiredDeviceInfo['device'] = _get_common_code($deviceClassTerm);
+            $requiredDeviceInfo['amount'] = isset($requiredDeviceNode->field_amount['und'][0]['value'])?$requiredDeviceNode->field_amount['und'][0]['value']:0;
+            $requiredDevice [] = $requiredDeviceInfo;
+        }
+        
+        $retArray['required_device'] = $requiredDevice;
+    }
 	
 	return $retArray;
 }
