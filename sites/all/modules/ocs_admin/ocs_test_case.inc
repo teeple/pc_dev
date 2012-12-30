@@ -16,11 +16,8 @@ function ocs_admin_run_testcase( $type, $nid, $tc)
             print json_encode( $node->field_ts_test_data['und']);
         }
         else {
-            // ajax/test/ocs/[nid]/[testcase nid]
-            if ( $tc == '0')
-                print ocs_run_all_testcase_for_ocs( $nid);
-            else
-                print ocs_run_one_testcase_for_ocs( $nid, $tc);
+            // ajax/test/ocs/[testsuite nid]/[testcase nid]
+			print ocs_run_all_testcase_for_ocs( $nid, $tc);
         }
     }
 }
@@ -48,24 +45,29 @@ function ocs_run_one_testcase_for_ocs( $nid, $tc_nid)
 }
 
 
-function ocs_run_all_testcase_for_ocs( $nid)
+function ocs_run_all_testcase_for_ocs( $ts_nid, $tc_nid)
 {
+	// load test suite
+	$ts = node_load( $ts_nid);
+	$host = $ts->field_ts_host['und'][0]['value'];
+	if ( substr( $host, -1) != '/') $host .= '/';
+
     // content type test_case_ocs
-    $node = node_load( $nid);
+    $tc = node_load( $tc_nid);
 
-	dpm( $node, 'test');
+	//dpm( $tc, 'test');
 
-    $url = 'http://' . $node->field_ts_host['und'][0]['value'] . $node->field_ts_api['und'][0]['value']; 
+    $url = 'http://' . $host . $tc->field_ts_api['und'][0]['value']; 
 
     $output = array();
     $field = NULL;
     // get test data
-    foreach( $node->field_ts_test_data['und'] as $key => $value) {
+    foreach( $tc->field_ts_test_data['und'] as $key => $value) {
         $ts_data = node_load( $value);
         if ( $field == NULL) $field = field_info_instances( 'node', $ts_data->type);
 
-        $output[] = ocs_run_testcase_http( $url, $ts_data, $field, $node->field_ts_method['und'][0]['value'],
-				$node->field_ts_json_prefix['und'][0]['value'], $node->field_ts_json_suffix['und'][0]['value']);
+        $output[] = ocs_run_testcase_http( $url, $ts_data, $field, $tc->field_ts_method['und'][0]['value'],
+				$tc->field_ts_json_prefix['und'][0]['value'], $tc->field_ts_json_suffix['und'][0]['value']);
     }
 
     return json_encode($output);
@@ -104,8 +106,8 @@ function ocs_run_testcase_http( $url, $ts_data, $field, $method = 'POST', $prefi
 				'headers' => array('Content-Type' => 'application/json', 'Accept' => 'application/json'),
 				'timeout'=>1));
 
-	dpm( 'http body:' . $body);
-	dpm( $response, 'response');
+	//dpm( 'http body:' . $body);
+	//dpm( $response, 'response');
 
     $output = array( 'response' => $response);
 
