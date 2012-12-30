@@ -469,11 +469,35 @@ function generate_condition_string_by_condition_node($nid, &$factor_list )
 				$factor_list[$type->field_rating_factor_name['und'][0]['value']] = $type;
 				$value = NULL;
 
+				$op = '=';
+
+				if(property_exists($node, 'field_rating_operation'))
+				{
+					$temp = get_drupal_field_tids($node , 'field_rating_operation');
+					$tid_node = $temp[0];
+					$temp = get_drupal_field_values($tid_node , 'field_rating_operation_code');
+					$op = $temp[0];
+				}
+				else if(property_exists($node, 'field_rating_operation_for_date'))
+				{
+					$temp = get_drupal_field_tids($node , 'field_rating_operation_for_date');
+					$tid_node = $temp[0];
+					$temp = get_drupal_field_values($tid_node , 'field_rating_operation_code');
+					$op = $temp[0];
+				}
+				else
+				{
+					$op = $type->field_rating_factor_op['und'][0]['value'];
+				}
+
 				if(array_key_exists('und' , $type->field_value) && count($type->field_value['und'])>0)
 				{
 					$drupal_field_name = get_drupal_field_values($type , "field_value");
 					//dsm($node);
-					$value = get_rating_factor_values_from_drupal_field($node , $drupal_field_name);
+					if($op == "between")
+						$value = get_rating_factor_values_from_drupal_field($node , $drupal_field_name);
+					else
+						$value = get_rating_factor_values_from_drupal_field($node , array(0=>$drupal_field_name[0]));
 				}
 				else
 				{
@@ -489,29 +513,8 @@ function generate_condition_string_by_condition_node($nid, &$factor_list )
 
 				if(is_array($value))
 				{
-					$o = '';
 					$factor_name = $type->field_rating_factor_name['und'][0]['value'];
 
-					$op = '=';
-
-					if(property_exists($node, 'field_rating_operation'))
-					{
-						$temp = get_drupal_field_tids($node , 'field_rating_operation');
-						$tid_node = $temp[0];
-						$temp = get_drupal_field_values($tid_node , 'field_rating_operation_code');
-						$op = $temp[0];
-					}
-					else if(property_exists($node, 'field_rating_operation_for_date'))
-					{
-						$temp = get_drupal_field_tids($node , 'field_rating_operation_for_date');
-						$tid_node = $temp[0];
-						$temp = get_drupal_field_values($tid_node , 'field_rating_operation_code');
-						$op = $temp[0];
-					}
-					else
-					{
-						$op = $type->field_rating_factor_op['und'][0]['value'];
-					}
 					if($op == '=' || $op == 'starts' || $op == 'ends')
 					{
 						array_apply($value , 'to_rating_rule_string');
@@ -558,20 +561,6 @@ function generate_condition_string_by_condition_node($nid, &$factor_list )
 				}
 				else
 				{
-					$op = '=';
-
-					if(property_exists($node, 'field_rating_operation'))
-					{
-						$temp = get_drupal_field_tids($node , 'field_rating_operation');
-						$tid_node = $temp[0];
-						$temp = get_drupal_field_values($tid_node , 'field_rating_operation_code');
-						$op = $temp[0];
-					}
-					else
-					{
-						$op = $type->field_rating_factor_op['und'][0]['value'];
-					}
-
 					$value = to_rating_rule_string($value);
 					return $type->field_rating_factor_name['und'][0]['value'] . ' ' . $op . ' ' . $value;
 				}

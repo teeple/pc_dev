@@ -4,6 +4,7 @@
 			//console.log('testcase.js loaded');
 			$('#run-test-ocs-button').bind('click', $.fn.runTestOcsHandler); // test button
 			$('#add-action-button').bind('click', $.fn.addActionHandler);
+			$('.run-one-test-case-button').bind('click', $.fn.runOneTestOcsHandler);
 		}
 	};
 
@@ -17,28 +18,64 @@
 		'</table>'
 		);
 		 */
-		var ts = $('.testcase_status').each(
-				function(index) {
-					$(this).text('Requesting');
+		var idx = 0;
+		var ts = $('.testcase_status[order=' + idx + ']').each(
+			function(index) {
+				$.fn.runOneTestCase( this, idx +1);
+			});
+	};
 
-					// first, get the number of test cases
-					var nid = $(this).attr('node');
-					var testOcsUrl = '/ajax/test/ocs/count/' + nid;
-					$.ajax({
-						url : testOcsUrl,
-						type : "get",
-						success : function(data) {
-							var output = data;
-							//                $('#run-test-ocs-result > ul').append( '<li>' + output + '</li>');
-							$.fn.runOcsTestCase(nid, data);
-						},
-						error : function() {
-							$('#run-test-ocs-result > ul').append(
-									'<li> Fail: ' + testOcsUrl + '</li>');
-						}
-					});
+	$.fn.runOneTestOcsHandler = function(event) {
+		console.log('run one test case');
+		/*
+		$('#run-test-ocs-result').append( 
+		'<table>' +
+		'<thead><tr><th>Response</th><th>Time</th></tr></thead>' +
+		'<tbody></tbody>' +
+		'</table>'
+		);
+		*/
+		var $target = $(event.target);
+		$.fn.runOneTestCase( $target, 0);
+	};
 
-				});
+	$.fn.runOneTestCase = function( target, next) {
+		console.log( 'target', target);
+		var nid = $(target).attr('node');
+		console.log('test: ', nid);
+		$('.testcase_status[node=' + nid + ']').text('Requesting');
+
+		// first, get the number of test cases
+		var testOcsUrl = '/ajax/test/ocs/' + nid + '/0';
+		$.ajax({
+			url : testOcsUrl,
+			type : "get",
+			success : function(data) {
+				var output = $.parseJSON(data);
+				console.log( 'response', output);
+			    $('#run-test-ocs-result > ul').append( '<li>' + data + '</li>');
+				var rsp = output[0].response;
+				var result = $.parseJSON( rsp.data);
+				$('.testcase_status[node=' + nid + ']').append( '<li> Code: ' + rsp.code + '</li>').
+					append( '<li>' + result.result_desc + '</li>').
+					append( '<li>' + result.result_code + '</li>').
+					append( '<li>' + result.result_reason + '</li>') ;
+			//	$.fn.runOcsTestCase(nid, data);
+
+				if ( next > 0) {
+					// run next test case
+					var $target = $('.testcase_status[order=' + next + ']');
+					if ( $target.length > 0) {
+						$.fn.runOneTestCase( $target, next+1);
+					}
+				}
+			},
+			error : function() {
+				$('#run-test-ocs-result > ul').append(
+						'<li> Fail: ' + testOcsUrl + '</li>');
+			}
+		});
+
 	};
 
 	$.fn.runOcsTestCase = function(nid, testData) {
