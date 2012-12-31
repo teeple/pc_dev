@@ -1,6 +1,9 @@
 <?php
 
-define( 'OCS_DEFAULT_IP_ADDRESS', '0.0.0.0');
+define( 'OCS_DEFAULT_GETOPENITEM_URL', 'http://0.0.0.0/ocs/openitem');
+define( 'OCS_DEFAULT_GETOPENITEM_METHOD', 'GET');
+
+/*
 define( 'OCS_DEFAULT_USER_ACCOUNT', 'uocs');
 define( 'OCS_DEFAULT_CONFIG_DIR', 'HOME/lua/script/uocs/ui');
 define( 'OCS_DEFAULT_EVENT_FILE_NAME', 'OcsOpenItem.json');
@@ -51,23 +54,36 @@ define( 'OCS_ADMIN_STATUS',
 define( 'OCS_ADMIN_PRODUCT_STATUS',
 '0|Idle
 1|Active');
+*/
 
 function ocs_admin_config( $form, &$form_state) 
 {
     $form['access'] = array(
         '#type' => 'fieldset',
-        '#title' => 'OCS System Access',
-        '#description' => 'Configure system access information',
+        '#title' => 'API to get Open Items',
         '#collapsible' => TRUE, 
         '#collapsed' => FALSE,
     );
 
+    $form['access']['getopenitem_method'] = array(
+        '#type' => 'select',
+        '#title' => 'Method',
+		'#options' => drupal_map_assoc(array( 'GET', 'POST')),
+        '#default_value' => variable_get('ocs_admin_getopenitem_method', OCS_DEFAULT_GETOPENITEM_METHOD),
+    );
+
+    $form['access']['getopenitem_url'] = array(
+        '#type' => 'textfield',
+        '#title' => 'URL',
+        '#default_value' => variable_get('ocs_admin_getopenitem_url', OCS_DEFAULT_GETOPENITEM_URL),
+    );
+
+	/*
     $form['access']['ip_address'] = array(
         '#type' => 'textfield',
-        '#title' => 'IP Address',
-        '#description' => 'Enter IP Address of OCS',
-        '#default_value' => variable_get('ocs_admin_ip_address',
-            OCS_DEFAULT_IP_ADDRESS),
+        '#title' => 'OCS URL',
+        '#description' => 'Enter URL of OCS',
+        '#default_value' => variable_get('ocs_admin_ocs_url', OCS_DEFAULT_URL),
     );
 
     $form['access']['user_account'] = array(
@@ -229,6 +245,7 @@ function ocs_admin_config( $form, &$form_state)
         '#description' => t('Input available values for "Product Status" with format "value|name"'),
         '#default_value' => variable_get( 'ocs_admin_product_status', OCS_ADMIN_PRODUCT_STATUS),
     );
+	*/
 
 
    $form['submit'] = array(
@@ -244,6 +261,9 @@ function ocs_admin_config( $form, &$form_state)
 */
 function ocs_admin_config_submit( $form, &$form_state) 
 {
+    variable_set('ocs_admin_getopenitem_url', $form_state['values']['getopenitem_url']);
+    variable_set('ocs_admin_getopenitem_method', $form_state['values']['getopenitem_method']);
+	/*
     variable_set('ocs_admin_ip_address', $form_state['values']['ip_address']);
     variable_set('ocs_admin_user_account', $form_state['values']['user_account']);
     variable_set('ocs_admin_user_password', $form_state['values']['user_password']);
@@ -272,6 +292,7 @@ function ocs_admin_config_submit( $form, &$form_state)
     variable_set('ocs_admin_status', $form_state['values']['status']);
     variable_set('ocs_admin_usable_type', $form_state['values']['usable_type']);
     variable_set('ocs_admin_product_status', $form_state['values']['product_status']);
+	*/
 
     drupal_set_message( t('The settings have been saved.'));
 }
