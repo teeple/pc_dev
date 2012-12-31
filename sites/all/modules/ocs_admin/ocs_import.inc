@@ -15,61 +15,40 @@ function ocs_admin_import_ocs_config( $form, &$form_state, $local_file = NULL)
 
     $form['ocs'] = array(
         '#type' => 'fieldset',
-        '#title' => 'OCS(Online Charging System) Access Info',
-        '#description' => t('OCS Access Settings. It can be changed ').
+        '#title' => 'OCS(Online Charging System) API',
+        '#description' => t('OCS API Settings. It can be changed ').
             l( t('here'), 'admin/config/system/ocs_admin'),
         '#collapsible' => TRUE, 
         '#collapsed' => FALSE,
     );
 
-    $ip_address = variable_get('ocs_admin_ip_address', 'Administrative Warning');
-    $user_account = variable_get('ocs_admin_user_account', 'Administrative Warning');
-    $user_password = variable_get('ocs_admin_user_password', 'Administrative Warning');
-    $config_directory = variable_get('ocs_admin_config_directory', 'Administrative Warning');
-    $event_file = variable_get('ocs_admin_ocs_event_file', 'Administrative Warning');
+    $url = variable_get('ocs_admin_getopenitem_url', 'Administrative Warning');
+    $method = variable_get('ocs_admin_getopenitem_method', 'Administrative Warning');
 
-    $form['ocs']['ip_address'] = array(
+    $form['ocs']['url'] = array(
         '#type' => 'item',
-        '#title' => 'IP Address',
-        '#markup' => $ip_address,
+        '#title' => 'URL to get open items from OCS',
+        '#markup' => '<br><p>' . $method . ' ' . $url . '</p>',
     );
 
-    $form['ocs']['user_account'] = array(
-        '#type' => 'item',
-        '#title' => 'Account Name',
-        '#markup' => $user_account,
-    );
+	$response = drupal_http_request( $url, array(
+		'method' => $method,
+		'headers' => array('Content-Type' => 'application/json', 'Accept' => 'application/json'),
+		'timeout'=>1));
+	//dpm( $response, 'response');
 
-    $form['ocs']['config_directory'] = array(
-        '#type' => 'item',
-        '#title' => 'Configuration Directory',
-        '#markup' => $config_directory,
-    );
-
-    $form['ocs']['ocs_event_file'] = array(
-        '#type' => 'item',
-        '#title' => 'Event File Name',
-        '#markup' => $event_file,
-    );
+	$form['response'] = array(
+		'#type' => 'textarea',
+		'#title' => 'API Return Result',
+		'#rows' => 20,
+		'#default_value' => $response->data,
+	);
 
     $form['actions'] = array('#type' => 'actions');
-
-    $file_content = _ftp_get( $ip_address, $user_account, $user_password, $config_directory, $event_file);
-    //$file_content = _scp_get( $ip_address, $user_account, $user_password, $config_directory, $event_file);
-    if ( $file_content) {
-        $form['file_content'] = array(
-            '#type' => 'textarea',
-            '#title' => 'Event File Contents',
-            '#rows' => 20,
-            '#default_value' => $file_content,
-        );
-
-        $form['actions']['submit'] = array(
-            '#type' => 'submit',
-            '#value' => t('Update Configuration'),
-        );
-
-    }
+	$form['actions']['submit'] = array(
+		'#type' => 'submit',
+		'#value' => t('Update Configuration'),
+	);
 
     $form['actions']['cancel'] = array(
         '#type' => 'submit',
@@ -167,7 +146,7 @@ function _scp_get( $ip_address, $user, $passwd, $dir, $file)
 function ocs_admin_import_ocs_config_submit( $form, &$form_state)
 {
     if ( $form_state['values']['op'] != 'Cancel') {
-        if ( ocs_admin_event_save( $form_state['values']['file_content'])) {
+        if ( ocs_admin_event_save( $form_state['values']['response'])) {
             drupal_set_message( t('System events are updated.'));
         }
         else {
@@ -213,10 +192,13 @@ function ocs_admin_event_save( $event_json)
         return FALSE;
     }
 
-    if ( update_ocs_param( $json["OCS_PARAM"]) &&
-        update_ocs_events( $json["OCS_EVENT"]) &&
-        update_ocs_states( $json["OCS_STATE"]) &&
-        update_ocs_actions( $json["OCS_ACTION"]) )
+	// dpm( $json, 'json');
+
+	$openItem = $json['openitem'];
+    if ( update_ocs_param( $openItem["OCS_PARAM"]) &&
+        update_ocs_events( $openItem["OCS_EVENT"]) &&
+        update_ocs_states( $openItem["OCS_STATE"]) &&
+        update_ocs_actions( $openItem["OCS_ACTION"]) )
         return TRUE;
 
     return FALSE;
