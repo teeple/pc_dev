@@ -6,22 +6,15 @@ function ocs_admin_run_api( $param1, $param2)
 }
 
 
-function ocs_admin_run_testcase( $type, $nid, $tc)
+function ocs_admin_run_testcase( $type, $test_suite, $tc_nid, $tc_idx)
 {
     if ( $type == 'ocs') {
-        if ( $nid == 'count') {
-            // ajax/test/ocs/count/[nid]
-            // return the number of test cases 
-            $node = node_load( $tc);
-            print json_encode( $node->field_ts_test_data['und']);
-        }
-        else {
-            // ajax/test/ocs/[testsuite nid]/[testcase nid]
-			print ocs_run_all_testcase_for_ocs( $nid, $tc);
-        }
+		// ajax/test/ocs/[testsuite nid]/[testcase nid]/[testcase idx]
+		print ocs_run_all_testcase_for_ocs( $test_suite, $tc_nid, $tc_idx);
     }
 }
 
+/*	not used anymore
 function ocs_run_one_testcase_for_ocs( $nid, $tc_nid)
 {
     // content type test_case_ocs
@@ -43,14 +36,25 @@ function ocs_run_one_testcase_for_ocs( $nid, $tc_nid)
 
     return json_encode($output);
 }
+*/
 
 
-function ocs_run_all_testcase_for_ocs( $ts_nid, $tc_nid)
+function ocs_run_all_testcase_for_ocs( $ts_nid, $tc_nid, $tc_idx)
 {
+	$tc_idx = (int)$tc_idx;
+
 	// load test suite
 	$ts = node_load( $ts_nid);
 	$host = $ts->field_ts_host['und'][0]['value'];
 	if ( substr( $host, -1) != '/') $host .= '/';
+
+	$data_to_replace = isset($ts->field_ts_test_suite_data['und']) ? $ts->field_ts_test_suite_data['und'][0]['value'] : NULL;
+	$json_data = json_decode( $data_to_replace, TRUE);
+	/*
+	if ( !empty($data_to_replace) && empty( $json_data)) {
+		drupal_set_message('Invalid json format in Test Suite Data', 'error');
+	}
+	*/
 
     // content type test_case_ocs
     $tc = node_load( $tc_nid);
@@ -59,31 +63,40 @@ function ocs_run_all_testcase_for_ocs( $ts_nid, $tc_nid)
 
     $url = 'http://' . $host . $tc->field_ts_api['und'][0]['value']; 
 
-    $output = array();
     $field = NULL;
+	$output = NULL;
     // get test data
-    foreach( $tc->field_ts_test_data['und'] as $key => $value) {
-        $ts_data = node_load( $value);
+    if( isset( $tc->field_ts_test_data['und'][$tc_idx])) {
+        $ts_data = node_load( $tc->field_ts_test_data['und'][$tc_idx]['nid']);
         if ( $field == NULL) $field = field_info_instances( 'node', $ts_data->type);
 
-        $output[] = ocs_run_testcase_http( $url, $ts_data, $field, $tc->field_ts_method['und'][0]['value'],
-				$tc->field_ts_json_prefix['und'][0]['value'], $tc->field_ts_json_suffix['und'][0]['value']);
+        $output = ocs_run_testcase_http( $url, $ts_data, $field, $tc->field_ts_method['und'][0]['value'],
+				$tc->field_ts_json_prefix['und'][0]['value'], $tc->field_ts_json_suffix['und'][0]['value'], $json_data);
     }
+	else {
+		$output = array( 'error' => 'TC-'. $tc_idx . ' Not found');
+	}
 
-    return json_encode($output);
+	//dpm( json_encode($output), 'result');
+
+    return json_encode( array_merge( $output, array( 'tc' => $tc_idx)));
 }
 
 
-function ocs_run_testcase_http( $url, $ts_data, $field, $method = 'POST', $prefix='', $suffix='')
+function ocs_run_testcase_http( $url, $ts_data, $field, $method = 'POST', $prefix='', $suffix='', $replace_data=NULL)
 {
-    $data = ocs_build_ts_json( $ts_data, $field);
+    $data = ocs_build_ts_json( $ts_data, $field, $replace_data);
 
     $pattern = '/\[(\w+)\]/';
     while ( preg_match( $pattern, $url, $match)) {
         // $match[0] == matched string, find in the value array
         $key = substr( $match[0], 1, -1);
-        if ( array_key_exists( $key, $data)) {
-            // replace one the variable pattern found
+
+		// replace one the variable pattern found
+        if ( array_key_exists( $key, $replace_data)) {
+            $url = preg_replace( $pattern, $replace_data[$key], $url, 1); 
+		}
+		else if ( array_key_exists( $key, $data)) {
             $url = preg_replace( $pattern, $data[$key], $url, 1); 
         }
 
@@ -109,21 +122,14 @@ function ocs_run_testcase_http( $url, $ts_data, $field, $method = 'POST', $prefi
 	//dpm( 'http body:' . $body);
 	//dpm( $response, 'response');
 
-    $output = array( 'response' => $response);
+    $output = array( 'response' => $response, 'test_data' => json_encode( $data));
 
     // build output
     return $output;
 }
 
 
-function ocs_test_case_json( $nid, $data)
-{
-	$node = node_load( $nid);
-	$field = field_info_instances( 'node', $node->type);
-    return ocs_build_ts_json( $node, $field);
-}
-
-function ocs_build_ts_json( $node, $field=NULL)
+function ocs_build_ts_json( $node, $field=NULL, $replace_data=NULL)
 {
     if ( $field == NULL) {
         $field = field_info_instances( 'node', $node->type);
@@ -133,7 +139,11 @@ function ocs_build_ts_json( $node, $field=NULL)
 	foreach( $field as $key => $value) {
 		$v = $node->$key;
 		$label = $value['label'];
-		if ( is_array( $v)) {
+
+		if ( array_key_exists( $label, $replace_data)) {
+			$va = $replace_data[$label];
+		}
+		else if ( is_array( $v)) {
 			if ( empty($v)) {
 				$va = null;
 			}
