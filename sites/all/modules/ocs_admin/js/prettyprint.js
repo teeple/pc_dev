@@ -434,7 +434,16 @@ var prettyPrint = (function(){
 		
 		var typeDealer = {
 			string : function(item){
-				return util.txt('"' + util.shorten(item.replace(/"/g,'\\"')) + '"');
+				//return util.txt('"' + util.shorten(item.replace(/"/g,'\\"')) + '"');
+				return util.txt('"' + item.replace(/"/g,'\\"') + '"');
+				/*
+				var str = item.replace(/"/g,'\\"');
+				var output = '';
+				for( var i=0; i< str.length; i+= 40) {
+					output += str.substr( i, 40) + '\\n';
+				}
+				return util.txt('"' + output + '"');
+				*/
 			},
 			number : function(item) {
 				return util.txt(item);
@@ -748,7 +757,7 @@ var prettyPrint = (function(){
 					border: '1px solid #000',
 					verticalAlign: 'top',
 					fontFamily: '"Consolas","Lucida Console",Courier,mono',
-					whiteSpace: 'nowrap'
+					whiteSpace: 'nowrap',
 				},
 				td_hover: {
 					/* Styles defined here will apply to all tr:hover > td,
