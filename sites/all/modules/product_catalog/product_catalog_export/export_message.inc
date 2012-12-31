@@ -35,6 +35,7 @@ function _array_message($nid = NULL)
 		}
 	}
 	
+	$jsonData['ifvalues']['resources'] = array();
 	$jsonData['messages'] = array_merge( $jsonData['messages'], array_values( $msg));
 	
 	return $jsonData;
