@@ -1,9 +1,6 @@
 <?php
 
 function product_catalog_form_node_validate($node, $form, &$form_state){
-// dsm($form, 'form');
-// dsm($form_state, 'form_state');
-// dsm($node, 'node');
 	
 	switch($form['form_id']['#value']){		
 		case 'timetablefactors_node_form':
@@ -21,8 +18,6 @@ function product_catalog_form_node_validate($node, $form, &$form_state){
 			}else if($form_state['values']['field_timeslot_from_hour']['und'][0]['value'] === '24'){
 				form_set_error('Reference','FROM Hour(24) is not allowed');
 			}
-		case 'counter_node_form';
-			break;
 		case 'conditionwhenactivationday_node_form':
 		case 'conditionwhensubscriptionday_node_form':
 			$operationTerm = taxonomy_term_load($form_state['values']['field_rating_operation_for_date']['und'][0]['tid']);
@@ -38,6 +33,19 @@ function product_catalog_form_node_validate($node, $form, &$form_state){
 				$form_state['values']['field_activedays_start']['und'][0]['value'] > $form_state['values']['field_activedays_end']['und'][0]['value']) {
 				drupal_set_message("Start days should be less than End days", "error");
 				form_set_error('Start days should be less than End days');
+			}
+			break;
+		case 'counter_node_form':
+			$counterType = taxonomy_term_load($form_state['values']['field_counter_type']['und'][0]['tid']);
+			$counterId = $form_state['values']['field_counter_id']['und'][0]['value'];
+			if($counterType->name == 'Rollover') {
+				if($counterId < 1000000 && $counterId > 2000000) {
+					form_set_error('rollover counter id should be between 1000000 and 2000000');
+				}
+			} else {
+				if($counterId >= 1000000) {
+					form_set_error('counter id should be less than 1000000');
+				}
 			}
 			break;
 	}
