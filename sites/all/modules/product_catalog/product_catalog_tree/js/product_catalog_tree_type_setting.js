@@ -69,7 +69,7 @@
 
 				},
 				"mobile_counter_main" : {
-                    "valid_children" : ["tree_node_counter_main_basic","tree_node_counter_main_optional"],
+                    "valid_children" : ["tree_node_counter_main_basic","tree_node_counter_main_optional","tree_node_counter_main_rollover"],
 									"icon" : {
 											"image" : "/sites/default/files/icons/inbox-document.png"
 										},
