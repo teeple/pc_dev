@@ -69,7 +69,7 @@ function _add_ajax_submit_callback($form_id,&$form){
         case 'actionpricediscount_node_form':
         case 'actionpriceallowance_node_form':
 		case 'actionblockfactors_node_form':
-		case 'counter_node_form':
+		// case 'counter_node_form':
 		// case 'actionsetnotification_node_form':
         case 'tariffplan_node_form':
         case 'treenodecounter_node_form':
@@ -476,6 +476,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             break;
 			
 		case 'counter_node_form':
+			$counterTypeTerm = current(taxonomy_get_term_by_name($form_state['counter_type'], 'countertype'));
 			
 			// in case edit
 			if(isset($form['nid']['#value'])) {
@@ -486,12 +487,17 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 				$form['field_billing_type_counter']['und']['#disabled'] = TRUE;
 				$form['field_counter_unit_type']['und']['#disabled'] = TRUE;
 				$form['field_default_usage_type']['und']['#disabled'] = TRUE;	
+			} else {
+				$form['field_counter_type']['und']['#default_value'] = $counterTypeTerm->tid;
+				$form['field_counter_type']['und']['#disabled'] = TRUE;
 			}
 			
 			unset($form['field_weight']);
 			unset($form['field_parent_node']);
 			
 			_unset_menu_items(&$form, 'counter_node_form');
+			$form['actions']['submit']['#submit'][] = 'product_catalog_form_form_redirect_handler';
+			dsm($form['actions'], 'actions');
 			break;
             
         case 'treenodecounter_node_form':
