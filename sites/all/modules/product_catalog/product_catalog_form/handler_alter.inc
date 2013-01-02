@@ -476,7 +476,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 		case 'counter_node_form':
 			$counterTypeTerm = current(taxonomy_get_term_by_name($form_state['counter_type'], 'countertype'));
 			
-			// in case edit
+			// Edit
 			if(isset($form['nid']['#value'])) {
 				$form['field_counter_id']['und']['#disabled'] = TRUE;
 				$form['field_scale']['und']['#disabled'] = TRUE;
@@ -484,8 +484,23 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 				$form['field_service_domain']['und']['#disabled'] = TRUE;
 				$form['field_billing_type_counter']['und']['#disabled'] = TRUE;
 				$form['field_counter_unit_type']['und']['#disabled'] = TRUE;
-				$form['field_default_usage_type']['und']['#disabled'] = TRUE;	
+				$form['field_default_usage_type']['und']['#disabled'] = TRUE;
+				
+			// Create
 			} else {
+				if($counterTypeTerm->name == 'Rollover') {
+					$viewResult = views_get_view_result('query_counter_max_id', 'panel_pane_2');
+					if(!empty($viewResult)) {
+						$maxCounterId = $viewResult[0]->field_field_counter_id[0]['raw']['value'] + 100;	
+					} else {
+						$maxCounterId = 1000000;
+					}
+				} else {
+					$viewResult = views_get_view_result('query_counter_max_id', 'panel_pane_1');
+					$maxCounterId = $viewResult[0]->field_field_counter_id[0]['raw']['value'] + 1;
+				}
+				$form['field_counter_id']['und'][0]['value']['#default_value'] = $maxCounterId;
+				$form['field_counter_id']['und']['#disabled'] = TRUE;
 				$form['field_counter_type']['und']['#default_value'] = $counterTypeTerm->tid;
 				$form['field_counter_type']['und']['#disabled'] = TRUE;
 			}
