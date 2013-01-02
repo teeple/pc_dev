@@ -245,6 +245,7 @@
             case 'defaulttreenode':
             case 'conditionwhatincomingcall':
             case 'treenodepacketpredefined': 
+            case 'prdattributeallowedmodel':
             	needToLoadEdit = false;
             	needToLoadDetail = false;
             	break;
