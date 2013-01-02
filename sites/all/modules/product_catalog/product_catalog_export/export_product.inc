@@ -349,6 +349,24 @@ function _get_attribute($product) {
 			'field_value' => "field_customer_group_type['und'][0]['tid']",
 			'field_value_default' => NULL
 		),
+		'treatment_day' => array(
+            'through_common_code' => FALSE,
+            'field' => 'field_treatment_day',
+            'field_value' => "field_treatment_day['und'][0]['value']",
+            'field_value_default' => NULL
+        ),
+        'treatment_price' => array(
+            'through_common_code' => FALSE,
+            'field' => 'field_treatment_price_amount',
+            'field_value' => "field_treatment_price_amount['und'][0]['value']",
+            'field_value_default' => 0
+        ),
+        'contract_period' => array(
+            'through_common_code' => FALSE,
+            'field' => 'field_contract_period‎',
+            'field_value' => "field_contract_period‎['und'][0]['value']",
+            'field_value_default' => 0
+        ),        
 	);
 	
 	$result_attribute_general = _get_result($reqArray, $product);
