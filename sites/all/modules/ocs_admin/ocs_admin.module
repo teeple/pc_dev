@@ -12,6 +12,7 @@ module_load_include( 'inc', 'ocs_admin', 'ocs_card');
 module_load_include( 'inc', 'ocs_admin', 'ocs_test_case');
 module_load_include( 'inc', 'ocs_admin', 'ocs_lifecycle');
 module_load_include( 'inc', 'ocs_admin', 'ocs_migrate');
+module_load_include( 'inc', 'ocs_admin', 'ocs_build_test_case');
 
 /**
 * Implement hook_help().
