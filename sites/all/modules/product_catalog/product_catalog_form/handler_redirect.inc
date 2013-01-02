@@ -90,16 +90,13 @@ function product_catalog_form_form_redirect_handler(&$form, &$form_state){
 			}
 			break;		
 		case 'number_special_node_form':			
-			$redirect_url = 'common/number_special/'.$form_state['values']['nid'].'#quickset-qtabs_common_data=6';
+			$redirect_url = 'common/number_special/'.$form_state['values']['nid'];
+			$urlFragment = 'quickset-qtabs_common_data=6';
 			break;		
         case 'actionpricefactors_node_form':
-
             $rule = node_load($form_state['rule_nid']);
-
             if($rule->type == 'rule') {
-
                 //$redirect_url = 'common/rules/'.$form_state['rule_nid'].'/edit';
-
             } else {
                 $redirect_url = 'common/number_sp_rule/'.$form_state['rule_nid'].'/edit';
             }
@@ -139,47 +136,79 @@ function product_catalog_form_form_redirect_handler(&$form, &$form_state){
             }
             break;
        case 'numberingplan_idd_node_form':
-       	   	$redirect_url = 'common/numberingplan_idd/'.$form_state['values']['nid'].'/ratinggroup#quickset-qtabs_common_data=4';
+       	   	$redirect_url = 'common/numberingplan_idd/'.$form_state['values']['nid'].'/ratinggroup';
+		    $urlFragment = 'quickset-qtabs_common_data=4';
         	break;
        case 'numberingplan_domestic_node_form':
-       	   	$redirect_url = 'common/numberingplan_domestic/'.$form_state['values']['nid'].'/ratinggroup#quickset-qtabs_common_data=3';
+       	   	$redirect_url = 'common/numberingplan_domestic/'.$form_state['values']['nid'].'/ratinggroup';
+		    $urlFragment = 'quickset-qtabs_common_data=3';
         	break;
        case 'roaming_plan_node_form':
-           $redirect_url = 'common/roaming/plan/'.$form_state['values']['nid'].'/ratinggroup#quickset-roaming=2';
+           $redirect_url = 'common/roaming/plan/'.$form_state['values']['nid'].'ratinggroup';
+		    $urlFragment = 'quickset-roaming=2';
            break;
         case 'country_code_node_form':
        	   	$redirect_url = 'common/country_code';
         	break;        
         case 'timetable_node_form':
-        	$redirect_url = 'common/timetable/'.$form_state['values']['nid'].'/timetablefactors#quickset-qtabs_common_data=5';
+        	$redirect_url = 'common/timetable/'.$form_state['values']['nid'].'/timetablefactors';
+			$urlFragment = 'quickset-qtabs_common_data=5';
         	break;
         case 'vouchercardtype_node_form':
             $redirect_url = 'common/vouchercardtype/edit/'.$form_state['values']['nid'];
             break;
         case 'counter_node_form':
-        	$redirect_url = 'common/counter/edit/'.$form_state['values']['nid'].'#quickset-qtabs_common_data=1';
+			$redirect_url = 'common/counter/edit/'.$form_state['counter_type'].'/'.$form_state['values']['nid'];
+			switch($form_state['counter_type']) {
+				case 'Basic':
+					$urlFragment = '';
+					break;
+				case 'Optional':
+					$urlFragment = 'quickset-counters=1';
+					break;
+				case 'Rollover':
+					$urlFragment = 'quickset-counters=2';
+					break;
+				default:
+					$urlFragment = '';
+					break;
+			}
         	break;
         case 'carrier_mobile_node_form':
-        	$redirect_url = 'common/carrier_mobile/'.$form_state['values']['nid'].'#quickset-qtabs_common_data=11';
+        	$redirect_url = 'common/carrier_mobile/'.$form_state['values']['nid'];
+			$urlFragment = 'quickset-qtabs_common_data=11';
         	break;
         case 'packetdynamicl4_node_form':
-            $redirect_url = 'common/packet/dynamic/l4/'.$form_state['values']['nid'].'#quickset-packet=2';
+            $redirect_url = 'common/packet/dynamic/l4/'.$form_state['values']['nid'];
+			$urlFragment = 'quickset-packet=2';
             break;
         case 'packetdynamicchargingrule_node_form':
-            $redirect_url = 'common/packet/dynamic/charging_rule/'.$form_state['values']['nid'].'#quickset-packet=1';
-            break;
+            $redirect_url = 'common/packet/dynamic/charging_rule/'.$form_state['values']['nid'];
+			$urlFragment = 'quickset-packet=1';
+			break;
         case 'packetpredefinedchargingrule_node_form':
-            $redirect_url = 'common/packet/predefined/charging_rule/'.$form_state['values']['nid'].'#quickset-packet=0';
+            $redirect_url = 'common/packet/predefined/charging_rule/'.$form_state['values']['nid'];
+			$urlFragment = 'quickset-packet=0';
             break;
         case 'roaming_country_node_form':
-            $redirect_url = 'common/roaming/country/'.$form_state['values']['nid'].'#quickset-roaming=0';
+            $redirect_url = 'common/roaming/country/'.$form_state['values']['nid'];
+            $urlFragment = 'quickset-roaming=0';
             break;
         case 'roaming_carrier_node_form':
-            $redirect_url = 'common/roaming/carrier/'.$form_state['values']['nid'].'#quickset-roaming=1';
+            $redirect_url = 'common/roaming/carrier/'.$form_state['values']['nid'];
+            $urlFragment = 'quickset-roaming=1';
             break;
-    }
 
-	if(!empty($redirect_url)){
-		$form_state['redirect'] = 'http://'.$_SERVER['HTTP_HOST'].base_path().$redirect_url;
     }
+	dsm($redirect_url, 'redirect_url');
+	dsm($urlFragment, 'urlFragment');
+	
+
+	$form_state['redirect'] = array(
+  		$redirect_url,
+  		array(
+			NULL,
+  			'fragment' => $urlFragment,
+  		)
+  	);
 }
