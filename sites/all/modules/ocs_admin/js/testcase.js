@@ -5,6 +5,9 @@
 			$('#run-test-ocs-button').bind('click', $.fn.runTestOcsHandler); // test button
 			$('#add-action-button').bind('click', $.fn.addActionHandler);
 			$('.run-one-test-case-button').bind('click', $.fn.runOneTestOcsHandler);
+			$('#clear-test-result-button').bind('click', function(event) {
+				$('#run-test-ocs-result').text('');
+			});
 		}
 	};
 
@@ -66,16 +69,17 @@
 			    //$('#run-test-ocs-result').append( '<div>' + JSON.stringify( output, undefined, 2)  + '</div>');
 				var config = { expanded : false, maxDepth: 5};
 
-				$('#run-test-ocs-result').append( '<br><h3>' + title + '</h3>').
-					append( '<h4>Request {0}</h4>'.format( testOcsUrl));
-
+				var d = new Date();
 				var tc_idx = output.tc;
 				var result = $.parseJSON( output.response.data);
 				var test_data = $.parseJSON( output.test_data);
+				var test_result = $.parseJSON( output.test_result);
 				var counter = {};
 
 				$('#run-test-ocs-result').
-					append( '<hr><h4 id="test_result_{1}_{0}"> TC-{0} </h4>'.format( tc_idx, nid)).
+					append( '<br>{0}:{1}:{2}<hr style="background-color:darkblue;"><h3>{3}</h3>'.
+						format( d.getHours(), d.getMinutes(), d.getSeconds(), title)).
+					append( '<h4 id="test_result_{1}_{0}"> TC-{0}    Request {2}</h4>'.format( tc_idx, nid, testOcsUrl)).
 					append( '<p> {0}</p>'.format( output.response.request.replace(/\n/g, '<br>')));
 
 				$('.testcase_status[node=' + nid + ']').
@@ -133,8 +137,7 @@
 						append( prettyPrint( eval_result, config));
 				}
 				else {
-					$('#run-test-ocs-result').
-						append( '<br><h4>Result </h4> : {0}'.format( output.response.error));
+					$('#run-test-ocs-result').append( '<br><h4>Result </h4> : {0}<br>'.format( output.response.error));
 				}
 
 				// run next test case
