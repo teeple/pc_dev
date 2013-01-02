@@ -10,7 +10,7 @@ function pc_device_services_services_resources() {
   $resources['device']['create'] = array(
     'help' => 'Create device type',
     'callback' => 'pc_device_services_create',
-    'access callback' => 'pc_device_services_access',
+    'access callback' => 'pc_device_services_access', 
     'args' => array(
         array(
             'name' => 'model',
@@ -50,35 +50,43 @@ function pc_device_services_retrieve($nid) {
     $ret_array = array();
     $ret_array['ID'] = $node->nid;
     $ret_array['Model'] = $node->title;
-
     return $ret_array;
 }
 
 
 function pc_device_services_create($model) {
-  global $user;
+    ctools_include('node.pages', 'node', '');
+    global $user;
 
-  $account = user_load(1);
-  $user = $account;
+    $account = user_load(1);
+    $user = $account;
 
-  $device_model = _services_arg_value($model, 'Model');
-
-  $product_device = new StdClass();
-  $product_device->title = $device_model['Model'];
-  $product_device->status = 1;
-  $product_device->uid = 1;
-  $product_device->type = 'simpleproductoffering';
-  $product_device->language = 'und';
-  $product_device->field_id['und'][0]['value'] = $device_model['Model'];
-  $product_device->field_offering_status['und'][0]['tid'] = 19; //PLANNED status 
-  $product_device->field_product_type['und'][0]['tid'] = 528; // product type : DEVICE
-
-  node_save($product_device);
-
-  $ret_array = array();
-  $ret_array['ID'] = $product_device->nid;
-
-  return $ret_array;
+    $device_model = _services_arg_value($model, 'model');
+    
+    $ret_array = array();
+    foreach($device_model as $model){
+        $view = views_get_view('list_device_model');
+        $view->set_display('panel_pane_2');
+        $view->set_arguments(array('0' => $model['devcMdlCd']));
+        $view->execute(); 
+        
+        if(empty($view->result)){//unique checking
+            $deviceModel = new StdClass();
+            $deviceModel->title = $model['devcMdlNm'];
+            $deviceModel->status = 1;
+            $deviceModel->uid = 1;
+            $deviceModel->type = 'devicemodel';
+            $deviceModel->language = 'und';
+            $deviceModel->field_model_code['und'][0]['value'] = $model['devcMdlCd'];
+            $deviceModel->field_model_class['und'][0]['value'] = $model['clssNm']; 
+            $deviceModel->field_model_class_code['und'][0]['value'] = $model['clssCd']; 
+        
+            node_save($deviceModel);  
+            $ret_array[] = array('ID' => $deviceModel->nid );
+        }    
+    }
+    
+    return $ret_array;
 }
 
 
