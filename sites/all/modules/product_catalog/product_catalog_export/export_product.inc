@@ -481,6 +481,7 @@ function _get_attribute_exceptions($product) {
 	// subscriber's lifecycle scheme과 연결
 	$retArray['lifecyclescheme'] = _get_lifecyclescheme($product->nid);
     
+    //required device
     $view = views_get_view('list_product_child_node');
     $view->set_display('panel_pane_2');
     $view->set_arguments(array('0' => $product->nid, '1' => 'prdattributerequireddevice'));
@@ -498,6 +499,27 @@ function _get_attribute_exceptions($product) {
         }
         
         $retArray['required_device'] = $requiredDevice;
+    }
+    
+    //allowed device
+    $view = views_get_view('list_product_child_node');
+    $view->set_display('panel_pane_2');
+    $view->set_arguments(array('0' => $product->nid, '1' => 'prdattributeallowedmodel'));
+    $view->execute();
+    $allowedDevice = array();
+    
+    if(!empty($view->result)) {        
+        foreach($view->result as $record){
+            $allowedDeviceNode = node_load($record->nid);
+            $deviceModelNode = node_load($allowedDeviceNode->field_ref_device_model['und'][0]['nid']);
+            $allowedDevice[] = array(
+                'device_name' => $deviceModelNode->name,
+                'device_code' => $deviceModelNode->field_model_code['und'][0]['safe_value'],
+                'device_class_name' => $deviceModelNode->field_model_class['und'][0]['safe_value'],
+                'device_class_code' => $deviceModelNode->field_model_class_code['und'][0]['safe_value']
+            );           
+        }      
+        $retArray['allowed_device'] = $allowedDevice;  
     }
 	
 	return $retArray;
