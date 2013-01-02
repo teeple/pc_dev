@@ -200,9 +200,6 @@ function product_catalog_form_form_redirect_handler(&$form, &$form_state){
             break;
 
     }
-	dsm($redirect_url, 'redirect_url');
-	dsm($urlFragment, 'urlFragment');
-	
 
 	$form_state['redirect'] = array(
   		$redirect_url,
