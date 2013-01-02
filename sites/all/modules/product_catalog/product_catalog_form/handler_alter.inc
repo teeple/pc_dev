@@ -450,7 +450,6 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			break;
         
 		case 'prdcounterlist_node_form':
-			
 			unset($form['actions']);
 			$form['field_parent_node']['#type'] = 'hidden';
 			$form['multiselect_custom'] = array('#type'=> 'markup',
@@ -466,7 +465,6 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			
 			$options = $counterList;
 			$element = $form['field_counter_list']['und'];
-			
 			$items = $form_state['build_info']['args'][0]->field_counter_list['und'];
 			
 			$widget = _multiselect_build_widget_code($options, $items, $element, NULL);
@@ -497,7 +495,6 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			
 			_unset_menu_items(&$form, 'counter_node_form');
 			$form['actions']['submit']['#submit'][] = 'product_catalog_form_form_redirect_handler';
-			dsm($form['actions'], 'actions');
 			break;
             
         case 'treenodecounter_node_form':
@@ -592,10 +589,16 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			if(isset($form['field_r_productofferingprice']))unset($form['field_r_productofferingprice']);
 			if(isset($form['field_r_productofferingprice']))unset($form['field_r_productofferingprice']);
 			
-			$paths = explode('/', current_path());
-			$productTypeTerm = taxonomy_get_term_by_name($paths[2], 'prdtype');
-			$form['field_product_type']['und']['#default_value'][0] = current($productTypeTerm)->tid;
-			$form['field_product_type']['#type'] = 'hidden';
+			// in case Create 
+			if(!isset($form['nid']['#value'])){
+				$paths = explode('/', current_path());
+				$productTypeTerm = taxonomy_get_term_by_name($paths[2], 'prdtype');
+				$form['field_product_type']['und']['#default_value'][0] = current($productTypeTerm)->tid;
+				$form['field_product_type']['#type'] = 'hidden';
+			// in case Edit 
+			} else {
+				$form['field_product_type']['#type'] = 'hidden';
+			}
 			
 			unset($form['field_service_type_of_provider']);
 			unset($form['field_parent_node_for_rp']);
@@ -1430,8 +1433,9 @@ function _get_available_counter_list($productNid, $existingCounterNids) {
 	
 	// counter type (Basic ,Optional or all)
 	if ($term_product_type->name == 'Main') {
-		$temp = taxonomy_get_term_by_name('Optional', 'countertype');
-		$args[0] = current($temp)->tid;
+		$temp1Term = taxonomy_get_term_by_name('Optional', 'countertype');
+		$temp2Term = taxonomy_get_term_by_name('Rollover', 'countertype');
+		$args[0] = current($temp1Term)->tid . '+'. current($temp2Term)->tid;
 	} else {
 		$args[0] = 'all';
 	}
@@ -1449,8 +1453,7 @@ function _get_available_counter_list($productNid, $existingCounterNids) {
 	if(isset($existingCounterNids)) {
 		$args[3] = join('+', $existingCounterNids);
 	}
-	dsm($args, 'args');
-	
+		
 	$view = views_get_view('query_list_counter');
 	$view->set_display('panel_pane_1');
 	$view->set_arguments($args);

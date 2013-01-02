@@ -195,6 +195,23 @@
 							},
 						};
 						break;
+					case 'tree_node_counter_main_rollover':
+						menus.custom_delete._disabled = false;
+						menus.custom_delete.action = function(node) {
+							$.fn.deleteNode(node);
+						};
+						menus.custom_create._disabled = false;
+						menus.custom_create.submenu = {
+							"treenode_counter_main_basic" : {
+								"label" : "Condition Set",
+								action : function(node) {
+									$.fn.addNode(node, {
+										'childContentType' : 'conditioncommonand'
+									});
+								}
+							},
+						};
+						break;
 					case "tree_node_counter_main_optional":
 						menus.custom_delete._disabled = false;
 						menus.custom_delete.action = function(node) {
