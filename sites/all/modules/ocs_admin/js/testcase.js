@@ -74,28 +74,29 @@
 				var test_data = $.parseJSON( output.test_data);
 				var counter = {};
 
-				if ( typeof( result.cdr) != 'undefined') {
-					var cdr = {};
-					for( var j in result.cdr) {
-						cdr[j] = result.cdr[j].split(',');
-
-						var decoded_cdr = $.fn.decodeCDR( cdr[j]);
-						counter = decoded_cdr.counters;
-					}
-					result.cdr = cdr;
-				}
-
 				$('#run-test-ocs-result').
 					append( '<hr><h4 id="test_result_{1}_{0}"> TC-{0} </h4>'.format( tc_idx, nid)).
-					append( '<p> {0}</p>'.format( output.response.request.replace(/\n/g, '<br>'))).
-					//append( prettyPrint( test_data, config)).
-					append( '<br><h4>Result</h4>').
-					append( prettyPrint( result, config));
+					append( '<p> {0}</p>'.format( output.response.request.replace(/\n/g, '<br>')));
 
 				$('.testcase_status[node=' + nid + ']').
 					append( '<h4> <a href="#test_result_{1}_{0}">TC-{0}</a> Code: {2}</h4>'.format( tc_idx, nid, output.response.code));
 
 				if ( result != null) {
+					if ( typeof( result.cdr) != 'undefined') {
+						var cdr = {};
+						for( var j in result.cdr) {
+							cdr[j] = result.cdr[j].split(',');
+
+							var decoded_cdr = $.fn.decodeCDR( cdr[j]);
+							counter = decoded_cdr.counters;
+						}
+						result.cdr = cdr;
+					}
+
+					$('#run-test-ocs-result').
+						append( '<br><h4>Result</h4>').
+						append( prettyPrint( result, config));
+
 					$('.testcase_status[node=' + nid + ']').
 						append( '<p> Result: {0} reason:{1} {2} </p>'.format( 
 							(typeof( result.result_code) == 'undefined') ? '??' : result.result_code,
@@ -130,6 +131,10 @@
 					$('#run-test-ocs-result').
 						append( '<br><h4> Test Data </h4>').
 						append( prettyPrint( eval_result, config));
+				}
+				else {
+					$('#run-test-ocs-result').
+						append( '<br><h4>Result </h4> : {0}'.format( output.response.error));
 				}
 
 				// run next test case
