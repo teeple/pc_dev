@@ -74,12 +74,12 @@ function _array_lifecycle_scheme($nid=NULL){
 			
 			$scheme['transition'] = $transition;
 		}
-		
-		
 		$jsonData[] = $scheme;
 	}
-
-    return $jsonData;   
+	$retData['ifvalues']['resources'] = array();
+	$retData['lifecycle_scheme'] = $jsonData;
+	
+    return $retData;   
 }
 
 // string fomat : Array( [0]=>13033:12191=0212355,[1]=>13033:12184=0, 13033:12186=12336)
@@ -108,7 +108,8 @@ function _decode_action_param_values( $param_list)
 function _json_lifecycle_scheme($nid=NULL) {
     $retArray = array();
     $jsonData  = _array_lifecycle_scheme($nid);
-    $retArray['lifecycle_scheme'] = $jsonData;
+    // $retArray['lifecycle_scheme'] = $jsonData;
+    $retArray = $jsonData;
 
     $enc = ($nid != NULL) ? json_encode($jsonData) : json_encode($retArray);
     
