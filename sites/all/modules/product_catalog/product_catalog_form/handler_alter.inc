@@ -22,6 +22,7 @@ function _unset_menu_items(&$form,$formId){
         case 'roaming_carrier_node_form':
         case 'roaming_plan_node_form':
 		case 'counter_node_form':
+        case 'tvchannel_node_form':
 			$unsetDeleteButton = FALSE;
 			//dsm($form);
 			break;
@@ -685,6 +686,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 		case 'conditionwhoprefixfactors_node_form':
 		case 'conditioncommoncounterfactors_node_form':
 		case 'conditionwhatqos_node_form':
+        case 'tvchannel_node_form':
 		
 			_unset_menu_items($form,$form_id);
 			unset($form['field_weight']);
