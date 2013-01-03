@@ -612,12 +612,15 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 				$productTypeTerm = taxonomy_get_term_by_name($paths[2], 'prdtype');
 				$form['field_product_type']['und']['#default_value'][0] = current($productTypeTerm)->tid;
 				$form['field_product_type']['#type'] = 'hidden';
+                $serviceTypeTerm = taxonomy_get_term_by_name($paths[1], 'svcdomain');
+                $form['field_service_type_of_provider']['und']['#default_value'][0] = current($serviceTypeTerm)->tid;
+                $form['field_service_type_of_provider']['#type'] = 'hidden';
 			// in case Edit 
 			} else {
 				$form['field_product_type']['#type'] = 'hidden';
-			}
+                $form['field_service_type_of_provider']['#type'] = 'hidden';
+            }
 			
-			unset($form['field_service_type_of_provider']);
 			unset($form['field_parent_node_for_rp']);
 			unset($form['field_weight_for_ratingpriority']);
 			unset($form['field_weight']);
