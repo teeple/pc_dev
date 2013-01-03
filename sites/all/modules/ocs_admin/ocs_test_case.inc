@@ -65,9 +65,17 @@ function ocs_run_all_testcase_for_ocs( $ts_nid, $tc_nid, $tc_idx)
 
     $field = NULL;
 	$output = NULL;
+	$test_result = array();
     // get test data
     if( isset( $tc->field_ts_test_data['und'][$tc_idx])) {
         $ts_data = node_load( $tc->field_ts_test_data['und'][$tc_idx]['nid']);
+		if ( $ts_data->type == 'test_result_online_charging') {
+			$test_result = ocs_build_ts_json( $ts_data, field_info_instances( 'node', $ts_data->type));
+			dpm( $test_result, 'test result');
+
+			// for test_result_online_charging type, read test data again
+			$ts_data = node_load( $ts_data->field_ts_test_case['und'][0]['nid']);
+		}
         if ( $field == NULL) $field = field_info_instances( 'node', $ts_data->type);
 
         $output = ocs_run_testcase_http( $url, $ts_data, $field, $tc->field_ts_method['und'][0]['value'],
@@ -79,11 +87,11 @@ function ocs_run_all_testcase_for_ocs( $ts_nid, $tc_nid, $tc_idx)
 
 	//dpm( json_encode($output), 'result');
 
-    return json_encode( array_merge( $output, array( 'tc' => $tc_idx)));
+    return json_encode( array_merge( $output, array( 'tc' => $tc_idx, 'test_result' => json_encode($test_result))));
 }
 
 
-function ocs_run_testcase_http( $url, $ts_data, $field, $method = 'POST', $prefix='', $suffix='', $replace_data=NULL)
+function ocs_run_testcase_http( $url, $ts_data, $field, $method = 'POST', $prefix='', $suffix='', $replace_data=array())
 {
     $data = ocs_build_ts_json( $ts_data, $field, $replace_data);
 
