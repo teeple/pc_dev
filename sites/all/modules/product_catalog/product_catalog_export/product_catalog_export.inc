@@ -49,6 +49,9 @@ function _make_json_string($termName,$refNid=NULL){
 		case 'MESSAGES':
 			$jsonString = export_message();
 			break;
+        case 'TV_CHANNEL':
+            $jsonString = export_tvchannel();
+            break;
 		case 'EXCLUSIVENESS':
 			$jsonString = export_exclusiveness();
 			break;
