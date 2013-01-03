@@ -385,7 +385,7 @@ var prettyPrint = (function(){
 			if (type === 'string') {
 				return '"' + obj.replace(/"/g,'\\"') + '"';
 			}
-			return obj.toString();
+			return (typeof(obj) == "undefined") ? "undefined" : obj.toString();
 		},
 		
 		headerGradient: (function(){
