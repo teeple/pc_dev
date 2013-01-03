@@ -740,14 +740,6 @@
 									});
 								}
 							},
-							"actionpricechargeonetime_condition" : {
-								"label" : "ConditionSet",
-								action : function(node) {
-									$.fn.addNode(node, {
-										'childContentType' : 'conditioncommonand'
-									});
-								}
-							},
 						};
 						break;
 
