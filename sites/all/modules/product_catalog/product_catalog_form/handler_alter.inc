@@ -707,6 +707,20 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			//$form['actions']['submit']['#submit'][] = 'product_catalog_form_form_redirect_handler';
             break;
 
+		case 'conditionwhereishomezone_node_form':
+			dsm($form, 'form');
+			dsm($form_state, 'form_state');
+			$form['title_markup'] = array(
+				'#type' => 'markup',
+                '#markup' => '<b>Condition : You are in Homezone</b>',
+           );
+           
+			_unset_menu_items($form,$form_id);
+			unset($form['field_weight']);
+			unset($form['field_parent_node']);
+			unset($form['actions']);
+			break;
+			
 		case 'conditionwhaturlgroups_node_form':
 		case 'conditionwhatcustom_node_form':
 		case 'conditionwhencustom_node_form':
