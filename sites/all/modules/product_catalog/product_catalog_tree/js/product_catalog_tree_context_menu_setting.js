@@ -976,6 +976,59 @@
 					case "conditioncommonand":
 						menus.custom_create._disabled = false;
 						menus.custom_create.submenu = {
+							"who" : {
+								"label" : "WHO",
+								"submenu" : {
+									/*
+									"member" : {
+										"label" : "Member",
+										action : function(node) {
+											$.fn.addNode(node, {
+												'childContentType' : 'conditionwhomemberfactors'
+											});
+										}
+									},
+									*/
+									"number" : {
+										"label" : "Number",
+										action : function(node) {
+											$.fn.addNode(node, {
+												'childContentType' : 'conditionwhonumberfactors'
+											});
+										}
+									},
+									"prefix" : {
+										"label" : "Prefix",
+										action : function(node) {
+											$.fn.addNode(node, {
+												'childContentType' : 'conditionwhoprefixfactors'
+											});
+										}
+									},
+								}
+							},
+							"where" : {
+								"label" : "WHERE",
+								"submenu" : {
+									"zone" : {
+										"label" : "Zone",
+										action : function(node) {
+											$.fn.addNode(node, {
+												'childContentType' : 'conditionwherezonefactors'
+											});
+										}
+									},
+									"homezone" : {
+										"label" : "HomeZone is True",
+										action : function(node) {
+											$.fn.addNode(node, {
+												'childContentType' : 'conditionwhereishomezone'
+											});
+										}
+									},
+								}
+							},
+							
 							"what" : {
 								"label" : "WHAT",
 								"submenu" : {
@@ -1149,7 +1202,6 @@
 											});
 										}
 									},
-
 									"qos" : {
 										"label" : "QoS",
 										action : function(node) {
@@ -1182,16 +1234,6 @@
 											});
 										}
 									},
-									/*
-									"what custom" : {
-										"label" : "Custom",
-										action : function(node) {
-											$.fn.addNode(node, {
-												'childContentType' : 'conditionwhatcustomfactors'
-											});
-										}
-									},
-									*/
 								}
 							},
 							"when" : {
@@ -1287,84 +1329,7 @@
 									},
 								}
 							},
-							"where" : {
-								"label" : "WHERE",
-								"submenu" : {
-									"country" : {
-										"label" : "Country",
-										action : function(node) {
-											$.fn.addNode(node, {
-												'childContentType' : 'conditionwherecountryfactors'
-											});
-										}
-									},
-									"network" : {
-										"label" : "Network",
-										action : function(node) {
-											$.fn.addNode(node, {
-												'childContentType' : 'conditionwherenetworkfactors'
-											});
-										}
-									},
-									"zone" : {
-										"label" : "Zone",
-										action : function(node) {
-											$.fn.addNode(node, {
-												'childContentType' : 'conditionwherezonefactors'
-											});
-										}
-									},
-									/*
-									"where custom" : {
-										"label" : "Custom",
-										action : function(node) {
-											$.fn.addNode(node, {
-												'childContentType' : 'conditionwherecustomfactors'
-											});
-										}
-									},
-									*/
-								}
-							},
-							"who" : {
-								"label" : "WHO",
-								"submenu" : {
-									"member" : {
-										"label" : "Member",
-										action : function(node) {
-											$.fn.addNode(node, {
-												'childContentType' : 'conditionwhomemberfactors'
-											});
-										}
-									},
-									"number" : {
-										"label" : "Number",
-										action : function(node) {
-											$.fn.addNode(node, {
-												'childContentType' : 'conditionwhonumberfactors'
-											});
-										}
-									},
-									"prefix" : {
-										"label" : "Prefix",
-										action : function(node) {
-											$.fn.addNode(node, {
-												'childContentType' : 'conditionwhoprefixfactors'
-											});
-										}
-									},
-									/*
-									"who custom" : {
-										"label" : "Custom",
-										action : function(node) {
-											$.fn.addNode(node, {
-												'childContentType' : 'conditionwhocustomfactors'
-											});
-										}
-									},
-									*/
-								}
-							},
+							
 						};
 						menus.custom_delete._disabled = false;
 						menus.custom_delete.action = function(node) {
@@ -1390,6 +1355,8 @@
 					case "conditionwhoprefixfactors":
 					case "conditionwhocustom":
 					case 'conditionwhatcardtype':
+					case 'conditionwhereishomezone':
+					case 'conditionwherezonefactors':
 						menus.custom_delete._disabled = false;
 						menus.custom_delete.action = function(node) {
 							$.fn.deleteNode(node);

@@ -1,10 +1,6 @@
 <?php
 function _get_vocabulary_name($contentType, $productNode, $serviceType = NULL){
 	
-// dsm($contentType, 'contentType');
-// dsm($productNode, 'productNode');
-// dsm($$serviceType, 'serviceType');
-	
 	$reserved_voca_name = array(
 			'simpleproductoffering' => array(
 					'Cross' => array(
