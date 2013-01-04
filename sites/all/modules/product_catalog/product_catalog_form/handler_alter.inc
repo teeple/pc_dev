@@ -368,6 +368,11 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			_unset_menu_items($form,$form_id);
             break;
 			
+		case 'locationfactor_node_form':
+		case 'homezonefactor_node_form':
+			_unset_menu_items($form,$form_id);
+            break;
+			
 		case 'prdnonusagerechargeblock_node_form':
 			unset($form['field_ref_product']);
             unset($form['field_ref_tree_tid']);
@@ -490,7 +495,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 				
 			// Create
 			} else {
-				if($counterTypeTerm->name == 'Rollover') {
+				if(!empty($counterTypeTerm) && ($counterTypeTerm->name == 'Rollover')) {
 					$viewResult = views_get_view_result('query_counter_max_id', 'panel_pane_2');
 					if(!empty($viewResult)) {
 						$maxCounterId = $viewResult[0]->field_field_counter_id[0]['raw']['value'] + 100;	
@@ -503,8 +508,11 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 				}
 				$form['field_counter_id']['und'][0]['value']['#default_value'] = $maxCounterId;
 				$form['field_counter_id']['und']['#disabled'] = TRUE;
-				$form['field_counter_type']['und']['#default_value'] = $counterTypeTerm->tid;
-				$form['field_counter_type']['und']['#disabled'] = TRUE;
+				
+				if(!empty($counterTypeTerm)) {
+					$form['field_counter_type']['und']['#default_value'] = $counterTypeTerm->tid;
+					$form['field_counter_type']['und']['#disabled'] = TRUE;	
+				}
 			}
 			
 			unset($form['field_weight']);
