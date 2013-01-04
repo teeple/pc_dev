@@ -165,8 +165,8 @@ function create_default_tree_node_submit_handler(&$form, &$form_state){
 	add_js_settings_after_node_save($rootNode);
 }
 
-function _create_default_items_in_product($product){
-    if(!isset($product->field_is_cloned)){
+function _create_default_items_in_product($product) {
+	if(!empty($product->field_is_cloned) && $product->field_is_cloned['und'][0]['value'] == 0){
         //main counter create
     	$voca_name = _get_vocabulary_name('simpleproductoffering', $product);
     	
@@ -176,12 +176,14 @@ function _create_default_items_in_product($product){
     	// main 상품을 생성하는 경우가 아니면 basic counter를 초기에 생성시켜줄 필요가 없다.
     	$prdTypeTerm = taxonomy_term_load($product->field_product_type['und'][0]['tid']);
     	
-    	if(!empty($mainTerm) && ( $prdTypeTerm->name == 'Main')) {
+    	if(!empty($mainTerm) && ($prdTypeTerm->name == 'Main')) {
     		_create_default_basic_counters($product->nid, current($mainTerm)->tid);
     		_create_default_recharge_block_item($product, $voca_name);
     	}
     	
-    	_create_default_prdattributes($product, $voca_name);
+		dsm($voca_name, 'voca_name');
+		
+		_create_default_prdattributes($product, $voca_name);
     	// _create_default_prdattribute_relations($offering, $voca_name);
     	_create_default_prdnonusage($product, $voca_name);
     	

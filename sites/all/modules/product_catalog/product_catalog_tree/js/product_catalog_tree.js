@@ -111,6 +111,7 @@
 					},
 					"types" : types,
 					"contextmenu" : {
+						"select_node": true,
 						"items" : function(obj) {
 							var menus = $.fn.getTreeContextMenuSetting(treeType,obj);
 							return menus;
