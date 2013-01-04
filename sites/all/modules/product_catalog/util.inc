@@ -1,7 +1,59 @@
 <?php
-/*
-aaaaabbbbb
-*/
+
+function _clone_vocabulary($baseVocaName,$targetVocaName){
+    $baseVocaMachineName = strtolower($baseVocaName);
+    $baseVoca = taxonomy_vocabulary_machine_name_load($baseVocaMachineName);
+    
+    $targetVocaMachineName = strtolower($targetVocaName);
+    $targetVoca = taxonomy_vocabulary_machine_name_load($targetVocaMachineName);
+    
+    if($targetVoca == NULL) {
+        $targetVoca = clone $baseVoca;
+        unset($targetVoca->vid);
+        $targetVoca->name = $targetVocaName;
+        $targetVoca->description = $targetVocaName;
+        $targetVoca->machine_name = $targetVocaMachineName;
+        taxonomy_vocabulary_save($targetVoca);
+    }
+    
+    $param = array();
+    $param['bundle'] = $baseVocaMachineName;
+    $fieldInstances = field_read_instances($param);
+    
+    foreach($fieldInstances as $field){
+        $checkParam = array();
+        $checkParam['bundle'] = $targetVocaMachineName;
+        $checkParam['field_name'] = $field['field_name'];
+        $checkFieldInfo = field_read_instances($checkParam);
+        
+        if(empty($checkFieldInfo)){
+            $field_instance = array(
+                'field_name' => $field['field_name'],
+                'entity_type' => 'taxonomy_term',
+                'bundle' => $targetVocaMachineName,
+                'label' => $field['label'],
+                'description' => $field['description'],
+                'widget' => $field['widget'],
+                
+            );
+            field_create_instance($field_instance);
+        }
+    }    
+    
+    $terms = taxonomy_get_tree($baseVoca->vid);
+    $tids = array();
+    foreach($terms as $term) {
+        $tids[] = $term->tid;
+    }
+    $baseTerms = taxonomy_term_load_multiple($tids);
+    
+    foreach($baseTerms as $baseTerm){
+        $targetTerm = clone $baseTerm;
+        $targetTerm->vid = $targetVoca->vid;
+        unset($targetTerm->tid);
+        taxonomy_term_save($targetTerm);
+    }    
+}
 /** 
  * Searches haystack for needle and returns an array of the key path if it is found in the (multidimensional) array, FALSE otherwise. 
  * 
