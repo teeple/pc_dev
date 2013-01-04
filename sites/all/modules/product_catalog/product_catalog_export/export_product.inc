@@ -539,6 +539,24 @@ function _get_attribute_exceptions($product) {
         }      
         $retArray['allowed_device'] = $allowedDevice;  
     }
+    
+    //available Channel
+    $view = views_get_view('list_product_child_node');
+    $view->set_display('panel_pane_2');
+    $view->set_arguments(array('0' => $product->nid, '1' => 'prdattributeavailablechannel'));
+    $view->execute();
+    $availableChannel = array();
+    
+    if(!empty($view->result)) {        
+        foreach($view->result as $record){
+            $availableChannelNode = node_load($record->nid);
+            $tvChannelNode = node_load($availableChannelNode->field_ref_tvchannel['und'][0]['nid']);
+            $availableChannel[] = array(
+                'channel_code' => $tvChannelNode->field_channel_code['und'][0]['safe_value'],                
+            );           
+        }      
+        $retArray['available_channel'] = $availableChannel;  
+    }
 	
 	return $retArray;
 }
