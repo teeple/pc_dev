@@ -746,6 +746,8 @@ function product_catalog_ajax_add_modal_content($js = NULL, $contentType, $refNo
 			case 'ocs_state_machine':
 			case 'holidaylist_repeatable':
 			case 'holidaylist_specific':
+			case 'locationfactor':
+			case 'homezonefactor':
 				$output[] = ctools_ajax_command_reload();
 				break;
 			case 'actionsetcounter':
@@ -1504,7 +1506,8 @@ function product_catalog_ajax_add_content($js = NULL) {
 		case 'conditionwhenfirstmonth':
 		case 'conditionwhencustomerbirthday':
 		case 'conditionwhencompanybirthday':
-    		// create without popup
+		case 'conditionwhereishomezone':
+			// create without popup
     		$child = new StdClass();
     		$child->uid = $user->uid;
     		$child->type = $childContentType;
@@ -1738,7 +1741,9 @@ function product_catalog_modal_form_edit_modal_content($js = NULL, $contentType,
 			case 'holidaylist_specific':
 			case 'holidaylist_repeatable':
         	case 'area_code':
-        		$output[] = ctools_ajax_command_reload();
+			case 'locationfactor':
+			case 'homezonefactor':
+				$output[] = ctools_ajax_command_reload();
 				break;
 			case 'actionsetcounter':
 			case 'actionsetcounteronbonus':
