@@ -246,9 +246,10 @@
             case 'conditionwhatincomingcall':
             case 'treenodepacketpredefined': 
             case 'prdattributeallowedmodel':
+            case 'prdattributeavailablechannel':
             	needToLoadEdit = false;
             	needToLoadDetail = false;
-            	break;
+            	break; 
             case 'conditionwhencustomerbirthday':
             	needToLoadEdit = false;
             	needToLoadDetail = false;
