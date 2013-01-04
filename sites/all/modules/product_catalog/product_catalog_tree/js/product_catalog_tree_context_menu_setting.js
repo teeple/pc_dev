@@ -1481,6 +1481,17 @@
 							},
 						};
 						break;	
+					case "attribute_available_channel":
+						menus.custom_create._disabled = false;
+						menus.custom_create.submenu = {
+							"attribute_available_channel" : {
+								"label" : "Select Available Channel",
+								action : function(node) {
+									$.fn.loadSelectForm(node);
+								}
+							},
+						};
+						break;	
 					case "attribute_allowed_device":
 						menus.custom_create._disabled = false;
 						menus.custom_create.submenu = {
@@ -1498,6 +1509,12 @@
 							$.fn.deleteNode(node);
 						};
 						break;
+					case "prdattributeavailablechannel":
+						menus.custom_delete._disabled = false;
+						menus.custom_delete.action = function(node) {
+							$.fn.deleteNode(node);
+						};
+						break;					
 					case "prdattributeallowedmodel":
 						menus.custom_delete._disabled = false;
 						menus.custom_delete.action = function(node) {
