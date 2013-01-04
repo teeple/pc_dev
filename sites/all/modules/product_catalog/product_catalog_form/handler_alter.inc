@@ -708,8 +708,6 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             break;
 
 		case 'conditionwhereishomezone_node_form':
-			dsm($form, 'form');
-			dsm($form_state, 'form_state');
 			$form['title_markup'] = array(
 				'#type' => 'markup',
                 '#markup' => '<b>Condition : You are in Homezone</b>',
