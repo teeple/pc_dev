@@ -1191,8 +1191,8 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 		case 'tariffplan_node_form':
 			unset($form['field_parent_node']);
             unset($form['field_weight']);
-            // $form['field_ref_product']['#type'] = hidden;
-            // $form['field_ref_tree_tid']['#type'] = hidden;
+            $form['field_ref_product']['#type'] = hidden;
+            $form['field_ref_tree_tid']['#type'] = hidden;
             unset($form['field_tree_child_voca_name']);
             unset($form['field_ref_numberingplan_domestic']);
             unset($form['field_ref_numberingplan_idd']);
@@ -1213,8 +1213,9 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             	$serviceTypeTerm = taxonomy_term_load($form_state['build_info']['args'][0]->field_ref_tree_tid['und'][0]['value']);
             	$voca_name = _get_vocabulary_name('tariffplan', $productNode, $serviceTypeTerm->name);
             	$form_state['build_info']['args'][0]->field_tree_child_voca_name['und'][0]['value'] = $voca_name;
-            	$form_state['ajax_actions'][] = '_node_save_handler_for_add_js_settings_after_node_save';
+            	
             }
+            $form_state['ajax_actions'][] = '_node_save_handler_for_add_js_settings_after_node_save';
 
         	break;
         case 'numberspecialfactors_node_form':
