@@ -477,6 +477,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			$widget = _multiselect_build_widget_code($options, $items, $element, NULL);
 			$form['field_counter_list']['und']['#prefix'] = $widget['prefix_pre'] . $widget['prefix_options'] . $widget['prefix_post'];
 			$form['field_counter_list']['und']['#options'] = $counterList;
+			 
 			
             break;
 			
@@ -559,15 +560,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 				$options = $mergedCounterList;
 				$element = $form['field_counter']['und'];
 				
-				/*
-				$items = $form_state['build_info']['args'][0]->field_counter['und'];
-				$widget = _multiselect_build_widget_code($options, $items, $element, NULL);
-				 
-				$form['field_counter']['und']['#prefix'] = $widget['prefix_pre'] . $widget['prefix_options'] . $widget['prefix_post'];
-				 */
 				$form['field_counter']['und']['#options'] = $mergedCounterList;
-				dsm($form, 'after form');
-				
 			}
 			
 			$form['title']['#type'] = 'hidden';
@@ -1211,8 +1204,8 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 		case 'tariffplan_node_form':
 			unset($form['field_parent_node']);
             unset($form['field_weight']);
-            $form['field_ref_product']['#type'] = hidden;
-            $form['field_ref_tree_tid']['#type'] = hidden;
+            //$form['field_ref_product']['#type'] = hidden;
+            //$form['field_ref_tree_tid']['#type'] = hidden;
             unset($form['field_tree_child_voca_name']);
             unset($form['field_ref_numberingplan_domestic']);
             unset($form['field_ref_numberingplan_idd']);
