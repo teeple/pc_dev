@@ -280,7 +280,7 @@ function _create_default_prdattributes($product, $voca_name) {
 	
 	$defaultContentTypes = array(
 		'prdattributebenefit' => 'Benefits',
-		'prdattributefeaturecode' => 'Service Feature Code'
+		//'prdattributefeaturecode' => 'Service Feature Code'
 	);
 	
 	$service_domain = taxonomy_term_load($product->field_service_type_of_provider['und'][0]['tid']);
@@ -289,6 +289,9 @@ function _create_default_prdattributes($product, $voca_name) {
 	}
 	
 	$product_type = taxonomy_term_load($product->field_product_type['und'][0]['tid']);
+    if($product_type->name != 'Package'){
+        $defaultContentTypes['prdattributefeaturecode'] = 'Service Feature Code';
+    }
 	if(  ($service_domain->name == 'Mobile' || $service_domain->name == 'VoIP') 
 		&& $product_type->name == 'Main' ) {
 		
