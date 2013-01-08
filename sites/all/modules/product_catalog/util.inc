@@ -14,6 +14,11 @@ function _clone_vocabulary($baseVocaName,$targetVocaName){
         $targetVoca->description = $targetVocaName;
         $targetVoca->machine_name = $targetVocaMachineName;
         taxonomy_vocabulary_save($targetVoca);
+    }else{
+        $deleteTerms = taxonomy_get_tree($targetVoca->vid);
+        foreach($deleteTerms as $deletTerm) {
+            taxonomy_term_delete($deletTerm->tid);
+        }
     }
     
     $param = array();
@@ -46,12 +51,19 @@ function _clone_vocabulary($baseVocaName,$targetVocaName){
         $tids[] = $term->tid;
     }
     $baseTerms = taxonomy_term_load_multiple($tids);
-    
+    $tidMap = array();
     foreach($baseTerms as $baseTerm){
         $targetTerm = clone $baseTerm;
         $targetTerm->vid = $targetVoca->vid;
         unset($targetTerm->tid);
+        
+        $tempParent = taxonomy_get_parents($baseTerm->tid);
+        if(!empty($tempParent)){
+            $targetTerm->parent = $tidMap[current($tempParent)->tid];
+        }
+        
         taxonomy_term_save($targetTerm);
+        $tidMap[$baseTerm->tid] = $targetTerm->tid;
     }    
 }
 /** 
