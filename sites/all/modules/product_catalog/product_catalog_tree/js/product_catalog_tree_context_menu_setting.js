@@ -592,6 +592,62 @@
 						};
 						break;
 
+					case "mobile_nonusage_subscription_discount":
+						menus.custom_create._disabled = false;
+						menus.custom_create.submenu = {
+							"mobile_nonusage_subscription_discount" : {
+								"label" : "Discount",
+								action : function(node) {
+									$.fn.addNode(node, {
+										'childContentType' : 'actionpricediscount'
+									});
+								}
+							},
+						};
+						break;
+
+					case "mobile_nonusage_unsubscription_discount":
+						menus.custom_create._disabled = false;
+						menus.custom_create.submenu = {
+							"mobile_nonusage_unsubscription_discount" : {
+								"label" : "Discount",
+								action : function(node) {
+									$.fn.addNode(node, {
+										'childContentType' : 'actionpricediscount'
+									});
+								}
+							},
+						};
+						break;
+						
+					case "mobile_nonusage_recurring_discount":
+						menus.custom_create._disabled = false;
+						menus.custom_create.submenu = {
+							"mobile_nonusage_recurring_discount" : {
+								"label" : "Discount",
+								action : function(node) {
+									$.fn.addNode(node, {
+										'childContentType' : 'actionpricediscount'
+									});
+								}
+							},
+						};
+						break;
+
+					case "mobile_nonusage_unittransfer_discount":
+						menus.custom_create._disabled = false;
+						menus.custom_create.submenu = {
+							"mobile_nonusage_unittransfer_discount" : {
+								"label" : "Discount",
+								action : function(node) {
+									$.fn.addNode(node, {
+										'childContentType' : 'actionpricediscount'
+									});
+								}
+							},
+						};
+						break;
+
 					case "mobile_nonusage_activation_bonus":
 						menus.custom_create._disabled = false;
 						menus.custom_create.submenu = {
@@ -733,17 +789,6 @@
 						menus.custom_delete._disabled = false;
 						menus.custom_delete.action = function(node) {
 							$.fn.deleteNode(node);
-						};
-						menus.custom_create._disabled = false;
-						menus.custom_create.submenu = {
-							"actionpricechargeonetime_discount" : {
-								"label" : "Discount",
-								action : function(node) {
-									$.fn.addNode(node, {
-										'childContentType' : 'actionpricediscount'
-									});
-								}
-							},
 						};
 						break;
 
