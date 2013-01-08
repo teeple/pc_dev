@@ -1,12 +1,13 @@
 <?php
 
-function _clone_vocabulary($baseVocaName,$targetVocaName){
+function _clone_vocabulary($baseVocaName,$targetVocaName,$param=array()){
     $baseVocaMachineName = strtolower($baseVocaName);
     $baseVoca = taxonomy_vocabulary_machine_name_load($baseVocaMachineName);
     
     $targetVocaMachineName = strtolower($targetVocaName);
     $targetVoca = taxonomy_vocabulary_machine_name_load($targetVocaMachineName);
     
+    //check target vocabulary
     if($targetVoca == NULL) {
         $targetVoca = clone $baseVoca;
         unset($targetVoca->vid);
@@ -21,9 +22,10 @@ function _clone_vocabulary($baseVocaName,$targetVocaName){
         }
     }
     
-    $param = array();
-    $param['bundle'] = $baseVocaMachineName;
-    $fieldInstances = field_read_instances($param);
+    //field instance information
+    $fieldParam = array();
+    $fieldParam['bundle'] = $baseVocaMachineName;
+    $fieldInstances = field_read_instances($fieldParam);
     
     foreach($fieldInstances as $field){
         $checkParam = array();
@@ -45,6 +47,7 @@ function _clone_vocabulary($baseVocaName,$targetVocaName){
         }
     }    
     
+    //get base terms
     $terms = taxonomy_get_tree($baseVoca->vid);
     $tids = array();
     foreach($terms as $term) {
@@ -52,6 +55,8 @@ function _clone_vocabulary($baseVocaName,$targetVocaName){
     }
     $baseTerms = taxonomy_term_load_multiple($tids);
     $tidMap = array();
+    
+    //duplicates terms
     foreach($baseTerms as $baseTerm){
         $targetTerm = clone $baseTerm;
         $targetTerm->vid = $targetVoca->vid;
@@ -62,6 +67,20 @@ function _clone_vocabulary($baseVocaName,$targetVocaName){
             $targetTerm->parent = $tidMap[current($tempParent)->tid];
         }
         
+        //check rel_type params
+        if(isset($param['rel_type']) && isset($targetTerm->field_rel_type['und'][0]['value'])){
+            $baseRelTypeStr = $targetTerm->field_rel_type['und'][0]['value'];
+            $baseRelTypeArr = explode('_',$baseRelTypeStr);
+            
+            $reltypes = array('mobile','iptv','satellite','broadband','bundle');
+            
+            $matched = array_intersect($reltypes, $baseRelTypeArr);
+           
+            $newRelTypeStr = str_replace($matched, $param['rel_type'], $baseRelTypeStr);
+            $targetTerm->field_rel_type['und'][0]['value'] = $newRelTypeStr;
+            $targetTerm->field_rel_type['und'][0]['safe_value'] = $newRelTypeStr;
+        }
+         
         taxonomy_term_save($targetTerm);
         $tidMap[$baseTerm->tid] = $targetTerm->tid;
     }    
