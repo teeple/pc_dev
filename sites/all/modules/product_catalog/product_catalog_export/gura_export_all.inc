@@ -2,8 +2,9 @@
 function rating_rules_export_all()
 {
 	$jsonData = rating_rules_export_by_content_type('rating_rule_export',  array());
-
-    return json_encode($jsonData);
+	$jsonData['ifvalues']['resources'] = array();
+	
+	return json_encode($jsonData);
 }
 
 function rating_rules_export_by_content_type_loaded($export_list, $nid=NULL, $vars = array(), &$export_item_cache = array())

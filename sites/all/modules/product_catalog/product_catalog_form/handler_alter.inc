@@ -1204,8 +1204,8 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 		case 'tariffplan_node_form':
 			unset($form['field_parent_node']);
             unset($form['field_weight']);
-            //$form['field_ref_product']['#type'] = hidden;
-            //$form['field_ref_tree_tid']['#type'] = hidden;
+            $form['field_ref_product']['#type'] = hidden;
+            $form['field_ref_tree_tid']['#type'] = hidden;
             unset($form['field_tree_child_voca_name']);
             unset($form['field_ref_numberingplan_domestic']);
             unset($form['field_ref_numberingplan_idd']);
