@@ -249,45 +249,53 @@ function get_rating_factor_values_from_drupal_field($obj , $field_name_arr)
 	$ret = array();
 	foreach($field_name_arr as $field_name)
 	{
-		$temp = $obj->$field_name;
-		foreach($temp['und'] as $und)
+		if(property_exists($obj , $field_name))
 		{
-			$value = NULL;
-			if(array_key_exists('nid' , $und))
+			$temp = $obj->$field_name;
+			foreach($temp['und'] as $und)
 			{
-				$nid = $und['nid'];
-				$value = $nid;
-			}
-			else if(array_key_exists('tid' , $und))
-			{
-				$tid = $und['tid'];
-				$taxo = taxonomy_term_load($tid);
-				$value = $taxo->name;
-				if(property_exists($taxo , 'field_common_code'))
+				$value = NULL;
+				if(array_key_exists('nid' , $und))
 				{
-					dsm($taxo);
-					$temp = get_drupal_field_values($taxo , 'field_common_code');
-					$value = $temp[0];
-					dsm($value);
+					$nid = $und['nid'];
+					$value = $nid;
 				}
-				if(property_exists($taxo , 'field_rating_operation_code'))
+				else if(array_key_exists('tid' , $und))
 				{
-					$temp = get_drupal_field_values($taxo , 'field_rating_operation_code');
-					$value = $temp[0];
+					$tid = $und['tid'];
+					$taxo = taxonomy_term_load($tid);
+					$value = $taxo->name;
+					if(property_exists($taxo , 'field_common_code'))
+					{
+						dsm($taxo);
+						$temp = get_drupal_field_values($taxo , 'field_common_code');
+						$value = $temp[0];
+						dsm($value);
+					}
+					if(property_exists($taxo , 'field_rating_operation_code'))
+					{
+						$temp = get_drupal_field_values($taxo , 'field_rating_operation_code');
+						$value = $temp[0];
+					}
+				}
+				else
+				{
+					$value = $und['value'];
+				}
+				if(array_key_exists('date_type', $und) && $und['date_type'] =='datetime' )
+				{
+					$value = dash_date_to_nondash_date_string($und['value']);
+				}
+				if($value!=NULL)
+				{
+					$ret[] = $value;
 				}
 			}
-			else
-			{
-				$value = $und['value'];
-			}
-			if(array_key_exists('date_type', $und) && $und['date_type'] =='datetime' )
-			{
-				$value = dash_date_to_nondash_date_string($und['value']);
-			}
-			if($value!=NULL)
-			{
-				$ret[] = $value;
-			}
+		}
+		else
+		{
+			dsm($field_name);
+			dsm($obj);
 		}
 	}
 	return $ret;
@@ -886,6 +894,7 @@ function get_rating_factor_info($rating_factor_name)
 		$ret["default_op"] = "=";
 		$ret["size"] = 0;
 		$ret["type"] = "double";
+		$ret["nvl"] = "0";
 		return $ret;
 	 }
 	 return NULL;
