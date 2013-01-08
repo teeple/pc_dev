@@ -72,7 +72,7 @@ function _clone_vocabulary($baseVocaName,$targetVocaName,$param=array()){
             $baseRelTypeStr = $targetTerm->field_rel_type['und'][0]['value'];
             $baseRelTypeArr = explode('_',$baseRelTypeStr);
             
-            $reltypes = array('mobile','iptv','satellite','broadband','bundle');
+            $reltypes = array('mobile','iptv','satellite','broadband','bundle','voip','cross');
             
             $matched = array_intersect($reltypes, $baseRelTypeArr);
            
