@@ -222,6 +222,7 @@ function build_navigation_bar()
 {
 	$path = current_path();
 	//dpm( $path, 'current path');
+	// test, test
 	
 	$menu = array(
 			'dash' => array( 'href' => '/', 'icon' => 'dash', 
