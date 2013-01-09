@@ -647,7 +647,7 @@
 							},
 						};
 						break;
-
+						
 					case "mobile_nonusage_activation_bonus":
 						menus.custom_create._disabled = false;
 						menus.custom_create.submenu = {

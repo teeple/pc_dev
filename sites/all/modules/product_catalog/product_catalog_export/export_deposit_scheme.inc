@@ -105,7 +105,8 @@ function _json_deposit_scheme($nid=NULL) {
     $retArray = array();
     $jsonData  = _array_deposit_scheme($nid);
     $retArray['deposit_scheme'] = $jsonData;
-
+	$retArray['ifvalues']['resources'] = array();
+	
     if($nid != NULL) {
         return json_encode($jsonData);
     } else {

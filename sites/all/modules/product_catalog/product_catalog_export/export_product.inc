@@ -36,7 +36,8 @@ function _product_for_export($nids=NULL){
             $packageProduct['relation_type'] = _get_common_code($packageTypeTerm);
             $packagedProducts [] = $packageProduct;
         }
-        $product['package_product'] = $packagedProducts;
+        // $product['package_product'] = $packagedProducts;
+        $product['auto_join_product'] = $packagedProducts;
         
         // Counter
         // 상품에서 사용하는 counter list만 정의함. Charging용인지 Accumulating용인지는 구분할 필요 없음.
