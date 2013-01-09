@@ -53,6 +53,7 @@ function _json_threshold_scheme($nid=NULL) {
     $retArray = array();
     $jsonData  = _array_threshold_scheme($nid);
     $retArray['threshold_scheme'] = $jsonData;
+	$retArray['ifvalues']['resources'] = array();
 
     if($nid != NULL) {
         return json_encode($jsonData);
