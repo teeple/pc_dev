@@ -106,7 +106,17 @@ function _json_deposit_scheme($nid=NULL) {
     $jsonData  = _array_deposit_scheme($nid);
     $retArray['deposit_scheme'] = $jsonData;
 	$retArray['ifvalues']['resources'] = array();
-	
+
+	$arr = array();
+	$arr[] = rating_rules_export_by_content_type_and_item_name("rating_rule_export", "rating_deposit_scheme");
+	foreach($arr as $a)
+	{
+		foreach($a as $t => $v)
+		{
+			$retArray['rating_rules'][$t] = $v;
+		}
+	}
+
     if($nid != NULL) {
         return json_encode($jsonData);
     } else {
