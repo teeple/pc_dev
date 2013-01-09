@@ -67,6 +67,19 @@ function _json_voucher_cardtype($nid=NULL) {
 	$retArray = array();
 	$jsonData  = _array_voucher_cardtype($nid);
 	$retArray['vouchers'] = $jsonData;
+	$retArray['rating_rules'] = array();
+
+	$arr = array();
+	$arr[] = rating_rules_export_by_content_type_and_item_name("rating_rule_export", "list_vouchercardtype");
+	$arr[] = rating_rules_export_by_content_type_and_item_name("rating_rule_export", "list_counter_for_vouchercardtype");
+	$arr[] = rating_rules_export_by_content_type_and_item_name("rating_rule_export", "list_loyaltypointfactors");
+	foreach($arr as $a)
+	{
+		foreach($a as $t => $v)
+		{
+			$retArray['rating_rules'][$t] = $v;
+		}
+	}
 
 	if($nid != NULL) {
 		return json_encode($jsonData);
