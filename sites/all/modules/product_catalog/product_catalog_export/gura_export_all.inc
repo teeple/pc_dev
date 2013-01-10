@@ -720,7 +720,7 @@ function view_get_field_value($view , $field_name , $record)
 		$raw_items = $field_handler->get_items($record);
 		if(count($raw_items)>0)
 		{
-            //dsm($field_handler);
+			//dsm($field_handler);
 			//dsm($raw_items);
 
 			$arr = array();
@@ -747,6 +747,10 @@ function view_get_field_value($view , $field_name , $record)
 						}
 
 						if(get_field_type_string($field_name) == 'list_integer')
+						{
+							$value = $field_handler->field_info['settings']['allowed_values'][$value];
+						}
+						if(get_field_type_string($field_name) == 'list_text')
 						{
 							$value = $field_handler->field_info['settings']['allowed_values'][$value];
 						}
