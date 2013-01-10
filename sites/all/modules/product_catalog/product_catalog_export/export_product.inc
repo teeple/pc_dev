@@ -47,7 +47,7 @@ function _product_for_export($nids=NULL){
         //nonusage
         $nonUsage = array();
 		
-		$nonUsage['thresdhold_scheme'] = _get_thresdhold_scheme($node);
+		$nonUsage['threshold_scheme'] = _get_thresdhold_scheme($node);
 		$nonUsage['deposit_scheme'] = _get_deposit_scheme($node);
         $nonUsage['recurring_scheme'] = _get_recurring_scheme($node->nid);
 		$nonUsage['onetime_charge'] = _get_onetime_charge($node->nid);
