@@ -56,6 +56,12 @@
                 		"image" : "/sites/default/files/icons4use/lock.png"
                 	},
 				},
+				"mobile_packaged_product" : {
+					"valid_children" : ["prdattributepackaged"],
+            		"icon" : {
+                		"image" : "/sites/default/files/icons/octagon-plus.png"
+                	},
+				},
 				"prdattributepackaged" : {
 					"valid_children" : "none"
 				},
