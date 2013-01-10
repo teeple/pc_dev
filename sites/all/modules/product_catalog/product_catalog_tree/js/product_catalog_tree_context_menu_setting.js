@@ -88,6 +88,17 @@
 							},
 						};
 						break;
+					case "mobile_packaged_product":
+						menus.custom_create._disabled = false;
+						menus.custom_create.submenu = {
+							"mobile_packaged_product" : {
+								"label" : "Select Product",
+								action : function(node) {
+									$.fn.loadSelectForm(node);
+								}
+							},
+						};
+						break;	
 					case "mobile_packaged_optional":
 						menus.custom_create._disabled = false;
 						menus.custom_create.submenu = {
