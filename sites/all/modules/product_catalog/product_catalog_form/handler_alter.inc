@@ -519,7 +519,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			unset($form['field_weight']);
 			unset($form['field_parent_node']);
 			
-			_unset_menu_items(&$form, 'counter_node_form');
+			_unset_menu_items($form, 'counter_node_form');
 			$form['actions']['submit']['#submit'][] = 'product_catalog_form_form_redirect_handler';
 			break;
             
