@@ -266,7 +266,7 @@ function build_navigation_bar()
                         array( '/common/packet/predefined/charging_rule','Packet'),					    
 					    array( '/common/vouchercardtype', 'ETC'),
                         )),
-            'simulator' => array( 'href' => '/simulator/test', 'icon' => 'grid', 
+            'simulator' => array( 'href' => '/simulator/test/voice', 'icon' => 'grid', 
 					'prefix' => 'simulator/', 'title' => 'Simulator'),
 			'ocs' => array( 'href' => '/config/ocs', 'icon' => 'tb', 
 					'prefix' => 'config/ocs', 'title' => 'OCS'),
