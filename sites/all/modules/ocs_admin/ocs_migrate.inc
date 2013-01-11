@@ -174,6 +174,11 @@ function ocs_migrate_fce_product_submit($form, &$form_state)
 					$p->field_ref_product['und'][0]['nid'] = $product->nid;
 					$p->field_ref_tree_tid['und'][0]['value'] = $plan['tid'];
 					$p->field_tree_child_voca_name['und'][0]['value'] = $plan['voca'];
+                    $p->field_valid_date_ymd['und'][0]['value'] = '2013-01-01 00:00:00';
+                    $p->field_valid_date_ymd['und'][0]['timezone'] = 'Asia/Ulaanbaatar';
+                    $p->field_valid_date_ymd['und'][0]['timezone_db'] = 'Asia/Ulaanbaatar';
+                    $p->field_valid_date_ymd['und'][0]['date_type'] = 'datetime';
+                    $p->field_valid_date_hour['und'][0]['value'] = '00'; 
 					node_save( $p);
 
 					dpm( '>>> new tariff plan : '. $plan['name']);
