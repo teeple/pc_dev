@@ -170,9 +170,6 @@ function _clone_vocabulary($baseVocaName,$targetVocaName,$param=array()){
     }    
 }
 
-function _clone_field_collection_item_single($parentEntityType,$parentObject,$fieldCollectionName){
-    
-}
 /** 
  * Searches haystack for needle and returns an array of the key path if it is found in the (multidimensional) array, FALSE otherwise. 
  * 
