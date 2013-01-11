@@ -156,8 +156,8 @@ function ocs_migrate_fce_product_submit($form, &$form_state)
 			}
 
 			$tariffplan_list = array( 
-					array( 'name' => 'voice_plan_'.$category, 'tid' => 664, 'voca' => 'tpl_tariffplan_mobile_voice'),
-					array( 'name' => 'sms_plan_'.$category, 'tid' => 665, 'voca' => 'tpl_tariffplan_mobile_sms'));
+					array( 'name' => 'voice_plan_'.$category, 'tid' => 3631, 'voca' => 'tpl_tariffplan_mobile_voice'),
+					array( 'name' => 'sms_plan_'.$category, 'tid' => 3632, 'voca' => 'tpl_tariffplan_mobile_sms'));
 
 			// check if it has tariff plan
 			foreach( $tariffplan_list as $plan) {
