@@ -83,6 +83,24 @@ function _clone_vocabulary($baseVocaName,$targetVocaName,$param=array()){
          
         taxonomy_term_save($targetTerm);
         $tidMap[$baseTerm->tid] = $targetTerm->tid;
+        
+        $targetTerm = taxonomy_term_load($targetTerm->tid);
+        //field_collection items
+        //qtabs_loading
+        if(isset($baseTerm->field_qtabs_loading['und'][0]['value'])){
+            unset($targetTerm->field_qtabs_loading);
+            $baseCollectionInfo = field_collection_item_load($baseTerm->field_qtabs_loading['und'][0]['value']);
+            $targetCollectionInfo = entity_create('field_collection_item', array('field_name' => 'field_qtabs_loading'));
+            $targetCollectionInfo->setHostEntity('taxonomy', $targetTerm);
+            $targetCollectionInfo->field_tab_type = $baseCollectionInfo->field_tab_type;
+            $targetCollectionInfo->field_tab_content = $baseCollectionInfo->field_tab_content;
+            $targetCollectionInfo->field_view_display = $baseCollectionInfo->field_view_display;
+            $targetCollectionInfo->field_view_arguments = $baseCollectionInfo->field_view_arguments;            
+            $targetCollectionInfo->save(); 
+            $targetTerm->field_qtabs_loading['und'][0]['value'] = $targetCollectionInfo->item_id;
+        }
+        dsm($targetTerm,'targetTerm');
+        taxonomy_term_save($targetTerm);
     }    
 }
 /** 
