@@ -152,7 +152,7 @@ function ocs_migrate_fce_product_submit($form, &$form_state)
 				node_save($product);
 				
 				// youngmin, 상품 생성시 기본적으로 추가되는 항목 자동 생성.
-				_create_default_items_in_product($product);
+				//_create_default_items_in_product($product);
 			}
 
 			$tariffplan_list = array( 
