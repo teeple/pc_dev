@@ -74,7 +74,7 @@
 				var result = $.parseJSON( output.response.data);
 				var test_data = $.parseJSON( output.test_data);
 				var test_result = $.parseJSON( output.test_result);
-				var counter = {};
+				var voice_cdr = [];
 
 				$('#run-test-ocs-result').
 					append( '<br>{0}:{1}:{2}<hr style="background-color:darkblue;"><h3>{3}</h3>'.
@@ -86,15 +86,29 @@
 					append( '<h4> <a href="#test_result_{1}_{0}">TC-{0}</a> Code: {2}</h4>'.format( tc_idx, nid, output.response.code));
 
 				if ( result != null) {
+					var cdr = [];
 					if ( typeof( result.cdr) != 'undefined') {
-						var cdr = {};
 						for( var j in result.cdr) {
-							cdr[j] = result.cdr[j].split(',');
-
-							var decoded_cdr = $.fn.decodeCDR( cdr[j]);
-							counter = decoded_cdr.counters;
+							if ( $.isArray( result.cdr[j])) {
+								var tmp = [];
+								for( var k in result.cdr[j]) {
+									tmp[k] = result.cdr[j][k].split(',');
+									/*
+									var decoded_cdr = $.fn.decodeCDR( cdr[j]);
+									counter = decoded_cdr.counters;
+									*/
+								}
+								cdr[j] = tmp;
+							}
+							else {
+								cdr[j] = result.cdr[j];
+							}
 						}
 						result.cdr = cdr;
+						console.log( 'cdr', cdr[0][0]);
+						var decoded_cdr = $.fn.decodeCDR( cdr[0][0]);
+						voice_cdr = decoded_cdr.counters; 
+						console.log( 'voice cdr', voice_cdr);
 					}
 
 					$('#run-test-ocs-result').
@@ -127,7 +141,7 @@
 						eval_result['result'] = eval(condition);
 
 					console.log( 'check', condition, eval_result);
-					console.log( 'counter', counter);
+					console.log( 'voice_cdr', voice_cdr);
 					$('.testcase_check_result[node=' + nid + ']').
 						append( '<h4> TC-{0} <a href="#test_result_{1}_{0}">{2}</a></h4>'.
 							format( tc_idx, nid, (eval_result['result'] ? "SUCCESS" : "FAIL")));
