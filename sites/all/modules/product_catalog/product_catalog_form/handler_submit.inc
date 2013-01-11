@@ -166,6 +166,8 @@ function create_default_tree_node_submit_handler(&$form, &$form_state){
 }
 
 function _create_default_items_in_product($product) {
+    //dsm('_create_default_items_in_product');
+    //dsm($product->field_is_cloned);
 	if(!empty($product->field_is_cloned) && $product->field_is_cloned['und'][0]['value'] == 0){
         //main counter create
     	$voca_name = _get_vocabulary_name('simpleproductoffering', $product);
