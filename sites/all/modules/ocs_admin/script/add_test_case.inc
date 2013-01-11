@@ -121,7 +121,7 @@ foreach( $case as $tc) {
 	$node->field_ts_destid['und'][0]['value'] = $tc[2];
 	$node->field_ts_starttime['und'][0]['value'] = $tc[4];
 	$node->field_ts_duration['und'][0]['value'] = $tc[5];
-	$node->field_ts_charge['und'][0]['value'] = $tc[6];
+	$node->field_ts_default_charge['und'][0]['value'] = $tc[6];
 
 	$stime = new DateTime( $tc[4]);
 	print_r( $stime);
