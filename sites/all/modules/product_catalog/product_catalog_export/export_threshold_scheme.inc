@@ -34,8 +34,15 @@ function _array_threshold_scheme($nid=NULL){
                 if(!empty($factorNode->field_field_ref_thresholdaction['und'])){
                     foreach($factorNode->field_field_ref_thresholdaction['und'] as $item){
                         $actionTerm = taxonomy_term_load($item['tid']);
-                        $factor['threshold_action'][] = _get_common_code($actionTerm);
-                    }   
+                        $actionInfo = _get_common_code($actionTerm);
+                        if($actionInfo['meaning'] == 'Notification' && isset($factorNode->field_message_select['und'])){
+                            foreach($factorNode->field_message_select['und'] as $messageItem){
+                                $actionInfo['message_id'][] = $messageItem['nid'];
+                            } 
+                        }
+                        //$factor['threshold_action'][] = _get_common_code($actionTerm);
+                        $factor['threshold_action'][] = $actionInfo;
+                    } 
                 }else{
                     $factor['threshold_action'] = NULL;
                 }      
