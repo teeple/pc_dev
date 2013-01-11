@@ -23,6 +23,7 @@ function _unset_menu_items(&$form,$formId){
         case 'roaming_plan_node_form':
 		case 'counter_node_form':
         case 'tvchannel_node_form':
+        case 'lifecyclescheme_node_form':
 			$unsetDeleteButton = FALSE;
 			//dsm($form);
 			break;
