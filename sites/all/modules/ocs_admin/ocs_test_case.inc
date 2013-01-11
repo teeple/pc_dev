@@ -71,7 +71,7 @@ function ocs_run_all_testcase_for_ocs( $ts_nid, $tc_nid, $tc_idx)
         $ts_data = node_load( $tc->field_ts_test_data['und'][$tc_idx]['nid']);
 		if ( $ts_data->type == 'test_result_online_charging') {
 			$test_result = ocs_build_ts_json( $ts_data, field_info_instances( 'node', $ts_data->type));
-			dpm( $test_result, 'test result');
+			//dpm( $test_result, 'test result');
 
 			// for test_result_online_charging type, read test data again
 			$ts_data = node_load( $ts_data->field_ts_test_case['und'][0]['nid']);
@@ -156,7 +156,14 @@ function ocs_build_ts_json( $node, $field=NULL, $replace_data=NULL)
 				$va = null;
 			}
 			else {
-				if ( isset( $v['und'][0]['date_type']) && $v['und'][0]['date_type'] == 'datetime') {
+				if ( $value['widget']['module'] == 'field_collection') {
+					$field_node = entity_load_single( 'field_collection_item', $v['und'][0]['value']);
+					$va = ocs_build_ts_json( $field_node, field_info_instances('field_collection_item', $value['field_name']));
+				}
+				else if ( $value['widget']['module'] == 'number') {
+					$va = intval( $v['und'][0]['value']);
+				}
+				else if ( isset( $v['und'][0]['date_type']) && $v['und'][0]['date_type'] == 'datetime') {
 					$date = new DateTime( $v['und'][0]['value']);
 					$va = $date->format( 'YmdHis');
 				}
