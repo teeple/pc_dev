@@ -119,15 +119,15 @@ foreach( $case as $tc) {
 	$node->field_ts_accountid['und'][0]['value'] = $tc[1];
 	$node->field_ts_origid['und'][0]['value'] = $tc[1];
 	$node->field_ts_destid['und'][0]['value'] = $tc[2];
-	$node->field_ts_starttime['und'][0]['value'] = $tc[4];
 	$node->field_ts_duration['und'][0]['value'] = $tc[5];
-	$node->field_ts_default_charge['und'][0]['value'] = $tc[6];
+	$node->field_ts_charge['und'][0]['value'] = $tc[6];
 
 	$stime = new DateTime( $tc[4]);
+	$node->field_ts_starttime['und'][0]['value'] = $stime->format('YmdHis');
 	print_r( $stime);
 	$etime = $stime->add( new DateInterval('PT'.$tc[5].'S'));
 	print_r( $etime);
-	$node->field_ts_endtime['und'][0]['value'] = $etime->date;
+	$node->field_ts_endtime['und'][0]['value'] = $etime->format('YmdHis');
 
 	node_save( $node);
 }
