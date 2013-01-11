@@ -152,12 +152,12 @@ function ocs_migrate_fce_product_submit($form, &$form_state)
 				node_save($product);
 				
 				// youngmin, 상품 생성시 기본적으로 추가되는 항목 자동 생성.
-				_create_default_items_in_product($product);
+				//_create_default_items_in_product($product);
 			}
 
 			$tariffplan_list = array( 
-					array( 'name' => 'voice_plan_'.$category, 'tid' => 664, 'voca' => 'tpl_tariffplan_mobile_voice'),
-					array( 'name' => 'sms_plan_'.$category, 'tid' => 665, 'voca' => 'tpl_tariffplan_mobile_sms'));
+					array( 'name' => 'voice_plan_'.$category, 'tid' => 3631, 'voca' => 'tpl_tariffplan_mobile_voice'),
+					array( 'name' => 'sms_plan_'.$category, 'tid' => 3632, 'voca' => 'tpl_tariffplan_mobile_sms'));
 
 			// check if it has tariff plan
 			foreach( $tariffplan_list as $plan) {
@@ -174,6 +174,11 @@ function ocs_migrate_fce_product_submit($form, &$form_state)
 					$p->field_ref_product['und'][0]['nid'] = $product->nid;
 					$p->field_ref_tree_tid['und'][0]['value'] = $plan['tid'];
 					$p->field_tree_child_voca_name['und'][0]['value'] = $plan['voca'];
+                    $p->field_valid_date_ymd['und'][0]['value'] = '2013-01-01 00:00:00';
+                    $p->field_valid_date_ymd['und'][0]['timezone'] = 'Asia/Ulaanbaatar';
+                    $p->field_valid_date_ymd['und'][0]['timezone_db'] = 'Asia/Ulaanbaatar';
+                    $p->field_valid_date_ymd['und'][0]['date_type'] = 'datetime';
+                    $p->field_valid_date_hour['und'][0]['value'] = '00'; 
 					node_save( $p);
 
 					dpm( '>>> new tariff plan : '. $plan['name']);

@@ -720,8 +720,11 @@ function view_get_field_value($view , $field_name , $record)
 		$raw_items = $field_handler->get_items($record);
 		if(count($raw_items)>0)
 		{
-			//dsm($field_handler);
-			//dsm($raw_items);
+			if($field_name == "field_dom_holiday")
+			{
+				dsm($field_handler);
+				dsm($raw_items);
+			}
 
 			$arr = array();
 			foreach($raw_items as $raw_item)
@@ -799,6 +802,25 @@ function view_get_field_value($view , $field_name , $record)
 					{
 						//dsm($raw_items[0]['raw']['node']);
 						$arr[]= $raw_item['raw']['node']->title;
+					}
+					else if(get_field_type_string($field_name) == 'partial_date' && array_key_exists('from' , $raw_item['raw']))
+					{
+						$value = "";
+						$f = $raw_item['raw']['from'];
+						if($f['year']!=NULL)
+						{
+							$value = $value . $f['year'];
+						}
+
+						if($f['month']!=NULL)
+						{
+							$value = $value . sprintf("%02d", $f['month']);
+						}
+						if($f['day']!=NULL)
+						{
+							$value = $value . sprintf("%02d", $f['day']);
+						}
+						$arr[] = $value;
 					}
 					else
 					{
