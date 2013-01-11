@@ -23,6 +23,7 @@ function _unset_menu_items(&$form,$formId){
         case 'roaming_plan_node_form':
 		case 'counter_node_form':
         case 'tvchannel_node_form':
+        case 'lifecyclescheme_node_form':
 			$unsetDeleteButton = FALSE;
 			//dsm($form);
 			break;
@@ -519,7 +520,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			unset($form['field_weight']);
 			unset($form['field_parent_node']);
 			
-			_unset_menu_items(&$form, 'counter_node_form');
+			_unset_menu_items($form, 'counter_node_form');
 			$form['actions']['submit']['#submit'][] = 'product_catalog_form_form_redirect_handler';
 			break;
             
@@ -884,8 +885,9 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
                     $form['actions']['submit']['#submit'][] = '_ratinggroup_link_to_roaming_plan';
                 }
             }
-            unset($form['field_ref_roaming_plan']);
-            _unset_menu_items($form,$form_id);            
+            // unset($form['field_ref_roaming_plan']);
+            $form['field_ref_roaming_plan']['#type'] = 'hidden';
+			_unset_menu_items($form,$form_id);            
             break;
         case 'depositschemefactors_node_form':
             _unset_menu_items($form,$form_id);
