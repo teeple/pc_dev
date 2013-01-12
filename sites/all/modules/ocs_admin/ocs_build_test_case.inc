@@ -114,7 +114,7 @@ function batch_build_test_case_op( $product_nid, $tc_nid, $operation_details, &$
 		$node->field_ts_test_case = array( 'und' => array( 0 => array( 'nid' => $tc_nid)));
 		$node->field_ts_product = array( 'und' => array( 0 => array( 'nid' => $product_nid)));
 		$node->field_ts_expected_charge = array( 'und' => array( 0 => array( 'value' => $tc->field_ts_default_charge['und'][0]['value'])));
-		$node->title = $operation_details;
+		$node->title = $tc->title;
 
 		node_save( $node);
 
@@ -123,7 +123,7 @@ function batch_build_test_case_op( $product_nid, $tc_nid, $operation_details, &$
 	else {
 		$nids = array_keys( $result['node']);
 		$node = node_load( $nids[0]);
-		$node->title =  $operation_details;
+		$node->title =  $tc->title;
 		$node->field_ts_expected_charge['und'][0]['value'] = $tc->field_ts_default_charge['und'][0]['value'];
 		node_save( $node);
 
