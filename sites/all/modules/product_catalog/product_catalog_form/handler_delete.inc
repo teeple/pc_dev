@@ -92,6 +92,16 @@ function product_catalog_form_node_delete($node){
                 node_save($parent);
             }
             break;
+        /*case 'lifecyclescheme':
+            if(!empty($node->field_lifecycle_states)){
+                foreach($node->field_lifecycle_states['und'] as $child){
+                    $childNodes[] = $child['nid'];
+                }
+                unset($node->field_lifecycle_states);
+                node_save($node);
+            }
+            break;
+         */
 		case 'timetable':
 			//delete child nodes
 			if(!empty($node->field_ref_timetablefactors)){
