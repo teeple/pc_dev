@@ -131,13 +131,12 @@
 	//
 	$.fn.selectItemHandler = function(event){
 		
-		var parent = event.data.node; 
+	var parent = event.data.node; 
     var rootId = event.data.rootId;
 		//jQuery('input[name=views_bulk_operations]:checked')		
 		var inputItems = $('input[name^=views_bulk_operations]:checked');
 		
 		if(inputItems.length == 0) {
-			// �ν� Drupal message ���濡�蹂�꼍??
 			alert('No Item Selected!');
 			
 		}else{
