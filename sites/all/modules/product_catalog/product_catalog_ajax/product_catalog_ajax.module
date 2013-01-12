@@ -1190,11 +1190,11 @@ function _create_treenodecounterforvoucherprd($treenodeproductforvoucher, $produ
 		$counterList[] = $record->nid;
 	}
 	
-	dsm($counterList, 'counterList');
-	
 	// 해당 상품의 basic counter를 가져옴.
-	$product = node_load($productNid);
-
+	// $product = node_load($productNid);
+	$counterList = _get_default_basic_counters($productNid);
+	
+	/*
 	$term_counter_type = taxonomy_get_term_by_name('Basic', 'countertype');
 	$term_service_domain_tid = $product->field_service_type_of_provider['und'][0]['tid'];
 	$term_billing_type_product = taxonomy_term_load($product->field_billing_type['und'][0]['tid']);
@@ -1218,8 +1218,7 @@ function _create_treenodecounterforvoucherprd($treenodeproductforvoucher, $produ
 	foreach($view->result as $record){
         $counterList[] = $record->nid;
 	}
-	
-	
+	*/
 	
 	foreach($counterList as $record) {
 		
