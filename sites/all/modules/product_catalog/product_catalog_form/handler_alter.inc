@@ -23,6 +23,7 @@ function _unset_menu_items(&$form,$formId){
         case 'roaming_plan_node_form':
 		case 'counter_node_form':
         case 'tvchannel_node_form':
+        case 'lifecyclescheme_node_form':
 			$unsetDeleteButton = FALSE;
 			//dsm($form);
 			break;
@@ -100,6 +101,7 @@ function _add_ajax_submit_callback($form_id,&$form){
         case 'treenodepacketdynamic_node_form':
         case 'basicrate_data_node_form';
         case 'prdattributerequireddevice_node_form':
+        case 'prdattributenumbersaving_node_form':
 		  	$change = TRUE;
         	break;
         	
@@ -518,7 +520,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			unset($form['field_weight']);
 			unset($form['field_parent_node']);
 			
-			_unset_menu_items(&$form, 'counter_node_form');
+			_unset_menu_items($form, 'counter_node_form');
 			$form['actions']['submit']['#submit'][] = 'product_catalog_form_form_redirect_handler';
 			break;
             
@@ -1409,6 +1411,12 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             $form['field_ref_tree_tid']['#type'] = 'hidden'; 
             $form['field_weight']['#type'] = 'hidden';
             $form['field_ref_device_class']['#type'] = 'hidden';
+            break;
+        case 'prdattributenumbersaving_node_form':
+            _unset_menu_items($form,$form_id);
+            $form['field_ref_product']['#type'] = 'hidden';
+            $form['field_ref_tree_tid']['#type'] = 'hidden'; 
+            $form['field_weight']['#type'] = 'hidden';
             break;
         /*
         case 'views_form_list_numberingplan_domestic_for_product_default':
