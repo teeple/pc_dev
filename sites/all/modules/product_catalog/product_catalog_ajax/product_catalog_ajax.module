@@ -1192,33 +1192,10 @@ function _create_treenodecounterforvoucherprd($treenodeproductforvoucher, $produ
 	
 	// 해당 상품의 basic counter를 가져옴.
 	// $product = node_load($productNid);
-	$counterList = _get_default_basic_counters($productNid);
-	
-	/*
-	$term_counter_type = taxonomy_get_term_by_name('Basic', 'countertype');
-	$term_service_domain_tid = $product->field_service_type_of_provider['und'][0]['tid'];
-	$term_billing_type_product = taxonomy_term_load($product->field_billing_type['und'][0]['tid']);
-		
-    $args[0] = current($term_counter_type)->tid;
-	$args[1] = $term_service_domain->tid;
-	if($term_bill_type_product->name == 'Hybrid') {
-		$args[2] = 'all';
-			
-	} else {
-		$term_billing_type_counter = taxonomy_get_term_by_name($term_billing_type_product->name, 'billtypecounter');
-		$args[2] = $term_billing_type_counter->tid;
+	$counter_list = _get_default_basic_counters($productNid);
+	foreach($counter_list as $record) {
+		$counterList[] = $record->nid;
 	}
-
-    $view = views_get_view('query_list_counter');
-    $view->set_display('panel_pane_1');
-    $view->set_arguments($args);
-    $view->execute();
-    
-	dsm($view->result, 'after counterlist');
-	foreach($view->result as $record){
-        $counterList[] = $record->nid;
-	}
-	*/
 	
 	foreach($counterList as $record) {
 		
