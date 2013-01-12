@@ -810,7 +810,14 @@ function product_catalog_ajax_select_submit() {
       $weight += $weightStep;
 
       switch($rel_type) {
+	  
       case 'mobile_nonusage_unittransfer_scheme':
+	  case 'iptv_nonusage_unittransfer_scheme':
+      case 'voip_nonusage_unittransfer_scheme':
+      case 'cross_nonusage_unittransfer_scheme':
+      case 'broadband_nonusage_unittransfer_scheme':
+      case 'dummy_nonusage_unittransfer_scheme':
+      
       	_remove_existing_children($tmpProductNid[1], $tmpParentNid[1]);
       	
       	$child->type = 'treenodeunittransferscheme';
@@ -825,7 +832,13 @@ function product_catalog_ajax_select_submit() {
       	$js_data['replace_or_append'] = 'replace';
       	
       	break;
+
 	  case 'mobile_attribute_subscriber_lifecycle_scheme':
+	  case 'iptv_attribute_subscriber_lifecycle_scheme':
+	  case 'voip_attribute_subscriber_lifecycle_scheme':
+	  case 'cross_attribute_subscriber_lifecycle_scheme':
+	  case 'broadband_attribute_subscriber_lifecycle_scheme':
+	  case 'dummy_attribute_subscriber_lifecycle_scheme':
 		_remove_existing_children($tmpProductNid[1], $tmpParentNid[1]);
       	
       	$child->type = 'treenodelifecyclescheme';
@@ -839,8 +852,14 @@ function product_catalog_ajax_select_submit() {
       	$js_data['append_to'] = 'inside';
       	$js_data['replace_or_append'] = 'replace';
       	break;
+		
+	  case 'cross_counter_main':
 	  case 'mobile_counter_main':
-      	$child->type = 'treenodecounter';
+	  case 'voip_counter_main':
+	  case 'broadband_counter_main':
+	  case 'iptv_counter_main':
+	  case 'dummy_counter_main':
+	  	$child->type = 'treenodecounter';
       	
       	$term_tree = taxonomy_get_term_by_name('Main', 'countermainoraccu');
       	$child->field_main_or_accumulated['und'][0]['tid'] = current($term_tree)->tid;
@@ -852,7 +871,13 @@ function product_catalog_ajax_select_submit() {
       	$js_data['append_to'] = 'last';
       	break;
       	
+	  case 'cross_counter_accumulated':
 	  case 'mobile_counter_accumulated':
+	  case 'iptv_counter_accumulated':
+	  case 'broadband_counter_accumulated':
+	  case 'voip_counter_accumulated':
+	  case 'dummy_counter_accumulated':
+		  
         $child->type = 'treenodecounter';
         
         $term_tree = taxonomy_get_term_by_name('Accumulated', 'countermainoraccu');
@@ -867,6 +892,12 @@ function product_catalog_ajax_select_submit() {
         break;
         
       case 'mobile_packaged_mandatory':
+      case 'cross_packaged_mandatory':
+      case 'iptv_packaged_mandatory':
+      case 'broadband_packaged_mandatory':
+      case 'voip_packaged_mandatory':
+      case 'dummy_packaged_mandatory':
+		  
       	$child->type = 'prdattributepackaged';
       	$child->field_weight['und'][0]['value'] = $weight;
       	$child->field_ref_product['und'][0]['nid'] = $tmpProductNid[1];
@@ -879,7 +910,14 @@ function product_catalog_ajax_select_submit() {
       	node_save($child);
       	$js_data['append_to'] = 'inside';
       	break;
+		
       case 'mobile_packaged_product':
+      case 'cross_packaged_product':
+      case 'iptv_packaged_product':
+      case 'broadband_packaged_product':
+      case 'voip_packaged_product':
+      case 'dummy_packaged_product':
+		  
         $child->type = 'prdattributepackaged';
         $child->field_weight['und'][0]['value'] = $weight;
         $child->field_ref_product['und'][0]['nid'] = $tmpProductNid[1];
@@ -892,20 +930,27 @@ function product_catalog_ajax_select_submit() {
         node_save($child);
         $js_data['append_to'] = 'inside';
         break;
+		
       case 'cross_available_product':
   		$child->type = 'prdattributepackaged';
   		$child->field_weight['und'][0]['value'] = $weight;
   		$child->field_ref_product['und'][0]['nid'] = $tmpProductNid[1];
   		$child->field_ref_connected_product['und'][0]['nid'] = $childNid;
-  	
+		
   		// $term = taxonomy_term_load($tmpParentNid[1]);
   		$term = taxonomy_get_term_by_name('Mandatory_MarketOpen','prdrelationtype');
   		$child->field_ref_prdrelationtype['und'][0]['tid'] = current($term)->tid;
   	
   		node_save($child);
   		$js_data['append_to'] = 'inside';
-  	  break;
-      case 'mobile_packaged_optional':
+  	  	break;
+		
+	  case 'mobile_packaged_optional':
+      case 'cross_packaged_optional':
+      case 'voip_packaged_optional':
+      case 'broadband_packaged_optional':
+      case 'iptv_packaged_optional':
+      case 'dummy_packaged_optional':
       	$child->type = 'prdattributepackaged';
       	$child->field_weight['und'][0]['value'] = $weight;
       	$child->field_ref_product['und'][0]['nid'] = $tmpProductNid[1];
@@ -917,8 +962,13 @@ function product_catalog_ajax_select_submit() {
       	node_save($child);
       	$js_data['append_to'] = 'inside';
         break;
-      	 
+		
       case 'mobile_packaged_hidden':
+      case 'cross_packaged_hidden':
+      case 'voip_packaged_hidden':
+      case 'broadband_packaged_hidden':
+      case 'iptv_packaged_hidden':
+      case 'dummy_packaged_hidden':
 		  
       	$child->type = 'prdattributepackaged';
       	$child->field_weight['und'][0]['value'] = $weight;
@@ -946,8 +996,12 @@ function product_catalog_ajax_select_submit() {
       	$js_data['append_to'] = 'inside';
       	break;
 
-      case 'mobile_nonusage_deposit':
-      	
+	  case 'mobile_nonusage_deposit':
+      case 'cross_nonusage_deposit':
+	  case 'voip_nonusage_deposit':
+      case 'broadband_nonusage_deposit':
+	  case 'iptv_nonusage_deposit':
+      case 'dummy_nonusage_deposit':
       	_remove_existing_children($tmpProductNid[1], $tmpParentNid[1]);
       	 
       	$child->type = 'treenodedepositscheme';
@@ -963,7 +1017,11 @@ function product_catalog_ajax_select_submit() {
       	break;
 
       case 'mobile_nonusage_threshold':
-      	
+      case 'cross_nonusage_threshold':
+      case 'voip_nonusage_threshold':
+      case 'broadband_nonusage_threshold':
+      case 'iptv_nonusage_threshold':
+      case 'dummy_nonusage_threshold':
       	_remove_existing_children($tmpProductNid[1], $tmpParentNid[1]);
       	
       	$child->type = 'treenodethresholdscheme';
@@ -979,6 +1037,11 @@ function product_catalog_ajax_select_submit() {
       	break;
       	
       case 'mobile_nonusage_recharge_additional':
+      case 'cross_nonusage_recharge_additional':
+      case 'voip_nonusage_recharge_additional':
+      case 'broadband_nonusage_recharge_additional':
+      case 'iptv_nonusage_recharge_additional':
+      case 'dummy_nonusage_recharge_additional':
       	$child->type = 'treenodevouchercardforproduct';
       	$child->field_weight['und'][0]['value'] = $weight;
       	$child->field_ref_product['und'][0]['nid'] = $tmpProductNid[1];
@@ -988,14 +1051,21 @@ function product_catalog_ajax_select_submit() {
       	
       	$js_data['append_to'] = 'inside';
       	break;
+		
       case 'mobile_nonusage_otheronetimecharge':
-        $child->type = 'treenodeotheronetimecharge';
-        $child->field_weight['und'][0]['value'] = $weight;
-        $child->field_ref_product['und'][0]['nid'] = $tmpProductNid[1];
-        $child->field_ref_otherontimecharge['und'][0]['tid'] = $childNid;
-        node_save($child);        
-        $js_data['append_to'] = 'inside';
-      break;
+      case 'cross_nonusage_otheronetimecharge':
+      case 'voip_nonusage_otheronetimecharge':
+      case 'broadband_nonusage_otheronetimecharge':
+      case 'iptv_nonusage_otheronetimecharge':
+      case 'dummy_nonusage_otheronetimecharge':
+	        $child->type = 'treenodeotheronetimecharge';
+	        $child->field_weight['und'][0]['value'] = $weight;
+	        $child->field_ref_product['und'][0]['nid'] = $tmpProductNid[1];
+	        $child->field_ref_otherontimecharge['und'][0]['tid'] = $childNid;
+	        node_save($child);        
+	        $js_data['append_to'] = 'inside';
+      	break;
+	  
       case 'voice_tariffplan_specialnumber':
       case 'sms_tariffplan_specialnumber':
         $planNode = node_load($tmpParentNid[2]);
@@ -1015,6 +1085,7 @@ function product_catalog_ajax_select_submit() {
         $js_data['append_to'] = 'inside';
         $js_data['replace_or_append'] = 'replace';
         break;
+		
       case 'data_tariffplan_predefined':
         $planNode = node_load($tmpParentNid[2]);
         $child->type = 'treenodepacketpredefined';
@@ -1026,6 +1097,7 @@ function product_catalog_ajax_select_submit() {
         node_save($child);        
         $js_data['append_to'] = 'inside'; 
         break;
+		
       case 'data_tariffplan_dynamic':
         $planNode = node_load($tmpParentNid[2]);
         $child->type = 'treenodepacketdynamic';
@@ -1037,6 +1109,7 @@ function product_catalog_ajax_select_submit() {
         node_save($child);        
         $js_data['append_to'] = 'inside'; 
         break;
+		
       case 'attribute_required_device':
         $child->type = 'prdattributerequireddevice';
         $child->field_weight['und'][0]['value'] = $weight;
@@ -1094,17 +1167,30 @@ function _create_treenodecounterforvoucherprd($treenodeproductforvoucher, $produ
 	global $user;
 	
 	// 해당 상품의 optional counter를 가져옴.
-	// 	
 	$params = array('0' => $productNid);
 	$view = views_get_view('list_prdcounterlist');
 	$view->set_display('panel_pane_2');
 	$view->set_arguments($params);
 	$view->execute();
 	
-	$counterList = array();
-	foreach($view->result as $record){
-		$counterList[] = view_get_field_value_by_label($view, 'qtabConfigNid', $record);
+	$counterNids = array();
+	foreach($view->result as $record) {
+		//$counterList[] = view_get_field_value_by_label($view, 'qtabConfigNid', $record);
+		$counterNids[] = view_get_field_value_by_label($view, 'qtabConfigNid', $record);
 	}
+	
+	// Prepaid면서 Basic , Optional인 counter만 걸러낸다.
+	$params = array('0' => join('+',$counterNids));
+	$view = views_get_view('query_list_counter');
+	$view->set_display('panel_pane_4');
+	$view->set_arguments($params);
+	$view->execute();
+	$counterList = array();
+	foreach($view->result as $record) {
+		$counterList[] = $record->nid;
+	}
+	
+	dsm($counterList, 'counterList');
 	
 	// 해당 상품의 basic counter를 가져옴.
 	$product = node_load($productNid);
@@ -1128,9 +1214,12 @@ function _create_treenodecounterforvoucherprd($treenodeproductforvoucher, $produ
     $view->set_arguments($args);
     $view->execute();
     
-    foreach($view->result as $record){
+	dsm($view->result, 'after counterlist');
+	foreach($view->result as $record){
         $counterList[] = $record->nid;
 	}
+	
+	
 	
 	foreach($counterList as $record) {
 		

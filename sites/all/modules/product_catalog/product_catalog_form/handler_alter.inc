@@ -122,7 +122,6 @@ function _add_ajax_submit_callback($form_id,&$form){
                     '#weight' => 1000
                 );
             }
-            
 			$firstPathName = current(explode('/', current_path()));
 			
 			if($firstPathName == 'relation') {
