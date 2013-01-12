@@ -108,7 +108,7 @@
 						console.log( 'cdr', cdr[0][0]);
 						var decoded_cdr = $.fn.decodeCDR( cdr[0][0]);
 						voice_cdr = decoded_cdr.counters; 
-						console.log( 'voice cdr', voice_cdr);
+						//console.log( 'voice cdr', voice_cdr);
 					}
 
 					$('#run-test-ocs-result').
@@ -138,13 +138,13 @@
 						}
 					}
 					if ( typeof(eval_result['result']) == 'undefined') 
-						eval_result['result'] = eval(condition);
+						eval_result['result'] = eval(condition) ? "SUCCESS" : "FAIL";
 
 					console.log( 'check', condition, eval_result);
 					console.log( 'voice_cdr', voice_cdr);
 					$('.testcase_check_result[node=' + nid + ']').
 						append( '<h4> TC-{0} <a href="#test_result_{1}_{0}">{2}</a></h4>'.
-							format( tc_idx, nid, (eval_result['result'] ? "SUCCESS" : "FAIL")));
+							format( tc_idx, nid, eval_result['result'] ));
 
 					$('#run-test-ocs-result').
 						append( '<br><h4> Test Data </h4>').
@@ -227,17 +227,24 @@
 	$.fn.decodeCDR = function( fields) {
 
 		// decode used counter
-		var used_counter = fields[24].split('/');
 		var counter = {};
-		for( var i=0; i< used_counter.length; i++){
-			var usage = used_counter[i].split(':');
-			counter[ usage[0]] = { usage : parseInt( usage[2]) - parseInt( usage[1])};
+
+		if ( fields[24].length > 0) {
+			var used_counter = fields[24].split('/');
+			//console.log( 'used counter', used_counter);
+			for( var i=0; i< used_counter.length; i++){
+				var usage = used_counter[i].split(':');
+				counter[ usage[0]] = { usage : parseInt( usage[2]) - parseInt( usage[1])};
+			}
 		}
 
-		return {
+		var cdr =  {
 			subscription_key: fields[2],
 			counters: counter,
 		};
+
+		//console.log( 'decoded cdr', cdr);
+		return cdr;
 	}
 
 })(jQuery);
