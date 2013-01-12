@@ -514,10 +514,28 @@ function _get_attribute_exceptions($product) {
             $deviceClassTerm = taxonomy_term_load($requiredDeviceNode->field_ref_device_class['und'][0]['tid']);
             $requiredDeviceInfo['device'] = _get_common_code($deviceClassTerm);
             $requiredDeviceInfo['amount'] = isset($requiredDeviceNode->field_amount['und'][0]['value'])?$requiredDeviceNode->field_amount['und'][0]['value']:0;
+            $requiredDeviceInfo['deposit_price'] = isset($requiredDeviceNode->field_deposit_price['und'][0]['value'])?$requiredDeviceNode->field_deposit_price['und'][0]['value']:0;
             $requiredDevice [] = $requiredDeviceInfo;
         }
-        
         $retArray['required_device'] = $requiredDevice;
+    }
+    
+    //number saving
+    $view = views_get_view('list_product_child_node');
+    $view->set_display('panel_pane_2');
+    $view->set_arguments(array('0' => $product->nid, '1' => 'prdattributenumbersaving'));
+    $view->execute();
+    $numberSavings = array();
+    
+    if(!empty($view->result)) {        
+        foreach($view->result as $record){
+            $numberSavingNode = node_load($record->nid);
+            $numberSavingInfo = array();            
+            $numberSavingInfo['saving_days'] = isset($numberSavingNode->field_saving_days['und'][0]['value'])?$numberSavingNode->field_saving_days['und'][0]['value']:0;
+            $numberSavingInfo['deposit_price'] = isset($numberSavingNode->field_deposit_price['und'][0]['value'])?$numberSavingNode->field_deposit_price['und'][0]['value']:0;
+            $numberSavings [] = $numberSavingInfo;
+        }
+        $retArray['number_saving'] = $numberSavings;
     }
     
     //allowed device
