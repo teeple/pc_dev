@@ -165,32 +165,91 @@ function create_default_tree_node_submit_handler(&$form, &$form_state){
 	add_js_settings_after_node_save($rootNode);
 }
 
+function _create_default_items_by_voca($product, $voca_name) {
+	global $user;
+	
+	$voca = taxonomy_vocabulary_machine_name_load($voca_name);
+	$terms = taxonomy_get_tree($voca->vid);
+	
+	foreach($terms as $term) {
+		$treeTerm = taxonomy_term_load($term->tid);
+		if(!empty($treeTerm->field_default_contenttype) 
+			&& !empty($treeTerm->field_default_contenttype['und'][0]['value'])) {
+			
+			$contentType = $treeTerm->field_default_contenttype['und'][0]['value'];
+			
+			switch($contentType) {
+				case 'treenodecounter':
+					_create_default_basic_counters($product->nid, $treeTerm->tid);
+					break;
+					
+				default:
+					$node = new StdClass();
+					$node->uid = $user->uid;
+					$node->type = $treeTerm->field_default_contenttype['und'][0]['value'];
+					$node->language = 'und';
+					
+					foreach($treeTerm->field_default_fieldset['und'] as $field) {
+				    	$fieldSet = field_collection_item_load($field['value']);
+						$fieldName = $fieldSet->field_field_name['und'][0]['value'];
+						$fieldValue = $fieldSet->field_field_value['und'][0]['value'];
+						
+						if($fieldValue == '$productNid') {
+							$fieldValue = $product->nid;
+							
+						} else if($fieldValue == '$refTreeTid') {
+							$fieldValue = $term->tid;
+						}
+						$command = '$node->'.$fieldName.'='.$fieldValue.';';
+						eval($command);
+					}
+					node_save($node);
+			}
+		}
+	}
+}
+
 function _create_default_items_in_product($product) {
     //dsm('_create_default_items_in_product');
     //dsm($product->field_is_cloned); 
 	if(!empty($product->field_is_cloned) && $product->field_is_cloned['und'][0]['value'] == 0){
-        //main counter create
+			
+		$voca_name = _get_vocabulary_name('simpleproductoffering', $product);
+		_create_default_items_by_voca($product, $voca_name);
+	}
+}
+
+function _create_default_items_in_product_old($product) {
+	
+	if(!empty($product->field_is_cloned) && $product->field_is_cloned['und'][0]['value'] == 0){
+		
+		//main counter create
     	$voca_name = _get_vocabulary_name('simpleproductoffering', $product);
-    	
-    	// vocabulary에서 'Main' counter에 해당하는 부분에 basic counter를 자동으로 생성하게 해준다. 
+		
+		$serviceDomainTerm = taxonomy_term_load($product->field_service_type_of_provider['und'][0]['tid']);
+		
+		if($serviceDomainTerm->name == 'Cross') {
+			_create_default_items_by_voca($product, $voca_name);
+			return;
+		}
+		
     	$mainTerm = taxonomy_get_term_by_name('Charging', $voca_name);
-    	
-    	// main 상품을 생성하는 경우가 아니면 basic counter를 초기에 생성시켜줄 필요가 없다.
     	$prdTypeTerm = taxonomy_term_load($product->field_product_type['und'][0]['tid']);
-    	
+		
+    	// main 상품을 생성하는 경우가 아니면 basic counter를 초기에 생성시켜줄 필요가 없다.
+    	// vocabulary에서 'Main' counter에 해당하는 부분에 basic counter를 자동으로 생성하게 해준다. 
     	if(!empty($mainTerm) && ($prdTypeTerm->name == 'Main')) {
     		_create_default_basic_counters($product->nid, current($mainTerm)->tid);
     		_create_default_recharge_block_item($product, $voca_name);
     	}
-    	
-		dsm($voca_name, 'voca_name');
 		
 		_create_default_prdattributes($product, $voca_name);
+    	
     	// _create_default_prdattribute_relations($offering, $voca_name);
     	_create_default_prdnonusage($product, $voca_name);
     	
     	// product basic counter setting
-    	_create_default_prdcounterlist($product, $voca_name);
+		_create_default_prdcounterlist($product, $voca_name);
     }
 }
 
@@ -207,7 +266,7 @@ function _create_default_recharge_block_item($product, $voca_name) {
 		$node->field_ref_product['und'][0]['nid'] = $product->nid;
 		$node->field_ref_tree_tid['und'][0]['value'] = current($term)->tid;
 		node_save($node);
-	}	
+	}
 }
 
 function _create_default_prdnonusage($product, $voca_name) {
@@ -240,6 +299,7 @@ function _create_default_prdcounterlist($product, $voca_name) {
 	$node->field_ref_product['und'][0]['nid'] = $product->nid;
 	node_save($node);
 }
+
 
 function _create_default_prdattribute_relations($product, $voca_name) {
 	global $user;
