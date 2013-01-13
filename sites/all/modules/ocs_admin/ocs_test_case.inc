@@ -81,6 +81,25 @@ function ocs_run_all_testcase_for_ocs( $ts_nid, $tc_nid, $tc_idx)
         $output = ocs_run_testcase_http( $url, $ts_data, $field, $tc->field_ts_method['und'][0]['value'],
 				$tc->field_ts_json_prefix['und'][0]['value'], $tc->field_ts_json_suffix['und'][0]['value'], $json_data);
     }
+	else if ( isset( $tc->field_ts_call_test['und'][$tc_idx])) {
+		// get template
+		$ts_data = node_load( $tc->field_ts_call_test_template['und'][0]['nid']);
+        if ( $field == NULL) $field = field_info_instances( 'node', $ts_data->type);
+
+		$cdata = entity_load_single( 'field_collection_item', $tc->field_ts_call_test['und'][$tc_idx]['value']);
+		$call_data = ocs_build_ts_json( $cdata, field_info_instances('field_collection_item', 'field_ts_call_test'));
+
+		// refine call_data
+		$call_data['destId'] = $call_data['dialed'];	// add another key : destId as same as dialed
+		// recalculate end time
+		$stime = new DateTime( $call_data['startTime']);
+		$etime = $stime->add( new DateInterval('PT'. $call_data['duration'] .'S'));
+		$call_data['endTime'] = $etime->format('YmdHis');
+
+        $output = ocs_run_testcase_http( $url, $ts_data, $field, $tc->field_ts_method['und'][0]['value'],
+				$tc->field_ts_json_prefix['und'][0]['value'], $tc->field_ts_json_suffix['und'][0]['value'], 
+				array_merge( $json_data, $call_data));
+	}
 	else {
 		$output = array( 'error' => 'TC-'. $tc_idx . ' Not found');
 	}
@@ -93,7 +112,9 @@ function ocs_run_all_testcase_for_ocs( $ts_nid, $tc_nid, $tc_idx)
 
 function ocs_run_testcase_http( $url, $ts_data, $field, $method = 'POST', $prefix='', $suffix='', $replace_data=array())
 {
-    $data = ocs_build_ts_json( $ts_data, $field, $replace_data);
+	// dpm( $replace_data, 'replace data');
+
+	$data = ocs_build_ts_json( $ts_data, $field, $replace_data);
 
     $pattern = '/\[(\w+)\]/';
     while ( preg_match( $pattern, $url, $match)) {
@@ -158,7 +179,7 @@ function ocs_build_ts_json( $node, $field=NULL, $replace_data=NULL)
 			else {
 				if ( $value['widget']['module'] == 'field_collection') {
 					$field_node = entity_load_single( 'field_collection_item', $v['und'][0]['value']);
-					$va = ocs_build_ts_json( $field_node, field_info_instances('field_collection_item', $value['field_name']));
+					$va = ocs_build_ts_json( $field_node, field_info_instances('field_collection_item', $value['field_name']), $replace_data);
 				}
 				else if ( $value['widget']['module'] == 'number') {
 					$va = intval( $v['und'][0]['value']);
