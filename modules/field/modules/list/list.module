@@ -236,6 +236,7 @@ function list_allowed_values($field, $instance = NULL, $entity_type = NULL, $ent
   $allowed_values = &drupal_static(__FUNCTION__, array());
 
   if (!isset($allowed_values[$field['id']])) {
+    dsm($field,'field');
     $function = $field['settings']['allowed_values_function'];
     // If $cacheable is FALSE, then the allowed values are not statically
     // cached. See list_test_dynamic_values_callback() for an example of
