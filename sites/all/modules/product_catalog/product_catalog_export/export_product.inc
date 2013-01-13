@@ -381,9 +381,9 @@ function _get_attribute($product) {
 
 function _get_result($reqArray, $product) {
 	$retArray = array();
-	foreach($reqArray as $key => $item) {
+	foreach($reqArray as $key => $item) { 
 		if($item['through_common_code']) {
-			$command = '$field = $product->'.$item['field'].';';
+			$command = '$field = isset($product->'.$item['field'].')?$product->'.$item['field'].':0'.';';
 			eval($command);
 			
 			if(!empty($field)) {
@@ -395,7 +395,8 @@ function _get_result($reqArray, $product) {
 			}
 			
 		} else {
-			$command = '$field = $product->'.$item['field'].';';
+			//$command = '$field = $product->'.$item['field'].';';
+            $command = '$field = isset($product->'.$item['field'].')?$product->'.$item['field'].':0'.';';
 			eval($command);
 			
 			if(!empty($field)) {
