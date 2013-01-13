@@ -117,7 +117,7 @@ function export_deploy($tid,$termName,$refNid=NULL){
 		}
         
         $resultString = json_encode($result);
-        $historyNode->field_export_type['und'][] = array('value' => $resultString,'safe_value' => $resultString);
+        $historyNode->field_export_result['und'][] = array('value' => $resultString,'safe_value' => $resultString);
 	}
     node_save($historyNode);
 	
