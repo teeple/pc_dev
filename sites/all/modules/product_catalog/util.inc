@@ -417,3 +417,24 @@ function session_get($session_name, $default=NULL) {
 function session_set($session_name, $session_value) {
     $_SESSION[$session_name] = $session_value;
 }
+
+function field_instance_copy() {
+	$field = field_info_instance('taxonomy_term', 'field_default_fieldset', 'tpl_default_tree_mobile_main_prepaid');
+	$voca_names = taxonomy_vocabulary_get_names();
+	foreach($voca_names as $key => $value) { 
+	   if( strncmp($key, 'tpl_default_tree', 16) == 0) {
+	
+	       if(  ($key != 'tpl_default_tree_mobile_main_prepaid')  && ($key != 'tpl_default_tree_mobile_main_postpaid')  && ($key != 'tpl_default_tree_cross_main')) {
+	            $field_instance = array(
+	                'field_name' => $field['field_name'],
+	                'entity_type' => 'taxonomy_term',
+	                'bundle' => $key,
+	                'label' => $field['label'],
+	                'description' => $field['description'],
+	                'widget' => $field['widget'],
+	            );
+	            field_create_instance($field_instance);
+	      } 
+	   }
+	}
+}

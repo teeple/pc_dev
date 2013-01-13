@@ -101,6 +101,7 @@ function _add_ajax_submit_callback($form_id,&$form){
         case 'treenodepacketdynamic_node_form':
         case 'basicrate_data_node_form';
         case 'prdattributerequireddevice_node_form':
+        case 'prdattributenumbersaving_node_form':
 		  	$change = TRUE;
         	break;
         	
@@ -123,7 +124,6 @@ function _add_ajax_submit_callback($form_id,&$form){
                     '#weight' => 1000
                 );
             }
-            
 			$firstPathName = current(explode('/', current_path()));
 			
 			if($firstPathName == 'relation') {
@@ -493,7 +493,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 				$form['field_service_domain']['und']['#disabled'] = TRUE;
 				$form['field_billing_type_counter']['und']['#disabled'] = TRUE;
 				$form['field_counter_unit_type']['und']['#disabled'] = TRUE;
-				$form['field_default_usage_type']['und']['#disabled'] = TRUE;
+				//$form['field_default_usage_type']['und']['#disabled'] = TRUE;
 				
 			// Create
 			} else {
@@ -1411,6 +1411,12 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             $form['field_ref_tree_tid']['#type'] = 'hidden'; 
             $form['field_weight']['#type'] = 'hidden';
             $form['field_ref_device_class']['#type'] = 'hidden';
+            break;
+        case 'prdattributenumbersaving_node_form':
+            _unset_menu_items($form,$form_id);
+            $form['field_ref_product']['#type'] = 'hidden';
+            $form['field_ref_tree_tid']['#type'] = 'hidden'; 
+            $form['field_weight']['#type'] = 'hidden';
             break;
         /*
         case 'views_form_list_numberingplan_domestic_for_product_default':
