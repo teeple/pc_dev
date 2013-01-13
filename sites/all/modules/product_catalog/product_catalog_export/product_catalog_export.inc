@@ -91,8 +91,8 @@ function export_deploy($tid,$termName,$refNid=NULL){
 	$historyNode->field_export_data['und'][0]['safe_value'] = $jsonString;
     $historyNode->field_export_data['und'][0]['value'] = $jsonString;
     $historyNode->field_export_type['und'][0]['tid'] = $tid;
-    node_save($historyNode);
-    $historyNodeNid = $historyNode->nid;
+    //node_save($historyNode);
+    //$historyNodeNid = $historyNode->nid;
     
 	//send deploy request
 	$term = taxonomy_term_load($tid);
@@ -109,13 +109,17 @@ function export_deploy($tid,$termName,$refNid=NULL){
 		dsm($result,'deploy result');
 
 		if($result->code === '200'){
-			$historyNode = node_load($historyNodeNid);
+			//$historyNode = node_load($historyNodeNid);
 			if(strpos($result->request,'/cs/') !== FALSE) $historyNode->field_deployed_cs['und'][0]['value'] = TRUE;
 			if(strpos($result->request,'/ocs/') !== FALSE) $historyNode->field_deployed_ocs['und'][0]['value'] = TRUE;
 			if(strpos($result->request,'/crm/') !== FALSE) $historyNode->field_deployed_crm['und'][0]['value'] = TRUE;
 			node_save($historyNode);
 		}
+        
+        $resultString = json_encode($result);
+        $historyNode->field_export_type['und'][] = array('value' => $resultString,'safe_value' => $resultString);
 	}
+    node_save($historyNode);
 	
 	$redirect_url = 'lifecycles/history/'.$tid;
 	drupal_goto($redirect_url);
