@@ -255,8 +255,14 @@ function list_allowed_values($field, $instance = NULL, $entity_type = NULL, $ent
       return $values;
     }
   }
+  
+  if(isset($allowed_values[$field['id']])){
+      return $allowed_values[$field['id']];
+  }else {
+      return NULL;
+  }
 
-  return $allowed_values[$field['id']];
+  
 }
 
 /**
