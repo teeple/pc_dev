@@ -128,10 +128,6 @@
 						};
 						break;
 					case "cross_available_product":
-						menus.custom_delete._disabled = false;
-						menus.custom_delete.action = function(node) {
-							$.fn.deleteNode(node);
-						};
 						menus.custom_create._disabled = false;
 						menus.custom_create.submenu = {
 							"cross_available_product" : {
@@ -593,6 +589,20 @@
 						menus.custom_create._disabled = false;
 						menus.custom_create.submenu = {
 							"mobile_nonusage_subscription_bonus" : {
+								"label" : "Bonus Item",
+								action : function(node) {
+									$.fn.addNode(node, {
+										'childContentType' : 'actionpriceallowanceonetime'
+									});
+								}
+							},
+						};
+						break;
+
+					case "cross_nonusage_subscription_bonus":
+						menus.custom_create._disabled = false;
+						menus.custom_create.submenu = {
+							"cross_nonusage_subscription_bonus" : {
 								"label" : "Bonus Item",
 								action : function(node) {
 									$.fn.addNode(node, {
@@ -1537,6 +1547,19 @@
 							},
 						};
 						break;	
+					case "attribute_number_saving":
+						menus.custom_create._disabled = false;
+						menus.custom_create.submenu = {
+							"attribute_number_saving" : {
+								"label" : "Number Saving",
+								action : function(node) {
+									$.fn.addNode(node, {
+										'childContentType' : 'prdattributenumbersaving' 
+									});
+								}
+							},
+						};
+						break;	
 					case "attribute_available_channel":
 						menus.custom_create._disabled = false;
 						menus.custom_create.submenu = {
@@ -1560,6 +1583,12 @@
 						};
 						break;	
 					case "prdattributerequireddevice":
+						menus.custom_delete._disabled = false;
+						menus.custom_delete.action = function(node) {
+							$.fn.deleteNode(node);
+						};
+						break;
+					case "prdattributenumbersaving":
 						menus.custom_delete._disabled = false;
 						menus.custom_delete.action = function(node) {
 							$.fn.deleteNode(node);
