@@ -508,7 +508,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 				$form['field_service_domain']['und']['#disabled'] = TRUE;
 				$form['field_billing_type_counter']['und']['#disabled'] = TRUE;
 				$form['field_counter_unit_type']['und']['#disabled'] = TRUE;
-				$form['field_default_usage_type']['und']['#disabled'] = TRUE;
+				//$form['field_default_usage_type']['und']['#disabled'] = TRUE;
 				
 			// Create
 			} else {
