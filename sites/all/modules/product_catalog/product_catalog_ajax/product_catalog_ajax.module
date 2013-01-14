@@ -1182,7 +1182,7 @@ function _create_treenodecounterforvoucherprd($treenodeproductforvoucher, $produ
 	// Prepaid면서 Basic , Optional인 counter만 걸러낸다.
 	$params = array('0' => join('+',$counterNids));
 	$view = views_get_view('query_list_counter');
-	$view->set_display('panel_pane_4');
+		$view->set_display('panel_pane_4');
 	$view->set_arguments($params);
 	$view->execute();
 	$counterList = array();
