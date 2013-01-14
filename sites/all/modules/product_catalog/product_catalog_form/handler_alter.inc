@@ -358,10 +358,8 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
         	break;
         	
         case 'prdattributeprefixrangeallowed_node_form':
-        case 'prdattributebenefit_node_form':
         case 'prdattributeprefixrangenotallowe_node_form':
         case 'prdattributefeaturecode_node_form':
-			
 			$form['field_parent_node']['#type'] = 'hidden';
             unset($form['field_ref_product']);
             unset($form['field_ref_tree_tid']);
@@ -369,6 +367,23 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			_unset_menu_items($form,$form_id);
             break;
 			
+		case 'prdattributebenefit_node_form':
+			$product = node_load($form_state['product_nid']);
+			$prdTypeTerm = taxonomy_term_load($product->field_product_type['und'][0]['tid']);
+			
+			$form['field_parent_node']['#type'] = 'hidden';
+            unset($form['field_ref_product']);
+            unset($form['field_ref_tree_tid']);
+			unset($form['field_weight']);
+			_unset_menu_items($form,$form_id);
+			
+			if($prdTypeTerm->name != 'Additional') {
+				$form['field_cug_flag']['#type'] = 'hidden';
+				$form['field_discount_for_cug']['#type'] = 'hidden';
+				unset($form['#group_children']);
+			}
+			break;
+				
 		case 'locationfactor_node_form':
 		case 'homezonefactor_node_form':
 			_unset_menu_items($form,$form_id);
@@ -1015,7 +1030,16 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
            
 			// $existingCounterList = _get_existing_counter_list($form_state['product_nid']);
 			$existingCounterList = _get_existing_counter_list($rootNid);
-			$form['field_ref_counter']['und']['#options'] = $existingCounterList;
+			
+			$results =  _get_default_basic_counters($form_state['root_nid']);
+			
+			foreach($results as $record) {
+				$basicCounterList[$record->nid] = $record->node_title.'('.$record->field_field_counter_unit_type[0]['rendered']['#title'].')';
+			}
+			$mergedCounterList = array_merge($basicCounterList, $existingCounterList);
+			
+			//$form['field_ref_counter']['und']['#options'] = $existingCounterList;
+			$form['field_ref_counter']['und']['#options'] = $mergedCounterList;
         	break;
 			
         case 'conditionwhatcounterfortracking_node_form':
