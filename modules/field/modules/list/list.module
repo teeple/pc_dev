@@ -235,8 +235,7 @@ function list_field_update_field($field, $prior_field, $has_data) {
 function list_allowed_values($field, $instance = NULL, $entity_type = NULL, $entity = NULL) {
   $allowed_values = &drupal_static(__FUNCTION__, array());
 
-  if (!isset($allowed_values[$field['id']]) && isset($field['settings']['allowed_values_function'])) {
-    //if (!isset($allowed_values[$field['id']])) {    
+  if (!isset($allowed_values[$field['id']])) {
     $function = $field['settings']['allowed_values_function'];
     // If $cacheable is FALSE, then the allowed values are not statically
     // cached. See list_test_dynamic_values_callback() for an example of
@@ -255,10 +254,6 @@ function list_allowed_values($field, $instance = NULL, $entity_type = NULL, $ent
     else {
       return $values;
     }
-  }
-  
-  if(!isset($allowed_values[$field['id']])){
-     $allowed_values[$field['id']] = NULL;
   }
 
   return $allowed_values[$field['id']];
@@ -469,17 +464,15 @@ function list_field_formatter_view($entity_type, $entity, $field, $instance, $la
     case 'list_default':
       $allowed_values = list_allowed_values($field, $instance, $entity_type, $entity);
       foreach ($items as $delta => $item) {
-        if(isset($item['value'])){
-            if (isset($allowed_values[$item['value']])) {
-              $output = field_filter_xss($allowed_values[$item['value']]);
-            }
-            else {
-              // If no match was found in allowed values, fall back to the key.
-              $output = field_filter_xss($item['value']);
-            }
-            $element[$delta] = array('#markup' => $output);
-          }
+        if (isset($allowed_values[$item['value']])) {
+          $output = field_filter_xss($allowed_values[$item['value']]);
         }
+        else {
+          // If no match was found in allowed values, fall back to the key.
+          $output = field_filter_xss($item['value']);
+        }
+        $element[$delta] = array('#markup' => $output);
+      }
       break;
 
     case 'list_key':
