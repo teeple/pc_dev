@@ -20,7 +20,10 @@ function _get_vocabulary_name($contentType, $productNode, $serviceType = NULL){
 								'VAS' 		=> array(	'Postpaid' => 'tpl_default_tree_iptv_vas_postpaid',
 														'Prepaid'  	=> 'tpl_default_tree_iptv_vas_prepaid'
 											),
-								),
+								'Package'   => array(   'Postpaid' => 'tpl_default_tree_iptv_package_postpaid',
+                                                        'Prepaid'   => 'tpl_default_tree_iptv_package_prepaid'
+                                            ),
+                                ),
 					'Mobile' => array(
 								'Main' 		=> array(	'Postpaid' => 'tpl_default_tree_mobile_main_postpaid',
 														'Prepaid'  	=> 'tpl_default_tree_mobile_main_prepaid',
@@ -32,7 +35,10 @@ function _get_vocabulary_name($contentType, $productNode, $serviceType = NULL){
 								'VAS' 		=> array(	'Postpaid' => 'tpl_default_tree_mobile_vas_postpaid',
 														'Prepaid'  	=> 'tpl_default_tree_mobile_vas_prepaid'
 											),
-								),
+								'Package'   => array(   'Postpaid' => 'tpl_default_tree_mobile_package_postpaid',
+                                                        'Prepaid'   => 'tpl_default_tree_mobile_package_prepaid'
+                                            ),
+                                ),
 					'Broadband' => array(
 								'Main' 		=> array(	'Postpaid' => 'tpl_default_tree_broadband_main_postpaid',
 														'Prepaid'  	=> 'tpl_default_tree_broadband_main_prepaid',
@@ -44,6 +50,9 @@ function _get_vocabulary_name($contentType, $productNode, $serviceType = NULL){
 								'VAS'		=> array(	'Postpaid' => 'tpl_default_tree_broadband_vas_postpaid',
 														'Prepaid'  	=> 'tpl_default_tree_broadband_vas_prepaid'
 											),
+								'Package'   => array(   'Postpaid' => 'tpl_default_tree_broadband_package_postpaid',
+                                                        'Prepaid'   => 'tpl_default_tree_broadband_package_prepaid'
+                                            ),
 								),
 					'VoIP' => array(
 								'Main' => array('Postpaid' => 'tpl_default_tree_voip_main_postpaid',
