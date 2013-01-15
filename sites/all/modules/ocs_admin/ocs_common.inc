@@ -9,6 +9,7 @@ define( 'OCS_PARAM_TYPE_TIME', '6');
 define( 'OCS_PARAM_TYPE_PRODUCT_KEY', '7');
 define( 'OCS_PARAM_TYPE_COUNTER', '8');
 define( 'OCS_PARAM_TYPE_MESSAGE', '9');
+define( 'OCS_PARAM_TYPE_FUNCTION', '10');
 
 function ocs_admin_get_param_type( $name)
 {
@@ -22,6 +23,7 @@ function ocs_admin_get_param_type( $name)
         'product_key' => OCS_PARAM_TYPE_PRODUCT_KEY,
         'counter' => OCS_PARAM_TYPE_COUNTER,
         'message' => OCS_PARAM_TYPE_MESSAGE,
+        'function' => OCS_PARAM_TYPE_FUNCTION,
     );
 
     if (isset( $optype[$name])) return $optype[$name];

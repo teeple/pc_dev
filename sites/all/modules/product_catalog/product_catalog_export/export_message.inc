@@ -6,14 +6,16 @@ function _array_message($nid = NULL)
 
 	//fetch data
 	$viewResult = views_get_view_result('ocs_messages', 'panel_json', $nid);
-	// dpm( $viewResult, 'messages');
+	dpm( $viewResult, 'messages');
 
 	foreach ($viewResult as $record) {
 		$msg = array();
 		$msg['message_id'] = isset($record->nid) ? $record->nid : null;
-		$format = $record->field_field_ocs_format[0]['raw']['value'];
+		$format['MNG'] = $record->field_field_ocs_format[0]['raw']['value'];
+		$format['ENG'] = isset( $record->field_field_ocs_format[1]) ? $record->field_field_ocs_format[1]['raw']['value'] : '';
 		$msg['name'] = $record->node_title;
-		$msg['format'] = preg_replace('/%\d+/', '%s', $format);
+		$msg['format'] = array( 'MNG' => preg_replace('/%\d+/', '%s', $format['MNG']),
+				'ENG' => preg_replace('/%\d+/', '%s', $format['ENG']));
 		foreach( $record->field_field_ocs_export_format as $export) {
 			$msg['ui_param'][] = $export['rendered']['#markup'];
 		}

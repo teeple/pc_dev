@@ -35,21 +35,27 @@ $param_types = array(
 	OCS_MESSAGE_COUNTER_GROUP => 'Counter Group'
 );
 
+global $supported_lang;
+$supported_lang = array( 'MNG', 'ENG');
+
 
 function ocs_admin_message_form($form, &$form_state, $nid = NULL, $op = NULL)
 {
 	$num_values = isset($form_state['values']['num_values']) ? $form_state['values']['num_values'] : 0;
 
 	$title = '';
-	$format = '';
+	$format = array( 'MNG' => 'Mongolian Notification Text', 'ENG' => 'English Notification Text');
 	if ($op == 'edit') {
 		$node = node_load($nid);
 		//        dpm( $node, 'node');
 		if ($node) {
 			$title = $node->title;
-			$format = $node->field_ocs_format['und'][0]['value'];
+			$format['MNG'] = $node->field_ocs_format['und'][0]['value'];
+			$format['ENG'] = isset( $node->field_ocs_format['und'][1]) ? $node->field_ocs_format['und'][1]['value'] : '';
 			if (!isset($form_state['values']['num_values'])) {
-				$num_values = count($node->field_ocs_value['und']);
+				if(!empty($node->field_ocs_value)) {
+					$num_values = count($node->field_ocs_value['und']);
+				}
 			}
 		}
 	}
@@ -82,13 +88,17 @@ function ocs_admin_message_form($form, &$form_state, $nid = NULL, $op = NULL)
 		'#default_value' => $title,
 	);
 
-	$form['format'] = array(
-		'#type' => 'textarea',
-		'#title' => 'Format',
-		'#default_value' => $format,
-		'#description' => 'Enter message format in "printf" style. Use "%1, %2" to substitue numeric value.' . 
-			'<br>Ex) "You have remains %1 won."',
-	);
+	global $supported_lang;
+
+	foreach( $supported_lang as $lang) {
+		$form['format' . $lang] = array(
+			'#type' => 'textarea',
+			'#title' => t( 'Format (@lang)', array( '@lang' => $lang)),
+			'#default_value' => $format[$lang],
+			'#description' => 'Enter message format in "printf" style. Use "%1, %2" to substitue numeric value.' . 
+				'<br>Ex) "You have remains %1 won."',
+		);
+	}
 
 	$form['valueset'] = array(
 		'#type' => 'fieldset',
@@ -273,19 +283,26 @@ function ocs_admin_message_form_validate($form, &$form_state)
 	$values = $form_state['values'];
 
 	if ($values['op'] == 'Save') {
-		foreach (array( 'title', 'format') as $key) {
-			if (empty($values[$key])) {
-				form_set_error($key, $form[$key]['#title'] . ' is empty');
-			}
+		if (empty($values['title'])) {
+			form_set_error('title', $form['title']['#title'] . ' is empty');
 		}
 
-		// check format string
-		$format = str_word_count($values['format'], 1, '%0123456789');
-		foreach ($format as $fmt) {
-			if (substr($fmt, 0, 1) == '%') {
-				// check the variable number
-				if (substr($fmt, 1) > $values['num_values']) {
-					form_set_error('format', t('Invalid variable "@v" in format string.', array('@v' => $fmt)));
+		global $supported_lang;
+
+		foreach ( $supported_lang as $lang) {
+
+			if (empty($values[ 'format' . $lang])) {
+				form_set_error( 'format'.$lang, $form[ 'format' . $lang]['#title'] . ' is empty');
+			}
+
+			// check format string
+			$format = str_word_count( $values['format'.$lang], 1, '%0123456789');
+			foreach ($format as $fmt) {
+				if (substr($fmt, 0, 1) == '%') {
+					// check the variable number
+					if (substr($fmt, 1) > $values['num_values']) {
+						form_set_error('format'.$lang, t('Invalid variable "@v" in format string.', array('@v' => $fmt)));
+					}
 				}
 			}
 		}
@@ -306,7 +323,6 @@ function ocs_admin_message_form_submit($form, &$form_state)
 			$node = ocs_admin_get_new_node('ocs_messages');
 		}
 		$node->title = $values['title'];
-		$node->field_ocs_format['und'][0]['value'] = $values['format'];
 
 		$options = $form['#options'];
 		// flatten $options[1], counter
@@ -321,25 +337,32 @@ function ocs_admin_message_form_submit($form, &$form_state)
 			$node->field_ocs_value_format['und'][$i - 1]['value'] = isset($values['format:' . $i]) ? $values['format:' . $i] : '';
 		}
 
-		// get parameter list from message format
-		if (preg_match_all('/%\d+/', $values['format'], $matches) > 0) {
-			foreach ($matches[0] as $pivot) {
+		global $supported_lang;
+		$idx = 0;
+		foreach( $supported_lang as $lang) {
+			$node->field_ocs_format['und'][$idx]['value'] = $values['format'.$lang];
 
-				// pivot : %1 => idx:1
-				$idx = substr($pivot, 1);
-				$type = $values['type:' . $idx];
-				if ($type == OCS_MESSAGE_PARAMETER) {// parameter
-					$value_str = $options[$type][$values['value:' . $idx]] . 
-						(isset($values['format:' . $idx]) ? ',' . $values['format:' . $idx] : '');
+			// get parameter list from message format
+			if (preg_match_all('/%\d+/', $values['format'.$lang], $matches) > 0) {
+				foreach ($matches[0] as $pivot) {
+
+					// pivot : %1 => idx:1
+					$idx = substr($pivot, 1);
+					$type = $values['type:' . $idx];
+					if ($type == OCS_MESSAGE_PARAMETER) {// parameter
+						$value_str = $options[$type][$values['value:' . $idx]] . 
+							(isset($values['format:' . $idx]) ? ',' . $values['format:' . $idx] : '');
+					}
+					else if ($type == OCS_MESSAGE_COUNTER) {// counter
+						$value_str = 'counter' . $values['format:'.$idx] . ',' . $values['value:' . $idx];
+					}
+					else {// counter group
+						$value_str = 'counter_group,' . $values['value:' . $idx];
+					}
+					$node->field_ocs_export_format['und'][$idx - 1]['value'] = $value_str;
 				}
-				else if ($type == OCS_MESSAGE_COUNTER) {// counter
-					$value_str = 'counter' . $values['format:'.$idx] . ',' . $values['value:' . $idx];
-				}
-				else {// counter group
-					$value_str = 'counter_group,' . $values['value:' . $idx];
-				}
-				$node->field_ocs_export_format['und'][$idx - 1]['value'] = $value_str;
 			}
+			$idx ++;
 		}
 
 		node_save($node);

@@ -389,6 +389,12 @@ function update_ocs_states( $states)
 
     drupal_set_message( t( 'OCS States are updated. Check it ') . l( t('here'), 'config/ocs/state'));
 
+    dpm( $node_nids, 'remove nids');
+    foreach( $node_nids as $nid) {
+        dpm( $nid, 'remove node nid');
+        node_delete( $nid);
+    }
+
     return TRUE;
 }
 
