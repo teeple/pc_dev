@@ -1087,7 +1087,10 @@ function product_catalog_ajax_select_submit() {
         break;
 		
       case 'data_tariffplan_predefined':
+<<<<<<< HEAD
 	  case 'cross_mobile_data_tariffplan_predefined':
+=======
+>>>>>>> 2597b946b6d8d70c383716bb73a9665f64c7c353
         $planNode = node_load($tmpParentNid[2]);
         $child->type = 'treenodepacketpredefined';
         $child->field_weight['und'][0]['value'] = $weight;
@@ -1098,9 +1101,14 @@ function product_catalog_ajax_select_submit() {
         node_save($child);        
         $js_data['append_to'] = 'inside'; 
         break;
+<<<<<<< HEAD
       
       case 'data_tariffplan_dynamic':
 	  case 'cross_mobile_data_tariffplan_dynamic':
+=======
+		
+      case 'data_tariffplan_dynamic':
+>>>>>>> 2597b946b6d8d70c383716bb73a9665f64c7c353
         $planNode = node_load($tmpParentNid[2]);
         $child->type = 'treenodepacketdynamic';
         $child->field_weight['und'][0]['value'] = $weight;
