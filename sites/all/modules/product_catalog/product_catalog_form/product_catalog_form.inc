@@ -1,6 +1,6 @@
 <?php
 function _get_vocabulary_name($contentType, $productNode, $serviceType = NULL){
-	
+		
 	$reserved_voca_name = array(
 			'simpleproductoffering' => array(
 					'Cross' => array(
@@ -76,11 +76,24 @@ function _get_vocabulary_name($contentType, $productNode, $serviceType = NULL){
 							'Loyalty Point' => 'tpl_tariffplan_mobile_loyalty_point_deduct',
 							'VOD'	=> 'tpl_tariffplan_mobile_vod',
 						),
-					
 					"IPTV" => array(
-							'VOD' => 'tpl_tariffplan_mobile_vod',
+							'VOD' => 'tpl_tariffplan_iptv_vod',
 						),
-						
+					"Cross" => array(
+							'Mobile_Voice' => 'tpl_tariffplan_cross_mobile_voice',
+							'Mobile_SMS'   => 'tpl_tariffplan_cross_mobile_sms',
+							'Mobile_Data'  => 'tpl_tariffplan_cross_mobile_data',
+							'Mobile_MMS'	=> 'tpl_tariffplan_cross_mobile_mms',
+							'Mobile_CRBT'	=> 'tpl_tariffplan_cross_mobile_crbt',
+							'Mobile_Loyalty Point' => 'tpl_tariffplan_cross_mobile_loyalty_point_deduct',
+							'Mobile_VOD'	=> 'tpl_tariffplan_cross_mobile_vod',
+							
+							'VoIP_Voice' => 'tpl_tariffplan_cross_voip_voice',
+							'VoIP_SMS'   => 'tpl_tariffplan_cross_voip_sms',
+							'VoIP_Loyalty Point'  => 'tpl_tariffplan_cross_voip_loyalty_point_deduct',
+							
+							'IPTV_VOD'  => 'tpl_tariffplan_cross_iptv_vod',
+						),
 				),
 	);
 	
@@ -102,7 +115,8 @@ function _get_vocabulary_name($contentType, $productNode, $serviceType = NULL){
 			$voca_name = $reserved_voca_name[$contentType][$serviceDomain][$serviceType];
 			break;
 	}
-// dsm($voca_name, 'voca_name');
+	
+//dsm($voca_name, 'voca_name');
 	return $voca_name;
 }
 
