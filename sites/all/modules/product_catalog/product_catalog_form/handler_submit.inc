@@ -189,22 +189,25 @@ function _create_default_items_by_voca($product, $voca_name) {
 					$node->type = $treeTerm->field_default_contenttype['und'][0]['value'];
 					$node->language = 'und';
 					
-					foreach($treeTerm->field_default_fieldset['und'] as $field) {
-				    	$fieldSet = field_collection_item_load($field['value']);
-						$fieldName = $fieldSet->field_field_name['und'][0]['value'];
-						$fieldValue = $fieldSet->field_field_value['und'][0]['value'];
-						
-						if($fieldValue == '$productNid') {
-							$fieldValue = $product->nid;
+					if(!empty($treeTerm->field_default_fieldset)) {
+						foreach($treeTerm->field_default_fieldset['und'] as $field) {
+					    	$fieldSet = field_collection_item_load($field['value']);
+							$fieldName = $fieldSet->field_field_name['und'][0]['value'];
+							$fieldValue = $fieldSet->field_field_value['und'][0]['value'];
 							
-						} else if($fieldValue == '$refTreeTid') {
-							$fieldValue = $term->tid;
+							if($fieldValue == '$productNid') {
+								$fieldValue = $product->nid;
+								
+							} else if($fieldValue == '$refTreeTid') {
+								$fieldValue = $term->tid;
+							}
+							$command = '$node->'.$fieldName.'='.$fieldValue.';';
+							eval($command);
 						}
-						$command = '$node->'.$fieldName.'='.$fieldValue.';';
-						eval($command);
-					}
-					node_save($node);
-			}
+						node_save($node);
+						
+					} // foreach 
+				} //if 
 		}
 	}
 }
