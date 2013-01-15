@@ -761,8 +761,9 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             unset($form['field_weight']);
 			if(!isset($form['nid']['#value'])){
 				$form['actions']['submit']['#submit'][]  = 'product_catalog_form_form_redirect_handler';
+			}else{
+			    $form['field_target_usage_type‎']['und']['#disabled'] = TRUE;
 			}
-			
 			break;
 		case 'views_form_list_area_ratinggroup_panel_pane_1':
 			unset($form['actions']['submit']['#suffix']);
@@ -1286,7 +1287,18 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			unset($form['field_parent_node']);
             unset($form['field_weight']);
 			$form['field_ref_tree_tid']['#type'] = 'hidden';
-			$form['field_ref_numberspecial']['#type'] = 'hidden';     
+			$form['field_ref_numberspecial']['#type'] = 'hidden';    
+            
+            $numberSpecialNode = node_load($form['#node']->field_ref_numberspecial['und'][0]['nid']);
+            
+            if(isset($numberSpecialNode->field_target_usage_type['und'][0]['tid'])){
+            $usageTypeTerm = taxonomy_term_load($numberSpecialNode->field_target_usage_type['und'][0]['tid']); 
+                if($usageTypeTerm->name == 'SMS'){
+                   unset($form['field_charge_collection']);
+                   unset($form['field_range_units']);
+                   unset($form['field_uom_units']); 
+                }
+            }
             _unset_menu_items($form,$form_id); 
 			break;
         case 'unittransfer_node_form':
