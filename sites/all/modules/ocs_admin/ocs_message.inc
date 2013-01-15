@@ -49,7 +49,9 @@ function ocs_admin_message_form($form, &$form_state, $nid = NULL, $op = NULL)
 			$title = $node->title;
 			$format = $node->field_ocs_format['und'][0]['value'];
 			if (!isset($form_state['values']['num_values'])) {
-				$num_values = count($node->field_ocs_value['und']);
+				if(!empty($node->field_ocs_value)) {
+					$num_values = count($node->field_ocs_value['und']);
+				}
 			}
 		}
 	}
