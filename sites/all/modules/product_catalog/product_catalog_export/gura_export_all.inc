@@ -19,7 +19,7 @@ function rating_rules_export_by_content_type_loaded($export_list, $nid=NULL, $va
             //dsm($export_item->field_export_disabled);
 		}
 
-        if(property_exists($export_item, "field_source_view_name") && count($export_item->field_source_view_name)>0)
+        if($nid==NULL && property_exists($export_item, "field_source_view_name") && count($export_item->field_source_view_name)>0)
         {
             $data = rating_rules_export_from_view_has_nid_reference($export_item->title, $export_item, $export_item->field_source_view_name['und'][0]['value'] , $export_item->field_source_display_name['und'][0]['value'] , $export_item->field_result_ruleset_name['und'][0]['value'], $vars, $export_item_cache);
             foreach($data as $d)
@@ -720,11 +720,13 @@ function view_get_field_value($view , $field_name , $record)
 		$raw_items = $field_handler->get_items($record);
 		if(count($raw_items)>0)
 		{
+			/*
 			if($field_name == "field_dom_holiday")
 			{
 				dsm($field_handler);
 				dsm($raw_items);
 			}
+			 */
 
 			$arr = array();
 			foreach($raw_items as $raw_item)
@@ -945,7 +947,8 @@ function rating_rules_export_from_view($title, $view_name, $display_name, $nid=N
         if($display_name!=NULL && $display_name!="")
         {
             $view->set_display($display_name);
-        }
+		}
+		//dsm($nid);
         if($nid!=NULL)
         {
             $view->set_arguments(array('0'=>$nid));
