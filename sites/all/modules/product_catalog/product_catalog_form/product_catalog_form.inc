@@ -1,26 +1,29 @@
 <?php
 function _get_vocabulary_name($contentType, $productNode, $serviceType = NULL){
-	
-	$reserved_voca_name = array(
-			'simpleproductoffering' => array(
+
+  $reserved_voca_name = array();
+  $reserved_voca_name['simpleproductoffering'] = array(
 					'Cross' => array(
 								'Main' => 	array(	'Postpaid' => 'tpl_default_tree_cross_main',
 													'Prepaid'  	=> 'tpl_default_tree_cross_main',
 													'Hybrid' => 'tpl_default_tree_cross_main'
-											),
-								),
+													),
+					),
 					'IPTV' => array(
 								'Main' 		=> array(	'Postpaid' => 'tpl_default_tree_iptv_main_postpaid',
 														'Prepaid'  	=> 'tpl_default_tree_iptv_main_prepaid',
 														'Hybrid'     => 'tpl_default_tree_iptv_main_hybrid'
-											),
+													),
 								'Additional' => array(	'Postpaid' => 'tpl_default_tree_iptv_additional_postpaid',
-														'Prepaid'  	=> 'tpl_default_tree_iptv_additional_prepaid'
-											),
+																			'Prepaid'  	=> 'tpl_default_tree_iptv_additional_prepaid'
+														),
 								'VAS' 		=> array(	'Postpaid' => 'tpl_default_tree_iptv_vas_postpaid',
 														'Prepaid'  	=> 'tpl_default_tree_iptv_vas_prepaid'
-											),
-								),
+															),
+								'Package'   => array(   'Postpaid' => 'tpl_default_tree_iptv_package_postpaid',
+                                                        'Prepaid'   => 'tpl_default_tree_iptv_package_prepaid'
+                 						),
+          ),
 					'Mobile' => array(
 								'Main' 		=> array(	'Postpaid' => 'tpl_default_tree_mobile_main_postpaid',
 														'Prepaid'  	=> 'tpl_default_tree_mobile_main_prepaid',
@@ -32,7 +35,10 @@ function _get_vocabulary_name($contentType, $productNode, $serviceType = NULL){
 								'VAS' 		=> array(	'Postpaid' => 'tpl_default_tree_mobile_vas_postpaid',
 														'Prepaid'  	=> 'tpl_default_tree_mobile_vas_prepaid'
 											),
-								),
+								'Package'   => array(   'Postpaid' => 'tpl_default_tree_mobile_package_postpaid',
+														'Prepaid'   => 'tpl_default_tree_mobile_package_prepaid'
+          						),
+					),
 					'Broadband' => array(
 								'Main' 		=> array(	'Postpaid' => 'tpl_default_tree_broadband_main_postpaid',
 														'Prepaid'  	=> 'tpl_default_tree_broadband_main_prepaid',
@@ -44,45 +50,76 @@ function _get_vocabulary_name($contentType, $productNode, $serviceType = NULL){
 								'VAS'		=> array(	'Postpaid' => 'tpl_default_tree_broadband_vas_postpaid',
 														'Prepaid'  	=> 'tpl_default_tree_broadband_vas_prepaid'
 											),
-								),
+								'Package'   => array(   'Postpaid' => 'tpl_default_tree_broadband_package_postpaid',
+                                                        'Prepaid'   => 'tpl_default_tree_broadband_package_prepaid'
+                                            ),
+					),
 					'VoIP' => array(
 								'Main' => array('Postpaid' => 'tpl_default_tree_voip_main_postpaid',
 												'Prepaid'  	=> 'tpl_default_tree_voip_main_prepaid',
 												'Hybrid'   => 'tpl_default_tree_voip_main_hybrid'
 										),
-							),
+					),
 					'Satellite' => array(
 								'Main' => array('Postpaid' => 'tpl_default_tree_satellite_main_postpaid',
 												'Prepaid'  	=> 'tpl_default_tree_satellite_main_prepaid',
 												'Hybrid'   => 'tpl_default_tree_satellite_main_hybrid'
 										),
-							),
+					),
 					'Dummy' => array(
 								'Main' => array('Postpaid' => 'tpl_default_tree_dummy_main_postpaid',
 												'Prepaid'  	=> 'tpl_default_tree_dummy_main_prepaid',
 												'Hybrid'   => 'tpl_default_tree_dummy_main_hybrid'
 										),
-							),
-				),
-			
-			
-			'tariffplan' => array(
+					),
+				);
+			$reserved_voca_name['tariffplan'] = array(
 					"Mobile" => array(
-							'Voice' => 'tpl_tariffplan_mobile_voice',
-							'SMS'   => 'tpl_tariffplan_mobile_sms',
-							'Data'  => 'tpl_tariffplan_mobile_data',
-							'MMS'	=> 'tpl_tariffplan_mobile_mms',
-							'CRBT'	=> 'tpl_tariffplan_mobile_crbt',
-							'Loyalty Point' => 'tpl_tariffplan_mobile_loyalty_point_deduct',
-							'VOD'	=> 'tpl_tariffplan_mobile_vod',
-						),
-					
+						"Main" => array(
+									'Voice' => 'tpl_tariffplan_mobile_voice',
+									'SMS'   => 'tpl_tariffplan_mobile_sms',
+									'Data'  => 'tpl_tariffplan_mobile_data',
+									'MMS'	=> 'tpl_tariffplan_mobile_mms',
+									'CRBT'	=> 'tpl_tariffplan_mobile_crbt',
+									'Loyalty Point' => 'tpl_tariffplan_mobile_loyalty_point_deduct',
+									'VOD'	=> 'tpl_tariffplan_mobile_vod',
+								),
+						"Additional" => array(
+										'Voice' => 'tpl_tariffplan_mobile_voice_additional',
+										'SMS'   => 'tpl_tariffplan_mobile_sms_additional',
+										'Data'  => 'tpl_tariffplan_mobile_data_additional',
+										'MMS'	=> 'tpl_tariffplan_mobile_mms_additional',
+										'CRBT'	=> 'tpl_tariffplan_mobile_crbt_additional',
+										'Loyalty Point' => 'tpl_tariffplan_mobile_loyalty_point_deduct_additional',
+										'VOD'	=> 'tpl_tariffplan_mobile_vod_additional',
+									),
+					),
+					"Cross" => array(
+								"Main" => array(
+										'Mobile_Voice' => 'tpl_tariffplan_cross_mobile_voice',
+										'Mobile_SMS'   => 'tpl_tariffplan_cross_mobile_sms',
+										'Mobile_Data'  => 'tpl_tariffplan_cross_mobile_data',
+										'Mobile_MMS'	=> 'tpl_tariffplan_cross_mobile_mms',
+										'Mobile_CRBT'	=> 'tpl_tariffplan_cross_mobile_crbt',
+										'Mobile_Loyalty Point' => 'tpl_tariffplan_cross_mobile_loyalty_point_deduct',
+										'Mobile_VOD'	=> 'tpl_tariffplan_cross_mobile_vod',
+										
+										'VoIP_Voice' => 'tpl_tariffplan_cross_voip_voice',
+										'VoIP_SMS'   => 'tpl_tariffplan_cross_voip_sms',
+										'VoIP_Loyalty Point'  => 'tpl_tariffplan_cross_voip_loyalty_point_deduct',
+										
+										'IPTV_VOD'  => 'tpl_tariffplan_cross_iptv_vod',
+								),
+					),
 					"IPTV" => array(
-							'VOD' => 'tpl_tariffplan_mobile_vod',
-						),
-						
-				),
-	);
+								"Main" => array(
+										'VOD' => 'tpl_tariffplan_mobile_vod',
+										),
+								"Additional" => array(
+										'VOD' => 'tpl_tariffplan_mobile_vod',
+										),
+					),
+				);
 	
 	//load taxonomy
 	$serviceDomainTerm = taxonomy_term_load($productNode->field_service_type_of_provider['und'][0]['tid']);
@@ -99,10 +136,10 @@ function _get_vocabulary_name($contentType, $productNode, $serviceType = NULL){
 			$voca_name = $reserved_voca_name[$contentType][$serviceDomain][$productType][$billingType];
 			break;
 		case 'tariffplan':
-			$voca_name = $reserved_voca_name[$contentType][$serviceDomain][$serviceType];
+			//$voca_name = $reserved_voca_name[$contentType][$serviceDomain][$serviceType];
+			$voca_name = $reserved_voca_name[$contentType][$serviceDomain][$productType][$serviceType];
 			break;
 	}
-// dsm($voca_name, 'voca_name');
 	return $voca_name;
 }
 

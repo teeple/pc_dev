@@ -386,7 +386,8 @@ function add_js_settings_after_node_update($node) {
 	$js_settings = array(
 		'success' => TRUE,
 		'data' => $js_data,
-		'parent_nid' => $parentId
+		// 'parent_nid' => $parentId
+		'parent_nid' => !empty($parentId)? $parentId: NULL
 	);
 	
 //	dsm($js_settings, 'js_settings in node update');
