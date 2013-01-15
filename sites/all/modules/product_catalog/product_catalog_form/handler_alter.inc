@@ -391,7 +391,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			
 		case 'prdnonusagerechargeblock_node_form':
 			unset($form['field_ref_product']);
-            unset($form['field_ref_tree_tid']);
+			unset($form['field_ref_tree_tid']);
 			$basicCounterList = array();
 			
 			$productNid = $form_state['product_nid'];
