@@ -1087,6 +1087,7 @@ function product_catalog_ajax_select_submit() {
         break;
 		
       case 'data_tariffplan_predefined':
+	  case 'cross_mobile_data_tariffplan_predefined':
         $planNode = node_load($tmpParentNid[2]);
         $child->type = 'treenodepacketpredefined';
         $child->field_weight['und'][0]['value'] = $weight;
@@ -1097,8 +1098,9 @@ function product_catalog_ajax_select_submit() {
         node_save($child);        
         $js_data['append_to'] = 'inside'; 
         break;
-		
+      
       case 'data_tariffplan_dynamic':
+	  case 'cross_mobile_data_tariffplan_dynamic':
         $planNode = node_load($tmpParentNid[2]);
         $child->type = 'treenodepacketdynamic';
         $child->field_weight['und'][0]['value'] = $weight;
@@ -1182,7 +1184,7 @@ function _create_treenodecounterforvoucherprd($treenodeproductforvoucher, $produ
 	// Prepaid면서 Basic , Optional인 counter만 걸러낸다.
 	$params = array('0' => join('+',$counterNids));
 	$view = views_get_view('query_list_counter');
-	$view->set_display('panel_pane_4');
+		$view->set_display('panel_pane_4');
 	$view->set_arguments($params);
 	$view->execute();
 	$counterList = array();
