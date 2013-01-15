@@ -1,0 +1,10 @@
+From Area Name,To Area Name,Rating Group
+ZuunKharaa,ZuunKharaa,1
+ZuunKharaa,Altai hot,2
+ZuunKharaa,Ulaanbaatar,1
+Altai hot,ZuunKharaa,1
+Altai hot,Altai hot,2
+Altai hot,Ulaanbaatar,3
+Ulaanbaatar,ZuunKharaa,4
+Ulaanbaatar,Altai hot,5
+Ulaanbaatar,Ulaanbaatar,6

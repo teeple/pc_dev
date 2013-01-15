@@ -1,6 +1,10 @@
 <?php
 function _get_vocabulary_name($contentType, $productNode, $serviceType = NULL){
+<<<<<<< HEAD
 		
+=======
+	
+>>>>>>> 2597b946b6d8d70c383716bb73a9665f64c7c353
 	$reserved_voca_name = array(
 			'simpleproductoffering' => array(
 					'Cross' => array(
@@ -20,7 +24,14 @@ function _get_vocabulary_name($contentType, $productNode, $serviceType = NULL){
 								'VAS' 		=> array(	'Postpaid' => 'tpl_default_tree_iptv_vas_postpaid',
 														'Prepaid'  	=> 'tpl_default_tree_iptv_vas_prepaid'
 											),
+<<<<<<< HEAD
 								),
+=======
+								'Package'   => array(   'Postpaid' => 'tpl_default_tree_iptv_package_postpaid',
+                                                        'Prepaid'   => 'tpl_default_tree_iptv_package_prepaid'
+                                            ),
+                                ),
+>>>>>>> 2597b946b6d8d70c383716bb73a9665f64c7c353
 					'Mobile' => array(
 								'Main' 		=> array(	'Postpaid' => 'tpl_default_tree_mobile_main_postpaid',
 														'Prepaid'  	=> 'tpl_default_tree_mobile_main_prepaid',
@@ -32,7 +43,14 @@ function _get_vocabulary_name($contentType, $productNode, $serviceType = NULL){
 								'VAS' 		=> array(	'Postpaid' => 'tpl_default_tree_mobile_vas_postpaid',
 														'Prepaid'  	=> 'tpl_default_tree_mobile_vas_prepaid'
 											),
+<<<<<<< HEAD
 								),
+=======
+								'Package'   => array(   'Postpaid' => 'tpl_default_tree_mobile_package_postpaid',
+                                                        'Prepaid'   => 'tpl_default_tree_mobile_package_prepaid'
+                                            ),
+                                ),
+>>>>>>> 2597b946b6d8d70c383716bb73a9665f64c7c353
 					'Broadband' => array(
 								'Main' 		=> array(	'Postpaid' => 'tpl_default_tree_broadband_main_postpaid',
 														'Prepaid'  	=> 'tpl_default_tree_broadband_main_prepaid',
@@ -44,6 +62,12 @@ function _get_vocabulary_name($contentType, $productNode, $serviceType = NULL){
 								'VAS'		=> array(	'Postpaid' => 'tpl_default_tree_broadband_vas_postpaid',
 														'Prepaid'  	=> 'tpl_default_tree_broadband_vas_prepaid'
 											),
+<<<<<<< HEAD
+=======
+								'Package'   => array(   'Postpaid' => 'tpl_default_tree_broadband_package_postpaid',
+                                                        'Prepaid'   => 'tpl_default_tree_broadband_package_prepaid'
+                                            ),
+>>>>>>> 2597b946b6d8d70c383716bb73a9665f64c7c353
 								),
 					'VoIP' => array(
 								'Main' => array('Postpaid' => 'tpl_default_tree_voip_main_postpaid',
@@ -76,6 +100,7 @@ function _get_vocabulary_name($contentType, $productNode, $serviceType = NULL){
 							'Loyalty Point' => 'tpl_tariffplan_mobile_loyalty_point_deduct',
 							'VOD'	=> 'tpl_tariffplan_mobile_vod',
 						),
+<<<<<<< HEAD
 					"IPTV" => array(
 							'VOD' => 'tpl_tariffplan_iptv_vod',
 						),
@@ -94,6 +119,13 @@ function _get_vocabulary_name($contentType, $productNode, $serviceType = NULL){
 							
 							'IPTV_VOD'  => 'tpl_tariffplan_cross_iptv_vod',
 						),
+=======
+					
+					"IPTV" => array(
+							'VOD' => 'tpl_tariffplan_mobile_vod',
+						),
+						
+>>>>>>> 2597b946b6d8d70c383716bb73a9665f64c7c353
 				),
 	);
 	
@@ -115,8 +147,12 @@ function _get_vocabulary_name($contentType, $productNode, $serviceType = NULL){
 			$voca_name = $reserved_voca_name[$contentType][$serviceDomain][$serviceType];
 			break;
 	}
+<<<<<<< HEAD
 	
 //dsm($voca_name, 'voca_name');
+=======
+// dsm($voca_name, 'voca_name');
+>>>>>>> 2597b946b6d8d70c383716bb73a9665f64c7c353
 	return $voca_name;
 }
 
