@@ -1417,6 +1417,7 @@
 						break;
 					case "conditionwhatqos":
 					case "conditionwhaturlgroupfactors":
+					case "conditionwhatcounter":
 					case "conditionwhatcustomfactors":
 					case "conditionwhatusagetypefactors":
 					case "conditionwhatnonusagetypefactors":

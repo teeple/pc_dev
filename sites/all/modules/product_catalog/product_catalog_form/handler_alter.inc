@@ -1023,24 +1023,22 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
         	unset($form['field_weight']);
         	$form['field_ref_product']['#type'] = 'hidden';
         	_unset_menu_items($form,$form_id);
-    		if(!isset($form['nid']['#value'])){
-				$rootNid = $form_state['root_nid'];
-            }else{
-            	$rootNid = $form['#node']->field_ref_product['und'][0]['nid'];
-            }
+    		  if(!isset($form['nid']['#value'])){
+				  	$rootNid = $form_state['root_nid'];
+          } else{
+           	$rootNid = $form['#node']->field_ref_product['und'][0]['nid'];
+          }
            
 			// $existingCounterList = _get_existing_counter_list($form_state['product_nid']);
-			$existingCounterList = _get_existing_counter_list($rootNid);
+			$counterList = _get_existing_counter_list($rootNid);
 			
 			$results =  _get_default_basic_counters($form_state['root_nid']);
-			
 			foreach($results as $record) {
-				$basicCounterList[$record->nid] = $record->node_title.'('.$record->field_field_counter_unit_type[0]['rendered']['#title'].')';
+				$counterList[$record->nid] = $record->node_title.'('.$record->field_field_counter_unit_type[0]['rendered']['#title'].')';
 			}
-			$mergedCounterList = array_merge($basicCounterList, $existingCounterList);
 			
 			//$form['field_ref_counter']['und']['#options'] = $existingCounterList;
-			$form['field_ref_counter']['und']['#options'] = $mergedCounterList;
+			$form['field_ref_counter']['und']['#options'] = $counterList;
         	break;
 			
         case 'conditionwhatcounterfortracking_node_form':
