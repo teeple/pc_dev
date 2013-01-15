@@ -607,6 +607,7 @@
 						break;
 						
 					case "mobile_nonusage_recurring_discount":
+					case "mobile_nonusage_recurring_discount_on_main":
 					case "iptv_nonusage_recurring_discount":
 					case "voip_nonusage_recurring_discount":
 					case "broadband_nonusage_recurring_discount":
@@ -626,6 +627,8 @@
 							},
 						};
 						break;
+						
+						
 
 					case "mobile_nonusage_unittransfer_discount":
 					case "iptv_nonusage_unittransfer_discount":
