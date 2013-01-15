@@ -1241,20 +1241,39 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             unset($form['field_ref_roaming_plan']);
             _unset_menu_items($form,$form_id);
             
-            if(!isset($form['nid']['#value'])){
-            	$productNode = node_load($form_state['build_info']['args'][0]->field_ref_product['und'][0]['nid']);
-            	
-            	/*
-            	$voca_name = 'tpl_';
-            	$serviceDomainTerm = taxonomy_term_load($productNode->field_service_type_of_provider['und'][0]['tid']);
-            	$voca_name .= strtolower($serviceDomainTerm->name) . '_' . strtolower($serviceTypeTerm->name) . '_tariffplan' ;
-            	*/
-            	$serviceTypeTerm = taxonomy_term_load($form_state['build_info']['args'][0]->field_ref_tree_tid['und'][0]['value']);
-            	$voca_name = _get_vocabulary_name('tariffplan', $productNode, $serviceTypeTerm->name);
-            	$form_state['build_info']['args'][0]->field_tree_child_voca_name['und'][0]['value'] = $voca_name;
-            	
+            if(!isset($form['nid']['#value'])) {
+				$relTypeTerm = taxonomy_term_load($form_state['build_info']['args'][0]->field_ref_tree_tid['und'][0]['value']);
+				
+				$productNode = node_load($form_state['build_info']['args'][0]->field_ref_product['und'][0]['nid']);
+				$serviceDomainTerm = taxonomy_term_load($productNode->field_service_type_of_provider['und'][0]['tid']);
+				$serviceTypeTerm = taxonomy_term_load($form_state['build_info']['args'][0]->field_ref_tree_tid['und'][0]['value']);
+				
+				if($serviceDomainTerm->name == 'Cross') {
+					$relType = $relTypeTerm->field_rel_type['und'][0]['value'];
+					$temp_list = explode('_', $relType);
+					
+					switch($temp_list[1]) {
+						case 'mobile':
+							$serviceType = 'Mobile_'.$serviceTypeTerm->name;
+							break;
+						case 'voip':
+							$serviceType = 'VoIP_'.$serviceTypeTerm->name;
+							break;
+						case 'iptv':
+							$serviceType = 'IPTV_'.$serviceTypeTerm->name;
+							break;
+					}
+					$ref_voca_name = _get_vocabulary_name('tariffplan', $productNode, $serviceType);
+					
+				} else {
+					
+					$ref_voca_name = _get_vocabulary_name('tariffplan', $productNode, $serviceTypeTerm->name);
+				}
+				
+            	$form_state['build_info']['args'][0]->field_tree_child_voca_name['und'][0]['value'] = $ref_voca_name;
             }
-            $form_state['ajax_actions'][] = '_node_save_handler_for_add_js_settings_after_node_save';
+			
+			$form_state['ajax_actions'][] = '_node_save_handler_for_add_js_settings_after_node_save';
 
         	break;
         case 'numberspecialfactors_node_form':
