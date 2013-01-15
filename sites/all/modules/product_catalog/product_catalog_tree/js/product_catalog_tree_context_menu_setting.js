@@ -562,7 +562,7 @@
 							},
 						};
 						break;
-<<<<<<< HEAD
+
 						
 					case "mobile_nonusage_subscription_discount":
 					case "iptv_nonusage_subscription_discount":
@@ -584,8 +584,6 @@
 							},
 						};
 						break;
-=======
->>>>>>> 2597b946b6d8d70c383716bb73a9665f64c7c353
 
 					case "mobile_nonusage_unsubscription_discount":
 					case "iptv_nonusage_unsubscription_discount":
@@ -1442,17 +1440,11 @@
 						break;
 						
 					case "mobile_usage_voice":
-<<<<<<< HEAD
 					case "voip_usage_voice":
 						menus.custom_create._disabled = false;
 						menus.custom_create.submenu = {
 							//"mobile_usage_voice" : {
 							"usage_voice" : {	
-=======
-						menus.custom_create._disabled = false;
-						menus.custom_create.submenu = {
-							"mobile_usage_voice" : {
->>>>>>> 2597b946b6d8d70c383716bb73a9665f64c7c353
 								"label" : "Tariff Plan",
 								action : function(node) {
 									$.fn.addNode(node, {
@@ -1467,7 +1459,6 @@
 						};
 						break;
 						
-<<<<<<< HEAD
 					case "cross_mobile_usage_voice":
 						menus.custom_create._disabled = false;
 						menus.custom_create.submenu = {
@@ -1489,14 +1480,7 @@
 					case "cross_voip_usage_voice":
 						menus.custom_create._disabled = false;
 						menus.custom_create.submenu = {
-							//"mobile_usage_voice" : {
-							"cross_voip_usage_voice" : {	
-=======
-					case "voip_usage_voice":
-						menus.custom_create._disabled = false;
-						menus.custom_create.submenu = {
-							"mobile_usage_voice" : {
->>>>>>> 2597b946b6d8d70c383716bb73a9665f64c7c353
+							"cross_voip_usage_voice" : {
 								"label" : "Tariff Plan",
 								action : function(node) {
 									$.fn.addNode(node, {
@@ -1510,8 +1494,6 @@
 							$.fn.pasteNode(node);
 						};
 						break;
-<<<<<<< HEAD
-					
 						
 					case "mobile_usage_sms":
 					case "voip_usage_sms":
@@ -1519,13 +1501,6 @@
 						menus.custom_create.submenu = {
 							//"mobile_usage_sms" : {
 							"usage_sms" : {
-=======
-						
-					case "mobile_usage_sms":
-						menus.custom_create._disabled = false;
-						menus.custom_create.submenu = {
-							"mobile_usage_sms" : {
->>>>>>> 2597b946b6d8d70c383716bb73a9665f64c7c353
 								"label" : "Tariff Plan",
 								action : function(node) {
 									$.fn.addNode(node, {
@@ -1539,7 +1514,7 @@
 							$.fn.pasteNode(node);
 						};
 						break;
-<<<<<<< HEAD
+						
 					case "cross_mobile_usage_sms":
 						menus.custom_create._disabled = false;
 						menus.custom_create.submenu = {
@@ -1596,13 +1571,6 @@
 						menus.custom_create._disabled = false;
 						menus.custom_create.submenu = {
 							"cross_mobile_usage_data" : {
-=======
-						
-					case "voip_usage_sms":
-						menus.custom_create._disabled = false;
-						menus.custom_create.submenu = {
-							"mobile_usage_sms" : {
->>>>>>> 2597b946b6d8d70c383716bb73a9665f64c7c353
 								"label" : "Tariff Plan",
 								action : function(node) {
 									$.fn.addNode(node, {
@@ -1630,7 +1598,7 @@
 							},
 						};
 						break;
-<<<<<<< HEAD
+						
 					case "cross_mobile_usage_mms":
 						menus.custom_create._disabled = false;
 						menus.custom_create.submenu = {
@@ -1645,8 +1613,6 @@
 						};
 						break;
 						
-=======
->>>>>>> 2597b946b6d8d70c383716bb73a9665f64c7c353
 					case "mobile_usage_crbt":
 						menus.custom_create._disabled = false;
 						menus.custom_create.submenu = {
@@ -1664,7 +1630,7 @@
 							$.fn.pasteNode(node);
 						};
 						break;
-<<<<<<< HEAD
+						
 					case "cross_mobile_usage_crbt":
 						menus.custom_create._disabled = false;
 						menus.custom_create.submenu = {
@@ -1701,12 +1667,6 @@
 						menus.custom_create._disabled = false;
 						menus.custom_create.submenu = {
 							"cross_mobile_usage_vod" : {
-=======
-					case "mobile_usage_vod":
-						menus.custom_create._disabled = false;
-						menus.custom_create.submenu = {
-							"mobile_usage_vod" : {
->>>>>>> 2597b946b6d8d70c383716bb73a9665f64c7c353
 								"label" : "Tariff Plan",
 								action : function(node) {
 									$.fn.addNode(node, {
@@ -1716,17 +1676,11 @@
 							},
 						};
 						break;
-<<<<<<< HEAD
+						
 					case "cross_iptv_usage_vod":
 						menus.custom_create._disabled = false;
 						menus.custom_create.submenu = {
 							"cross_iptv_usage_vod" : {
-=======
-					case "iptv_usage_vod":
-						menus.custom_create._disabled = false;
-						menus.custom_create.submenu = {
-							"mobile_usage_vod" : {
->>>>>>> 2597b946b6d8d70c383716bb73a9665f64c7c353
 								"label" : "Tariff Plan",
 								action : function(node) {
 									$.fn.addNode(node, {
@@ -1743,10 +1697,6 @@
 					case "broadband_usage_loyaltypoint":
 					case "satellite_usage_loyaltypoint":
 					case "dummy_usage_loyaltypoint":
-<<<<<<< HEAD
-=======
-					case "cross_usage_loyaltypoint":
->>>>>>> 2597b946b6d8d70c383716bb73a9665f64c7c353
 						menus.custom_create._disabled = false;
 						menus.custom_create.submenu = {
 							// "mobile_usage_loyaltypoint" : {
@@ -1760,19 +1710,12 @@
 							},
 						};
 						break;
-<<<<<<< HEAD
+						
 					case "cross_mobile_usage_loyaltypoint":
 						menus.custom_create._disabled = false;
 						menus.custom_create.submenu = {
 							// "mobile_usage_loyaltypoint" : {
 							"cross_mobile_usage_loyaltypoint" : {	
-=======
-										
-					case "mobile_usage_data":
-						menus.custom_create._disabled = false;
-						menus.custom_create.submenu = {
-							"mobile_usage_data" : {
->>>>>>> 2597b946b6d8d70c383716bb73a9665f64c7c353
 								"label" : "Tariff Plan",
 								action : function(node) {
 									$.fn.addNode(node, {
@@ -1781,7 +1724,6 @@
 								}
 							},
 						};
-<<<<<<< HEAD
 						break;
 					case "cross_voip_usage_loyaltypoint":
 						menus.custom_create._disabled = false;
@@ -1798,15 +1740,6 @@
 						};
 						break;
 						
-										
-=======
-						menus.custom_paste._disabled = false;
-						menus.custom_paste.action = function(node) {
-							$.fn.pasteNode(node);
-						};
-						break;
-						
->>>>>>> 2597b946b6d8d70c383716bb73a9665f64c7c353
 					case "attribute_required_device":
 						menus.custom_create._disabled = false;
 						menus.custom_create.submenu = {
@@ -1889,7 +1822,7 @@
 							},
 						};
 						break;
-<<<<<<< HEAD
+						
 					case "cross_mobile_data_tariffplan_predefined":
 						menus.custom_create._disabled = false;
 						menus.custom_create.submenu = {
@@ -1902,8 +1835,6 @@
 						};
 						break;
 						
-=======
->>>>>>> 2597b946b6d8d70c383716bb73a9665f64c7c353
 					case "data_tariffplan_dynamic":
 						menus.custom_create._disabled = false;
 						menus.custom_create.submenu = {
@@ -1915,7 +1846,7 @@
 							},
 						};
 						break;
-<<<<<<< HEAD
+						
 					case "cross_mobile_data_tariffplan_dynamic":
 						menus.custom_create._disabled = false;
 						menus.custom_create.submenu = {
@@ -1928,8 +1859,6 @@
 						};
 						break;
 						
-=======
->>>>>>> 2597b946b6d8d70c383716bb73a9665f64c7c353
 					case 'data_tariffplan_basicrate':
 						menus.custom_create._disabled = false;
 						menus.custom_create.submenu = {
