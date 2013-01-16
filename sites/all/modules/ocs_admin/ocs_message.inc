@@ -339,9 +339,9 @@ function ocs_admin_message_form_submit($form, &$form_state)
 		}
 
 		global $supported_lang;
-		$idx = 0;
+		$lang_idx = 0;
 		foreach( $supported_lang as $lang) {
-			$node->field_ocs_format['und'][$idx]['value'] = $values['format'.$lang];
+			$node->field_ocs_format['und'][$lang_idx]['value'] = $values['format'.$lang];
 
 			// get parameter list from message format
 			if (preg_match_all('/%\d+/', $values['format'.$lang], $matches) > 0) {
@@ -363,7 +363,7 @@ function ocs_admin_message_form_submit($form, &$form_state)
 					$node->field_ocs_export_format['und'][$idx - 1]['value'] = $value_str;
 				}
 			}
-			$idx ++;
+			$lang_idx ++;
 		}
 
 		node_save($node);
