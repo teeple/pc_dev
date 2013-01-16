@@ -22,7 +22,8 @@ function _unset_menu_items(&$form,$formId){
         case 'roaming_carrier_node_form':
         case 'roaming_plan_node_form':
 		case 'counter_node_form':
-        case 'tvchannel_node_form':
+		case 'depositscheme_node_form':
+		    case 'tvchannel_node_form':
         case 'lifecyclescheme_node_form':
 			$unsetDeleteButton = FALSE;
 			//dsm($form);
@@ -908,16 +909,42 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
         case 'depositschemefactors_node_form':
             _unset_menu_items($form,$form_id);
             $form['field_ref_depositscheme']['#type'] = 'hidden';
+            $form['field_is_default_factor']['#type'] = 'hidden';
                         
             $depositSchemeFactorNode = node_load($form['nid']['#value']);
             
-            if(!isset($form['nid']['#value'])){
+            if(!isset($form['nid']['#value'])){ // create 
                $depositSchemeNode = node_load($form_state['build_info']['args'][0]->field_ref_depositscheme['und'][0]['nid']);
-            }else{
-                $depositSchemeNode = node_load($depositSchemeFactorNode->field_ref_depositscheme['und'][0]['nid']);
+               $serviceDomainTid = $depositSchemeNode->field_service_domain['und'][0]['tid'];
+               $form['field_thismonth_accu_counter']['#type'] = 'hidden';
+               
+            }else{ // edit 
+								
+								$depositSchemeNode = node_load($depositSchemeFactorNode->field_ref_depositscheme['und'][0]['nid']);
+		            $serviceDomainTid = $depositSchemeNode->field_service_domain['und'][0]['tid'];
+		            
+            		if($form_state['build_info']['args'][0]->field_is_default_factor['und'][0]['value'] == 1) {
+            			$form['title']['#disabled'] = TRUE;
+            			
+            			// Only rollover counters
+            			$view = views_get_view('list_counter');
+            			$view->set_display('panel_pane_12');
+            			$view->set_arguments(array('0' => $serviceDomainTid));
+            			$view->execute();
+            			
+            			$options = array();
+            			$options['_none'] = '- None -';
+            			foreach($view->result as $item){
+            			    $options[$item->nid] = $item->node_title;
+            			}
+            			$form['field_thismonth_accu_counter']['und']['#options'] = $options;
+            			
+            		} else {
+            			$form['field_thismonth_accu_counter']['#type'] = 'hidden';
+            		}
             }
-            $serviceDomainTid = $depositSchemeNode->field_service_domain['und'][0]['tid'];
-            
+
+						// set other counters only basic, optional counters
             $view = views_get_view('list_counter');
             $view->set_display('panel_pane_10');
             $view->set_arguments(array('0' => $serviceDomainTid));
@@ -927,7 +954,6 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             foreach($view->result as $item){
                 $options[$item->nid] = $item->node_title;
             }
-            
             $form['field_ref_thres_counter_acc']['und']['#options'] = $options;
             $form['field_ref_thres_counter_limit']['und']['#options'] = $options;
             
