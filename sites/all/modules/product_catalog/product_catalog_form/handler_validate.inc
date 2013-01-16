@@ -47,6 +47,7 @@ function product_catalog_form_node_validate($node, $form, &$form_state){
 					form_set_error('counter id should be less than 1000000');
 				}
 			}
+            break;
 		case 'depositschemefactors_node_form':
 		
 		  // create
