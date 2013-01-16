@@ -166,6 +166,20 @@ function _clone_vocabulary($baseVocaName,$targetVocaName,$param=array()){
             $targetCollectionInfo->save(); 
             $targetTerm->field_qtabs_click_arguments['und'][0]['value'] = $targetCollectionInfo->item_id;
         }
+        //field_default_fieldset
+        if(isset($baseTerm->field_default_fieldset['und'][0]['value'])){
+            unset($targetTerm->field_default_fieldset);
+            $fieldsetCount = count($baseTerm->field_default_fieldset['und']);
+            for($i=0;$i<$fieldsetCount;$i++){
+                $baseCollectionInfo = field_collection_item_load($baseTerm->field_default_fieldset['und'][$i]['value']);
+                $targetCollectionInfo = entity_create('field_collection_item', array('field_name' => 'field_default_fieldset'));
+                $targetCollectionInfo->setHostEntity('taxonomy_term', $targetTerm);
+                $targetCollectionInfo->field_field_name = $baseCollectionInfo->field_field_name;
+                $targetCollectionInfo->field_field_value = $baseCollectionInfo->field_field_value;
+                $targetCollectionInfo->save(); 
+                $targetTerm->field_default_fieldset['und'][$i]['value'] = $targetCollectionInfo->item_id;
+            }
+        }
         taxonomy_term_save($targetTerm);
     }    
 }
