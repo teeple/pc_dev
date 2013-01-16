@@ -36,6 +36,39 @@ function _create_modal_select_link($contentType, $params) {
 	return $link_string;
 }
 
+function _create_modal_edit_link($contentType,$params){ 
+	ctools_include('ajax');
+	ctools_include('modal');
+	ctools_modal_add_js();
+		
+	$edit_url = '/product_catalog_ajax/nojs/edit_modal/'.$contentType;
+	foreach($params as $param){
+		$edit_url .= '/'.$param;
+	}
+	
+	$link_class = 'ctools-use-modal ctools-modal-add-item-modal-style';
+	
+	$link_string = '<div><a href="'.$edit_url.'" class='.$link_class.'>edit</a></div>';
+	echo $link_string;	
+}
+
+function _create_modal_delete_link($contentType,$params){ 
+	ctools_include('ajax');
+	ctools_include('modal');
+	ctools_modal_add_js();
+		
+	$delete_url = 'product_catalog_ajax/delete_from_view';
+	foreach($params as $param){
+		$delete_url .= '/'.$param;
+	}
+	
+	$link_class = 'ctools-use-modal ctools-modal-add-item-modal-style';
+	$delete_output = l(t('delete'), $delete_url, array('attributes' => array('class' => array('use-ajax'))));
+	
+	$link_string = '<div>'.$delete_output.'</div>';
+	echo $link_string;	
+}
+
 function _create_modal_edit_delete_link($contentType,$params){ 
 	ctools_include('ajax');
 	ctools_include('modal');
