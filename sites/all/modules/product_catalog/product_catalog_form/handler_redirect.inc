@@ -156,6 +156,7 @@ function product_catalog_form_form_redirect_handler(&$form, &$form_state){
         	break;
         case 'vouchercardtype_node_form':
             $redirect_url = 'common/vouchercardtype/edit/'.$form_state['values']['nid'];
+            $urlFragment = '';
             break;
         case 'counter_node_form':
 			$redirect_url = 'common/counter/edit/'.$form_state['counter_type'].'/'.$form_state['values']['nid'];

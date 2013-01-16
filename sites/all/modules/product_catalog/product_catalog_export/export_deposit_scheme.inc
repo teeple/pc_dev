@@ -48,21 +48,38 @@ function _array_deposit_scheme($nid=NULL){
                 //accumulated counter
                 if(isset($factorNode->field_ref_thres_counter_acc['und'][0]['nid'])){
                     $accCounterNode = node_load($factorNode->field_ref_thres_counter_acc['und'][0]['nid']);
-                    $factor['counter_accumulated'] = array(
-                        'counter_id' => $accCounterNode->field_counter_id['und'][0]['value'],
-                        'counter_name' => $accCounterNode->title
-                    );
+                    if(!empty($accCounterNode)){
+	                    $factor['counter_accumulated'] = array(
+	                        'counter_id' => $accCounterNode->field_counter_id['und'][0]['value'],
+	                        'counter_name' => $accCounterNode->title
+	                    );
+	                  };
                 }else{
                     $factor['counter_accumulated'] = NULL;
+                }
+                
+                // monthly accumulating counter
+                if(isset($factorNode->field_thismonth_accu_counter['und'][0]['nid'])){
+                    $accCounterNode = node_load($factorNode->field_thismonth_accu_counter['und'][0]['nid']);
+                    if(!empty($accCounterNode)){
+	                    $factor['counter_accumulated_monthly'] = array(
+	                        'counter_id' => $accCounterNode->field_counter_id['und'][0]['value'],
+	                        'counter_name' => $accCounterNode->title
+	                    );
+	                  };
+                }else{
+                    $factor['counter_accumulated_monthly'] = NULL;
                 }
                 
                 //limit counter
                 if(isset($factorNode->field_ref_thres_counter_limit['und'][0]['nid'])){
                     $limitCounterNode = node_load($factorNode->field_ref_thres_counter_limit['und'][0]['nid']);
-                    $factor['counter_limit'] = array(
-                        'counter_id' => $limitCounterNode->field_counter_id['und'][0]['value'],
-                        'counter_name' => $limitCounterNode->title
-                    );
+                    if(!empty($limitCounterNode)){
+	                    $factor['counter_limit'] = array(
+	                        'counter_id' => $limitCounterNode->field_counter_id['und'][0]['value'],
+	                        'counter_name' => $limitCounterNode->title
+	                    );
+                    }
                 }else{
                     $factor['counter_limit'] = NULL;
                 }
