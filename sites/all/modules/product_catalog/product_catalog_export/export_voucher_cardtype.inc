@@ -59,13 +59,15 @@ function _array_voucher_cardtype($nid=NULL){
 
         $jsonData[] = $jsonCounter;
     }
-
+    
 	return $jsonData;
 }
 
 function _json_voucher_cardtype($nid=NULL) {
 	$retArray = array();
 	$jsonData  = _array_voucher_cardtype($nid);
+    $retArray['ifvalues']['resources'] = '';
+    
 	$retArray['vouchers'] = $jsonData;
 	$retArray['rating_rules'] = array();
 
