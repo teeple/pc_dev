@@ -401,8 +401,7 @@ function field_collection_modals_field_attach_view_alter(&$output, $context) {
         if (is_numeric($key)) {
           // If Edit access, insert "edit" & "delete" links.
           if ($edit_access) {
-            if (count($output[$field]['#items'][$key]) == 1) {
-
+          	if (!empty($output[$field]['#items']) && (count($output[$field]['#items'][$key]) == 1)) {
               $output[$field][$key]['links']['#links']['edit']['href'] = 'fc/' .
               $context['entity']->nid . '/' . str_replace('_', '-', $field) . '/'
               . $output[$field]['#items'][$key]['value'] . '/edit/nojs/go';
@@ -411,7 +410,7 @@ function field_collection_modals_field_attach_view_alter(&$output, $context) {
             $output[$field][$key]['links']['#links']['edit']['attributes']
               = array('class' => 'ctools-use-modal');
 
-            if (count($output[$field]['#items'][$key]) == 1) {
+				    if ( !empty($ouput[$field]['#items']) && (count($output[$field]['#items'][$key]) == 1)) {
               $output[$field][$key]['links']['#links']['delete']['href'] = 'fc/' .
               $context['entity']->nid . '/' . str_replace('_', '-', $field) . '/'
               . $output[$field]['#items'][$key]['value'] . '/delete/nojs/go';

@@ -47,6 +47,21 @@ function product_catalog_form_node_validate($node, $form, &$form_state){
 					form_set_error('counter id should be less than 1000000');
 				}
 			}
+		case 'depositschemefactors_node_form':
+			$ref_depositscheme = $form_state['build_info']['args'][0]->field_ref_depositscheme['und'][0]['nid'];
+			$title = $form_state['input']['title'];
+			
+			$view = views_get_view('list_depositschemefactors');
+			$view->set_display('panel_pane_6');
+	    $view->set_arguments(array('0' => $ref_depositscheme,
+	    													'1' => $title));
+  	  $view->execute();
+
+			if(!empty($view->result) ) {
+					 drupal_set_message("Deposit factors name should be unique");
+		       form_set_error('Deposit factors name should be unique');
+		  }
+
 			break;
 	}
 //dsm($form_state,'node validate formstate');
