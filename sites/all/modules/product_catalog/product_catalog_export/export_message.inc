@@ -6,7 +6,7 @@ function _array_message($nid = NULL)
 
 	//fetch data
 	$viewResult = views_get_view_result('ocs_messages', 'panel_json', $nid);
-	dpm( $viewResult, 'messages');
+	//dpm( $viewResult, 'messages');
 
 	foreach ($viewResult as $record) {
 		$msg = array();
