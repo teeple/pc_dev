@@ -11,7 +11,6 @@ function _unset_menu_items(&$form,$formId){
 	
 	$unsetDeleteButton = TRUE;
 	
-	dsm($formId, 'formId');
 	switch($formId){
 		case 'numberingplan_domestic_node_form':
 		case 'numberingplan_idd_node_form':
@@ -916,22 +915,23 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             
             if(!isset($form['nid']['#value'])){ // create 
                $depositSchemeNode = node_load($form_state['build_info']['args'][0]->field_ref_depositscheme['und'][0]['nid']);
+               $serviceDomainTid = $depositSchemeNode->field_service_domain['und'][0]['tid'];
                $form['field_thismonth_accu_counter']['#type'] = 'hidden';
+               
             }else{ // edit 
+								
 								$depositSchemeNode = node_load($depositSchemeFactorNode->field_ref_depositscheme['und'][0]['nid']);
 		            $serviceDomainTid = $depositSchemeNode->field_service_domain['und'][0]['tid'];
 		            
             		if($form_state['build_info']['args'][0]->field_is_default_factor['und'][0]['value'] == 1) {
             			$form['title']['#disabled'] = TRUE;
             			
-            			// set this month accumulating counter
+            			// Only rollover counters
             			$view = views_get_view('list_counter');
-            			$view->set_display('panel_pane_10');
-            			dsm($serviceDomainTid, 'serviceDomainTid');
-
-            			$view->set_arguments(array('0' => $serviceDomainTid,
-            																	'1' => 'Rollover'));
+            			$view->set_display('panel_pane_12');
+            			$view->set_arguments(array('0' => $serviceDomainTid));
             			$view->execute();
+            			
             			$options = array();
             			$options['_none'] = '- None -';
             			foreach($view->result as $item){
@@ -943,9 +943,8 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             			$form['field_thismonth_accu_counter']['#type'] = 'hidden';
             		}
             }
-            $serviceDomainTid = $depositSchemeNode->field_service_domain['und'][0]['tid'];
 
-						// set other counters            
+						// set other counters only basic, optional counters
             $view = views_get_view('list_counter');
             $view->set_display('panel_pane_10');
             $view->set_arguments(array('0' => $serviceDomainTid));
