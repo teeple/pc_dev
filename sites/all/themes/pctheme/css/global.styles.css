@@ -2422,3 +2422,16 @@ div.ctools-modal-content .form-item table .form-type-textfield .form-text{
 div.div_float_left {
 	float:left;
 }
+
+  
+/* to add language icon in ocs_message list */
+td.supported_lang ul li.first {
+	list-style-position: outside;
+	list-style-image: url( ../img/mongolia_flag.png);
+}   
+    
+td.supported_lang ul li.last {
+	list-style-position: outside;
+	list-style-image: url( ../img/usa_flag.png);
+}
+
