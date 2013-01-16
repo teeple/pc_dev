@@ -691,7 +691,6 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 		case 'conditionwhatcustomfactors_node_form':
 		case 'conditionwhaturlgroupfactors_node_form':
 		case 'conditionwhencustomfactors_node_form':
-		case 'conditionwhendurationfactors_node_form':
 		case 'conditionwhendayofmonth_node_form':
 		case 'conditionwhendayfactors_node_form':
 		case 'conditionwhentimeslotfactors_node_form':
@@ -716,7 +715,26 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			//$form['actions']['submit']['#submit'][] = '_condition_submit_handler';
 			//$form['actions']['submit']['#submit'][] = 'product_catalog_form_form_redirect_handler';
             break;
-
+		case 'conditionwhendurationfactors_node_form':
+			_unset_menu_items($form,$form_id);
+			unset($form['field_weight']);
+			unset($form['field_parent_node']);
+			
+			$first_day_this_month = date('Y-m-01 00:00:00');
+			$lst_day_of_month = date('Y-m-t 23:59:00');
+			
+			if(!isset($form['nid']['#value'])){
+				dsm($form, 'form');
+				dsm($form_state, 'form_state');
+				dsm($first_day_this_month, 'first_day_this_month');
+				dsm($lst_day_of_month, 'lst_day_of_month');
+				
+			  $form['field_duration']['und'][0]['#default_value']['value'] = $first_day_this_month;
+				$form['field_duration']['und'][0]['#default_value']['value2'] = $lst_day_of_month;
+			}
+				
+			break;
+			
 		case 'conditionwhereishomezone_node_form':
 			$form['title_markup'] = array(
 				'#type' => 'markup',
@@ -733,7 +751,6 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 		case 'conditionwhatcustom_node_form':
 		case 'conditionwhencustom_node_form':
 		case 'conditionwhenday_node_form':
-		case 'conditionwhenduration_node_form':
 		case 'conditionwhentimeslot_node_form':
 		case 'conditionwhenweek_node_form':
 		case 'conditionwherecountry_node_form':
@@ -747,6 +764,11 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			_unset_menu_items($form,$form_id);
 			//$form['actions']['submit']['#submit'][] = 'product_catalog_form_form_redirect_handler';
 			//$form['actions']['submit']['#submit'][] = '_condition_submit_handler';
+			break;
+		case 'conditionwhenduration_node_form':
+			dsm($form, 'form');
+			dsm($form_state, 'form_state');
+			_unset_menu_items($form,$form_id);
 			break;
 		case 'feeds_import_form':
 			$form['#submit'][] = 'product_catalog_form_form_redirect_handler';
