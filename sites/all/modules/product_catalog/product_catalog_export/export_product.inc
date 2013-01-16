@@ -114,7 +114,8 @@ function _get_thresdhold_scheme($product) {
     $view->set_arguments(array('0' => $product->nid));
     $view->execute();
     if(!empty($view->result)){
-        $scheme['threshold_scheme_id'] = $view->result[0]->nid;    
+        $schemeNode = node_load($view->result[0]->nid);
+        $scheme['threshold_scheme_id'] = $schemeNode->field_ref_thresholdscheme['und'][0]['nid'];    
     }
 	return $scheme;
 }
@@ -228,7 +229,8 @@ function _get_lifecyclescheme($productNid) {
 	$records = _get_records_from_views_by_label($view_name, $display, $args, $req_labels);
 	
 	if(!empty($records)) {
-		return $records[0];
+	    $schemeNode = node_load($records[0]['lifecyclescheme_id']);
+        return $schemeNode->field_lifecycle_scheme['und'][0]['nid'];
 	} else {
 		return NULL;	
 	}
