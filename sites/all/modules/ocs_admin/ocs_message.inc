@@ -237,7 +237,7 @@ function ocs_admin_message_form($form, &$form_state, $nid = NULL, $op = NULL)
 				'#options' => array(
 					'_value' => 'Value',
 					'_expire' => 'Expire Date',
-					'_delta_valule' => 'Delta Value'
+					'_delta_value' => 'Delta Value'
 				),
 				'#default_value' => $format_value,
 			);
