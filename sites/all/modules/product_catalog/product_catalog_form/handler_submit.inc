@@ -814,7 +814,14 @@ function _vouchercardtype_submit_handler($form, $form_state) {
 	global $user;
 	
 	$node = node_load($form_state['build_info']['args'][0]->nid);
-	$node->field_tree_child_voca_name['und'][0] = array('value' => 'tpl_vouchercardtype');
+	$voucherCardType = taxonomy_term_load($node->field_ref_voucher_type['und'][0]['tid']);
+	
+	if($voucherCardType->name == 'Discount') {
+		$node->field_tree_child_voca_name['und'][0] = array('value' => 'tpl_vouchercardtype_discount');
+	} else {
+		$node->field_tree_child_voca_name['und'][0] = array('value' => 'tpl_vouchercardtype');
+	}
+		
 	node_save($node);
 	
 	// 자동으로 voucher를 위한 counter를 생성시킨다.
