@@ -25,8 +25,8 @@ function _array_voucher_cardtype($nid=NULL){
 
 		$ret_product = array();
 		foreach($listProduct as $product) {
-			
-			$tmpProduct['product_id'] = $product->node_field_data_field_ref_product_nid;
+            $originalProductNode = node_load($product->node_field_data_field_ref_product_nid);
+            $tmpProduct['product_id'] = $originalProductNode->field_product_id['und'][0]['safe_value'];
 			$tmpProduct['product_name'] = $product->node_title;
 			
 			$ret_product[] = $tmpProduct;
@@ -59,13 +59,15 @@ function _array_voucher_cardtype($nid=NULL){
 
         $jsonData[] = $jsonCounter;
     }
-
+    
 	return $jsonData;
 }
 
 function _json_voucher_cardtype($nid=NULL) {
 	$retArray = array();
 	$jsonData  = _array_voucher_cardtype($nid);
+    $retArray['ifvalues']['resources'] = array();
+    
 	$retArray['vouchers'] = $jsonData;
 	$retArray['rating_rules'] = array();
 
