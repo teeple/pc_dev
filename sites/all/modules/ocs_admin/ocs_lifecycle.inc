@@ -170,7 +170,7 @@ function ocs_lifecycle_transition_form($form, &$form_state, $scheme_nid, $transi
 	//    dpm( $events, 'events');
 
 	$form['event'] = array(
-		'#type' => 'checkboxes',
+		'#type' => 'radios',
 		'#title' => t('Event'),
 		'#options' => $events,
 		'#required' => TRUE,
@@ -184,8 +184,8 @@ function ocs_lifecycle_transition_form($form, &$form_state, $scheme_nid, $transi
 
 		$form['from_state']['#default_value'] = $action_node->field_ocs_from_state['und'][0]['target_id'];
 		$form['to_state']['#default_value'] = $action_node->field_ocs_to_state['und'][0]['target_id'];
-		$events = array_get_value($action_node->field_ocs_trigger_events);
-		$form['event']['#default_value'] = $events;
+		//$events = array_get_value($action_node->field_ocs_trigger_events);
+		$form['event']['#default_value'] = $action_node->field_ocs_trigger_events['und'][0]['target_id'];
 
 		// load related actions
 		$query = new EntityFieldQuery();
@@ -408,9 +408,9 @@ function ocs_lifecycle_transition_form_validate($form, &$form_state)
 function ocs_lifecycle_transition_form_submit($form, &$form_state)
 {
 	$values = $form_state['values'];
-	//     dpm( $values, 'submit values');
+	//dpm( $values, 'submit values');
 
-	if ($values['op'] != 'Cancel') {
+	if ($values['op'] == 'Save') {
 		// save ocs_state_machine
 		if ($form['#op'] == 'add') {
 			$node = ocs_admin_get_new_node('ocs_state_machine');
@@ -426,11 +426,7 @@ function ocs_lifecycle_transition_form_submit($form, &$form_state)
 		$node->field_ocs_to_state['und'][0]['target_id'] = $values['to_state'];
 
 		// set trigger events
-		unset($node->field_ocs_trigger_events['und']);
-		foreach (array_values( $values['event']) as $event) {
-			if ($event)
-				$node->field_ocs_trigger_events['und'][] = array('target_id' => $event);
-		}
+		$node->field_ocs_trigger_events['und'][0]['target_id'] = $values['event'];
 
 		node_save($node);
 
