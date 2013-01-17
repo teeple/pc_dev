@@ -29,7 +29,6 @@ function _unset_menu_items(&$form,$formId){
 			//dsm($form);
 			break;
 	}
-	
 	if($unsetDeleteButton)unset($form['actions']['delete']);
 	
 }
@@ -53,7 +52,8 @@ function _add_ajax_submit_callback($form_id,&$form){
 		case 'conditionwherecountryfactors_node_form':
 		case 'conditionwherecustomfactors_node_form':
 		case 'conditionwherenetworkfactors_node_form':
-		case 'conditionwherezonefactors_node_form':
+		case 'conditionwherecallerzone_node_form':
+		case 'conditionwherecalleezone_node_form':
 		case 'conditionwhocustomfactors_node_form':
 		case 'conditionwhomemberfactors_node_form':
 		case 'conditionwhonumberfactors_node_form':
@@ -190,8 +190,8 @@ function edit_pane_callback($form, &$form_state){
 
 function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 
-// dsm($form_id, 'form_id');
-// dsm($form_state, 'form_state');
+//dsm($form_id, 'form_id');
+//dsm($form_state, 'form_state');
 	
     if((isset($form['#attributes']) && isset($form['#attributes']['class'])) 
         && gettype($form['#attributes']['class']) == 'array') {
@@ -702,7 +702,8 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 		case 'conditionwherecountryfactors_node_form':
 		case 'conditionwherecustomfactors_node_form':
 		case 'conditionwherenetworkfactors_node_form':
-		case 'conditionwherezonefactors_node_form':
+		case 'conditionwherecallerzone_node_form':
+		case 'conditionwherecalleezone_node_form':
 		case 'conditionwhocustomfactors_node_form':
 		case 'conditionwhomemberfactors_node_form':
 		case 'conditionwhonumberfactors_node_form':
@@ -737,10 +738,10 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 				
 			break;
 			
-		case 'conditionwhereishomezone_node_form':
+		case 'conditionwhereissamezone_node_form':
 			$form['title_markup'] = array(
 				'#type' => 'markup',
-                '#markup' => '<b>Condition : You are in Homezone</b>',
+                '#markup' => '<b>Condition : Caller and Callee are in the Szmezone</b>',
            );
            
 			_unset_menu_items($form,$form_id);
@@ -1598,7 +1599,7 @@ function _get_available_counter_list($productNid, $existingCounterNids) {
 	if(isset($existingCounterNids)) {
 		$args[3] = join('+', $existingCounterNids);
 	}
-		
+	
 	$view = views_get_view('query_list_counter');
 	$view->set_display('panel_pane_1');
 	$view->set_arguments($args);

@@ -1097,19 +1097,27 @@
 							"where" : {
 								"label" : "WHERE",
 								"submenu" : {
-									"zone" : {
-										"label" : "Zone",
+									"caller zone" : {
+										"label" : "Caller Zone",
 										action : function(node) {
 											$.fn.addNode(node, {
-												'childContentType' : 'conditionwherezonefactors'
+												'childContentType' : 'conditionwherecallerzone'
 											});
 										}
 									},
-									"homezone" : {
-										"label" : "HomeZone is True",
+									"callee zone" : {
+										"label" : "Callee Zone",
 										action : function(node) {
 											$.fn.addNode(node, {
-												'childContentType' : 'conditionwhereishomezone'
+												'childContentType' : 'conditionwherecalleezone'
+											});
+										}
+									},
+									"samezone" : {
+										"label" : "Caller/Callee in SameZone",
+										action : function(node) {
+											$.fn.addNode(node, {
+												'childContentType' : 'conditionwhereissamezone'
 											});
 										}
 									},
@@ -1436,7 +1444,8 @@
 					case "conditionwhenweekfactors":
 					case "conditionwherecountryfactors":
 					case "conditionwherenetworkfactors":
-					case "conditionwherezonefactors":
+					case "conditionwherecallerzone":
+					case "conditionwherecalleezone":					
 					case "conditionwherecustomfactors":
 					case "conditionwhomemberfactors":
 					case "conditionwhonumberfactors":
@@ -1444,7 +1453,7 @@
 					case "conditionwhocustom":
 					case "conditionwhocustomerlevel":
 					case 'conditionwhatcardtype':
-					case 'conditionwhereishomezone':
+					case 'conditionwhereissamezone':
 					case 'conditionwherezonefactors':
 						menus.custom_delete._disabled = false;
 						menus.custom_delete.action = function(node) {
