@@ -1607,7 +1607,7 @@ function product_catalog_ajax_add_content($js = NULL) {
 		case 'conditionwhenfirstmonth':
 		case 'conditionwhencustomerbirthday':
 		case 'conditionwhencompanybirthday':
-		case 'conditionwhereishomezone':
+		case 'conditionwhereissamezone':
 			// create without popup
     		$child = new StdClass();
     		$child->uid = $user->uid;
