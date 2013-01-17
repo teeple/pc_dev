@@ -515,6 +515,7 @@
 	
 	$.fn.behaviorAttach = function(settings){	
 		//console.log('mutiselect_behavior set');
+		delete Drupal.settings.views.ajaxViews;
 		Drupal.behaviors.quicktabs.attach(document,settings);
 		Drupal.behaviors.ViewsAjaxView.attach();		
 		Drupal.behaviors.multiselect.attach(document);		
