@@ -9,7 +9,7 @@ function _array_message($nid = NULL)
 	//dpm( $viewResult, 'messages');
 
 	foreach ($viewResult as $record) {
-		$msg = array();
+	    $msg = array();
 		$msg['message_id'] = isset($record->nid) ? $record->nid : null;
 		$format['MNG'] = $record->field_field_ocs_format[0]['raw']['value'];
 		$format['ENG'] = isset( $record->field_field_ocs_format[1]) ? $record->field_field_ocs_format[1]['raw']['value'] : '';
@@ -50,7 +50,9 @@ function _json_message($nid = NULL)
 	$retArray = $jsonData;
 
 	$enc = ($nid != NULL) ? json_encode($jsonData) : json_encode($retArray);
-		
+    //remove carrage return and line feed
+    $enc = str_replace('\r\n','', $enc);
+    
 	// write to file
     try{
         $fd = fopen( '/tmp/export_message.json', 'w');
