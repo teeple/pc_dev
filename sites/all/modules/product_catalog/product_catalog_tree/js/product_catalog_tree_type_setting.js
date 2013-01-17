@@ -864,6 +864,12 @@
 						"image" : "/sites/default/files/file.png"
 					}
 				},
+				"conditionwhocustomerlevel" : {
+					"valid_children" : [],
+					"icon" : {
+						"image" : "/sites/default/files/file.png"
+					}
+				},
 				
 				"tariffplan" :{
                     "valid_children" : ["treeNodeBasicRateIDD", "treeNodePlanCustom"],

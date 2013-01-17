@@ -58,6 +58,7 @@ function _add_ajax_submit_callback($form_id,&$form){
 		case 'conditionwhomemberfactors_node_form':
 		case 'conditionwhonumberfactors_node_form':
 		case 'conditionwhoprefixfactors_node_form':
+		case 'conditionwhocustomerlevel_node_form':
 		case 'conditioncommoncounterfactors_node_form':
 		case 'conditionwhatqos_node_form':
 		case 'conditioncommoncarrieridd_node_form':
@@ -591,6 +592,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			_unset_menu_items($form,$form_id);
 
             break;
+        case 'conditionwhocustomerlevel_node_form':
         case 'conditionwhatcalltype_node_form':
         	unset($form['field_parent_node']);
         	unset($form['field_weight']);
