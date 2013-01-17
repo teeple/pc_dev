@@ -1084,6 +1084,14 @@
 											});
 										}
 									},
+									"customer level" : {
+										"label" : "customer level",
+										action : function(node) {
+											$.fn.addNode(node, {
+												'childContentType' : 'conditionwhocustomerlevel'
+											});
+										}
+									},
 								}
 							},
 							"where" : {
@@ -1434,6 +1442,7 @@
 					case "conditionwhonumberfactors":
 					case "conditionwhoprefixfactors":
 					case "conditionwhocustom":
+					case "conditionwhocustomerlevel":
 					case 'conditionwhatcardtype':
 					case 'conditionwhereishomezone':
 					case 'conditionwherezonefactors':
