@@ -154,9 +154,28 @@ function product_catalog_ajax_menu() {
       'access callback' => TRUE,
       'type' => MENU_CALLBACK,
   );
+  $items['product_catalog_ajax/remove_field_collection_item/%'] = array(
+      'title' => 'Remove',
+      'page callback' => 'product_catalog_ajax_remove_field_collection_item',
+      'page arguments' => array(2),
+      'access callback' => TRUE,
+      'type' => MENU_CALLBACK,
+  );
   return $items;
 
 } 
+
+function product_catalog_ajax_remove_field_collection_item($fieldCollectionDomID){
+    ctools_include('node.pages', 'node', '');
+    ctools_include('ajax');
+    global $user;
+    
+    dsm($fieldCollectionDomID,'field collection domID');   
+    
+    $output = '';
+    print json_encode($output);
+    exit;
+};
 
 function product_catalog_ajax_clone_product($targetProductId){
     ctools_include('node.pages', 'node', '');
@@ -769,7 +788,7 @@ function product_catalog_ajax_add_modal_content($js = NULL, $contentType, $refNo
 			$output[] = ajax_command_invoke(NULL, 'drawFlotLinkInit');
 		}
 	}
-	
+	$output[] = ajax_command_invoke(NULL,'bindCollectionItemRemoveButton');
 	print ajax_render($output);
 	exit;	
 }
@@ -1859,6 +1878,8 @@ function product_catalog_modal_form_edit_modal_content($js = NULL, $contentType,
     		$output[] = ajax_command_invoke(NULL, 'drawFlotLinkInit');
     	}
     }
+    
+    $output[] = ajax_command_invoke(NULL,'bindCollectionItemRemoveButton');
 //dsm($output,'modal output');
     print ajax_render($output);
     exit;

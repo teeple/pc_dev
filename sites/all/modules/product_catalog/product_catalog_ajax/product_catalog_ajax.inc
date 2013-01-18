@@ -408,78 +408,81 @@ function add_js_settings_after_node_update($node){
  */
 
 function load_required_js_css_before_ajax_load(){
-	
-	//date popup
-	date_popup_add();
-    drupal_add_js(drupal_get_path('module', 'date_popup') .'/date_popup.js');
+	$js_added = drupal_static( __FUNCTION__, FALSE);
+    if ( !$js_added ) {
+        $js_added = TRUE;
+         
+    	//date popup
+    	date_popup_add();
+        drupal_add_js(drupal_get_path('module', 'date_popup') .'/date_popup.js');
+        
+        //tabledrag
+        drupal_add_js(base_path().'misc/tabledrag.js');
+        drupal_add_js(base_path().'misc/tableheader.js');    
+        
+        //vbo
+        drupal_add_js(drupal_get_path('module', 'views_bulk_operations').'/js/views_bulk_operations.js');
+        
+        //quick tab
+        $qTabPath = drupal_get_path('module', 'quicktabs');
+        drupal_add_js($qTabPath.'/js/quicktabs.js');
+        drupal_add_css($qTabPath.'/css/quicktabs.css');
+        drupal_add_css($qTabPath.'/quicktabs_tabstyles/tabstyles/zen/zen-rtl.css');
+        drupal_add_css($qTabPath.'/quicktabs_tabstyles/tabstyles/zen/zen.css');
+        //views
+        drupal_add_js(drupal_get_path('module', 'views').'/js/ajax_view.js'); 
     
-    //tabledrag
-    drupal_add_js(base_path().'misc/tabledrag.js');
-    drupal_add_js(base_path().'misc/tableheader.js');    
-    
-    //vbo
-    drupal_add_js(drupal_get_path('module', 'views_bulk_operations').'/js/views_bulk_operations.js');
-    
-    //quick tab
-    $qTabPath = drupal_get_path('module', 'quicktabs');
-    drupal_add_js($qTabPath.'/js/quicktabs.js');
-    drupal_add_css($qTabPath.'/css/quicktabs.css');
-    drupal_add_css($qTabPath.'/quicktabs_tabstyles/tabstyles/zen/zen-rtl.css');
-    drupal_add_css($qTabPath.'/quicktabs_tabstyles/tabstyles/zen/zen.css');
-    //views
-    drupal_add_js(drupal_get_path('module', 'views').'/js/ajax_view.js'); 
-
-    // editable fields
-    $editablefields_path = drupal_get_path('module', 'editablefields');
-    drupal_add_js($editablefields_path . '/editablefields.js');
-    
-    // ctools auto submit
-    drupal_add_js(drupal_get_path('module', 'ctools').'/js/auto-submit.js');
-    
-    //field conditional state    
-    drupal_add_js(base_path().'misc/states.js');
-	
-    $fieldConditionalStatePath = drupal_get_path('module','field_conditional_state');
-    drupal_add_js($fieldConditionalStatePath.'/js/conditional_state.js');
-	
-	$arrangeFieldsPath = drupal_get_path('module', 'arrange_fields');
-	drupal_add_js($arrangeFieldsPath.'/js/arrange_fields.js');
-	drupal_add_css($arrangeFieldsPath.'/css/arrange_fields.css');
-	
-	//drupal_add_js($fieldConditionalStatePath.'/js/required_conditional_state.js');       
-    //drupal_add_js($fieldConditionalStatePath.'/js/settings_form.js');
-    
-	//jstree
-	drupal_add_js(libraries_get_path('jstree') . '/jquery.jstree.js');
-	drupal_add_js(libraries_get_path('jquery-loadmask') . '/jquery.loadmask.min.js');
-	drupal_add_css(libraries_get_path('jquery-loadmask') . '/jquery.loadmask.css');
-	
-	//flot for chart
-	$floatPath = libraries_get_path('flot');
-	drupal_add_js($floatPath.'/jquery.flot.js');
-	
-	//product catalog tree
-	$product_catalog_tree_path = drupal_get_path('module', 'product_catalog_tree');
-	drupal_add_js($product_catalog_tree_path  . '/js/product_catalog_tree_type_setting.js');
-	drupal_add_js($product_catalog_tree_path  . '/js/product_catalog_tree_context_menu_setting.js');
-	drupal_add_js($product_catalog_tree_path  . '/js/product_catalog_tree_operation.js');
-	drupal_add_js($product_catalog_tree_path  . '/js/product_catalog_tree_flot.js');
-	drupal_add_js($product_catalog_tree_path  . '/js/product_catalog_tree.js');
-	
-	//ctools collapsible div
-	$ctoolsPath = drupal_get_path('module', 'ctools');
-	drupal_add_js($ctoolsPath. '/js/collapsible-div.js');
-	drupal_add_css($ctoolsPath.'/css/collapsible-div.css');
-	
-	//product catalog selectable
-	$product_catalog_selectable_path = drupal_get_path('module', 'product_catalog_selectable');
-	drupal_add_js($product_catalog_selectable_path . '/js/product_catalog_selectable.js');
-	
-	// module multiselect
-	$product_catalog_multiselect_path = drupal_get_path('module', 'multiselect');
-	drupal_add_js($product_catalog_multiselect_path . '/multiselect.js');
-	drupal_add_css($product_catalog_multiselect_path. '/multiselect.css');
-	
+        // editable fields
+        $editablefields_path = drupal_get_path('module', 'editablefields');
+        drupal_add_js($editablefields_path . '/editablefields.js');
+        
+        // ctools auto submit
+        drupal_add_js(drupal_get_path('module', 'ctools').'/js/auto-submit.js');
+        
+        //field conditional state    
+        drupal_add_js(base_path().'misc/states.js');
+    	
+        $fieldConditionalStatePath = drupal_get_path('module','field_conditional_state');
+        drupal_add_js($fieldConditionalStatePath.'/js/conditional_state.js');
+    	
+    	$arrangeFieldsPath = drupal_get_path('module', 'arrange_fields');
+    	drupal_add_js($arrangeFieldsPath.'/js/arrange_fields.js');
+    	drupal_add_css($arrangeFieldsPath.'/css/arrange_fields.css');
+    	
+    	//drupal_add_js($fieldConditionalStatePath.'/js/required_conditional_state.js');       
+        //drupal_add_js($fieldConditionalStatePath.'/js/settings_form.js');
+        
+    	//jstree
+    	drupal_add_js(libraries_get_path('jstree') . '/jquery.jstree.js');
+    	drupal_add_js(libraries_get_path('jquery-loadmask') . '/jquery.loadmask.min.js');
+    	drupal_add_css(libraries_get_path('jquery-loadmask') . '/jquery.loadmask.css');
+    	
+    	//flot for chart
+    	$floatPath = libraries_get_path('flot');
+    	drupal_add_js($floatPath.'/jquery.flot.js');
+    	
+    	//product catalog tree
+    	$product_catalog_tree_path = drupal_get_path('module', 'product_catalog_tree');
+    	drupal_add_js($product_catalog_tree_path  . '/js/product_catalog_tree_type_setting.js');
+    	drupal_add_js($product_catalog_tree_path  . '/js/product_catalog_tree_context_menu_setting.js');
+    	drupal_add_js($product_catalog_tree_path  . '/js/product_catalog_tree_operation.js');
+    	drupal_add_js($product_catalog_tree_path  . '/js/product_catalog_tree_flot.js');
+    	drupal_add_js($product_catalog_tree_path  . '/js/product_catalog_tree.js');
+    	
+    	//ctools collapsible div
+    	$ctoolsPath = drupal_get_path('module', 'ctools');
+    	drupal_add_js($ctoolsPath. '/js/collapsible-div.js');
+    	drupal_add_css($ctoolsPath.'/css/collapsible-div.css');
+    	
+    	//product catalog selectable
+    	$product_catalog_selectable_path = drupal_get_path('module', 'product_catalog_selectable');
+    	drupal_add_js($product_catalog_selectable_path . '/js/product_catalog_selectable.js');
+    	
+    	// module multiselect
+    	$product_catalog_multiselect_path = drupal_get_path('module', 'multiselect');
+    	drupal_add_js($product_catalog_multiselect_path . '/multiselect.js');
+    	drupal_add_css($product_catalog_multiselect_path. '/multiselect.css');
+    }
 }
 
 function _get_max_weight_in_children($parentNid){

@@ -69,6 +69,7 @@ function theme_field_collection_table_multiple_value_fields($variables) {
     );
 
     // Add the items as table rows.
+    
     foreach ($items as $key => $item) {
       uasort($item, 'element_sort');
       $item['_weight']['#attributes']['class'] = array($order_class);
@@ -84,7 +85,17 @@ function theme_field_collection_table_multiple_value_fields($variables) {
             'class' => array('field-label'),
           );
         }
-        $cells[] = array('data' => $item[$field_name]);
+        if($field_name == 'remove_button'){
+            $markupStr = '<input type="button" value="remove" id="remove_collection_item_'.$item['#entity']->item_id.'"/>';
+            $removeItem = array(
+                '#type' => 'markup',
+                '#markup' => $markupStr
+            );
+            
+            $cells[] = array('data' => $removeItem);
+        }else{
+            $cells[] = array('data' => $item[$field_name]);
+        }
       }
       $rows[] = array(
         'data' => $cells,
