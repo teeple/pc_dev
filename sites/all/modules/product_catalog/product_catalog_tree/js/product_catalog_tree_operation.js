@@ -92,6 +92,15 @@
 		
 	};
 	
+	$.fn.bindCollectionItemRemoveButton = function(){
+		$('input[id^=remove_collection_item_]').bind('click',$.fn.collectionItemRemoveHandler);
+	};
+	
+	$.fn.collectionItemRemoveHandler = function(event){
+		itemDomID = event.currentTarget.id;
+		console.log(itemDomID);
+	};
+	
 	$.fn.selectMessageItemHandler = function(event) {
 		var loadLink = '/product_catalog_ajax/select_modal_item/actionsetnotification';
 		
@@ -535,6 +544,7 @@
     //Drupal.behaviors.qt_accordion.attach($('#tree_content_div'),settings);
     //Drupal.behaviors.qt_ui_tabs.attach(document,settings);
         
+    $.fn.bindCollectionItemRemoveButton();
     $.fn.drawFlotLinkInit();
     
     

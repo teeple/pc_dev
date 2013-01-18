@@ -192,7 +192,8 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 
 //dsm($form_id, 'form_id');
 //dsm($form_state, 'form_state');
-	
+	load_required_js_css_before_ajax_load();
+    
     if((isset($form['#attributes']) && isset($form['#attributes']['class'])) 
         && gettype($form['#attributes']['class']) == 'array') {
     	$form['#attributes']['class'][] = 'myform';
@@ -505,7 +506,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			// Edit
 			if(isset($form['nid']['#value'])) {
 				$form['field_counter_id']['und']['#disabled'] = TRUE;
-				$form['field_scale']['und']['#disabled'] = TRUE;
+				//$form['field_scale']['und']['#disabled'] = TRUE;
 				$form['field_counter_type']['und']['#disabled'] = TRUE;
 				$form['field_service_domain']['und']['#disabled'] = TRUE;
 				$form['field_billing_type_counter']['und']['#disabled'] = TRUE;
