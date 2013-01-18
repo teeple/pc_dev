@@ -98,7 +98,18 @@
 	
 	$.fn.collectionItemRemoveHandler = function(event){
 		itemDomID = event.currentTarget.id;
-		console.log(itemDomID);
+		
+		var removeLink = '/product_catalog_ajax/remove_field_collection_item/' + itemDomID;
+		$.fn.masking("Deleting...");
+		//console.log(loadLink);
+		$.ajax({
+			url : removeLink,
+			success : function(data) {
+				var output = $.parseJSON(data);
+				$('#'+itemDomID).parent().parent().replaceWith('');
+				$.fn.unmasking();
+			}
+		});
 	};
 	
 	$.fn.selectMessageItemHandler = function(event) {
@@ -701,10 +712,10 @@
 	};
 	
 	$.fn.masking = function(message){ 
-		$("#main-content").mask(message);
+		$("#content").mask(message);
 	};
 	$.fn.unmasking = function(){
-		$("#main-content").unmask();
+		$("#content").unmask();
 	}
 	
 	$.fn.modalMasking = function(message){
