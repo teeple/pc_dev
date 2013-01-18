@@ -170,8 +170,15 @@ function product_catalog_ajax_remove_field_collection_item($fieldCollectionDomID
     ctools_include('ajax');
     global $user;
     
-    dsm($fieldCollectionDomID,'field collection domID');   
+    $collectionID = explode('_',$fieldCollectionDomID);
     
+    if(!empty($collectionID[3])){//exisiting collection item
+        $collectionID = $collectionID[3];
+        $fieldCollectionItem = field_collection_item_load($collectionID);
+        $fieldCollectionItem->delete();
+    }else{//non existing collection item
+        
+    }
     $output = '';
     print json_encode($output);
     exit;
