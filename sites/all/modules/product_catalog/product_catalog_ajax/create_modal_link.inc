@@ -92,6 +92,22 @@ function _create_modal_edit_delete_link($contentType,$params){
 	echo $link_string;	
 }
 
+function _create_modal_delete_link($contentType,$params){ 
+    ctools_include('ajax');
+    ctools_include('modal');
+    ctools_modal_add_js();
+    
+    $delete_url = 'product_catalog_ajax/delete_from_view';
+    foreach($params as $param){
+        $delete_url .= '/'.$param;
+    }
+    
+    $delete_output = l(t('delete'), $delete_url, array('attributes' => array('class' => array('use-ajax'))));
+        
+    $link_string = '<div>'.$delete_output.'</div>';
+    echo $link_string;  
+}
+
 function _create_modal_form_view_link($linkTitle,$formName,$params){
 	ctools_include('ajax');
 	ctools_include('modal');
