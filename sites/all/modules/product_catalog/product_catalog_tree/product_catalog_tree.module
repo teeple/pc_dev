@@ -19,12 +19,6 @@ function product_catalog_tree_form($form, &$form_state) {
    		'#markup' => '<div id="dummy-link"></div>'
     );
 
-	$js_added = drupal_static( __FUNCTION__, FALSE);
-    if ( !$js_added ) {
-        $js_added = TRUE;
-		load_required_js_css_before_ajax_load();        
-    }
-
 	$form['tree'] = array(
 		'#type' => 'markup',
         '#markup' => '<div style="height:680px;overflow:scroll" class="product_catalog_tree"></div>',

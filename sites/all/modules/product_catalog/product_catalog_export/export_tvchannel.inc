@@ -30,6 +30,7 @@ function _array_tvchannel($nid=NULL){
 function _json_tvchannel($nid=NULL) {
     $retArray = array();
     $jsonData  = _array_tvchannel($nid);
+    $retArray['ifvalues']['resources'] = array();
     $retArray['tv_channel'] = $jsonData;
 
     if($nid != NULL) {

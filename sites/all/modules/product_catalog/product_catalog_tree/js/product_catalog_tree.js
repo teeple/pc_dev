@@ -1,6 +1,8 @@
 (function($) {
 	Drupal.behaviors.ProductCatalogTreeBehavior = {
 		attach : function(context, settings) {
+			$.fn.bindCollectionItemRemoveButton();
+			
 			$('#dummy-link').hide();
 			$.jstree._themes = settings.themes_dir;
 			//console.log(context);
@@ -88,7 +90,6 @@
 						$('#'+childId).trigger('click');	
 					}
 				} else {
-					
 				}
 			});
 			

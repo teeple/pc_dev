@@ -70,7 +70,7 @@ function export_json($tid,$termName,$refNid=NULL){
 	return $output;
 }
 
-function export_deploy($tid,$termName,$refNid=NULL){
+function export_deploy($tid,$termName,$target,$refNid=NULL){
 	global $user;
 	$jsonString = _make_json_string($termName,$refNid);
 	
@@ -102,7 +102,15 @@ function export_deploy($tid,$termName,$refNid=NULL){
 	$options['headers']['User-Agent'] = 'Product Catalog';
 	$options['data'] = $jsonString;
 	
-	foreach($term->field_export_url['und'] as $item){
+    if($target == 'testbed'){
+        $targetItem = $term->field_export_url_testbed['und'];
+    }else if($target == 'commercial'){
+        $targetItem = $term->field_export_url_commercial['und'];
+    }
+    $historyNode->field_export_target['und'][0]['value'] = $target;
+    $historyNode->field_export_target['und'][0]['safe_value'] = $target;
+    
+	foreach($targetItem as $item){
 		$url = $item['safe_value'];
 		$result = drupal_http_request($url, $options);
 		 
@@ -110,10 +118,10 @@ function export_deploy($tid,$termName,$refNid=NULL){
 
 		if($result->code === '200'){
 			//$historyNode = node_load($historyNodeNid);
-			if(strpos($result->request,'/cs/') !== FALSE) $historyNode->field_deployed_cs['und'][0]['value'] = TRUE;
-			if(strpos($result->request,'/ocs/') !== FALSE) $historyNode->field_deployed_ocs['und'][0]['value'] = TRUE;
-			if(strpos($result->request,'/crm/') !== FALSE) $historyNode->field_deployed_crm['und'][0]['value'] = TRUE;
-			node_save($historyNode);
+			//if(strpos($result->request,'/cs/') !== FALSE) $historyNode->field_deployed_cs['und'][0]['value'] = TRUE;
+			//if(strpos($result->request,'/ocs/') !== FALSE) $historyNode->field_deployed_ocs['und'][0]['value'] = TRUE;
+			//if(strpos($result->request,'/crm/') !== FALSE) $historyNode->field_deployed_crm['und'][0]['value'] = TRUE;
+			//node_save($historyNode);
 		}
         
         unset($result->request);

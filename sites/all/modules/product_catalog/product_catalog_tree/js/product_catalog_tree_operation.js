@@ -92,6 +92,26 @@
 		
 	};
 	
+	$.fn.bindCollectionItemRemoveButton = function(){
+		$('input[id^=remove_collection_item_]').bind('click',$.fn.collectionItemRemoveHandler);
+	};
+	
+	$.fn.collectionItemRemoveHandler = function(event){
+		itemDomID = event.currentTarget.id;
+		
+		var removeLink = '/product_catalog_ajax/remove_field_collection_item/' + itemDomID;
+		$.fn.masking("Deleting...");
+		//console.log(loadLink);
+		$.ajax({
+			url : removeLink,
+			success : function(data) {
+				var output = $.parseJSON(data);
+				$('#'+itemDomID).parent().parent().replaceWith('');
+				$.fn.unmasking();
+			}
+		});
+	};
+	
 	$.fn.selectMessageItemHandler = function(event) {
 		var loadLink = '/product_catalog_ajax/select_modal_item/actionsetnotification';
 		
@@ -515,6 +535,7 @@
 	
 	$.fn.behaviorAttach = function(settings){	
 		//console.log('mutiselect_behavior set');
+		delete Drupal.settings.views.ajaxViews;
 		Drupal.behaviors.quicktabs.attach(document,settings);
 		Drupal.behaviors.ViewsAjaxView.attach();		
 		Drupal.behaviors.multiselect.attach(document);		
@@ -534,6 +555,7 @@
     //Drupal.behaviors.qt_accordion.attach($('#tree_content_div'),settings);
     //Drupal.behaviors.qt_ui_tabs.attach(document,settings);
         
+    $.fn.bindCollectionItemRemoveButton();
     $.fn.drawFlotLinkInit();
     
     
@@ -690,10 +712,10 @@
 	};
 	
 	$.fn.masking = function(message){ 
-		$("#main-content").mask(message);
+		$("#content").mask(message);
 	};
 	$.fn.unmasking = function(){
-		$("#main-content").unmask();
+		$("#content").unmask();
 	}
 	
 	$.fn.modalMasking = function(message){
