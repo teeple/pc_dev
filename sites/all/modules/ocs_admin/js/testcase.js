@@ -2,27 +2,22 @@
 	Drupal.behaviors.ocs_admin = {
 		attach : function(context, settings) {
 			//console.log('testcase.js loaded');
-			$('#run-test-ocs-button').bind('click', $.fn.runTestOcsHandler); // test button
+			$('#run-test-ocs-button').bind('click', function(event) {
+				$('.run-one-test-case-button').removeClass('fire').addClass( 'fire');
+				$('.run-one-test-case-button[order=0]').trigger( 'click');
+			});
 			$('#add-action-button').bind('click', $.fn.addActionHandler);
 			$('.run-one-test-case-button').bind('click', $.fn.runOneTestOcsHandler);
+			$('.run-all-test-case-button').bind('click', function(event) {
+				var target = $(event.target);
+				var nid = $(target).attr('node');
+				$('.run-one-test-case-button[node=' + nid +']').removeClass('fire').addClass('fire');
+				$('.run-one-test-case-button[node=' + nid +'][tc=0]').trigger('click');
+			});
 			$('#clear-test-result-button').bind('click', function(event) {
 				$('#run-test-ocs-result').text('');
 			});
 		}
-	};
-
-	$.fn.runTestOcsHandler = function(event) {
-		console.log('run test case');
-		/*
-		$('#run-test-ocs-result').append( 
-		'<table>' +
-		'<thead><tr><th>Response</th><th>Time</th></tr></thead>' +
-		'<tbody></tbody>' +
-		'</table>'
-		);
-		 */
-		$('.run-one-test-case-button').removeClass('fire').addClass( 'fire');
-		$('.run-one-test-case-button[order=0]').trigger( 'click');
 	};
 
 	$.fn.runOneTestOcsHandler = function(event) {
