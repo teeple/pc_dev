@@ -87,18 +87,18 @@ function ocs_run_all_testcase_for_ocs( $ts_nid, $tc_nid, $tc_idx)
         if ( $field == NULL) $field = field_info_instances( 'node', $ts_data->type);
 
 		$cdata = entity_load_single( 'field_collection_item', $tc->field_ts_call_test['und'][$tc_idx]['value']);
-		$call_data = ocs_build_ts_json( $cdata, field_info_instances('field_collection_item', 'field_ts_call_test'));
+		$test_result = ocs_build_ts_json( $cdata, field_info_instances('field_collection_item', 'field_ts_call_test'));
 
 		// refine call_data
-		$call_data['destId'] = $call_data['dialed'];	// add another key : destId as same as dialed
+		$test_result['destId'] = $test_result['dialed'];	// add another key : destId as same as dialed
 		// recalculate end time
-		$stime = new DateTime( $call_data['startTime']);
-		$etime = $stime->add( new DateInterval('PT'. $call_data['duration'] .'S'));
-		$call_data['endTime'] = $etime->format('YmdHis');
+		$stime = new DateTime( $test_result['startTime']);
+		$etime = $stime->add( new DateInterval('PT'. $test_result['duration'] .'S'));
+		$test_result['endTime'] = $etime->format('YmdHis');
 
         $output = ocs_run_testcase_http( $url, $ts_data, $field, $tc->field_ts_method['und'][0]['value'],
 				$tc->field_ts_json_prefix['und'][0]['value'], $tc->field_ts_json_suffix['und'][0]['value'], 
-				array_merge( $json_data, $call_data));
+				array_merge( $json_data, $test_result));
 	}
 	else {
 		$output = array( 'error' => 'TC-'. $tc_idx . ' Not found');
