@@ -1917,6 +1917,7 @@ function product_catalog_ajax_delete_from_view($nodeNid, $refNodeNid, $defaultTa
 			break;
 		case 'actionsetcounter':
 		case 'actionsetcounteronbonus':
+        case 'actionsetnotification':
 			$output[] = _add_command_after_dismiss_modal($refNodeNid,NULL,$defaultTabIndex);
 			break;
 	}
