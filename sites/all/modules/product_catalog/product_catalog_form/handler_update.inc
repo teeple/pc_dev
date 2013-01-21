@@ -1,5 +1,9 @@
 <?php
 
+function node_update_handler_to_touch_product($newNode,$oldNode){
+    
+};
+
 function product_catalog_form_entity_update($entity, $type){
     switch($type){
         case 'node':
