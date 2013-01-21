@@ -437,7 +437,24 @@ function product_catalog_ajax_select_modal_item_submit($contentTypes) {
 	$source_nid = $_POST['source_nid'];
 	$nids = $_POST['nids'];
 	$defaultTabIndex = $_POST['default_tab_index'];
-	  
+	
+    //delete existing node
+    $source_action = node_load($source_nid);
+    $source_tree_term = taxonomy_term_load($source_action->field_ref_tree_tid['und'][0]['value']);
+
+    // Bonus일 경우 기존에 soruce action에 달려있던 action notification 삭제 
+    if($source_tree_term->name == 'Bonus') {
+        $view = views_get_view('list_actionsetnotification');
+        $view->set_display('panel_pane_2');
+        $view->set_arguments(array('0' => $source_nid));
+        $view->execute();
+        
+        foreach($view->result as $record) {
+            node_delete($record->nid);
+        }
+    }
+ 
+    //create new node
 	foreach($nids as $nid) {
 		$actionsetnotification = new StdClass(); 
   	
