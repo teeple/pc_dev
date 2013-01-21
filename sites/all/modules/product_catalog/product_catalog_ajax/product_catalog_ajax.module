@@ -442,10 +442,9 @@ function product_catalog_ajax_select_modal_item_submit($contentTypes) {
     $source_action = node_load($source_nid);
     $source_tree_term = taxonomy_term_load($source_action->field_ref_tree_tid['und'][0]['value']);
 
-    // Bonus일 경우 기존에 soruce action에 달려있던 action notification 삭제 
     if($source_tree_term->name == 'Bonus') {
         $view = views_get_view('list_actionsetnotification');
-        $view->set_display('panel_pane_2');
+        $view->set_display('panel_pane_3');
         $view->set_arguments(array('0' => $source_nid));
         $view->execute();
         
@@ -453,10 +452,9 @@ function product_catalog_ajax_select_modal_item_submit($contentTypes) {
             node_delete($record->nid);
         }
     }
- 
-    //create new node
+
 	foreach($nids as $nid) {
-		$actionsetnotification = new StdClass(); 
+		$actionsetnotification = new StdClass();
   	
 		$actionsetnotification->uid = $user->uid;
 		$actionsetnotification->type = 'actionsetnotification';
@@ -467,12 +465,12 @@ function product_catalog_ajax_select_modal_item_submit($contentTypes) {
 		
 		node_save($actionsetnotification);
 	}
-  
+	
 	$output[] = ctools_modal_command_dismiss(t('Success'));
 	$output = ajax_render($output);
 	  
 	print $output;
-	exit;	
+	exit;
 }
  
 function _create_qtabs_for_counter($nid, $args) {
@@ -1613,25 +1611,8 @@ function product_catalog_ajax_add_content($js = NULL) {
 	$weight = $maxWeight + $weightStep;
 
 	switch ($childContentType){
-        case 'conditionwhatusagetypefactors':        	 
-			$child = new StdClass();
-    		$child->uid = $user->uid;
-    		$child->type = $childContentType;
-    		$child->language = 'und';
-    		$child->field_parent_node = array('und' => array(0 => array('nid' => $parentNid)));
-    		$child->field_weight = array('und' => array(0 => array('value' => $weight)));
-
-            $usageTypeTerm = taxonomy_get_term_by_name($usageType, 'usagetype');
-			$child->field_ref_usage_type = array('und' => array(0 => array('tid' => current($usageTypeTerm)->tid)));
-            
-            node_save($child);
-
-            // js tree node add function call
-    		$output = array('parent_id' => $parentId, 'child_id' => 'node_'.$child->nid,'title' => $child->title, 'node_type' => $child->type, 'weight' => $weight);
-    		print json_encode($output);
-    		exit;
-            break;
-			
+	
+		/*
 		case 'conditionwhatnonusagetypefactors':        	 
 			$child = new StdClass();
     		$child->uid = $user->uid;
@@ -1649,15 +1630,31 @@ function product_catalog_ajax_add_content($js = NULL) {
     		print json_encode($output);
     		exit;
             break;
-            
-    	case 'conditioncommonor':
-    	case 'conditioncommonand':
-        case 'conditionwhatincomingcall':
-		case 'conditionwhenfirstmonth':
-		case 'conditionwhencustomerbirthday':
-		case 'conditionwhencompanybirthday':
-		case 'conditionwhereissamezone':
+     */
+     
+		case 'conditioncommonor':
+		case 'conditioncommonand':
+				$child = new StdClass();
+		    		$child->uid = $user->uid;
+		    		$child->type = $childContentType;
+		    		$child->language = 'und';
+		    		$child->field_parent_node = array('und' => array(0 => array('nid' => $parentNid)));
+		    		$child->field_weight = array('und' => array(0 => array('value' => $weight)));
+		    		node_save($child);
+		
+		    		// js tree node add function call
+		    		$output = array('parent_id' => $parentId, 'child_id' => 'node_'.$child->nid,'title' => $child->title, 'node_type' => $child->type, 'weight' => $weight);
+		    		print json_encode($output);
+		    		exit;
+		    		break;
+				
+    // case 'conditionwhatincomingcall':
+		// case 'conditionwhenfirstmonth':
+		// case 'conditionwhencustomerbirthday':
+		// case 'conditionwhencompanybirthday':
+		// case 'conditionwhereissamezone':
 			// create without popup
+			/*
     		$child = new StdClass();
     		$child->uid = $user->uid;
     		$child->type = $childContentType;
@@ -1671,7 +1668,8 @@ function product_catalog_ajax_add_content($js = NULL) {
     		print json_encode($output);
     		exit;
     		break;
-			
+    */
+    	
 		default:    		
     		if($refTreeNid == NULL) $refTreeNid = $parentNid;
     		$qtabs = array();
