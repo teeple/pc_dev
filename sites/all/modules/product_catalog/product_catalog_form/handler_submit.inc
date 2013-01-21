@@ -1,7 +1,7 @@
 <?php
 
 function node_save_handler_to_touch_product($node){
-    
+    touch_product($node);
 };
 
 function product_catalog_form_node_submit($node, $form, &$form_state)
