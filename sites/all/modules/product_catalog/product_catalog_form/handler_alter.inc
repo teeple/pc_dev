@@ -47,16 +47,24 @@ function _add_ajax_submit_callback($form_id,&$form){
 		case 'conditionwhendayfactors_node_form':
 		case 'conditionwhentimeslotfactors_node_form':
 		case 'conditionwhenholidayfactors_node_form':
-		case 'conditionwhenactivedays_node_form';
+		case 'conditionwhenactivedays_node_form':
 		case 'conditionwhenweekfactors_node_form':
+		case 'conditionwhencustomerbirthday_node_form':
+		case 'conditionwhencompanybirthday_node_form':
+		case 'conditionwhenfirstmonth_node_form':
 		case 'conditionwherecountryfactors_node_form':
 		case 'conditionwherecustomfactors_node_form':
+		case 'conditionwhereissamezone_node_form':
 		case 'conditionwherenetworkfactors_node_form':
 		case 'conditionwherecallerzone_node_form':
 		case 'conditionwherecalleezone_node_form':
+		case 'conditionwhereclientip_node_form':
+		case 'conditionwheremacaddress_node_form':
+		case 'conditionwheredeivcetype_node_form':
 		case 'conditionwhocustomfactors_node_form':
 		case 'conditionwhomemberfactors_node_form':
 		case 'conditionwhonumberfactors_node_form':
+		case 'conditionwhocalledcarrier_node_form':
 		case 'conditionwhoprefixfactors_node_form':
 		case 'conditionwhocustomerlevel_node_form':
 		case 'conditioncommoncounterfactors_node_form':
@@ -94,6 +102,7 @@ function _add_ajax_submit_callback($form_id,&$form){
         case 'conditionwhatcounter_node_form':
 		case 'conditionwhatcounterfortracking_node_form':
 		case 'conditionwhensubscriptionday_node_form':
+		case 'conditionwhatincomingcall_node_form':
 		// case 'conditionwhatcardtype_node_form':
 		case 'conditionwhenactivationday_node_form':
 		case 'numberspecialrate_node_form':
@@ -190,10 +199,9 @@ function edit_pane_callback($form, &$form_state){
 
 function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 
-//dsm($form_id, 'form_id');
+// dsm($form_id, 'form_id');
 //dsm($form_state, 'form_state');
-	load_required_js_css_before_ajax_load();
-    
+	
     if((isset($form['#attributes']) && isset($form['#attributes']['class'])) 
         && gettype($form['#attributes']['class']) == 'array') {
     	$form['#attributes']['class'][] = 'myform';
@@ -270,9 +278,12 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
         case 'views_form_list_treenodecounterforvoucher_panel_pane_1';
             unset($form['actions']);
             break;
+    case 'conditionwhenfirstmonth_node_form':
 		case 'conditionwhenactivationday_node_form':
         case 'conditionwhensubscriptionday_node_form';
 		case 'conditionwhenactivedays_node_form';
+		case 'conditionwhencustomerbirthday_node_form':
+		case 'conditionwhencompanybirthday_node_form':
 		    _unset_menu_items($form,$form_id);
 			$form['field_weight']['#type'] = 'hidden';
             $form['field_parent_node']['#type'] = 'hidden';
@@ -506,7 +517,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			// Edit
 			if(isset($form['nid']['#value'])) {
 				$form['field_counter_id']['und']['#disabled'] = TRUE;
-				//$form['field_scale']['und']['#disabled'] = TRUE;
+				$form['field_scale']['und']['#disabled'] = TRUE;
 				$form['field_counter_type']['und']['#disabled'] = TRUE;
 				$form['field_service_domain']['und']['#disabled'] = TRUE;
 				$form['field_billing_type_counter']['und']['#disabled'] = TRUE;
@@ -692,26 +703,32 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 		case 'conditionwhatusagetypefactors_node_form':
 		case 'conditionwhatnonusagetypefactors_node_form':
 		case 'conditionwhatcustomfactors_node_form':
+		case 'conditionwhatincomingcall_node_form':
 		case 'conditionwhaturlgroupfactors_node_form':
 		case 'conditionwhencustomfactors_node_form':
 		case 'conditionwhendayofmonth_node_form':
 		case 'conditionwhendayfactors_node_form':
 		case 'conditionwhentimeslotfactors_node_form':
 		case 'conditionwhenholidayfactors_node_form':
-
+		
 		case 'conditionwhenweekfactors_node_form':
 		case 'conditionwherecountryfactors_node_form':
 		case 'conditionwherecustomfactors_node_form':
 		case 'conditionwherenetworkfactors_node_form':
 		case 'conditionwherecallerzone_node_form':
+		case 'conditionwhereissamezone_node_form':
 		case 'conditionwherecalleezone_node_form':
+		case 'conditionwhereclientip_node_form':
+		case 'conditionwheremacaddress_node_form':
+		case 'conditionwheredevicetype_node_form':
 		case 'conditionwhocustomfactors_node_form':
+		case 'conditionwhocalledcarrier_node_form':
 		case 'conditionwhomemberfactors_node_form':
 		case 'conditionwhonumberfactors_node_form':
 		case 'conditionwhoprefixfactors_node_form':
 		case 'conditioncommoncounterfactors_node_form':
 		case 'conditionwhatqos_node_form':
-        case 'tvchannel_node_form':
+		case 'tvchannel_node_form':
 		
 			_unset_menu_items($form,$form_id);
 			unset($form['field_weight']);
@@ -739,18 +756,6 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 				
 			break;
 			
-		case 'conditionwhereissamezone_node_form':
-			$form['title_markup'] = array(
-				'#type' => 'markup',
-                '#markup' => '<b>Condition : Caller and Callee are in the Szmezone</b>',
-           );
-           
-			_unset_menu_items($form,$form_id);
-			unset($form['field_weight']);
-			unset($form['field_parent_node']);
-			unset($form['actions']);
-			break;
-			
 		case 'conditionwhaturlgroups_node_form':
 		case 'conditionwhatcustom_node_form':
 		case 'conditionwhencustom_node_form':
@@ -765,6 +770,8 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 		case 'conditionwhomember_node_form':
 		case 'conditionwhonumber_node_form':
 		case 'conditionwhoprefix_node_form':
+		case 'conditionwheremacaddress_node_form':
+		case 'conditionwheredeivcetype_node_form':
 			_unset_menu_items($form,$form_id);
 			//$form['actions']['submit']['#submit'][] = 'product_catalog_form_form_redirect_handler';
 			//$form['actions']['submit']['#submit'][] = '_condition_submit_handler';

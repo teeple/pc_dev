@@ -1,8 +1,25 @@
 <?php
+function _is_condition_duplicated($args) {
+	$view = views_get_view('list_conditions_for_duplicate_check');
+	$view->set_display('panel_pane_1');
+	$view->set_arguments($args);
+	$view->execute();
+	
+	if(!empty($view->result)) return TRUE;
+	return FALSE;
+};
 
 function product_catalog_form_node_validate($node, $form, &$form_state){
 	
-	switch($form['form_id']['#value']){		
+	switch($form['form_id']['#value']){
+		case 'conditionwheremacaddress_node_form':
+			if(is_macaddress($form_state['values']['field_mac_address']['und'][0]['value']) == FALSE) {
+				drupal_set_message("Mac Address Format is not valid", 'error');
+				form_set_error('Mac Address Format is not valid');			
+			} 
+			break;
+		case 'conditionwheremacaddress_node_form':
+			break;
 		case 'timetablefactors_node_form':
 			if($form_state['values']['field_timeslot_from_hour']['und'][0]['value'] > $form_state['values']['field_timeslot_to_hour']['und'][0]['value']){
 				form_set_error('Reference','FROM is greater than TO');
@@ -18,7 +35,7 @@ function product_catalog_form_node_validate($node, $form, &$form_state){
 			}else if($form_state['values']['field_timeslot_from_hour']['und'][0]['value'] === '24'){
 				form_set_error('Reference','FROM Hour(24) is not allowed');
 			}
-		case 'conditionwhenactivationday_node_form':
+
 		case 'conditionwhensubscriptionday_node_form':
 			$operationTerm = taxonomy_term_load($form_state['values']['field_rating_operation_for_date']['und'][0]['tid']);
 			if($operationTerm->name == 'Is between' && 
@@ -47,9 +64,8 @@ function product_catalog_form_node_validate($node, $form, &$form_state){
 					form_set_error('counter id should be less than 1000000');
 				}
 			}
-            break;
-		case 'depositschemefactors_node_form':
-		
+      break;
+   	case 'depositschemefactors_node_form':
 		  // create
 		  if(!isset($form['nid']['#value'])){
 				$ref_depositscheme = $form_state['build_info']['args'][0]->field_ref_depositscheme['und'][0]['nid'];
@@ -66,10 +82,32 @@ function product_catalog_form_node_validate($node, $form, &$form_state){
 			       form_set_error('Deposit factors name should be unique');
 			  }
 			}
-			
 			break;
 	}
-//dsm($form_state,'node validate formstate');
+	
+	// condition 중복 체크. 동일한 condition set에 같은 type의 condition이 있는지를 확인하여 봄.
+	if(strncmp($form['form_id']['#value'], 'conditionwh', 11) ==  0) {
+	
+		// counter 관련 조건은 중복 추가 가능함.
+		if($form['form_id']['#value'] == 'conditionwhatcounter_node_form') return;
+		
+		// create일 때마 체크하도록 함
+		if(!isset($form['nid']['#value']) ) {
+			
+			if(!empty($form_state['build_info']['args'][0]->field_parent_node)) {
+				$args = array( '0' => $form_state['build_info']['args'][0]->type,
+											'1' => $form_state['build_info']['args'][0]->field_parent_node['und'][0]['nid']);
+				// $args = array('0' => $form_state['build_info']['args'][0]->
+				$isDuplicated = _is_condition_duplicated($args);
+				
+				if($isDuplicated > 0) {
+					drupal_set_message("Same condition type exists in condition set", "error");
+					form_set_error('Same condition type exists in condition set');
+				}
+			}
+		} // only in create
+	}
+	//dsm($form_state,'node validate formstate');
 }
 
 function check_same_type_of_call_exist($form, $form_state){

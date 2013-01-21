@@ -768,24 +768,6 @@
 						"image" : "/sites/default/files/file.png"
 					}
 				},
-				"conditionwhatqos" : {
-					"valid_children" : [],
-					"icon" : {
-						"image" : "/sites/default/files/file.png"
-					}
-				},
-				"conditionwhaturlgroupfactors" : {
-					"valid_children" : [],
-					"icon" : {
-						"image" : "/sites/default/files/file.png"
-					}
-				},
-				"conditionwhatcustomfactors" : {
-					"valid_children" : [],
-					"icon" : {
-						"image" : "/sites/default/files/file.png"
-					}
-				},
 				"conditionwhendayfactors" : {
 					"valid_children" : [],
 					"icon" : {
