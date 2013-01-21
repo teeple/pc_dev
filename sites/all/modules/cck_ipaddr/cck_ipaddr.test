@@ -1,0 +1,108 @@
+<?php
+
+/**
+ * @file
+ * Simpletest for cck_ipaddr
+ */
+
+class CckIpaddrTestCase extends DrupalWebTestCase {
+
+  public static function getInfo() {
+    return array(
+      'name' => 'IP Address Tests',
+      'description' => 'Test cck_ipaddr widgets and settings',
+      'group' => 'CCK',
+    );
+  }
+
+  /**
+   * Admin user who will run tests
+   */
+  protected $privileged_user;  
+
+  /**
+   * Set up the test
+   * Create an admin user
+   */
+  public function setUp() {
+    // Enable any modules required for the test.
+    parent::setUp('content', 'cck_ipaddr');
+
+    // Create and log in admin user.
+    $this->privileged_user = $this->drupalCreateUser(array(
+      'administer nodes',
+      'administer content types',
+    ));
+    $this->drupalLogin($this->privileged_user);
+  }
+
+  /**
+   * Add ipaddr and ipaddr_range fields to page content type
+   */
+  public function testCckIpaddr() {
+    // add an IP Address field to page content type
+    $ipaddr = array(
+      '_add_new_field[label]' => 'IP Address',
+      '_add_new_field[field_name]' => 'ipaddr',
+      '_add_new_field[type]' => 'cck_ipaddr',
+      '_add_new_field[widget_type]' => 'ipaddr'
+    );
+    $settings = array('private' => 1);
+    $this->drupalPost('admin/content/node-type/page/fields', $ipaddr, t('Save'));
+    $this->drupalPost(NULL, $settings, t('Save field settings'));
+    $this->assertText(t('Added field @title', 
+        array('@title' => $ipaddr['_add_new_field[label]'])));
+    
+    // add an IP Address Range field to page content type
+    $ipaddr_range = array(
+      '_add_new_field[label]' => 'IP Address Range',
+      '_add_new_field[field_name]' => 'ipaddr_range',
+      '_add_new_field[type]' => 'cck_ipaddr',
+      '_add_new_field[widget_type]' => 'ipaddr_range'
+    );
+    $settings = array('private' => 1, 'cidr' => 24);
+    $this->drupalPost('admin/content/node-type/page/fields', $ipaddr_range, t('Save'));
+    $this->drupalPost(NULL, $settings, t('Save field settings'));
+    $this->assertText(t('Added field @title', 
+        array('@title' => $ipaddr_range['_add_new_field[label]'])));
+  
+    //non-routeable address should fail
+    $page = array(
+      'title' => 'test',
+      'field_ipaddr_range[0][addr1_q1]' => 10,
+      'field_ipaddr_range[0][addr1_q2]' => 1,
+      'field_ipaddr_range[0][addr1_q3]' => 1,
+      'field_ipaddr_range[0][addr1_q4]' => 1,
+      'field_ipaddr_range[0][addr2_q1]' => 10,
+      'field_ipaddr_range[0][addr2_q2]' => 2,
+      'field_ipaddr_range[0][addr2_q3]' => 1,
+      'field_ipaddr_range[0][addr2_q4]' => 2,
+      'field_ipaddr_range[0][label]' => 'test range',
+    );
+    $this->drupalPost('node/add/page', $page, t('Save'));
+    $this->assertText(t('Illegal value for @field. Non-routable IP addresses are not allowed.',
+        array('@field' => 'IP range 0')));
+
+    //large cidr range should fail
+    $page['field_ipaddr_range[0][addr1_q1]'] = 100;
+    $page['field_ipaddr_range[0][addr2_q1]'] = 100;
+    $this->drupalPost(NULL, $page, t('Save'));
+    $this->assertText(t('Illegal address range for @field. Address range is limited to a 0.0.0.0/24 CIDR netmask.',
+        array('@field' => 'IP range 0')));
+
+    //bad quad value should fail
+    $page['field_ipaddr_range[0][addr2_q2]'] = 1;
+    $page['field_ipaddr_range[0][addr2_q4]'] = 999;
+    $this->drupalPost(NULL, $page, t('Save'));
+    $this->assertText(t('Illegal value for quad 8 in @field. Each quad must be an integer between 0 and 255.',
+        array('@field' => 'IP range 0')));
+
+    //good range should succeed
+    $page['field_ipaddr_range[0][addr2_q4]'] = 2;
+    $this->drupalPost(NULL, $page, t('Save'));
+    $this->assertText(t('Page @title has been created.',
+        array('@title' => 'test')));
+    //check that values are sanitized
+    $this->assertText('100.001.001.001 - 100.001.001.002');
+  }
+}

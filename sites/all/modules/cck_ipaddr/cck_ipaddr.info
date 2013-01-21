@@ -1,0 +1,12 @@
+; $Id $
+name = IP Address
+description = A CCK field and two CCK widgets for entering IP address and IP address ranges.
+dependencies[] = content
+package = CCK
+core = 6.x
+; Information added by drupal.org packaging script on 2011-11-01
+version = "7.x-1.x-dev"
+core = "7.x"
+project = "cck_ipaddr"
+datestamp = "1320105824"
+
