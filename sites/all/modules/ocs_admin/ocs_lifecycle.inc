@@ -9,16 +9,16 @@ function ocs_admin_check_lifecycle_scheme($node, $node_unchanged)
 	$after = array_get_value($node->field_lifecycle_states, FALSE);
 	$before = array_get_value($node_unchanged->field_lifecycle_states, FALSE);
 
-	dpm($after, 'after');
-	dpm($before, 'before');
+	//dpm($after, 'after');
+	//dpm($before, 'before');
 
 	$intersect = array_intersect($before, $after);
 	$removed = array_diff($before, $intersect);
 	$added = array_diff($after, $intersect);
 
-	dpm($added . 'nodes to add');
-	dpm($removed, 'nodes to remove');
-	dpm($intersect, 'node intersect');
+	//dpm($added . 'nodes to add');
+	//dpm($removed, 'nodes to remove');
+	//dpm($intersect, 'node intersect');
 
 	// check ocs_svc_perm
 	// ocs_svc_perm���� title�� node->nid�� instance ���� ����Ǿ� �ִ�.
@@ -76,6 +76,23 @@ function ocs_admin_check_lifecycle_scheme($node, $node_unchanged)
 	}
 
 }
+
+/*
+   add svc permission for each states
+   */
+function ocs_lifecycle_add_svcperm($node)
+{
+	$states = array_get_value($node->field_lifecycle_states, FALSE);
+
+	foreach( $states as $state_nid) {
+		$new_node = ocs_admin_get_new_node('ocs_svc_perm');
+		$new_node->title = 'Service permission for state:' . $state_nid . ' scheme:' . $node->nid;
+		$new_node->field_lifecycle_state['und'][0]['nid'] = $state_nid;
+		$new_node->field_lifecycle_scheme['und'][0]['nid'] = $node->nid;
+		node_save($new_node);
+	}
+}
+
 
 function ocs_lifecycle_node_form(&$form, &$form_state, $form_id)
 {
