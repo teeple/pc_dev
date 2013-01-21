@@ -1,13 +1,15 @@
 <?php
 
-function ocs_build_all_test_case( $form, &$form_state, $product_nid)
+function ocs_build_all_test_case( $form, &$form_state, $voice_or_sms, $product_nid)
 {
+	$node_type = ($voice_or_sms == 'voice') ? 'test_case_online_charging' : 'test_case_sms_charging';
+
 	$node = node_load( $product_nid);
 
 	/* get list of test cases */
 	$query = new EntityFieldQuery();
 	$result = $query->entityCondition( 'entity_type', 'node')
-		->entityCondition( 'bundle', 'test_case_online_charging')
+		->entityCondition( 'bundle', $node_type)
 		->execute();
 
 	if ( count( $result) > 0) {
@@ -16,7 +18,7 @@ function ocs_build_all_test_case( $form, &$form_state, $product_nid)
 			array( '@name' => $node->title, '@num' => count( $result['node'])));
 	}
 	else {
-		$msg = t( 'No test cases are found in the content type <em>"test_case_online_charging"</em>');
+		$msg = t( 'No test cases are found in the content type <em>"' . $node_type . '"</em>');
 	}
 
 	$form['markup'] = array(
@@ -39,6 +41,7 @@ function ocs_build_all_test_case( $form, &$form_state, $product_nid)
 	);
 
 	$form['#product'] = $product_nid;
+	$form['#node_type'] = $node_type;
 
 	return $form;
 }
@@ -51,17 +54,17 @@ function ocs_build_all_test_case_submit($form, &$form_state)
 	if ( $values['op'] == 'OK') {
 		$_SESSION['http_request_count'] = 0; // reset counter for debug information.
 
-		$batch = batch_build_test_case( $form['#product']);
+		$batch = batch_build_test_case( $form['#node_type'], $form['#product']);
 		batch_set($batch);
 	}
 }
 
-function batch_build_test_case( $product_nid = 0) 
+function batch_build_test_case( $node_type, $product_nid = 0) 
 {
 	/* get list of test cases */
 	$query = new EntityFieldQuery();
 	$result = $query->entityCondition( 'entity_type', 'node')
-		->entityCondition( 'bundle', 'test_case_online_charging')
+		->entityCondition( 'bundle', $node_type)
 		->execute();
 
 	drupal_set_message(t('Creating an array of @num operations', array('@num' => count( $result['node']))));
@@ -80,7 +83,7 @@ function batch_build_test_case( $product_nid = 0)
 		// Each operation is an array consisting of
 		// - the function to call
 		// - An array of arguments to that function
-		$operations[] = array('batch_build_test_case_op', array($product_nid, $nid, 
+		$operations[] = array('batch_build_test_case_op', array( $node_type, $product_nid, $nid, 
 				t('Test case @nid for product "@title"', array( '@nid' => $nid, '@title' => check_plain($product->title)))));
 	}
 
@@ -96,12 +99,14 @@ function batch_build_test_case( $product_nid = 0)
 }
 
 
-function batch_build_test_case_op( $product_nid, $tc_nid, $operation_details, &$context) 
+function batch_build_test_case_op( $node_type, $product_nid, $tc_nid, $operation_details, &$context) 
 {
+	$test_result_node_type = ($node_type == 'test_case_online_charging') ? 'test_result_online_charging' : 'test_result_sms_charging';
+
 	/* get list of test cases */
 	$query = new EntityFieldQuery();
 	$result = $query->entityCondition( 'entity_type', 'node')
-		->entityCondition( 'bundle', 'test_result_online_charging')
+		->entityCondition( 'bundle', $test_result_node_type)
 		->fieldCondition( 'field_ts_product', 'nid', $product_nid)
 		->fieldCondition( 'field_ts_test_case', 'nid', $tc_nid)
 		->execute();
@@ -111,11 +116,12 @@ function batch_build_test_case_op( $product_nid, $tc_nid, $operation_details, &$
 
 	if ( count( $result) == 0) {
 		// add new test case
-		$node = ocs_admin_get_new_node( 'test_result_online_charging');
+		$node = ocs_admin_get_new_node( $test_result_node_type);
 		$node->field_ts_test_case = array( 'und' => array( 0 => array( 'nid' => $tc_nid)));
 		$node->field_ts_product = array( 'und' => array( 0 => array( 'nid' => $product_nid)));
 		$node->field_ts_expected_charge = array( 'und' => array( 0 => array( 'value' => $tc->field_ts_default_charge['und'][0]['value'])));
-		$node->title = $prd->title . ' : ' . $tc->title;
+		$node->title = ($node_type == 'test_case_online_charging') ? 'Voice : ' : 'SMS : ';
+		$node->title .= $prd->title . ' : ' . $tc->title;
 
 		node_save( $node);
 
@@ -124,7 +130,8 @@ function batch_build_test_case_op( $product_nid, $tc_nid, $operation_details, &$
 	else {
 		$nids = array_keys( $result['node']);
 		$node = node_load( $nids[0]);
-		$node->title = $prd->title . ' : ' . $tc->title;
+		$node->title = ($node_type == 'test_case_online_charging') ? 'Voice : ' : 'SMS : ';
+		$node->title .= $prd->title . ' : ' . $tc->title;
 		$node->field_ts_expected_charge['und'][0]['value'] = $tc->field_ts_default_charge['und'][0]['value'];
 		node_save( $node);
 
