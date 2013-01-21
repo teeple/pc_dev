@@ -673,6 +673,12 @@ function product_catalog_ajax_select_modal_content($js = NULL, $contentType, $ni
 	$output = array();
 	$renderOutput = '<div id="modal_content" style="overflow:scroll;height:700px;">'.$renderedView.'</div>';
 	
+    switch($contentType){
+        case 'actionsetnotification':
+            $renderOutput .= '<input type="button" id="vbo-message-select-button" value="Select"/>';
+        break;
+    }
+    
 	$output[] = ctools_modal_command_display('Notification Message Selection', $renderOutput);
 	$output[] = ajax_command_invoke(NULL, 'selectModalButtonBinding', array('0' => $renderOutput, '1' => $nid, '2' => $defaultTabIndex));
 	
