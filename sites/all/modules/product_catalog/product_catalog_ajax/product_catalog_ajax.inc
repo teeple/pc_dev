@@ -427,8 +427,9 @@ function load_required_js_css_before_ajax_load(){
         $qTabPath = drupal_get_path('module', 'quicktabs');
         drupal_add_js($qTabPath.'/js/quicktabs.js');
         drupal_add_css($qTabPath.'/css/quicktabs.css');
-        drupal_add_css($qTabPath.'/quicktabs_tabstyles/tabstyles/zen/zen-rtl.css');
+        //drupal_add_css($qTabPath.'/quicktabs_tabstyles/tabstyles/zen/zen-rtl.css');
         drupal_add_css($qTabPath.'/quicktabs_tabstyles/tabstyles/zen/zen.css');
+        
         //views
         drupal_add_js(drupal_get_path('module', 'views').'/js/ajax_view.js'); 
     
