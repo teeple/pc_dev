@@ -29,6 +29,6 @@ function _json_exclusiveness($nid=NULL){
 		$product['exclusiveness'] = $exclusive_product_ids;
 		$jsonData['ProductExclusiveness'][] = $product;
 	}
-	
+	$jsonData['ifvalues']['resources'] = array();
 	return json_encode($jsonData);
 }
