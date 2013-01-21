@@ -69,13 +69,14 @@ function ocs_run_all_testcase_for_ocs( $ts_nid, $tc_nid, $tc_idx)
     // get test data
     if( isset( $tc->field_ts_test_data['und'][$tc_idx])) {
         $ts_data = node_load( $tc->field_ts_test_data['und'][$tc_idx]['nid']);
-		if ( $ts_data->type == 'test_result_online_charging') {
+		if ( $ts_data->type == 'test_result_online_charging' || $ts_data->type == 'test_result_sms_charging') {
 			$test_result = ocs_build_ts_json( $ts_data, field_info_instances( 'node', $ts_data->type));
 			//dpm( $test_result, 'test result');
 
 			// for test_result_online_charging type, read test data again
 			$ts_data = node_load( $ts_data->field_ts_test_case['und'][0]['nid']);
 		}
+
         if ( $field == NULL) $field = field_info_instances( 'node', $ts_data->type);
 
         $output = ocs_run_testcase_http( $url, $ts_data, $field, $tc->field_ts_method['und'][0]['value'],
