@@ -119,3 +119,8 @@
 	background-color: white;
 	color: blue;
 }
+
+/* modal select bulk operation command display */
+#views-form-list-messages-panel-pane-1 > div > fieldset{
+  display:none;
+}
