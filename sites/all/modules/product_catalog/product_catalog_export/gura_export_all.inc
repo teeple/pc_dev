@@ -244,9 +244,34 @@ function to_rating_rule_string($value)
 	return $value;
 }
 
-function get_rating_factor_values_from_drupal_field($obj , $field_name_arr)
+function format_rating_factor_value($field_name, $und, $value)
+{
+	$field_type = get_field_type_string($field_name);
+	if($field_type == "list_integer" || $field_type == "list_text")
+	{
+		dsm(field_info_field($field_name));
+	}
+	else if($field_type == 'list_boolean')
+	{
+		if($value == '1')
+			$value = 'true';
+		else
+			$value = 'false';
+	}
+
+	if(array_key_exists('date_type', $und) && $und['date_type'] =='datetime' )
+	{
+		$value = dash_date_to_nondash_date_string($und['value']);
+	}
+	return $value;
+}
+function get_rating_factor_values_from_drupal_field($obj , $field_name_arr, $use_title)
 {
 	$ret = array();
+	//if($field_name_arr[0] == "field_is_same_zone")
+	//{
+		//dsm($obj);
+	//}
 	foreach($field_name_arr as $field_name)
 	{
 		if(property_exists($obj , $field_name))
@@ -258,37 +283,68 @@ function get_rating_factor_values_from_drupal_field($obj , $field_name_arr)
 				if(array_key_exists('nid' , $und))
 				{
 					$nid = $und['nid'];
-					$value = $nid;
+					if($use_title)
+					{
+						$c = node_load($nid);
+						$value = $c->title;
+
+					}
+					else
+					{
+						$value = $nid;
+					}
+					if($value!=NULL)
+					{
+						$ret[] = $value;
+					}
 				}
 				else if(array_key_exists('tid' , $und))
 				{
 					$tid = $und['tid'];
 					$taxo = taxonomy_term_load($tid);
 					$value = $taxo->name;
-					if(property_exists($taxo , 'field_common_code'))
+					if($use_title == TRUE)
 					{
-						dsm($taxo);
-						$temp = get_drupal_field_values($taxo , 'field_common_code');
-						$value = $temp[0];
-						dsm($value);
 					}
-					if(property_exists($taxo , 'field_rating_operation_code'))
+					else
 					{
-						$temp = get_drupal_field_values($taxo , 'field_rating_operation_code');
-						$value = $temp[0];
+						if(property_exists($taxo , 'field_common_code'))
+						{
+							dsm($taxo);
+							$temp = get_drupal_field_values($taxo , 'field_common_code');
+							$value = $temp[0];
+							dsm($value);
+						}
+						if(property_exists($taxo , 'field_rating_operation_code'))
+						{
+							$temp = get_drupal_field_values($taxo , 'field_rating_operation_code');
+							$value = $temp[0];
+						}
+					}
+
+					if($value!=NULL)
+					{
+						$ret[] = $value;
 					}
 				}
 				else
 				{
 					$value = $und['value'];
-				}
-				if(array_key_exists('date_type', $und) && $und['date_type'] =='datetime' )
-				{
-					$value = dash_date_to_nondash_date_string($und['value']);
-				}
-				if($value!=NULL)
-				{
-					$ret[] = $value;
+					$value = format_rating_factor_value($field_name , $und , $value);
+					if($value!=NULL)
+					{
+						$ret[] = $value;
+					}
+
+					if(array_key_exists("value2" , $und))
+					{
+						$value = $und['value2'];
+						$value = format_rating_factor_value($field_name , $und , $value2);
+						if($value!=NULL)
+						{
+							$ret [] = $value;
+						}
+					}
 				}
 			}
 		}
@@ -477,6 +533,17 @@ function generate_condition_string_by_condition_node($nid, &$factor_list )
 			{
 				$factor_list[$type->field_rating_factor_name['und'][0]['value']] = $type;
 				$value = NULL;
+				$use_title = FALSE;
+				$tags = get_drupal_field_values($type, "field_rating_factor_tags");
+				foreach($tags as $tag)
+				{
+					//dsm($tag);
+					if($tag=="use_title")
+					{
+						$use_title = TRUE;
+					}
+				}
+
 
 				$op = '=';
 
@@ -504,9 +571,9 @@ function generate_condition_string_by_condition_node($nid, &$factor_list )
 					$drupal_field_name = get_drupal_field_values($type , "field_value");
 					//dsm($node);
 					if($op == "between")
-						$value = get_rating_factor_values_from_drupal_field($node , $drupal_field_name);
+						$value = get_rating_factor_values_from_drupal_field($node , $drupal_field_name, $use_title);
 					else
-						$value = get_rating_factor_values_from_drupal_field($node , array(0=>$drupal_field_name[0]));
+						$value = get_rating_factor_values_from_drupal_field($node , array(0=>$drupal_field_name[0]), $use_title);
 				}
 				else
 				{
@@ -698,6 +765,7 @@ function get_field_type_string($field_name)
     }
     return "unknown";
 }
+
 
 function date_to_iso8601_date_str($value)
 {
@@ -912,6 +980,7 @@ function get_rating_factor_info($rating_factor_name)
             $ret["default_op"] = $node->field_rating_factor_op['und'][0]['value'];
             $ret["size"] = $node->field_rating_factor_size['und'][0]['value'];
             $ret["type"] = $node->field_rating_factor_type['und'][0]['value'];
+            $ret["tags"] = get_drupal_field_values($node, "field_rating_factor_tags");
             return $ret;
         }
 	 }
