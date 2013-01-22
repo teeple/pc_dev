@@ -1358,6 +1358,14 @@
 											});
 										}
 									},
+									"Day of Month" : {
+										"label" : "Day of Month",
+										action : function(node) {
+											$.fn.addNode(node, {
+												'childContentType' : 'conditionwhendayofmonth'
+											});
+										}
+									},
 									"active_days" : {
 										"label" : "Active Days",
 										action : function(node) {
@@ -1455,6 +1463,7 @@
 					case 'conditionwhatcardtype':
 					case 'conditionwhereissamezone':
 					case 'conditionwherezonefactors':
+					case 'conditionwhendayofmonth':
 						menus.custom_delete._disabled = false;
 						menus.custom_delete.action = function(node) {
 							$.fn.deleteNode(node);
