@@ -93,6 +93,24 @@ function ocs_lifecycle_add_svcperm($node)
 	}
 }
 
+/*
+   remove svc permissions and state transition rules
+*/
+function ocs_lifecycle_deleted($node)
+{
+	$node_list = ocs_get_nodes_by_node_ref('ocs_state_machine', 'field_lifecycle_scheme', $node->nid);
+	//dpm( $node_list, 'state machine');
+	foreach( $node_list as $nid) {
+		node_delete( $nid);
+	}
+
+	$node_list = ocs_get_nodes_by_node_ref('ocs_svc_perm', 'field_lifecycle_scheme', $node->nid);
+	//dpm( $node_list, 'svc perm');
+	foreach( $node_list as $nid) {
+		node_delete( $nid);
+	}
+}
+
 
 function ocs_lifecycle_node_form(&$form, &$form_state, $form_id)
 {
