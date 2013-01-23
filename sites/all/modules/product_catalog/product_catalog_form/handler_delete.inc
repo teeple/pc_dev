@@ -125,11 +125,14 @@ function product_catalog_form_node_delete($node){
 			}
 			
 			break;
+            /*
         case 'number_special':
             //TODO: Delete children node
             $redirectUrl = 'common/numberingplan/number_special/list';
             $urlFragment = 'quickset-numbering_plan=3';
             break;
+             * 
+             */
 		case 'counter':
 			//unittransfer view
 			$unitTransferView = views_get_view('list_unittransfer');
