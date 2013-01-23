@@ -152,7 +152,9 @@ function product_catalog_form_node_delete($node){
 			break;
         case 'number_special':
             //TODO: Delete children node
-            $redirectUrl = 'common/numberingplan/domestic/list#quickset-numbering_plan=3';
+            node_delete($node->nid);
+            $redirectUrl = 'common/numberingplan/number_special/list';
+            $urlFragment = 'quickset-numbering_plan=3';
             break;
 	}
 	
@@ -162,7 +164,7 @@ function product_catalog_form_node_delete($node){
 	}
     
     if($redirectUrl != NULL){
-        drupal_goto($redirectUrl);
+        drupal_goto($redirectUrl,array(NULL,'fragment' => $urlFragment));
     }
 }
 
