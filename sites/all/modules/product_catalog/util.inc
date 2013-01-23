@@ -2,7 +2,7 @@
 
 function is_macaddress($val)
 {
-	return (bool)preg_match('/^([0-9a-fA-F][0-9a-fA-F]:){5}([0-9a-fA-F][0-9a-fA-F])$/',	$val);
+	return (bool)preg_match('/^([0-9a-fA-F][0-9a-fA-F]:){2}([0-9a-fA-F][0-9a-fA-F])$/',	$val);
 }
 
 function _clone_vocabulary($baseVocaName,$targetVocaName,$param=array()){

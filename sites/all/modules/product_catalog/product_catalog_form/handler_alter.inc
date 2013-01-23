@@ -60,7 +60,7 @@ function _add_ajax_submit_callback($form_id,&$form){
 		case 'conditionwherecalleezone_node_form':
 		case 'conditionwhereclientip_node_form':
 		case 'conditionwheremacaddress_node_form':
-		case 'conditionwheredeivcetype_node_form':
+		case 'conditionwheredevicetype_node_form':
 		case 'conditionwhocustomfactors_node_form':
 		case 'conditionwhomemberfactors_node_form':
 		case 'conditionwhonumberfactors_node_form':
@@ -81,8 +81,6 @@ function _add_ajax_submit_callback($form_id,&$form){
         case 'actionpricediscount_node_form':
         case 'actionpriceallowance_node_form':
 		case 'actionblockfactors_node_form':
-		// case 'counter_node_form':
-		// case 'actionsetnotification_node_form':
         case 'tariffplan_node_form':
         case 'treenodecounter_node_form':
         case 'prdattributeprefixrangeallowed_node_form':
@@ -201,6 +199,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 
 // dsm($form_id, 'form_id');
 //dsm($form_state, 'form_state');
+	load_required_js_css_before_ajax_load();
 	
     if((isset($form['#attributes']) && isset($form['#attributes']['class'])) 
         && gettype($form['#attributes']['class']) == 'array') {
@@ -1603,6 +1602,8 @@ function _get_available_counter_list($productNid, $existingCounterNids) {
 		$term_billing_type_counter = taxonomy_get_term_by_name($term_billing_type_product->name, 'billtypecounter');
 		$args[2] = current($term_billing_type_counter)->tid;
 	}
+	
+	dsm($args, 'args');
 	
 	if(isset($existingCounterNids)) {
 		$args[3] = join('+', $existingCounterNids);

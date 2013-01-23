@@ -14,9 +14,9 @@ function product_catalog_form_node_validate($node, $form, &$form_state){
 	switch($form['form_id']['#value']){
 		case 'conditionwheremacaddress_node_form':
 			if(is_macaddress($form_state['values']['field_mac_address']['und'][0]['value']) == FALSE) {
-				drupal_set_message("Mac Address Format is not valid", 'error');
-				form_set_error('Mac Address Format is not valid');			
-			} 
+				drupal_set_message("Only 3 bytes of Mac Address Format is allowed", 'error');
+				form_set_error('Only 3 bytes of Mac Address Format is allowed');			
+			}
 			break;
 		case 'conditionwheremacaddress_node_form':
 			break;
