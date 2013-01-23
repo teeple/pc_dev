@@ -90,9 +90,9 @@ function product_catalog_form_form_redirect_handler(&$form, &$form_state){
 			}
 			break;		
 		case 'number_special_node_form':			
-			$redirect_url = 'common/number_special/'.$form_state['values']['nid'];
-			$urlFragment = 'quickset-qtabs_common_data=6';
-			break;		
+			$redirect_url = 'common/numberingplan/number_special/'.$form_state['values']['nid'];
+            $urlFragment = 'quickset-numbering_plan=3';
+            break;		
         case 'actionpricefactors_node_form':
             $rule = node_load($form_state['rule_nid']);
             if($rule->type == 'rule') {
