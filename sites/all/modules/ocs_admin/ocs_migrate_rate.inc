@@ -259,6 +259,7 @@ function _set_price($plan_nid, $name, $price, $tid, $check_only = TRUE)
 	$new_rate->field_uom_units['und'][0]['tid'] = 1551;     
 	$new_rate->field_ref_tariffplan['und'][0]['nid'] = $plan_nid;
 	$new_rate->field_ref_tree_tid['und'][0]['value'] = $tid['tree_tid'];
+	$new_rate->field_price['und'][0]['value'] = $price;
 
 	if ( ! $check_only) {
 		node_save($new_rate);
