@@ -150,12 +150,20 @@ function product_catalog_form_node_delete($node){
 			}
 					
 			break;
+        case 'number_special':
+            //TODO: Delete children node
+            $redirectUrl = 'common/numberingplan/domestic/list#quickset-numbering_plan=3';
+            break;
 	}
 	
 	$childNodes = array_unique($childNodes); 
 	if(!empty($childNodes)){
 		node_delete_multiple($childNodes);
 	}
+    
+    if($redirectUrl != NULL){
+        drupal_goto($redirectUrl);
+    }
 }
 
 function _unlink_conditionfactors_from_sp_rule($param){
