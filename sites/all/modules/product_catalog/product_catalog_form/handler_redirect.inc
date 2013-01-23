@@ -205,7 +205,7 @@ function product_catalog_form_form_redirect_handler(&$form, &$form_state){
 	$form_state['redirect'] = array(
   		$redirect_url,
   		array(
-			//NULL,
+			NULL,
   			'fragment' => $urlFragment,
   		)
   	);
