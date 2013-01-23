@@ -788,6 +788,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			unset($form['field_parent_node']);
             unset($form['field_weight']);
 			if(!isset($form['nid']['#value'])){
+			    dsm('if create');
 				$form['actions']['submit']['#submit'][]  = 'product_catalog_form_form_redirect_handler';
 			}else{
 			    $form['field_target_usage_type‎']['und']['#disabled'] = TRUE;

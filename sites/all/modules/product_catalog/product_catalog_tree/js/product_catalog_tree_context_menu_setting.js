@@ -2064,12 +2064,12 @@
 			case "numberspecial_tree":
 				var relType = obj.attr("rel");
 				switch (relType) {
-					case "number_special":
-						menus.custom_delete._disabled = false;
-						menus.custom_delete.action = function(node) {
-							$.fn.deleteNode(node);
-						};
-						break;
+					//case "number_special":
+					//	menus.custom_delete._disabled = false;
+					//	menus.custom_delete.action = function(node) {
+					//		$.fn.deleteNode(node);
+					//	};
+					//	break;
 					case "Rates":
 						menus.custom_create._disabled = false;
 						menus.custom_create.submenu = {

@@ -89,7 +89,8 @@ function product_catalog_form_form_redirect_handler(&$form, &$form_state){
 					break;
 			}
 			break;		
-		case 'number_special_node_form':			
+		case 'number_special_node_form':	
+            dsm('here');		
 			$redirect_url = 'common/numberingplan/number_special/'.$form_state['values']['nid'];
             $urlFragment = 'quickset-numbering_plan=3';
             break;		
