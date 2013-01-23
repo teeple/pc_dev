@@ -176,8 +176,8 @@ function product_catalog_form_form_redirect_handler(&$form, &$form_state){
 			}
         	break;
         case 'carrier_mobile_node_form':
-        	$redirect_url = 'common/carrier_mobile/'.$form_state['values']['nid'];
-			$urlFragment = 'quickset-qtabs_common_data=11';
+        	$redirect_url = 'common/numberingplan/carrier_mobile/'.$form_state['values']['nid'];
+			$urlFragment = 'quickset-qtabs_common_data=6';
         	break;
         case 'packetdynamicl4_node_form':
             $redirect_url = 'common/packet/dynamic/l4/'.$form_state['values']['nid'];
