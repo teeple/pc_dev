@@ -58,7 +58,7 @@ function product_catalog_tree_form($form, &$form_state) {
     	),
     );
 
- 	drupal_add_js( $settings, 'setting');
+	drupal_add_js( $settings, 'setting');
 	//ctools_add_js('ctools-ajax-sample', 'ctools_ajax_sample');
  	//ctools_add_css('ctools-ajax-sample', 'ctools_ajax_sample');
 	return $form;
