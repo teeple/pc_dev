@@ -31,6 +31,7 @@ function _load_tree_item_mixed_with_node_and_term($rootNode,$grandParentNode=NUL
 	foreach($tree as $item){
 		$term = taxonomy_term_load($item->tid);
         
+        /*
         if($term->name == 'Roaming'){ //skip roaming term in case of not prepaid
             if($grandParentNode != NULL){
                 if($grandParentNode->type == 'simpleproductoffering'){
@@ -40,7 +41,8 @@ function _load_tree_item_mixed_with_node_and_term($rootNode,$grandParentNode=NUL
                     }
                 }
             }
-        }       
+        } 
+        */
         
 		$itemArray = array(
 				'attr' => array('id' => 'term_'.$item->tid.'_'.$rootNode->nid,
