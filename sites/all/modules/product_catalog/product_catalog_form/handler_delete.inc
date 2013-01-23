@@ -150,12 +150,14 @@ function product_catalog_form_node_delete($node){
 			}
 					
 			break;
+            /*
         case 'number_special':
             //TODO: Delete children node
             node_delete($node->nid);
             $redirectUrl = 'common/numberingplan/number_special/list';
             $urlFragment = 'quickset-numbering_plan=3';
             break;
+             */
 	}
 	
 	$childNodes = array_unique($childNodes); 
