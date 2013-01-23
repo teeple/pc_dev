@@ -261,11 +261,31 @@ function format_rating_factor_value($field_name, $und, $value)
 
 	if(array_key_exists('date_type', $und) && $und['date_type'] =='datetime' )
 	{
-		$value = dash_date_to_nondash_date_string($und['value']);
+		$value = dash_date_to_nondash_date_string($value);
 	}
 	return $value;
 }
-function get_rating_factor_values_from_drupal_field($obj , $field_name_arr, $use_title)
+
+function get_rating_factor_value_from_partial_date($value)
+{
+	$ret = "";
+	if($value['year']!=NULL)
+	{
+		$ret = $ret . $value['year'];
+	}
+
+	if($value['month']!=NULL)
+	{
+		$ret = $ret . sprintf("%02d", $value['month']);
+	}
+	if($value['day']!=NULL)
+	{
+		$ret = $ret . sprintf("%02d", $value['day']);
+	}
+	return $ret;
+}
+
+function get_rating_factor_values_from_drupal_field($obj , $field_name_arr, $use_title, $use_field = NULL)
 {
 	$ret = array();
 	//if($field_name_arr[0] == "field_is_same_zone")
@@ -289,13 +309,29 @@ function get_rating_factor_values_from_drupal_field($obj , $field_name_arr, $use
 						$value = $c->title;
 
 					}
+					else if($use_field!=NULL)
+					{
+						$c = node_load($nid);
+						$value = get_rating_factor_values_from_drupal_field($c , array($use_field)  , FALSE , NULL);
+					}
 					else
 					{
 						$value = $nid;
 					}
+
 					if($value!=NULL)
 					{
-						$ret[] = $value;
+						if(is_array($value))
+						{
+							foreach($value as $v)
+							{
+								$ret[] = $v;
+							}
+						}
+						else
+						{
+							$ret[] = $value;
+						}
 					}
 				}
 				else if(array_key_exists('tid' , $und))
@@ -327,6 +363,17 @@ function get_rating_factor_values_from_drupal_field($obj , $field_name_arr, $use
 						$ret[] = $value;
 					}
 				}
+				else if(get_field_type_string($field_name) == 'partial_date_range')
+				{
+					if(array_key_exists('from' , $und))
+					{
+						$ret[]  = get_rating_factor_value_from_partial_date($und['from']);
+					}
+					if(array_key_exists('to' , $und))
+					{
+						$ret[]  = get_rating_factor_value_from_partial_date($und['to']);
+					}
+				}
 				else
 				{
 					$value = $und['value'];
@@ -339,7 +386,7 @@ function get_rating_factor_values_from_drupal_field($obj , $field_name_arr, $use
 					if(array_key_exists("value2" , $und))
 					{
 						$value = $und['value2'];
-						$value = format_rating_factor_value($field_name , $und , $value2);
+						$value = format_rating_factor_value($field_name , $und , $value);
 						if($value!=NULL)
 						{
 							$ret [] = $value;
@@ -534,6 +581,7 @@ function generate_condition_string_by_condition_node($nid, &$factor_list )
 				$factor_list[$type->field_rating_factor_name['und'][0]['value']] = $type;
 				$value = NULL;
 				$use_title = FALSE;
+				$use_field = NULL;
 				$tags = get_drupal_field_values($type, "field_rating_factor_tags");
 				foreach($tags as $tag)
 				{
@@ -541,6 +589,15 @@ function generate_condition_string_by_condition_node($nid, &$factor_list )
 					if($tag=="use_title")
 					{
 						$use_title = TRUE;
+					}
+
+					if(string_startsWith($tag,"use_field"))
+					{
+						$pos = strpos($tag , '=');
+						if($pos!==false)
+						{
+							$use_field = substr($tag , $pos+1 );
+						}
 					}
 				}
 
@@ -571,9 +628,9 @@ function generate_condition_string_by_condition_node($nid, &$factor_list )
 					$drupal_field_name = get_drupal_field_values($type , "field_value");
 					//dsm($node);
 					if($op == "between")
-						$value = get_rating_factor_values_from_drupal_field($node , $drupal_field_name, $use_title);
+						$value = get_rating_factor_values_from_drupal_field($node , $drupal_field_name, $use_title, $use_field);
 					else
-						$value = get_rating_factor_values_from_drupal_field($node , array(0=>$drupal_field_name[0]), $use_title);
+						$value = get_rating_factor_values_from_drupal_field($node , array(0=>$drupal_field_name[0]), $use_title, $use_field);
 				}
 				else
 				{
@@ -589,12 +646,21 @@ function generate_condition_string_by_condition_node($nid, &$factor_list )
 
 				if(is_array($value))
 				{
+					if(count($value)==0)
+						return NULL;
+
 					$factor_name = $type->field_rating_factor_name['und'][0]['value'];
 
 					if($op == '=' || $op == 'starts' || $op == 'ends')
 					{
 						array_apply($value , 'to_rating_rule_string');
-						return $factor_name . ' ' . $op . ' ' . join(',' , $value);
+
+						if(count($value) > 1)
+						{
+							return $factor_name . ' ' . $op . '(' . join(',' , $value) . ')';
+						}
+						else
+							return $factor_name . ' ' . $op . ' ' . join(',' , $value);
 					}
 					else if($op == 'between')
 					{
@@ -602,7 +668,11 @@ function generate_condition_string_by_condition_node($nid, &$factor_list )
 						array_apply($value , 'to_rating_rule_string');
 						return $factor_name . ' ' . $op . ' ' . join(',' , $value);
 						 */
-						if(count($value) == 2)
+						if(count($value)==1)
+						{
+							return $factor_name . ' ' . $op . " $value[0] , $value[0]";
+						}
+						else if(count($value) == 2)
 						{
 							array_apply($value , 'to_rating_rule_string');
 							return $factor_name . ' ' . $op . ' ' . join(',' , $value);
