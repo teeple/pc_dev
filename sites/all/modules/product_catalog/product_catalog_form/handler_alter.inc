@@ -23,9 +23,8 @@ function _unset_menu_items(&$form,$formId){
         case 'roaming_plan_node_form':
 		case 'counter_node_form':
 		case 'depositscheme_node_form':
-		case 'tvchannel_node_form':
+		    case 'tvchannel_node_form':
         case 'lifecyclescheme_node_form':
-        case 'number_special_node_form':
 			$unsetDeleteButton = FALSE;
 			//dsm($form);
 			break;
@@ -73,7 +72,8 @@ function _add_ajax_submit_callback($form_id,&$form){
 		case 'conditioncommoncounterfactors_node_form':
 		case 'conditionwhatqos_node_form':
 		case 'conditioncommoncarrieridd_node_form':
-        case 'conditioncommoncarrierdomestic_node_form':
+		case 'conditionwhatcardtype_node_form':
+		    case 'conditioncommoncarrierdomestic_node_form':
         case 'conditioncommonratinggroup_node_form':
         case 'conditioncommontimetablefactors_node_form':
         case 'actionpricediscountfactors_node_form':
@@ -295,6 +295,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 		    $form['field_weight']['#type'] = 'hidden';
             $form['field_parent_node']['#type'] = 'hidden';
 			_unset_menu_items($form,$form_id);
+			/*
 			unset($form['actions']);
 			
 			$form['custom_markup'] = array('#type'=> 'markup',
@@ -307,7 +308,8 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 				'#markup' => "<input type='button' id='multiselect_custom_button_cardtype' value='Save'></input>",
 				'#weight' => 100,
 			);
-			break;
+			*/
+				break;
 			
 		case 'holidaylist_specific_node_form':
 		case 'holidaylist_repeatable_node_form':
@@ -843,7 +845,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			unset($form['field_parent_node']);
             unset($form['field_weight']);
 			if(!isset($form['nid']['#value'])){
-			    $form['actions']['submit']['#submit'][]  = 'product_catalog_form_form_redirect_handler';
+				$form['actions']['submit']['#submit'][]  = 'product_catalog_form_form_redirect_handler';
 			}else{
 			    $form['field_target_usage_type‎']['und']['#disabled'] = TRUE;
 			}
@@ -1403,7 +1405,6 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
                    unset($form['field_charge_collection']);
                    unset($form['field_range_units']);
                    unset($form['field_uom_units']); 
-                   unset($form['field_grace_seconds']);
                 }
             }
             _unset_menu_items($form,$form_id); 
