@@ -1226,6 +1226,14 @@
 											});
 										}
 									},
+									"Day of Month" : {
+										"label" : "Day of Month",
+										action : function(node) {
+											$.fn.addNode(node, {
+												'childContentType' : 'conditionwhendayofmonth'
+											});
+										}
+									},
 									"active_days" : {
 										"label" : "Active Days",
 										action : function(node) {
@@ -1293,6 +1301,35 @@
 								}
 							},
 						};
+<<<<<<< HEAD
+=======
+						break;
+					case "conditionwhatqos":
+					case "conditionwhaturlgroupfactors":
+					case "conditionwhatcounter":
+					case "conditionwhatcustomfactors":
+					case "conditionwhatusagetypefactors":
+					case "conditionwhatnonusagetypefactors":
+					case "conditionwhendayfactors":
+					case "conditionwhendurationfactors":
+					case "conditionwhenholidayfactors":
+					case "conditionwhentimeslotfactors":
+					case "conditionwhenweekfactors":
+					case "conditionwherecountryfactors":
+					case "conditionwherenetworkfactors":
+					case "conditionwherecallerzone":
+					case "conditionwherecalleezone":					
+					case "conditionwherecustomfactors":
+					case "conditionwhomemberfactors":
+					case "conditionwhonumberfactors":
+					case "conditionwhoprefixfactors":
+					case "conditionwhocustom":
+					case "conditionwhocustomerlevel":
+					case 'conditionwhatcardtype':
+					case 'conditionwhereissamezone':
+					case 'conditionwherezonefactors':
+					case 'conditionwhendayofmonth':
+>>>>>>> 3e04297540678242fe85472f9fee89c12c0e9f20
 						menus.custom_delete._disabled = false;
 						menus.custom_delete.action = function(node) {
 							$.fn.deleteNode(node);

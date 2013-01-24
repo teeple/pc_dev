@@ -64,6 +64,8 @@ function _add_ajax_submit_callback($form_id,&$form){
 		case 'conditionwhocustomfactors_node_form':
 		case 'conditionwhomemberfactors_node_form':
 		case 'conditionwhonumberfactors_node_form':
+		case 'conditionwhosubscribermdn_node_form':
+		case 'conditionwhosubscriberstatus_node_form':
 		case 'conditionwhocalledcarrier_node_form':
 		case 'conditionwhoprefixfactors_node_form':
 		case 'conditionwhocustomerlevel_node_form':
@@ -82,6 +84,7 @@ function _add_ajax_submit_callback($form_id,&$form){
         case 'actionpriceallowance_node_form':
 		case 'actionblockfactors_node_form':
         case 'tariffplan_node_form':
+    case 'treenodeproductforvoucher_node_form':
         case 'treenodecounter_node_form':
         case 'prdattributeprefixrangeallowed_node_form':
         case 'prdattributeprefixrangenotallowe_node_form':
@@ -340,13 +343,25 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
         	//$form['field_tree_child_voca_name']['und']['#default_value'][0] = 'tbl_vouchercardtype';
         	$form['field_tree_child_voca_name']['#type'] = 'hidden';
         	_unset_menu_items($form,$form_id);
-            
+        	
+        	unset($form['field_active_period']);
+        	unset($form['field_grace_period']);
+        	  
             if(!isset($form['nid']['#value'])){
 			    $form['actions']['submit']['#submit'][] = '_vouchercardtype_submit_handler';			
 			    $form['actions']['submit']['#submit'][] = 'product_catalog_form_form_redirect_handler';
             }
             break;
-            
+        
+        case 'treenodeproductforvoucher_node_form':
+        	unset($form['field_ref_product']);
+        	unset($form['field_ref_tree_tid']);
+        	unset($form['field_weight']);
+        	unset($form['field_ref_vouchercardtype']);
+        	
+        	_unset_menu_items($form, $form_id);
+        	break;
+        	  
         case 'loyaltypoint_node_form':
         	
         	// loyaltypoint���ъ���� counter��point��counter留�蹂������濡����.
@@ -552,7 +567,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			$form['actions']['submit']['#submit'][] = 'product_catalog_form_form_redirect_handler';
 			break;
             
-        case 'treenodecounter_node_form':
+      case 'treenodecounter_node_form':
 			$refTreeTerm = taxonomy_term_load($form['field_ref_tree_tid']['und'][0]['value']['#default_value']);
 			
 			if($refTreeTerm->name == 'Charging') {
@@ -590,15 +605,16 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 				$element = $form['field_counter']['und'];
 				
 				$form['field_counter']['und']['#options'] = $mergedCounterList;
+				
 			}
 			
 			$form['title']['#type'] = 'hidden';
-            $form['field_ref_counter']['#type'] = 'hidden';
-            $form['field_parent_node']['#type'] = 'hidden';
-            $form['field_weight']['#type'] = 'hidden';
-            $form['field_ref_tree_tid']['#type'] = 'hidden';
-            $form['field_ref_product']['#type'] = 'hidden';
-            $form['field_main_or_accumulated']['#type'] = 'hidden';
+      $form['field_ref_counter']['#type'] = 'hidden';
+      $form['field_parent_node']['#type'] = 'hidden';
+      $form['field_weight']['#type'] = 'hidden';
+      $form['field_ref_tree_tid']['#type'] = 'hidden';
+      $form['field_ref_product']['#type'] = 'hidden';
+      $form['field_main_or_accumulated']['#type'] = 'hidden';
 			
 			_unset_menu_items($form,$form_id);
 
@@ -725,16 +741,49 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 		case 'conditionwhomemberfactors_node_form':
 		case 'conditionwhonumberfactors_node_form':
 		case 'conditionwhoprefixfactors_node_form':
+		case 'conditionwhosubscribermdn_node_form':
 		case 'conditioncommoncounterfactors_node_form':
 		case 'conditionwhatqos_node_form':
 		case 'tvchannel_node_form':
-		
-			_unset_menu_items($form,$form_id);
-			unset($form['field_weight']);
-			unset($form['field_parent_node']);
-			//$form['actions']['submit']['#submit'][] = '_condition_submit_handler';
-			//$form['actions']['submit']['#submit'][] = 'product_catalog_form_form_redirect_handler';
-            break;
+				_unset_menu_items($form,$form_id);
+				unset($form['field_weight']);
+				unset($form['field_parent_node']);
+  			break;
+  	case 'conditionwhosubscriberstatus_node_form':
+  			// Edit 
+  			if(!empty($form['nid']['#value'])) {
+  			
+  			} else { // Create
+					$productNid = $form_state['root_nid'];
+					$view = views_get_view('list_lifecycle_scheme');
+					$view->set_display('panel_pane_5');
+					$view->set_arguments(array('0'=>$productNid));
+					$view->execute();
+
+					// lifecycle scheme이 선택되어 있지 않을때. 					
+					if(empty($view->result)) {
+						unset($form['actions']);
+						unset($form['field_subscriber_status']);
+						$form['chart_button'] = array(
+							'#type' => 'markup',
+							'#markup' => '<h3> You should select lifecycle scheme First! </h3>',
+						);
+					} else {
+						$options = array();
+						foreach($view->result as $record) {
+							$statusNid = $record->field_field_lifecycle_states[0]['raw']['nid'];
+							$statusName = $record->field_field_lifecycle_states[0]['rendered']['#title'];
+							$options[$statusNid] = $statusName;
+							
+						}
+						$form['field_subscriber_status']['und']['#options'] = $options;
+					}
+  			}
+  			_unset_menu_items($form,$form_id);
+  			unset($form['field_weight']);
+  			unset($form['field_parent_node']);
+  			break;
+  	
 		case 'conditionwhendurationfactors_node_form':
 			_unset_menu_items($form,$form_id);
 			unset($form['field_weight']);
@@ -1602,8 +1651,6 @@ function _get_available_counter_list($productNid, $existingCounterNids) {
 		$term_billing_type_counter = taxonomy_get_term_by_name($term_billing_type_product->name, 'billtypecounter');
 		$args[2] = current($term_billing_type_counter)->tid;
 	}
-	
-	dsm($args, 'args');
 	
 	if(isset($existingCounterNids)) {
 		$args[3] = join('+', $existingCounterNids);

@@ -1451,6 +1451,8 @@ function product_catalog_ajax_load_select_form($nid,$eventType,$rootNid,$relType
 // dsm($termInTree, 'termInTree');
 	$qtabConfigs = _qtabconfig_loading($targetCollection, $termInTree);
 	
+//dsm($qtabConfigs, 'qtabConfigs');
+	
 	$qtabs = array();
     $weight = 0;
     
@@ -1582,7 +1584,7 @@ function product_catalog_ajax_load_tree($js = NULL, $rootNid) {
 	    	$children = get_children_stored_procedure($rootNid);
 	    break;
 	}
-    //dsm($children,'children'); 
+    // dsm($children,'children'); 
     print json_encode($children); 
     //dsm(date('H:i:s'));    
     exit;

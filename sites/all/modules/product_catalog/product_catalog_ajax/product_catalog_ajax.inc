@@ -12,6 +12,7 @@ function _load_tree_item_mixed_with_node_and_term($rootNode,$grandParentNode=NUL
 	switch($rootNode->type){
 		case 'simpleproductoffering':
 			$vocaName = _get_vocabulary_name('simpleproductoffering', $rootNode);
+			$children['state'] = 'open';
 			break;			
 		case 'tariffplan':
 		case 'vouchercardtype':
@@ -50,7 +51,17 @@ function _load_tree_item_mixed_with_node_and_term($rootNode,$grandParentNode=NUL
 				),
 				'data' => $item->name
 		);
-			
+		
+	 switch($term->field_rel_type['und'][0]['safe_value']) {
+		 case 'mobile_attribute':
+		 case 'mobile_attribute_packaged':
+		 case 'mobile_counter':
+		 case 'mobile_nonusage':
+		 case 'mobile_usage':
+		 		$itemArray['state'] = 'open';
+		 		break;
+	 }
+	 		
 		if(isset($term->field_qtabs_loading['und'][0]['value'])){
 			$loadingInfo = field_collection_item_load($term->field_qtabs_loading['und'][0]['value']);
 			//$qtabType = $loadingInfo->field_tab_type['und'][0]['value'];
@@ -290,10 +301,12 @@ function get_children_stored_procedure($nid,$parentId=NULL){
 	$stored_procedure_query = "call pc_dev.getTreeDataView(:nid);";
 	$stored_procedure_result = db_query($stored_procedure_query,array(':nid' => $nid))->fetchAll();
 	
-    foreach($stored_procedure_result as $item){
+  foreach($stored_procedure_result as $item){
     
-    if ($item->content_type == 'conditioncommonand') { 
-    	$item->rel_type = _get_rel_type_on_condition($item);
+    switch($item->content_type) {
+    	case 'conditioncommonand':
+    		$item->rel_type = _get_rel_type_on_condition($item);
+    		break;
     }
     
 		$itemArray = array(
@@ -361,7 +374,7 @@ function get_children($nid) {
 
         case 'treenodecounter':
             $refNode = node_load($node->field_ref_counter['und'][0]['nid']);
-
+            
             $nodeTitle = $refNode->title;
             $main_or_accumulated = taxonomy_term_load($refNode->field_main_or_accumulated['und'][0]['tid']);
             $counter_type = taxonomy_term_load($refNode->field_counter_type['und'][0]['tid']);

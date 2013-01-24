@@ -107,6 +107,17 @@ BEGIN
 																						   WHERE entity_id = parent_nid)
 																	)
 													)
+												),'_',
+												LOWER(
+													(SELECT name
+													   FROM taxonomy_term_data
+													  WHERE tid = (SELECT field_billing_type_counter_tid 
+																	  FROM field_data_field_billing_type_counter
+																	 WHERE entity_id = (SELECT field_ref_counter_nid
+																							FROM field_data_field_ref_counter
+																						   WHERE entity_id = parent_nid)
+																	)
+													)
 												)
 									 )
 								 WHEN parent.bundle = 'treenodewithnodereference' THEN
@@ -199,6 +210,17 @@ BEGIN
 																				   WHERE entity_id = parent_nid)
 															)
 											)
+										),'_',
+										LOWER(
+											(SELECT name
+											   FROM taxonomy_term_data
+											  WHERE tid = (SELECT field_billing_type_counter_tid 
+															  FROM field_data_field_billing_type_counter
+															 WHERE entity_id = (SELECT field_ref_counter_nid
+																					FROM field_data_field_ref_counter
+																				   WHERE entity_id = parent_nid)
+															)
+											)
 										)
 							 )
 						 WHEN node.type = 'treenodewithnodereference' THEN
@@ -225,13 +247,6 @@ BEGIN
 							  WHERE tid = (SELECT field_ref_tree_node_tid_value
 											  FROM field_data_field_ref_tree_node_tid 
 											 WHERE entity_id = parent_nid)
-							)
-						WHEN node.type = 'treenodecounter' THEN	
-							(SELECT title
-							   FROM node
-							  WHERE nid =	(SELECT field_ref_counter_nid
-											   FROM field_data_field_ref_counter
-											  WHERE entity_id = parent_nid)
 							)
 						WHEN node.type = 'treenodewithnodereference' THEN	
 							(SELECT title

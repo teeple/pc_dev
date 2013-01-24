@@ -176,7 +176,9 @@
 							$.fn.deleteNode(node);
 						};
 						break;
-					case "tree_node_counter_main_basic":
+						
+					case "tree_node_counter_main_basic_prepaid":
+					case "tree_node_counter_main_basic_postpaid":
 						menus.custom_delete._disabled = false;
 						menus.custom_delete.action = function(node) {
 							$.fn.deleteNode(node);
@@ -193,7 +195,8 @@
 							},
 						};
 						break;
-					case 'tree_node_counter_main_rollover':
+					case 'tree_node_counter_main_rollover_prepaid':
+					case 'tree_node_counter_main_rollover_postpaid':
 						menus.custom_delete._disabled = false;
 						menus.custom_delete.action = function(node) {
 							$.fn.deleteNode(node);
@@ -210,7 +213,8 @@
 							},
 						};
 						break;
-					case "tree_node_counter_main_optional":
+					case "tree_node_counter_main_optional_prepaid":
+					case "tree_node_counter_main_optional_postpaid":
 						menus.custom_delete._disabled = false;
 						menus.custom_delete.action = function(node) {
 							$.fn.deleteNode(node);
@@ -227,7 +231,8 @@
 							},
 						};
 						break;
-					case "tree_node_counter_accumulated_basic":
+					case "tree_node_counter_accumulated_basic_prepaid":
+					case "tree_node_counter_accumulated_basic_postpaid":
 						menus.custom_delete._disabled = false;
 						menus.custom_delete.action = function(node) {
 							$.fn.deleteNode(node);
@@ -834,7 +839,8 @@
 						};
 						break;
 
-					case 'tree_node_counter_accumulated_optional':
+					case 'tree_node_counter_accumulated_optional_prepaid':
+					case 'tree_node_counter_accumulated_optional_postpaid':
 						menus.custom_delete._disabled = false;
 						menus.custom_delete.action = function(node) {
 							$.fn.deleteNode(node);
@@ -851,7 +857,26 @@
 							},
 						};
 						break;
-
+						
+					case 'tree_node_counter_accumulated_rollover_prepaid':
+					case 'tree_node_counter_accumulated_rollover_postpaid':
+						menus.custom_delete._disabled = false;
+						menus.custom_delete.action = function(node) {
+							$.fn.deleteNode(node);
+						};
+						menus.custom_create._disabled = false;
+						menus.custom_create.submenu = {
+							"actionpricechargeonetime" : {
+								"label" : "ConditionSet",
+								action : function(node) {
+									$.fn.addNode(node, {
+										'childContentType' : 'conditioncommonand'
+									});
+								}
+							},
+						};
+						break;
+					
 					case "actionpriceallowanceonetime":
 						menus.custom_delete._disabled = false;
 						menus.custom_delete.action = function(node) {
@@ -1066,6 +1091,22 @@
 							"who" : {
 								"label" : "Who",
 								"submenu" : {
+									"subscriber MDN" : {
+										"label" : "Subscriber MDN",
+										action : function(node) {
+											$.fn.addNode(node, {
+												'childContentType' : 'conditionwhosubscribermdn'
+											});
+										}
+									},
+									"Subscrbier Status" : {
+										"label" : "Subscrbier Status",
+										action : function(node) {
+											$.fn.addNode(node, {
+												'childContentType' : 'conditionwhosubscriberstatus'
+											});
+										}
+									},
 									"prefix" : {
 										"label" : "Called Number",
 										action : function(node) {
@@ -1320,6 +1361,22 @@
 													});
 												}
 											},
+											"subscriber MDN" : {
+												"label" : "Subscriber MDN",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhosubscribermdn'
+													});
+												}
+											},
+											"Subscrbier Status" : {
+												"label" : "Subscrbier Status",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhosubscriberstatus'
+													});
+												}
+											},
 										}
 									},
 									"what" : {
@@ -1464,6 +1521,23 @@
 													});
 												}
 											},
+											"subscriber MDN" : {
+												"label" : "Subscriber MDN",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhosubscribermdn'
+													});
+												}
+											},
+											"Subscrbier Status" : {
+												"label" : "Subscrbier Status",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhosubscriberstatus'
+													});
+												}
+											},
+											
 										}
 									},
 									"what" : {
@@ -1600,6 +1674,23 @@
 													});
 												}
 											},
+											"subscriber MDN" : {
+												"label" : "Subscriber MDN",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhosubscribermdn'
+													});
+												}
+											},
+											"Subscrbier Status" : {
+												"label" : "Subscrbier Status",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhosubscriberstatus'
+													});
+												}
+											},
+											
 										}
 									},
 									"what" : {
@@ -1744,6 +1835,23 @@
 													});
 												}
 											},
+											"subscriber MDN" : {
+												"label" : "Subscriber MDN",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhosubscribermdn'
+													});
+												}
+											},
+											"Subscrbier Status" : {
+												"label" : "Subscrbier Status",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhosubscriberstatus'
+													});
+												}
+											},
+											
 										}
 									},
 									"what" : {
@@ -1880,6 +1988,23 @@
 									"who_" : {
 										"label" : "Who",
 										"submenu" : {
+												"subscriber MDN" : {
+													"label" : "Subscriber MDN",
+													action : function(node) {
+														$.fn.addNode(node, {
+															'childContentType' : 'conditionwhosubscribermdn'
+														});
+													}
+												},
+												"Subscrbier Status" : {
+													"label" : "Subscrbier Status",
+													action : function(node) {
+														$.fn.addNode(node, {
+															'childContentType' : 'conditionwhosubscriberstatus'
+														});
+													}
+												},
+												
 											"prefix" : {
 												"label" : "Called Number",
 												action : function(node) {
@@ -2102,6 +2227,23 @@
 									"who_" : {
 										"label" : "Who",
 										"submenu" : {
+											"subscriber MDN" : {
+												"label" : "Subscriber MDN",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhosubscribermdn'
+													});
+												}
+											},
+											"Subscrbier Status" : {
+												"label" : "Subscrbier Status",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhosubscriberstatus'
+													});
+												}
+											},
+										
 											"customer level" : {
 												"label" : "Customer level",
 												action : function(node) {
@@ -2239,6 +2381,23 @@
 									"who_" : {
 										"label" : "Who",
 										"submenu" : {
+											"subscriber MDN" : {
+												"label" : "Subscriber MDN",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhosubscribermdn'
+													});
+												}
+											},
+											"Subscrbier Status" : {
+												"label" : "Subscrbier Status",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhosubscriberstatus'
+													});
+												}
+											},
+											
 											"prefix" : {
 												"label" : "Called Number",
 												action : function(node) {
@@ -2437,6 +2596,23 @@
 									"who_" : {
 										"label" : "Who",
 										"submenu" : {
+											"subscriber MDN" : {
+												"label" : "Subscriber MDN",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhosubscribermdn'
+													});
+												}
+											},
+											"Subscrbier Status" : {
+												"label" : "Subscrbier Status",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhosubscriberstatus'
+													});
+												}
+											},
+											
 											"prefix" : {
 												"label" : "Called Number",
 												action : function(node) {
@@ -2634,6 +2810,23 @@
 									"who_" : {
 										"label" : "Who",
 										"submenu" : {
+											"subscriber MDN" : {
+												"label" : "Subscriber MDN",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhosubscribermdn'
+													});
+												}
+											},
+											"Subscrbier Status" : {
+												"label" : "Subscrbier Status",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhosubscriberstatus'
+													});
+												}
+											},
+											
 											"customer level" : {
 												"label" : "Customer level",
 												action : function(node) {
@@ -2819,6 +3012,22 @@
 									"who_" : {
 										"label" : "Who",
 										"submenu" : {
+											"subscriber MDN" : {
+												"label" : "Subscriber MDN",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhosubscribermdn'
+													});
+												}
+											},
+											"Subscrbier Status" : {
+												"label" : "Subscrbier Status",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhosubscriberstatus'
+													});
+												}
+											},
 											"customer level" : {
 												"label" : "Customer level",
 												action : function(node) {
@@ -2981,6 +3190,8 @@
 					case "conditionwhendayfactors":
 					case "conditionwhendurationfactors":
 					case "conditionwhenholidayfactors":
+					case "conditionwhendayofmonth":
+					case "conditionwhenactivedays":
 					case "conditionwhentimeslotfactors":
 					case "conditionwhenweekfactors":
 					case "conditionwherecountryfactors":
@@ -2993,6 +3204,8 @@
 					case "conditionwheredevicetype":
 					case "conditionwhomemberfactors":
 					case "conditionwhonumberfactors":
+					case "conditionwhosubscribermdn":
+					case "conditionwhosubscriberstatus":
 					case "conditionwhoprefixfactors":
 					case "conditionwhocustom":
 					case "conditionwhocustomerlevel":
