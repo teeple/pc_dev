@@ -1,3 +1,4 @@
+#!/usr/bin/env drush                      
 <?php
 
 $case = array(
@@ -102,51 +103,84 @@ array('  98. MOBI_INT TIMEID2 00~09','97688778899','003821097971731','Voice','20
 array('  99. UNI_INT TIMEID2 00~09','97688778899','008821097971731','Voice','2013-01-07 5:00','60','495'),
 	);
 
+$subs = array(
+		array( '428880300001696', '100000136020', '97688000011'),
+		array( '428880300001697', '100000136021', '97688000012'),
+		array( '428880300001698', '100000136022', '97688000005'),
+		array( '428880300001699', '100000136023', '97688000006'),
+		array( '428880300001700', '100000136024', '97688000007'),
+		array( '428880300001701', '100000136025', '97688000008'),
+		array( '428880300001702', '100000136026', '97688000009'),
+		array( '428880300001694', '100000136018', '97688003002'),
+		array( '428880300001695', '100000136019', '97688003004'),
+		array( '428880300001693', '100000136017', '97688003000'),
+		array( '428880300001690', '100000136013', '97687003000'),
+		array( '428880300001691', '100000136014', '97688003001'),
+		array( '428880300001692', '100000136015', '97688003003'),
+		);
+
+
 $nl = '
 ';
 
-foreach( $case as $tc) {
-	$node = _get_node_by_title( $tc[0]);
-	if ( empty( $node)) {
-		$node = ocs_admin_get_new_node('test_case_online_charging');
-		print 'New node '.$nl;
-		$node->title = $tc[0];
+$user = array(
+		"subscription_key" => "428880111011135", 
+		"user_key" => "97688788899", 
+		"product_id" => "fce_prepaid_A", 
+		"origId" => "97688788899", 
+		"accountId" => "97688788899" 
+		);
+
+
+foreach( $subs as $s) {
+	$user['subscription_key'] = $s[0];
+	$user['user_key'] = $user['origId'] = $user['accountId'] = $s[2];
+
+	// first recharge
+	recharge( $user);
+
+	foreach( $case as $tc) {
+		$node = _get_node_by_title( $tc[0]);
+
+		$stime = new DateTime();
+		$node->field_ts_starttime['und'][0]['value'] = $stime->format('YmdHis');
+		$duration = rand( 3, 300);
+		$etime = $stime->add( new DateInterval('PT'.$duration.'S'));
+		$node->field_ts_endtime['und'][0]['value'] = $etime->format('YmdHis');
+
+		$output = ocs_run_testcase_http( 'http://10.21.8.70:8085/ocs/subscriber/' . $user['user_key'] . '/directdebit', $node, NULL, 'POST', '', '', $user);
+		$response = $output['response'];
+		$result = json_decode( $response->data);
+		if ( $result->result_code != '0') {
+			print $tc[0] . ' : FAIL' . $nl;
+			print_r( $output);
+			if ( $result->result_reason == 'NOT_ENOUGH_BALANCE') {
+				recharge( $user);
+			}
+		}
+		else {
+			print $tc[0] . ' : SUCCESS' . $nl;
+		}
+	}
+}
+
+function recharge( $user)
+{
+	$nl = '
+';
+	$recharge_template = node_load( 60016);
+	$recharge_template->field_recharge_type['und'][0]['value'] = 3;
+
+	$output = ocs_run_testcase_http( 'http://10.21.8.70:8085/ocs/subscriber/' . $user['subscription_key'] . '/recharge', 
+			$recharge_template, NULL, 'POST', '{"recharge":', '}', $user);
+	$response = $output['response'];
+	$result = json_decode( $response->data);
+	if ( $result->result_code != '0') {
+		print 'Recharge : FAIL' . $nl;
 	}
 	else {
-		print 'Existing node '. $node->title.$nl;
+		print 'Recharge : SUCCESS' . $nl;
 	}
-
-	$node->field_ts_accountid['und'][0]['value'] = $tc[1];
-	$node->field_ts_origid['und'][0]['value'] = $tc[1];
-	$node->field_ts_destid['und'][0]['value'] = $tc[2];
-	$node->field_ts_duration['und'][0]['value'] = $tc[5];
-	$node->field_ts_default_charge['und'][0]['value'] = $tc[6];
-	$node->field_ts_serviceid['und'][0]['value'] = 1;
-
-	$stime = new DateTime( $tc[4]);
-	$node->field_ts_starttime['und'][0]['value'] = $stime->format('YmdHis');
-	print_r( $stime);
-	$etime = $stime->add( new DateInterval('PT'.$tc[5].'S'));
-	print_r( $etime);
-	$node->field_ts_endtime['und'][0]['value'] = $etime->format('YmdHis');
-
-	/* voice service info */
-	if ( empty($node->field_ts_voiceserviceinfo)) {
-		$vs = entity_create('field_collection_item', array('field_name' => 'field_ts_voiceserviceinfo'));
-		$vs->setHostEntity( 'node', $node);
-	}
-	else {
-		$vs = entity_load_single( 'field_collection_item', $node->field_ts_voiceserviceinfo['und'][0]['value']);
-	}
-
-	$vs->field_ts_typeofnumber['und'][0]['value'] = 1;
-	$vs->field_ts_dialed['und'][0]['value'] = $tc[2];
-	$vs->field_ts_triggertype['und'][0]['value'] = 1;
-	$vs->field_ts_voicesvctype['und'][0]['value'] = 1;
-	$vs->field_ts_vlrnumber['und'][0]['value'] = '97612345678';
-	$vs->save();
-
-	node_save( $node);
 }
 
 
