@@ -262,25 +262,12 @@
             case 'conditioncommonor':
             case 'conditioncommonand':
             case 'defaulttreenode':
-            case 'conditionwhatincomingcall':
             case 'treenodepacketpredefined': 
             case 'prdattributeallowedmodel':
             case 'prdattributeavailablechannel':
             	needToLoadEdit = false;
             	needToLoadDetail = false;
             	break; 
-            case 'conditionwhencustomerbirthday':
-            	needToLoadEdit = false;
-            	needToLoadDetail = false;
-            	break;
-            case 'conditionwhencompanybirthday':
-            	needToLoadEdit = false;
-            	needToLoadDetail = false;
-            	break;
-            case 'conditionwhenfirstmonth':
-            	needToLoadEdit = false;
-            	needToLoadDetail = false;
-            	break;
             case 'treenodespecialnumberscheme':
             	needToLoadEdit = false;
             	break;

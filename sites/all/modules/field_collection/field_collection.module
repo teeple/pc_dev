@@ -1023,8 +1023,14 @@ function field_collection_field_widget_form(&$form, &$form_state, $field, $insta
       if (empty($element['#required'])) {
         $element['#after_build'][] = 'field_collection_field_widget_embed_delay_required_validation';
       }
-
       if ($field['cardinality'] == FIELD_CARDINALITY_UNLIMITED) {
+          $markupStr = '<input type="button" value="remove" id="remove_collection_item_'.$field_collection_item->item_id.'"/>';
+          $element['remove_button'] = array(
+              '#type' => 'markup',
+              '#markup' => $markupStr,
+              '#weight' => 1000,
+            );
+         /*
         $element['remove_button'] = array(
           '#delta' => $delta,
           '#name' => implode('_', $parents) . '_remove_button',
@@ -1038,7 +1044,8 @@ function field_collection_field_widget_form(&$form, &$form_state, $field, $insta
             'effect' => 'fade',
           ),
           '#weight' => 1000,
-        );
+        );*/
+        
       }
 
       $recursion--;

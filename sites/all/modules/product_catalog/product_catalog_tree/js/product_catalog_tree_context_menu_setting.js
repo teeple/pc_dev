@@ -34,6 +34,8 @@
 		switch (treeType) {
 			case "product_tree":
 				var relType = obj.attr("rel");
+				console.log('relType');
+				console.log(relType);
 				switch (relType) {
 					case "treenodevouchercardforproduct":
 						menus.custom_create._disabled = false;
@@ -65,6 +67,12 @@
 						};
 						break;
 					case "prdnonusagerollover":
+						menus.custom_delete._disabled = false;
+						menus.custom_delete.action = function(node) {
+							$.fn.deleteNode(node);
+						};
+						break;
+					case "treenodespecialnumberscheme":
 						menus.custom_delete._disabled = false;
 						menus.custom_delete.action = function(node) {
 							$.fn.deleteNode(node);
@@ -1056,34 +1064,25 @@
 						menus.custom_create._disabled = false;
 						menus.custom_create.submenu = {
 							"who" : {
-								"label" : "WHO",
+								"label" : "Who",
 								"submenu" : {
-									/*
-									"member" : {
-										"label" : "Member",
-										action : function(node) {
-											$.fn.addNode(node, {
-												'childContentType' : 'conditionwhomemberfactors'
-											});
-										}
-									},
-									*/
-									"number" : {
-										"label" : "Number",
-										action : function(node) {
-											$.fn.addNode(node, {
-												'childContentType' : 'conditionwhonumberfactors'
-											});
-										}
-									},
 									"prefix" : {
-										"label" : "Prefix",
+										"label" : "Called Number",
 										action : function(node) {
 											$.fn.addNode(node, {
 												'childContentType' : 'conditionwhoprefixfactors'
 											});
 										}
 									},
+									"carrier" : {
+										"label" : "Carrier (Called)",
+										action : function(node) {
+											$.fn.addNode(node, {
+												'childContentType' : 'conditionwhocalledcarrier'
+											});
+										}
+									},
+									
 									"customer level" : {
 										"label" : "customer level",
 										action : function(node) {
@@ -1095,7 +1094,7 @@
 								}
 							},
 							"where" : {
-								"label" : "WHERE",
+								"label" : "Where",
 								"submenu" : {
 									"caller zone" : {
 										"label" : "Caller Zone",
@@ -1121,164 +1120,49 @@
 											});
 										}
 									},
+									"client IP" : {
+										"label" : "Client IP",
+										action : function(node) {
+											$.fn.addNode(node, {
+												'childContentType' : 'conditionwhereclientip'
+											});
+										}
+									},
+									"client MAC Address" : {
+										"label" : "Client MAC Address",
+										action : function(node) {
+											$.fn.addNode(node, {
+												'childContentType' : 'conditionwheremacaddress'
+											});
+										}
+									},
+									"client Device Type" : {
+										"label" : "Client Device Type",
+										action : function(node) {
+											$.fn.addNode(node, {
+												'childContentType' : 'conditionwheredevicetype'
+											});
+										}
+									},
 								}
 							},
-							
 							"what" : {
-								"label" : "WHAT",
+								"label" : "What",
 								"submenu" : {
 									"usage_type" : {
 										"label" : "UsageType",
-										"submenu" : {
-											"voice" : {
-												"label" : "voice",
-												action : function(node) {
-													$.fn.addNode(node, {
-														'childContentType' : 'conditionwhatusagetypefactors',
-														'usageType' : 'voice'
-													});
-												}
-											},
-											"sms" : {
-												"label" : "sms",
-												action : function(node) {
-													$.fn.addNode(node, {
-														'childContentType' : 'conditionwhatusagetypefactors',
-														'usageType' : 'sms'
-													});
-												}
-											},
-											"packet" : {
-												"label" : "packet",
-												action : function(node) {
-													$.fn.addNode(node, {
-														'childContentType' : 'conditionwhatusagetypefactors',
-														'usageType' : 'packet'
-													});
-												}
-											},
-											"crbt" : {
-												"label" : "crbt",
-												action : function(node) {
-													$.fn.addNode(node, {
-														'childContentType' : 'conditionwhatusagetypefactors',
-														'usageType' : 'crbt'
-													});
-												}
-											},
-											"mms" : {
-												"label" : "mms",
-												action : function(node) {
-													$.fn.addNode(node, {
-														'childContentType' : 'conditionwhatusagetypefactors',
-														'usageType' : 'mms'
-													});
-												}
-											},
-											"loyalty_point_deduct" : {
-												"label" : "loyalty_point_deduct",
-												action : function(node) {
-													$.fn.addNode(node, {
-														'childContentType' : 'conditionwhatusagetypefactors',
-														'usageType' : 'loyalty_point_deduct'
-													});
-												}
-											},																																	
+										action : function(node) {
+											$.fn.addNode(node, {
+													'childContentType' : 'conditionwhatusagetypefactors'
+											});
 										},
 									},
 									"nonusage_type" : {
 										"label" : "NonUsageType",
-										"submenu" : {
-											"activation" : {
-												"label" : "activation",
-												action : function(node) {
+											action : function(node) {
 													$.fn.addNode(node, {
 														'childContentType' : 'conditionwhatnonusagetypefactors',
-														'nonUsageType' : 'activation'
-													});
-												}
-											},
-											"bonus_on_recharge" : {
-												"label" : "bonus_on_recharge",
-												action : function(node) {
-													$.fn.addNode(node, {
-														'childContentType' : 'conditionwhatnonusagetypefactors',
-														'nonUsageType' : 'bonus_on_recharge'
-													});
-												}
-											},
-											"query_hotbill" : {
-												"label" : "query_hotbill",
-												action : function(node) {
-													$.fn.addNode(node, {
-														'childContentType' : 'conditionwhatnonusagetypefactors',
-														'nonUsageType' : 'query_hotbill'
-													});
-												}
-											},
-											"recharge" : {
-												"label" : "recharge",
-												action : function(node) {
-													$.fn.addNode(node, {
-														'childContentType' : 'conditionwhatnonusagetypefactors',
-														'nonUsageType' : 'recharge'
-													});
-												}
-											},
-											"recurring_bonus" : {
-												"label" : "recurring_bonus",
-												action : function(node) {
-													$.fn.addNode(node, {
-														'childContentType' : 'conditionwhatnonusagetypefactors',
-														'nonUsageType' : 'recurring_bonus'
-													});
-												}
-											},
-											"recurring_charge" : {
-												"label" : "recurring_charge",
-												action : function(node) {
-													$.fn.addNode(node, {
-														'childContentType' : 'conditionwhatnonusagetypefactors',
-														'nonUsageType' : 'recurring_charge'
-													});
-												}
-											},
-											"subscription" : {
-												"label" : "subscription",
-												action : function(node) {
-													$.fn.addNode(node, {
-														'childContentType' : 'conditionwhatnonusagetypefactors',
-														'nonUsageType' : 'subscription'
-													});
-												}
-											},
-											"unit_transfer" : {
-												"label" : "unit_transfer",
-												action : function(node) {
-													$.fn.addNode(node, {
-														'childContentType' : 'conditionwhatnonusagetypefactors',
-														'nonUsageType' : 'unit_transfer'
-													});
-												}
-											},
-											"unsubscription" : {
-												"label" : "unsubscription",
-												action : function(node) {
-													$.fn.addNode(node, {
-														'childContentType' : 'conditionwhatnonusagetypefactors',
-														'nonUsageType' : 'unsubscription'
-													});
-												}
-											},
-											"usage_based_bonus" : {
-												"label" : "usage_based_bonus",
-												action : function(node) {
-													$.fn.addNode(node, {
-														'childContentType' : 'conditionwhatnonusagetypefactors',
-														'nonUsageType' : 'usage_based_bonus'
-													});
-												}
-											},
+											});
 										},
 									},
 									"voucher_card_type" : {
@@ -1289,27 +1173,11 @@
 											});
 										}
 									},
-									"incomingcall" : {
+									"Incoming Call" : {
 										"label" : "Incoming Call",
 										action : function(node) {
 											$.fn.addNode(node, {
 												'childContentType' : 'conditionwhatincomingcall'
-											});
-										}
-									},
-									"qos" : {
-										"label" : "QoS",
-										action : function(node) {
-											$.fn.addNode(node, {
-												'childContentType' : 'conditionwhatqos'
-											});
-										}
-									},
-									"urlgroup" : {
-										"label" : "URL Group",
-										action : function(node) {
-											$.fn.addNode(node, {
-												'childContentType' : 'conditionwhaturlgroupfactors'
 											});
 										}
 									},
@@ -1332,7 +1200,7 @@
 								}
 							},
 							"when" : {
-								"label" : "WHEN",
+								"label" : "When",
 								"submenu" : {
 									"day" : {
 										"label" : "Day",
@@ -1432,12 +1300,9 @@
 									},
 								}
 							},
-							
 						};
-						menus.custom_delete._disabled = false;
-						menus.custom_delete.action = function(node) {
-							$.fn.deleteNode(node);
-						};
+<<<<<<< HEAD
+=======
 						break;
 					case "conditionwhatqos":
 					case "conditionwhaturlgroupfactors":
@@ -1464,7 +1329,927 @@
 					case 'conditionwhereissamezone':
 					case 'conditionwherezonefactors':
 					case 'conditionwhendayofmonth':
+>>>>>>> 3e04297540678242fe85472f9fee89c12c0e9f20
 						menus.custom_delete._disabled = false;
+						menus.custom_delete.action = function(node) {
+							$.fn.deleteNode(node);
+						};
+						break;
+						case "conditioncommonand_nonusage_subscription":
+								menus.custom_create._disabled = false;
+								menus.custom_create.submenu = {
+									"who_" : {
+										"label" : "Who",
+										"submenu" : {
+											/*
+											"prefix" : {
+												"label" : "Called Number",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhoprefixfactors'
+													});
+												}
+											},
+											"carrier" : {
+												"label" : "Carrier (Called)",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhocalledcarrier'
+													});
+												}
+											},
+											*/
+											"customer level" : {
+												"label" : "Customer level",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhocustomerlevel'
+													});
+												}
+											},
+										}
+									},
+									"where_" : {
+										"label" : "Where",
+										"submenu" : {
+											"caller zone" : {
+												"label" : "Caller Zone",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwherecallerzone'
+													});
+												}
+											},
+											"callee zone" : {
+												"label" : "Callee Zone",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwherecalleezone'
+													});
+												}
+											},
+											"samezone" : {
+												"label" : "Caller/Callee in SameZone",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhereissamezone'
+													});
+												}
+											},
+											"client IP" : {
+												"label" : "Client IP",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhereclientip'
+													});
+												}
+											},
+										}
+									},
+									"what" : {
+										"label" : "What",
+										"submenu" : {
+											"usage_type" : {
+												"label" : "UsageType",
+												action : function(node) {
+													$.fn.addNode(node, {
+															'childContentType' : 'conditionwhatusagetypefactors'
+													});
+												},
+											},
+											"nonusage_type" : {
+												"label" : "NonUsageType",
+													action : function(node) {
+															$.fn.addNode(node, {
+																'childContentType' : 'conditionwhatnonusagetypefactors',
+													});
+												},
+											},
+											"voucher_card_type" : {
+												"label" : "Card Types",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhatcardtype'
+													});
+												}
+											},
+											"Incoming Call" : {
+												"label" : "Incoming Call",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhatincomingcall'
+													});
+												}
+											},
+											"calltype" : {
+												"label" : "Call Type",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhatcalltype'
+													});
+												}
+											},
+											"Counter" : {
+												"label" : "Counter",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhatcounter'
+													});
+												}
+											},
+										}
+									},
+									"when" : {
+										"label" : "When",
+										"submenu" : {
+											"day" : {
+												"label" : "Day",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhendayfactors'
+													});
+												}
+											},
+											"subscription_day" : {
+												"label" : "Subscription Date",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhensubscriptionday'
+													});
+												}
+											},
+											"activation_day" : {
+												"label" : "Activation Date",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhenactivationday'
+													});
+												}
+											},
+											"active_days" : {
+												"label" : "Active Days",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhenactivedays'
+													});
+												}
+											},
+											"customerbirthday" : {
+												"label" : "Customer Birthday",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhencustomerbirthday'
+													});
+												}
+											},
+											"companybirthday" : {
+												"label" : "Company Birthday",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhencompanybirthday'
+													});
+												}
+											},
+											"duration" : {
+												"label" : "Duration",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhendurationfactors'
+													});
+												}
+											},
+											"holiday" : {
+												"label" : "Holiday",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhenholidayfactors'
+													});
+												}
+											},
+											"timeslot" : {
+												"label" : "Timeslot",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhentimeslotfactors'
+													});
+												}
+											},
+											"week" : {
+												"label" : "Week",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhenweekfactors'
+													});
+												}
+											},
+											"firstmonth" : {
+												"label" : "First Month",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhenfirstmonth'
+													});
+												}
+											},
+										}
+									},
+								};
+								menus.custom_delete._disabled = false;
+								menus.custom_delete.action = function(node) {
+									$.fn.deleteNode(node);
+						};
+						break;
+						case "conditioncommonand_nonusage_unsubscription":
+								menus.custom_create._disabled = false;
+								menus.custom_create.submenu = {
+									"who_" : {
+										"label" : "Who",
+										"submenu" : {
+											"prefix" : {
+												"label" : "Called Number",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhoprefixfactors'
+													});
+												}
+											},
+											"carrier" : {
+												"label" : "Carrier (Called)",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhocalledcarrier'
+													});
+												}
+											},
+											"customer level" : {
+												"label" : "Customer level",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhocustomerlevel'
+													});
+												}
+											},
+										}
+									},
+									"where_" : {
+										"label" : "Where",
+										"submenu" : {
+											"caller zone" : {
+												"label" : "Caller Zone",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwherecallerzone'
+													});
+												}
+											},
+											"callee zone" : {
+												"label" : "Callee Zone",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwherecalleezone'
+													});
+												}
+											},
+											"samezone" : {
+												"label" : "Caller/Callee in SameZone",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhereissamezone'
+													});
+												}
+											},
+											"client IP" : {
+												"label" : "Client IP",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhereclientip'
+													});
+												}
+											},
+										}
+									},
+									"what" : {
+										"label" : "What",
+										"submenu" : {
+											"usage_type" : {
+												"label" : "UsageType",
+												action : function(node) {
+													$.fn.addNode(node, {
+															'childContentType' : 'conditionwhatusagetypefactors'
+													});
+												},
+											},
+											"nonusage_type" : {
+												"label" : "NonUsageType",
+													action : function(node) {
+															$.fn.addNode(node, {
+																'childContentType' : 'conditionwhatnonusagetypefactors',
+													});
+												},
+											},
+											"voucher_card_type" : {
+												"label" : "Card Types",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhatcardtype'
+													});
+												}
+											},
+											"Incoming Call" : {
+												"label" : "Incoming Call",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhatincomingcall'
+													});
+												}
+											},
+											"calltype" : {
+												"label" : "Call Type",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhatcalltype'
+													});
+												}
+											},
+											"Counter" : {
+												"label" : "Counter",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhatcounter'
+													});
+												}
+											},
+										}
+									},
+									"when" : {
+										"label" : "When",
+										"submenu" : {
+											"day" : {
+												"label" : "Day",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhendayfactors'
+													});
+												}
+											},
+											"subscription_day" : {
+												"label" : "Subscription Date",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhensubscriptionday'
+													});
+												}
+											},
+											"activation_day" : {
+												"label" : "Activation Date",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhenactivationday'
+													});
+												}
+											},
+											"active_days" : {
+												"label" : "Active Days",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhenactivedays'
+													});
+												}
+											},
+											"customerbirthday" : {
+												"label" : "Customer Birthday",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhencustomerbirthday'
+													});
+												}
+											},
+											"companybirthday" : {
+												"label" : "Company Birthday",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhencompanybirthday'
+													});
+												}
+											},
+											"duration" : {
+												"label" : "Duration",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhendurationfactors'
+													});
+												}
+											},
+											"holiday" : {
+												"label" : "Holiday",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhenholidayfactors'
+													});
+												}
+											},
+											"timeslot" : {
+												"label" : "Timeslot",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhentimeslotfactors'
+													});
+												}
+											},
+											"week" : {
+												"label" : "Week",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhenweekfactors'
+													});
+												}
+											},
+											"firstmonth" : {
+												"label" : "First Month",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhenfirstmonth'
+													});
+												}
+											},
+										}
+									},
+								};
+								menus.custom_delete._disabled = false;
+								menus.custom_delete.action = function(node) {
+									$.fn.deleteNode(node);
+						};
+						break;
+						case "conditioncommonand_nonusage_activation":
+								menus.custom_create._disabled = false;
+								menus.custom_create.submenu = {
+									"who_1" : {
+										"label" : "Who",
+										"submenu" : {
+											"prefix" : {
+												"label" : "Called Number",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhoprefixfactors'
+													});
+												}
+											},
+											"carrier" : {
+												"label" : "Carrier (Called)",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhocalledcarrier'
+													});
+												}
+											},
+											"customer level" : {
+												"label" : "Customer level",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhocustomerlevel'
+													});
+												}
+											},
+										}
+									},
+									"where_" : {
+										"label" : "Where",
+										"submenu" : {
+											"caller zone" : {
+												"label" : "Caller Zone",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwherecallerzone'
+													});
+												}
+											},
+											"callee zone" : {
+												"label" : "Callee Zone",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwherecalleezone'
+													});
+												}
+											},
+											"samezone" : {
+												"label" : "Caller/Callee in SameZone",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhereissamezone'
+													});
+												}
+											},
+											"client IP" : {
+												"label" : "Client IP",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhereclientip'
+													});
+												}
+											},
+										}
+									},
+									"what" : {
+										"label" : "What",
+										"submenu" : {
+											"usage_type" : {
+												"label" : "UsageType",
+												action : function(node) {
+													$.fn.addNode(node, {
+															'childContentType' : 'conditionwhatusagetypefactors'
+													});
+												},
+											},
+											"nonusage_type" : {
+												"label" : "NonUsageType",
+													action : function(node) {
+															$.fn.addNode(node, {
+																'childContentType' : 'conditionwhatnonusagetypefactors',
+													});
+												},
+											},
+											"voucher_card_type" : {
+												"label" : "Card Types",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhatcardtype'
+													});
+												}
+											},
+											"Incoming Call" : {
+												"label" : "Incoming Call",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhatincomingcall'
+													});
+												}
+											},
+											"calltype" : {
+												"label" : "Call Type",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhatcalltype'
+													});
+												}
+											},
+											"Counter" : {
+												"label" : "Counter",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhatcounter'
+													});
+												}
+											},
+										}
+									},
+									"when" : {
+										"label" : "When",
+										"submenu" : {
+											"day" : {
+												"label" : "Day",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhendayfactors'
+													});
+												}
+											},
+											"subscription_day" : {
+												"label" : "Subscription Date",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhensubscriptionday'
+													});
+												}
+											},
+											"activation_day" : {
+												"label" : "Activation Date",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhenactivationday'
+													});
+												}
+											},
+											"active_days" : {
+												"label" : "Active Days",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhenactivedays'
+													});
+												}
+											},
+											"customerbirthday" : {
+												"label" : "Customer Birthday",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhencustomerbirthday'
+													});
+												}
+											},
+											"companybirthday" : {
+												"label" : "Company Birthday",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhencompanybirthday'
+													});
+												}
+											},
+											"duration" : {
+												"label" : "Duration",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhendurationfactors'
+													});
+												}
+											},
+											"holiday" : {
+												"label" : "Holiday",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhenholidayfactors'
+													});
+												}
+											},
+											"timeslot" : {
+												"label" : "Timeslot",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhentimeslotfactors'
+													});
+												}
+											},
+											"week" : {
+												"label" : "Week",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhenweekfactors'
+													});
+												}
+											},
+											"firstmonth" : {
+												"label" : "First Month",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhenfirstmonth'
+													});
+												}
+											},
+										}
+									},
+								};
+								menus.custom_delete._disabled = false;
+								menus.custom_delete.action = function(node) {
+									$.fn.deleteNode(node);
+						};
+						break;
+						case "conditioncommonand_nonusage_recharge":
+								menus.custom_create._disabled = false;
+								menus.custom_create.submenu = {
+									"who_" : {
+										"label" : "Who",
+										"submenu" : {
+											"prefix" : {
+												"label" : "Called Number",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhoprefixfactors'
+													});
+												}
+											},
+											"carrier" : {
+												"label" : "Carrier (Called)",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhocalledcarrier'
+													});
+												}
+											},
+											"customer level" : {
+												"label" : "Customer level",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhocustomerlevel'
+													});
+												}
+											},
+										}
+									},
+									"where_" : {
+										"label" : "Where",
+										"submenu" : {
+											"caller zone" : {
+												"label" : "Caller Zone",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwherecallerzone'
+													});
+												}
+											},
+											"callee zone" : {
+												"label" : "Callee Zone",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwherecalleezone'
+													});
+												}
+											},
+											"samezone" : {
+												"label" : "Caller/Callee in SameZone",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhereissamezone'
+													});
+												}
+											},
+											"client IP" : {
+												"label" : "Client IP",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhereclientip'
+													});
+												}
+											},
+										}
+									},
+									"what" : {
+										"label" : "What",
+										"submenu" : {
+											"usage_type" : {
+												"label" : "UsageType",
+												action : function(node) {
+													$.fn.addNode(node, {
+															'childContentType' : 'conditionwhatusagetypefactors'
+													});
+												},
+											},
+											"nonusage_type" : {
+												"label" : "NonUsageType",
+													action : function(node) {
+															$.fn.addNode(node, {
+																'childContentType' : 'conditionwhatnonusagetypefactors',
+													});
+												},
+											},
+											"voucher_card_type" : {
+												"label" : "Card Types",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhatcardtype'
+													});
+												}
+											},
+											"Incoming Call" : {
+												"label" : "Incoming Call",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhatincomingcall'
+													});
+												}
+											},
+											"calltype" : {
+												"label" : "Call Type",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhatcalltype'
+													});
+												}
+											},
+											"Counter" : {
+												"label" : "Counter",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhatcounter'
+													});
+												}
+											},
+										}
+									},
+									"when" : {
+										"label" : "When",
+										"submenu" : {
+											"day" : {
+												"label" : "Day",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhendayfactors'
+													});
+												}
+											},
+											"subscription_day" : {
+												"label" : "Subscription Date",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhensubscriptionday'
+													});
+												}
+											},
+											"activation_day" : {
+												"label" : "Activation Date",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhenactivationday'
+													});
+												}
+											},
+											"active_days" : {
+												"label" : "Active Days",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhenactivedays'
+													});
+												}
+											},
+											"customerbirthday" : {
+												"label" : "Customer Birthday",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhencustomerbirthday'
+													});
+												}
+											},
+											"companybirthday" : {
+												"label" : "Company Birthday",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhencompanybirthday'
+													});
+												}
+											},
+											"duration" : {
+												"label" : "Duration",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhendurationfactors'
+													});
+												}
+											},
+											"holiday" : {
+												"label" : "Holiday",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhenholidayfactors'
+													});
+												}
+											},
+											"timeslot" : {
+												"label" : "Timeslot",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhentimeslotfactors'
+													});
+												}
+											},
+											"week" : {
+												"label" : "Week",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhenweekfactors'
+													});
+												}
+											},
+											"firstmonth" : {
+												"label" : "First Month",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhenfirstmonth'
+													});
+												}
+											},
+										}
+									},
+								};
+								menus.custom_delete._disabled = false;
+								menus.custom_delete.action = function(node) {
+									$.fn.deleteNode(node);
+						};
+						break;
+					case "conditionwhatqos":
+					case "conditionwhaturlgroupfactors":
+					case "conditionwhatcounter":
+					case "conditionwhatcustomfactors":
+					case "conditionwhatusagetypefactors":
+					case "conditionwhatnonusagetypefactors":
+					case "conditionwhendayfactors":
+					case "conditionwhendurationfactors":
+					case "conditionwhenholidayfactors":
+					case "conditionwhentimeslotfactors":
+					case "conditionwhenweekfactors":
+					case "conditionwherecountryfactors":
+					case "conditionwherenetworkfactors":
+					case "conditionwherecallerzone":
+					case "conditionwherecalleezone":					
+					case "conditionwherecustomfactors":
+					case "conditionwhereclientip":
+					case "conditionwheremacaddress":
+					case "conditionwheredevicetype":
+					case "conditionwhomemberfactors":
+					case "conditionwhonumberfactors":
+					case "conditionwhoprefixfactors":
+					case "conditionwhocustom":
+					case "conditionwhocustomerlevel":
+					case 'conditionwhatcardtype':
+					case 'conditionwhereissamezone':
+					case 'conditionwherezonefactors':
+					case 'conditionwhocalledcarrier':
+						menus.custom_delete._disabled = false;	
 						menus.custom_delete.action = function(node) {
 							$.fn.deleteNode(node);
 						};
@@ -2060,16 +2845,16 @@
 						break;
 				}  
 				break;
-
+			
 			case "numberspecial_tree":
 				var relType = obj.attr("rel");
 				switch (relType) {
-					case "number_special":
-						menus.custom_delete._disabled = false;
-						menus.custom_delete.action = function(node) {
-							$.fn.deleteNode(node);
-						};
-						break;
+					//case "number_special":
+					//	menus.custom_delete._disabled = false;
+					//	menus.custom_delete.action = function(node) {
+					//		$.fn.deleteNode(node);
+					//	};
+					//	break;
 					case "Rates":
 						menus.custom_create._disabled = false;
 						menus.custom_create.submenu = {

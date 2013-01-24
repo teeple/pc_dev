@@ -2,7 +2,6 @@
 function product_catalog_rules_create_default_counters($vouchercardtype_nid) {
 
 		$viewResult = views_get_view_result('list_counter', 'panel_pane_1', 'MAIN');
-
 		foreach($viewResult as $counter) {
 				$counterforvoucher = new stdClass();
 				$counterforvoucher->status = 1;

@@ -1,5 +1,10 @@
 <?php
 
+function is_macaddress($val)
+{
+	return (bool)preg_match('/^([0-9a-fA-F][0-9a-fA-F]:){2}([0-9a-fA-F][0-9a-fA-F])$/',	$val);
+}
+
 function _clone_vocabulary($baseVocaName,$targetVocaName,$param=array()){
     $baseVocaMachineName = strtolower($baseVocaName);
     $baseVoca = taxonomy_vocabulary_machine_name_load($baseVocaMachineName);
