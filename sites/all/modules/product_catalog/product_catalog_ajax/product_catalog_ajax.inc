@@ -12,6 +12,7 @@ function _load_tree_item_mixed_with_node_and_term($rootNode,$grandParentNode=NUL
 	switch($rootNode->type){
 		case 'simpleproductoffering':
 			$vocaName = _get_vocabulary_name('simpleproductoffering', $rootNode);
+			$children['state'] = 'open';
 			break;			
 		case 'tariffplan':
 		case 'vouchercardtype':
@@ -50,7 +51,17 @@ function _load_tree_item_mixed_with_node_and_term($rootNode,$grandParentNode=NUL
 				),
 				'data' => $item->name
 		);
-			
+		
+	 switch($term->field_rel_type['und'][0]['safe_value']) {
+		 case 'mobile_attribute':
+		 case 'mobile_attribute_packaged':
+		 case 'mobile_counter':
+		 case 'mobile_nonusage':
+		 case 'mobile_usage':
+		 		$itemArray['state'] = 'open';
+		 		break;
+	 }
+	 		
 		if(isset($term->field_qtabs_loading['und'][0]['value'])){
 			$loadingInfo = field_collection_item_load($term->field_qtabs_loading['und'][0]['value']);
 			//$qtabType = $loadingInfo->field_tab_type['und'][0]['value'];
@@ -179,21 +190,134 @@ function get_product_nids_from_noderefernce($oldChildrenNids){
     return $retArray;
 }
 
+function _get_rel_type_by_usage_type($tariffplan_machinename) {
+
+	$machineNames = explode('_', $tariffplan_machinename);
+	$length = count($machineNames);
+	$usageType = $machineNames[$length-1];
+	
+	switch($usageType) {
+	case 'data':
+		$rel_type_suffix = '_usage_data';
+		break;
+	case 'mms':
+		$rel_type_suffix = '_usage_mms';
+		break;
+	case 'sms':
+		$rel_type_suffix = '_usage_sms';
+		break;
+	case 'voice':
+		$rel_type_suffix = '_usage_voice';
+		break;
+	case 'deduct':
+		$rel_type_suffix = '_usage_loyalty_point_deduct';
+		break;
+	case 'crbt':
+		$rel_type_suffix = '_usage_crbt';
+		break;
+	case 'vod':
+		$rel_type_suffix = '_usage_vod';
+		break;
+	}
+	
+	return $rel_type_suffix;
+}
+
+function _get_rel_type_by_nonusage_type($tempRelType) {
+	$tempRelTypes = explode('_', $tempRelType);
+	$length = count($tempRelTypes);
+	
+	$nonUsageType = $tempRelTypes[$length-2];
+	switch($nonUsageType) {
+		case 'recurring':
+			$rel_type_suffix = '_nonusage_recurring';
+			break;
+		case 'subscription':
+			$rel_type_suffix = '_nonusage_subscription';
+			break;
+		case 'unsubscription':
+			$rel_type_suffix = '_nonusage_unsubscription';
+			break;
+		case 'activation':
+			$rel_type_suffix = '_nonusage_activation';
+			break;
+		case 'recharge':
+			$rel_type_suffix = '_nonusage_recharge';
+			break;
+		case 'usageend':
+			$rel_type_suffix = '_nonusage_usageend';
+			break;
+	}
+	return $rel_type_suffix;
+}
+
+function _get_rel_type_on_condition($item) {
+	
+	$parent = node_load($item->parent_nid);
+	$treeTerm = taxonomy_term_load($parent->field_ref_tree_tid['und'][0]['value']);
+
+	$rel_type = 'conditioncommonand';
+	
+	switch($treeTerm->name) {
+		case 'Discount':
+			$tempRelType = $treeTerm->field_rel_type['und'][0]['value'];
+			
+		  if($tempRelType == 'treeNodeCustomDiscount') {
+					$rel_type .= _get_rel_type_by_usage_type($treeTerm->vocabulary_machine_name);
+		  } else {
+		  		$rel_type .= _get_rel_type_by_nonusage_type($tempRelType);
+		  }
+		  break;
+			
+		case 'Bonus':
+			$tempRelType = $treeTerm->field_rel_type['und'][0]['value'];
+			$rel_type .= _get_rel_type_by_nonusage_type($tempRelType);
+			
+			break;
+			
+		case 'Block':
+			$tempRelType = $treeTerm->field_rel_type['und'][0]['value'];
+			
+			if($tempRelType == 'treeNodeCustomBlock') {
+					$rel_type .= _get_rel_type_by_usage_type($treeTerm->vocabulary_machine_name);
+			}
+			break;
+			
+		case 'Predefined':
+		case 'Dynamic':
+			$rel_type .= _get_rel_type_by_usage_type($treeTerm->vocabulary_machine_name);
+			break;
+			
+		default:
+			break;
+	}
+	
+	return $rel_type;
+}
+
 function get_children_stored_procedure($nid,$parentId=NULL){
 	$result = array();
 	
 	$stored_procedure_query = "call pc_dev.getTreeDataView(:nid);";
 	$stored_procedure_result = db_query($stored_procedure_query,array(':nid' => $nid))->fetchAll();
 	
-    foreach($stored_procedure_result as $item){
+  foreach($stored_procedure_result as $item){
+    
+    switch($item->content_type) {
+    	case 'conditioncommonand':
+    		$item->rel_type = _get_rel_type_on_condition($item);
+    		break;
+    }
+    
 		$itemArray = array(
 			'attr' => array('id' => 'node_'.$item->nid,
 					'node_type' => $item->content_type,
 					'rel' => $item->rel_type,
-					'weight' => $item->weight			
+					'weight' => $item->weight
 			),
 			'data' => $item->title
 		);
+		
 		if($item->parent_nid === '0' || $item->nid == $nid){
 			$itemArray['attr']['parent_nid'] = ($parentId != NULL) ? $parentId :NULL;
 			$result = $itemArray;
@@ -250,7 +374,7 @@ function get_children($nid) {
 
         case 'treenodecounter':
             $refNode = node_load($node->field_ref_counter['und'][0]['nid']);
-
+            
             $nodeTitle = $refNode->title;
             $main_or_accumulated = taxonomy_term_load($refNode->field_main_or_accumulated['und'][0]['tid']);
             $counter_type = taxonomy_term_load($refNode->field_counter_type['und'][0]['tid']);
@@ -451,7 +575,7 @@ function load_required_js_css_before_ajax_load(){
     	drupal_add_css($arrangeFieldsPath.'/css/arrange_fields.css');
     	
     	//drupal_add_js($fieldConditionalStatePath.'/js/required_conditional_state.js');       
-        //drupal_add_js($fieldConditionalStatePath.'/js/settings_form.js');
+      //drupal_add_js($fieldConditionalStatePath.'/js/settings_form.js');
         
     	//jstree
     	drupal_add_js(libraries_get_path('jstree') . '/jquery.jstree.js');
@@ -464,8 +588,19 @@ function load_required_js_css_before_ajax_load(){
     	
     	//product catalog tree
     	$product_catalog_tree_path = drupal_get_path('module', 'product_catalog_tree');
+    	
+    	$paths = explode('/', current_path());
+    	if(!empty($paths) && $paths[0] == 'product_designer') {
+	    	$serviceDomain = $paths[1];
+
+				$jsContextMenuSettingsPath = '/js/product_catalog_tree_context_menu_setting_'.$serviceDomain.'.js';
+				drupal_add_js($product_catalog_tree_path  . $jsContextMenuSettingsPath);
+				
+    	} else {
+    		drupal_add_js($product_catalog_tree_path  . '/js/product_catalog_tree_context_menu_setting_Mobile.js');
+    	}
+    	
     	drupal_add_js($product_catalog_tree_path  . '/js/product_catalog_tree_type_setting.js');
-    	drupal_add_js($product_catalog_tree_path  . '/js/product_catalog_tree_context_menu_setting.js');
     	drupal_add_js($product_catalog_tree_path  . '/js/product_catalog_tree_operation.js');
     	drupal_add_js($product_catalog_tree_path  . '/js/product_catalog_tree_flot.js');
     	drupal_add_js($product_catalog_tree_path  . '/js/product_catalog_tree.js');

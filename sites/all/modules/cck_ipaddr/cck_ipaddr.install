@@ -1,0 +1,17 @@
+<?php
+
+function cck_ipaddr_install() {
+  content_notify('install', 'cck_ipaddr');
+}
+
+function cck_ipaddr_enable() {
+  content_notify('enable', 'cck_ipaddr');
+}
+
+function cck_ipaddr_disable() {
+  content_notify('disable', 'cck_ipaddr');
+}
+
+function cck_ipaddr_uninstall() {
+  content_notify('uninstall', 'cck_ipaddr');
+}

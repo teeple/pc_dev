@@ -47,22 +47,33 @@ function _add_ajax_submit_callback($form_id,&$form){
 		case 'conditionwhendayfactors_node_form':
 		case 'conditionwhentimeslotfactors_node_form':
 		case 'conditionwhenholidayfactors_node_form':
-		case 'conditionwhenactivedays_node_form';
+		case 'conditionwhenactivedays_node_form':
 		case 'conditionwhenweekfactors_node_form':
+		case 'conditionwhencustomerbirthday_node_form':
+		case 'conditionwhencompanybirthday_node_form':
+		case 'conditionwhenfirstmonth_node_form':
 		case 'conditionwherecountryfactors_node_form':
 		case 'conditionwherecustomfactors_node_form':
+		case 'conditionwhereissamezone_node_form':
 		case 'conditionwherenetworkfactors_node_form':
 		case 'conditionwherecallerzone_node_form':
 		case 'conditionwherecalleezone_node_form':
+		case 'conditionwhereclientip_node_form':
+		case 'conditionwheremacaddress_node_form':
+		case 'conditionwheredevicetype_node_form':
 		case 'conditionwhocustomfactors_node_form':
 		case 'conditionwhomemberfactors_node_form':
 		case 'conditionwhonumberfactors_node_form':
+		case 'conditionwhosubscribermdn_node_form':
+		case 'conditionwhosubscriberstatus_node_form':
+		case 'conditionwhocalledcarrier_node_form':
 		case 'conditionwhoprefixfactors_node_form':
 		case 'conditionwhocustomerlevel_node_form':
 		case 'conditioncommoncounterfactors_node_form':
 		case 'conditionwhatqos_node_form':
 		case 'conditioncommoncarrieridd_node_form':
-        case 'conditioncommoncarrierdomestic_node_form':
+		case 'conditionwhatcardtype_node_form':
+		    case 'conditioncommoncarrierdomestic_node_form':
         case 'conditioncommonratinggroup_node_form':
         case 'conditioncommontimetablefactors_node_form':
         case 'actionpricediscountfactors_node_form':
@@ -73,9 +84,8 @@ function _add_ajax_submit_callback($form_id,&$form){
         case 'actionpricediscount_node_form':
         case 'actionpriceallowance_node_form':
 		case 'actionblockfactors_node_form':
-		// case 'counter_node_form':
-		// case 'actionsetnotification_node_form':
         case 'tariffplan_node_form':
+    case 'treenodeproductforvoucher_node_form':
         case 'treenodecounter_node_form':
         case 'prdattributeprefixrangeallowed_node_form':
         case 'prdattributeprefixrangenotallowe_node_form':
@@ -94,6 +104,7 @@ function _add_ajax_submit_callback($form_id,&$form){
         case 'conditionwhatcounter_node_form':
 		case 'conditionwhatcounterfortracking_node_form':
 		case 'conditionwhensubscriptionday_node_form':
+		case 'conditionwhatincomingcall_node_form':
 		// case 'conditionwhatcardtype_node_form':
 		case 'conditionwhenactivationday_node_form':
 		case 'numberspecialrate_node_form':
@@ -190,10 +201,10 @@ function edit_pane_callback($form, &$form_state){
 
 function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 
-//dsm($form_id, 'form_id');
+// dsm($form_id, 'form_id');
 //dsm($form_state, 'form_state');
 	load_required_js_css_before_ajax_load();
-    
+	
     if((isset($form['#attributes']) && isset($form['#attributes']['class'])) 
         && gettype($form['#attributes']['class']) == 'array') {
     	$form['#attributes']['class'][] = 'myform';
@@ -270,9 +281,12 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
         case 'views_form_list_treenodecounterforvoucher_panel_pane_1';
             unset($form['actions']);
             break;
+    case 'conditionwhenfirstmonth_node_form':
 		case 'conditionwhenactivationday_node_form':
         case 'conditionwhensubscriptionday_node_form';
 		case 'conditionwhenactivedays_node_form';
+		case 'conditionwhencustomerbirthday_node_form':
+		case 'conditionwhencompanybirthday_node_form':
 		    _unset_menu_items($form,$form_id);
 			$form['field_weight']['#type'] = 'hidden';
             $form['field_parent_node']['#type'] = 'hidden';
@@ -281,6 +295,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 		    $form['field_weight']['#type'] = 'hidden';
             $form['field_parent_node']['#type'] = 'hidden';
 			_unset_menu_items($form,$form_id);
+			/*
 			unset($form['actions']);
 			
 			$form['custom_markup'] = array('#type'=> 'markup',
@@ -293,7 +308,8 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 				'#markup' => "<input type='button' id='multiselect_custom_button_cardtype' value='Save'></input>",
 				'#weight' => 100,
 			);
-			break;
+			*/
+				break;
 			
 		case 'holidaylist_specific_node_form':
 		case 'holidaylist_repeatable_node_form':
@@ -330,13 +346,25 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
         	//$form['field_tree_child_voca_name']['und']['#default_value'][0] = 'tbl_vouchercardtype';
         	$form['field_tree_child_voca_name']['#type'] = 'hidden';
         	_unset_menu_items($form,$form_id);
-            
+        	
+        	unset($form['field_active_period']);
+        	unset($form['field_grace_period']);
+        	  
             if(!isset($form['nid']['#value'])){
 			    $form['actions']['submit']['#submit'][] = '_vouchercardtype_submit_handler';			
 			    $form['actions']['submit']['#submit'][] = 'product_catalog_form_form_redirect_handler';
             }
             break;
-            
+        
+        case 'treenodeproductforvoucher_node_form':
+        	unset($form['field_ref_product']);
+        	unset($form['field_ref_tree_tid']);
+        	unset($form['field_weight']);
+        	unset($form['field_ref_vouchercardtype']);
+        	
+        	_unset_menu_items($form, $form_id);
+        	break;
+        	  
         case 'loyaltypoint_node_form':
         	
         	// loyaltypoint���ъ���� counter��point��counter留�蹂������濡����.
@@ -506,7 +534,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			// Edit
 			if(isset($form['nid']['#value'])) {
 				$form['field_counter_id']['und']['#disabled'] = TRUE;
-				//$form['field_scale']['und']['#disabled'] = TRUE;
+				$form['field_scale']['und']['#disabled'] = TRUE;
 				$form['field_counter_type']['und']['#disabled'] = TRUE;
 				$form['field_service_domain']['und']['#disabled'] = TRUE;
 				$form['field_billing_type_counter']['und']['#disabled'] = TRUE;
@@ -542,7 +570,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			$form['actions']['submit']['#submit'][] = 'product_catalog_form_form_redirect_handler';
 			break;
             
-        case 'treenodecounter_node_form':
+      case 'treenodecounter_node_form':
 			$refTreeTerm = taxonomy_term_load($form['field_ref_tree_tid']['und'][0]['value']['#default_value']);
 			
 			if($refTreeTerm->name == 'Charging') {
@@ -580,15 +608,16 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 				$element = $form['field_counter']['und'];
 				
 				$form['field_counter']['und']['#options'] = $mergedCounterList;
+				
 			}
 			
 			$form['title']['#type'] = 'hidden';
-            $form['field_ref_counter']['#type'] = 'hidden';
-            $form['field_parent_node']['#type'] = 'hidden';
-            $form['field_weight']['#type'] = 'hidden';
-            $form['field_ref_tree_tid']['#type'] = 'hidden';
-            $form['field_ref_product']['#type'] = 'hidden';
-            $form['field_main_or_accumulated']['#type'] = 'hidden';
+      $form['field_ref_counter']['#type'] = 'hidden';
+      $form['field_parent_node']['#type'] = 'hidden';
+      $form['field_weight']['#type'] = 'hidden';
+      $form['field_ref_tree_tid']['#type'] = 'hidden';
+      $form['field_ref_product']['#type'] = 'hidden';
+      $form['field_main_or_accumulated']['#type'] = 'hidden';
 			
 			_unset_menu_items($form,$form_id);
 
@@ -692,33 +721,72 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 		case 'conditionwhatusagetypefactors_node_form':
 		case 'conditionwhatnonusagetypefactors_node_form':
 		case 'conditionwhatcustomfactors_node_form':
+		case 'conditionwhatincomingcall_node_form':
 		case 'conditionwhaturlgroupfactors_node_form':
 		case 'conditionwhencustomfactors_node_form':
 		case 'conditionwhendayofmonth_node_form':
 		case 'conditionwhendayfactors_node_form':
 		case 'conditionwhentimeslotfactors_node_form':
 		case 'conditionwhenholidayfactors_node_form':
-
+		
 		case 'conditionwhenweekfactors_node_form':
 		case 'conditionwherecountryfactors_node_form':
 		case 'conditionwherecustomfactors_node_form':
 		case 'conditionwherenetworkfactors_node_form':
 		case 'conditionwherecallerzone_node_form':
+		case 'conditionwhereissamezone_node_form':
 		case 'conditionwherecalleezone_node_form':
+		case 'conditionwhereclientip_node_form':
+		case 'conditionwheremacaddress_node_form':
+		case 'conditionwheredevicetype_node_form':
 		case 'conditionwhocustomfactors_node_form':
+		case 'conditionwhocalledcarrier_node_form':
 		case 'conditionwhomemberfactors_node_form':
 		case 'conditionwhonumberfactors_node_form':
 		case 'conditionwhoprefixfactors_node_form':
+		case 'conditionwhosubscribermdn_node_form':
 		case 'conditioncommoncounterfactors_node_form':
 		case 'conditionwhatqos_node_form':
-        case 'tvchannel_node_form':
-		
-			_unset_menu_items($form,$form_id);
-			unset($form['field_weight']);
-			unset($form['field_parent_node']);
-			//$form['actions']['submit']['#submit'][] = '_condition_submit_handler';
-			//$form['actions']['submit']['#submit'][] = 'product_catalog_form_form_redirect_handler';
-            break;
+		case 'tvchannel_node_form':
+				_unset_menu_items($form,$form_id);
+				unset($form['field_weight']);
+				unset($form['field_parent_node']);
+  			break;
+  	case 'conditionwhosubscriberstatus_node_form':
+  			// Edit 
+  			if(!empty($form['nid']['#value'])) {
+  			
+  			} else { // Create
+					$productNid = $form_state['root_nid'];
+					$view = views_get_view('list_lifecycle_scheme');
+					$view->set_display('panel_pane_5');
+					$view->set_arguments(array('0'=>$productNid));
+					$view->execute();
+
+					// lifecycle scheme이 선택되어 있지 않을때. 					
+					if(empty($view->result)) {
+						unset($form['actions']);
+						unset($form['field_subscriber_status']);
+						$form['chart_button'] = array(
+							'#type' => 'markup',
+							'#markup' => '<h3> You should select lifecycle scheme First! </h3>',
+						);
+					} else {
+						$options = array();
+						foreach($view->result as $record) {
+							$statusNid = $record->field_field_lifecycle_states[0]['raw']['nid'];
+							$statusName = $record->field_field_lifecycle_states[0]['rendered']['#title'];
+							$options[$statusNid] = $statusName;
+							
+						}
+						$form['field_subscriber_status']['und']['#options'] = $options;
+					}
+  			}
+  			_unset_menu_items($form,$form_id);
+  			unset($form['field_weight']);
+  			unset($form['field_parent_node']);
+  			break;
+  	
 		case 'conditionwhendurationfactors_node_form':
 			_unset_menu_items($form,$form_id);
 			unset($form['field_weight']);
@@ -739,18 +807,6 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 				
 			break;
 			
-		case 'conditionwhereissamezone_node_form':
-			$form['title_markup'] = array(
-				'#type' => 'markup',
-                '#markup' => '<b>Condition : Caller and Callee are in the Szmezone</b>',
-           );
-           
-			_unset_menu_items($form,$form_id);
-			unset($form['field_weight']);
-			unset($form['field_parent_node']);
-			unset($form['actions']);
-			break;
-			
 		case 'conditionwhaturlgroups_node_form':
 		case 'conditionwhatcustom_node_form':
 		case 'conditionwhencustom_node_form':
@@ -765,6 +821,8 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 		case 'conditionwhomember_node_form':
 		case 'conditionwhonumber_node_form':
 		case 'conditionwhoprefix_node_form':
+		case 'conditionwheremacaddress_node_form':
+		case 'conditionwheredeivcetype_node_form':
 			_unset_menu_items($form,$form_id);
 			//$form['actions']['submit']['#submit'][] = 'product_catalog_form_form_redirect_handler';
 			//$form['actions']['submit']['#submit'][] = '_condition_submit_handler';

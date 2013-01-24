@@ -1,0 +1,8 @@
+.ip-addr-item .form-item {
+  display: inline;
+}
+
+.node-form .form-text {
+  display: inline;
+  width: auto;
+}
