@@ -5,8 +5,7 @@ function node_delete_handler_to_touch_product($node){
 };
 
 function product_catalog_form_node_delete($node){
-    $redirectUrl = NULL;
-	$childNodes = get_nested_children_nids($node->nid);
+    $childNodes = get_nested_children_nids($node->nid);
 
 	switch($node->type){
 		case 'simpleproductoffering':
@@ -166,10 +165,6 @@ function product_catalog_form_node_delete($node){
 	if(!empty($childNodes)){
 		node_delete_multiple($childNodes);
 	}
-    
-    if($redirectUrl != NULL){
-        drupal_goto($redirectUrl,array(NULL,'fragment' => $urlFragment));
-    }
 }
 
 function _unlink_conditionfactors_from_sp_rule($param){
