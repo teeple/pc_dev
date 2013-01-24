@@ -8,7 +8,7 @@ function _array_voucher_cardtype($nid=NULL){
 
     foreach($viewResult as $record) {
 
-        $jsonCounter['id'] = isset($record->nid) ? $record->nid: null;
+        $jsonCounter['id'] = isset($record->field_field_voucher_id)?$record->field_field_voucher_id[0]['rendered']['#markup']: null;
         $jsonCounter['title'] = isset($record->node_title) ? $record->node_title: null;
         $jsonCounter['active_period'] = !empty($record->field_field_active_period) ? $record->field_field_active_period[0]['rendered']['#markup']: null;
         $jsonCounter['grace_period'] = !empty($record->field_field_grace_period) ? $record->field_field_grace_period[0]['rendered']['#markup']: null;

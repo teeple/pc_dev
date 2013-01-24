@@ -110,6 +110,23 @@
 						"select_multiple_modifier" : false,
 						"initially_select" : [ settings.product_catalog_tree_data[0].attr.root_nid ]
 					},
+					"crrm" : {
+					        "move" : {
+					            "check_move" : function (m) {
+					            		if(m.o.attr('rel') == 'tree_node_counter_main_basic_prepaid' 
+					            			|| m.o.attr('rel') == 'tree_node_counter_main_basic_postpaid'
+					            			|| m.o.attr('rel') == 'tree_node_counter_main_optional_prepaid' 
+					            			|| m.o.attr('rel') == 'tree_node_counter_main_optional_postpaid' 
+					            			|| m.o.attr('rel') == 'tree_node_counter_main_rollover_prepaid' 
+					            			|| m.o.attr('rel') == 'tree_node_counter_main_rollover_postpaid' ) {
+					            			
+					            			return true;
+					            		} else {
+					            			return false;
+					            		}
+					            }
+					        }
+					},
 					"types" : types,
 					"contextmenu" : {
 						"select_node": true,
@@ -137,9 +154,11 @@
 							$.jstree._focused().refresh(-1);
  
 							$.fn.unmasking();
-
+							
+							console.log(data);
+							
 							// 임시로 모두 오픈
-							$(".product_catalog_tree").jstree('open_all');
+							// $(".product_catalog_tree").jstree('open_all');
 						},
 						error: function(jqXHR, textStatus, errorThrown){
 							//console.log('ajax error');
