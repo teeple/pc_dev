@@ -369,7 +369,15 @@ function _get_attribute($product) {
             'field' => 'field_contract_period‎',
             'field_value' => "field_contract_period‎['und'][0]['value']",
             'field_value_default' => 0
-        ),        
+        ),   
+        'roaming_allowed' => array(
+            'through_common_code' => TRUE,
+            'field' => 'field_roaming_allowed',
+            'field_value' => "field_roaming_allowed['und'][0]['tid']",
+            'field_value_default' => array('codeGroup' => 'RoamingAllwoed',
+                                           'code' => '0',
+                                           'meaning' => 'Not Allowed')
+        ),     
 	);
 	
 	$result_attribute_general = _get_result($reqArray, $product);
