@@ -158,7 +158,11 @@
 							console.log(data);
 							
 							// 임시로 모두 오픈
+<<<<<<< HEAD
 							$(".product_catalog_tree").jstree('open_all');
+=======
+							 $(".product_catalog_tree").jstree('open_all');
+>>>>>>> 133378ec4e0e6e43090c843470bcc533090406b7
 						},
 						error: function(jqXHR, textStatus, errorThrown){
 							//console.log('ajax error');

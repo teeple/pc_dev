@@ -336,7 +336,11 @@ function build_navigation_bar()
                     'sub' => array( array( '/product_designer/Mobile', 'Mobile'), 
                         array( '/product_designer/IPTV', 'IPTV'),
                         array( '/product_designer/Broadband', 'Broadband'),
+<<<<<<< HEAD
                         array( '/product_designer/VoIP', 'VOIP'),
+=======
+                        array( '/product_designer/VoIP', 'VoIP'),
+>>>>>>> 133378ec4e0e6e43090c843470bcc533090406b7
                         array( '/product_designer/Satellite', 'Satellite'),
                         array( '/product_designer/Cross', 'Bundle'))),
 			'relation' => array( 'href' => '/relation/product/hierarchy/Mobile', 'icon' => 'widgets', 
