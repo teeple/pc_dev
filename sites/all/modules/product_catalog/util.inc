@@ -336,7 +336,7 @@ function build_navigation_bar()
                     'sub' => array( array( '/product_designer/Mobile', 'Mobile'), 
                         array( '/product_designer/IPTV', 'IPTV'),
                         array( '/product_designer/Broadband', 'Broadband'),
-                        array( '/product_designer/VOIP', 'VOIP'),
+                        array( '/product_designer/VoIP', 'VoIP'),
                         array( '/product_designer/Satellite', 'Satellite'),
                         array( '/product_designer/Cross', 'Bundle'))),
 			'relation' => array( 'href' => '/relation/product/hierarchy/Mobile', 'icon' => 'widgets', 
