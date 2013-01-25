@@ -159,13 +159,13 @@
 				},
 				
 				'attribute_allowed_device': {
-					"valid_children" : "none",
+					"valid_children" : ["prdattributeallowedmodel"],
 					  		"icon" : {
 					      		"image" : "/sites/default/files/icons/attribute_detail.png"
 					      	},
 				},
 				'attribute_required_device': {
-					"valid_children" : "none",
+					"valid_children" : ["prdattributerequireddevice"],
 					  		"icon" : {
 					      		"image" : "/sites/default/files/icons/attribute_detail.png"
 					      	},
