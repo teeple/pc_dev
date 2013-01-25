@@ -85,12 +85,7 @@
 							$.fn.deleteNode(node);
 						};
 						break;
-					case "mobile_packaged_mandatory":
-					case "iptv_packaged_mandatory":
-					case "voip_packaged_mandatory":
-					case "broadband_packaged_mandatory":
-					case "satellite_packaged_mandatory":
-					case "dummy_packaged_mandatory":
+					case "packaged_mandatory":
 						menus.custom_create._disabled = false;
 						menus.custom_create.submenu = {
 							// "mobile_packaged_mandatory" : {
@@ -102,12 +97,7 @@
 							},
 						};
 						break;
-					case "mobile_packaged_product":
-					case "iptv_packaged_product":
-					case "voip_packaged_product":
-					case "broadband_packaged_product":
-					case "satellite_packaged_product":
-					case "dummy_packaged_product":
+					case "packaged_product":
 						menus.custom_create._disabled = false;
 						menus.custom_create.submenu = {
 							// "mobile_packaged_product" : {
@@ -119,12 +109,7 @@
 							},
 						};
 						break;	
-					case "mobile_packaged_optional":
-					case "iptv_packaged_optional":
-					case "voip_packaged_optional":
-					case "broadband_packaged_optional":
-					case "satellite_packaged_optional":
-					case "dummy_packaged_optional":
+					case "packaged_optional":
 						menus.custom_create._disabled = false;
 						menus.custom_create.submenu = {
 							// "mobile_packaged_optional" : {
@@ -136,12 +121,7 @@
 							},
 						};
 						break;
-					case "mobile_packaged_hidden":
-					case "iptv_packaged_hidden":
-					case "voip_packaged_hidden":
-					case "broadband_packaged_hidden":
-					case "satellite_packaged_hidden":
-					case "dummy_packaged_hidden":
+					case "packaged_hidden":
 						menus.custom_create._disabled = false;
 						menus.custom_create.submenu = {
 							//"mobile_packaged_hidden" : {
@@ -176,7 +156,9 @@
 							$.fn.deleteNode(node);
 						};
 						break;
-					case "tree_node_counter_main_basic":
+						
+					case "tree_node_counter_main_basic_prepaid":
+					case "tree_node_counter_main_basic_postpaid":
 						menus.custom_delete._disabled = false;
 						menus.custom_delete.action = function(node) {
 							$.fn.deleteNode(node);
@@ -193,7 +175,8 @@
 							},
 						};
 						break;
-					case 'tree_node_counter_main_rollover':
+					case 'tree_node_counter_main_rollover_prepaid':
+					case 'tree_node_counter_main_rollover_postpaid':
 						menus.custom_delete._disabled = false;
 						menus.custom_delete.action = function(node) {
 							$.fn.deleteNode(node);
@@ -210,7 +193,8 @@
 							},
 						};
 						break;
-					case "tree_node_counter_main_optional":
+					case "tree_node_counter_main_optional_prepaid":
+					case "tree_node_counter_main_optional_postpaid":
 						menus.custom_delete._disabled = false;
 						menus.custom_delete.action = function(node) {
 							$.fn.deleteNode(node);
@@ -227,7 +211,8 @@
 							},
 						};
 						break;
-					case "tree_node_counter_accumulated_basic":
+					case "tree_node_counter_accumulated_basic_prepaid":
+					case "tree_node_counter_accumulated_basic_postpaid":
 						menus.custom_delete._disabled = false;
 						menus.custom_delete.action = function(node) {
 							$.fn.deleteNode(node);
@@ -245,13 +230,7 @@
 						};
 						break;
 						
-					case "mobile_counter_main":
-					case "iptv_counter_main":
-					case "voip_counter_main":
-					case "broadband_counter_main":
-					case "satellite_counter_main":
-					case "dummy_counter_main":
-					case 'cross_counter_main':
+					case "counter_main":
 						menus.custom_create._disabled = false;
 						menus.custom_create.submenu = {
 							// "mobile_counter_main" : {
@@ -263,13 +242,7 @@
 							},
 						};
 						break;
-					case "mobile_nonusage_deposit":
-					case "iptv_nonusage_deposit":
-					case "voip_nonusage_deposit":
-					case "broadband_nonusage_deposit":
-					case "satellite_nonusage_deposit":
-					case "dummy_nonusage_deposit":
-					case "cross_nonusage_deposit":
+					case "nonusage_deposit":
 						menus.custom_create._disabled = false;
 						menus.custom_create.submenu = {
 							// "mobile_nonusage_deposit" : {
@@ -282,13 +255,7 @@
 						};						
 						break;
 						
-					case 'mobile_nonusage_otheronetimecharge':
-					case 'iptv_nonusage_otheronetimecharge':
-					case 'voip_nonusage_otheronetimecharge':
-					case 'broadband_nonusage_otheronetimecharge':
-					case 'satellite_nonusage_otheronetimecharge':
-					case 'dummy_nonusage_otheronetimecharge':
-					case 'cross_nonusage_otheronetimecharge':															
+					case 'nonusage_otheronetimecharge':
 						menus.custom_create._disabled = false;
 						menus.custom_create.submenu = {
 							// "mobile_nonusage_otheronetimecharge" : {
@@ -307,13 +274,7 @@
 						};
 					break;
 					
-					case 'mobile_nonusage_bonus_transfer':
-					case 'iptv_nonusage_bonus_transfer':
-					case 'voip_nonusage_bonus_transfer':
-					case 'broadband_nonusage_bonus_transfer':
-					case 'satellite_nonusage_bonus_transfer':
-					case 'dummy_nonusage_bonus_transfer':
-					case 'cross_nonusage_bonus_transfer':					
+					case 'nonusage_bonus_transfer':
 						menus.custom_create._disabled = false;
 						menus.custom_create.submenu = {
 							//"mobile_nonusage_bonus_transfer" : {
@@ -338,13 +299,7 @@
 						};
 						break;
 
-					case "mobile_nonusage_threshold":
-					case "iptv_nonusage_threshold":
-					case "voip_nonusage_threshold":
-					case "broadband_nonusage_threshold":
-					case "satellite_nonusage_threshold":
-					case "dummy_nonusage_threshold":
-					case "cross_nonusage_threshold":					
+					case "nonusage_threshold":
 						menus.custom_create._disabled = false;
 						menus.custom_create.submenu = {
 							//"mobile_nonusage_threshold" : {
@@ -357,13 +312,7 @@
 						};
 						break;
 
-					case "mobile_counter_accumulated":
-					case "iptv_counter_accumulated":
-					case "voip_counter_accumulated":
-					case "broadband_counter_accumulated":
-					case "satellite_counter_accumulated":
-					case "dummy_counter_accumulated":
-					case "cross_counter_accumulated":
+					case "counter_accumulated":
 						menus.custom_create._disabled = false;
 						menus.custom_create.submenu = {
 							//"mobile_counter_accumulated " : {
@@ -376,13 +325,7 @@
 						};
 						break;
 						
-					case "mobile_nonusage_unittransfer_scheme":
-					case "iptv_nonusage_unittransfer_scheme":
-					case "voip_nonusage_unittransfer_scheme":
-					case "broadband_nonusage_unittransfer_scheme":
-					case "satellite_nonusage_unittransfer_scheme":
-					case "dummy_nonusage_unittransfer_scheme":
-					case "cross_nonusage_unittransfer_scheme":
+					case "nonusage_unittransfer_scheme":
 						menus.custom_create._disabled = false;
 						menus.custom_create.submenu = {
 							//"mobile_nonusage_unittransfer_scheme" : {
@@ -395,13 +338,7 @@
 						};
 						break;
 						
-					case "mobile_attribute_subscriber_lifecycle_scheme":
-					case "iptv_attribute_subscriber_lifecycle_scheme":
-					case "voip_attribute_subscriber_lifecycle_scheme":
-					case "broadband_attribute_subscriber_lifecycle_scheme":
-					case "satellite_attribute_subscriber_lifecycle_scheme":
-					case "dummy_attribute_subscriber_lifecycle_scheme":
-					case "cross_attribute_subscriber_lifecycle_scheme":
+					case "attribute_subscriber_lifecycle_scheme":
 						menus.custom_create._disabled = false;
 						menus.custom_create.submenu = {
 							// "mobile_attribute_subscriber_lifecycle_scheme" : {
@@ -420,13 +357,7 @@
 						};
 						break;
 						
-					case 'mobile_nonusage_rollover':
-					case 'iptv_nonusage_rollover':
-					case 'voip_nonusage_rollover':
-					case 'broadband_nonusage_rollover':
-					case 'satellite_nonusage_rollover':
-					case 'dummy_nonusage_rollover':
-					case 'cross_nonusage_rollover':
+					case 'nonusage_rollover':
 						menus.custom_create._disabled = false;
 						menus.custom_create.submenu = {
 							//'mobile_nonusgae_rollover' : {
@@ -509,13 +440,7 @@
 							},
 						};
 						break;
-					case 'mobile_nonusage_fee_onetime':
-					case 'iptv_nonusage_fee_onetime':
-					case 'voip_nonusage_fee_onetime':
-					case 'broadband_nonusage_fee_onetime':
-					case 'satellite_nonusage_fee_onetime':
-					case 'dummy_nonusage_fee_onetime':
-					case 'cross_nonusage_fee_onetime':
+					case 'nonusage_fee_onetime':
 						menus.custom_create._disabled = false;
 						menus.custom_create.submenu = {
 							//"mobile_nonusage_fee_onetime" : {
@@ -529,13 +454,7 @@
 							},
 						};
 						break;
-					case 'mobile_nonusage_fee_recurring':
-					case 'iptv_nonusage_fee_recurring':
-					case 'voip_nonusage_fee_recurring':
-					case 'broadband_nonusage_fee_recurring':
-					case 'satellite_nonusage_fee_recurring':
-					case 'dummy_nonusage_fee_recurring':
-					case 'cross_nonusage_fee_recurring':
+					case 'nonusage_fee_recurring':
 						menus.custom_create._disabled = false;
 						menus.custom_create.submenu = {
 							//"mobile_nonusage_fee_recurring" : {
@@ -550,13 +469,7 @@
 						};
 						break;
 
-					case "mobile_nonusage_subscription_bonus":
-					case "iptv_nonusage_subscription_bonus":
-					case "voip_nonusage_subscription_bonus":
-					case "broadband_nonusage_subscription_bonus":
-					case "satellite_nonusage_subscription_bonus":
-					case "dummy_nonusage_subscription_bonus":
-					case "cross_nonusage_subscription_bonus":					
+					case "nonusage_subscription_bonus":
 						menus.custom_create._disabled = false;
 						menus.custom_create.submenu = {
 							//"mobile_nonusage_subscription_bonus" : {
@@ -572,13 +485,7 @@
 						break;
 
 						
-					case "mobile_nonusage_subscription_discount":
-					case "iptv_nonusage_subscription_discount":
-					case "voip_nonusage_subscription_discount":
-					case "broadband_nonusage_subscription_discount":
-					case "satellite_nonusage_subscription_discount":
-					case "dummy_nonusage_subscription_discount":
-					case "cross_nonusage_subscription_discount":
+					case "nonusage_subscription_discount":
 						menus.custom_create._disabled = false;
 						menus.custom_create.submenu = {
 							//"mobile_nonusage_unsubscription_discount" : {
@@ -593,13 +500,7 @@
 						};
 						break;
 
-					case "mobile_nonusage_unsubscription_discount":
-					case "iptv_nonusage_unsubscription_discount":
-					case "voip_nonusage_unsubscription_discount":
-					case "broadband_nonusage_unsubscription_discount":
-					case "satellite_nonusage_unsubscription_discount":
-					case "dummy_nonusage_unsubscription_discount":
-					case "cross_nonusage_unsubscription_discount":
+					case "nonusage_unsubscription_discount":
 						menus.custom_create._disabled = false;
 						menus.custom_create.submenu = {
 							//"mobile_nonusage_unsubscription_discount" : {
@@ -614,14 +515,7 @@
 						};
 						break;
 						
-					case "mobile_nonusage_recurring_discount":
-					case "mobile_nonusage_recurring_discount_on_main":
-					case "iptv_nonusage_recurring_discount":
-					case "voip_nonusage_recurring_discount":
-					case "broadband_nonusage_recurring_discount":
-					case "satellite_nonusage_recurring_discount":
-					case "dummy_nonusage_recurring_discount":
-					case "cross_nonusage_recurring_discount":
+					case "nonusage_recurring_discount":
 						menus.custom_create._disabled = false;
 						menus.custom_create.submenu = {
 							//"mobile_nonusage_recurring_discount" : {
@@ -635,16 +529,8 @@
 							},
 						};
 						break;
-						
-						
 
-					case "mobile_nonusage_unittransfer_discount":
-					case "iptv_nonusage_unittransfer_discount":
-					case "voip_nonusage_unittransfer_discount":
-					case "broadband_nonusage_unittransfer_discount":
-					case "satellite_nonusage_unittransfer_discount":
-					case "dummy_nonusage_unittransfer_discount":
-					case "cross_nonusage_unittransfer_discount":
+					case "nonusage_unittransfer_discount":
 						menus.custom_create._disabled = false;
 						menus.custom_create.submenu = {
 							//"mobile_nonusage_unittransfer_discount" : {
@@ -659,13 +545,7 @@
 						};
 						break;
 						
-					case "mobile_nonusage_activation_bonus":
-					case "iptv_nonusage_activation_bonus":
-					case "voip_nonusage_activation_bonus":
-					case "broadband_nonusage_activation_bonus":
-					case "satellite_nonusage_activation_bonus":
-					case "dummy_nonusage_activation_bonus":
-					case "cross_nonusage_activation_bonus":
+					case "nonusage_activation_bonus":
 						menus.custom_create._disabled = false;
 						menus.custom_create.submenu = {
 							//"mobile_nonusage_activation_bonus" : {
@@ -680,13 +560,7 @@
 						};
 						break;
 
-					case "mobile_nonusage_recharge_bonus":
-					case "iptv_nonusage_recharge_bonus":
-					case "voip_nonusage_recharge_bonus":
-					case "broadband_nonusage_recharge_bonus":
-					case "satellite_nonusage_recharge_bonus":
-					case "dummy_nonusage_recharge_bonus":
-					case "cross_nonusage_recharge_bonus":
+					case "nonusage_recharge_bonus":
 						menus.custom_create._disabled = false;
 						menus.custom_create.submenu = {
 							//"mobile_nonusage_recharge_bonus" : {
@@ -701,13 +575,7 @@
 						};
 						break;
 						
-					case "mobile_nonusage_usageend_bonus":
-					case "iptv_nonusage_usageend_bonus":
-					case "voip_nonusage_usageend_bonus":
-					case "broadband_nonusage_usageend_bonus":
-					case "sateelite_nonusage_usageend_bonus":
-					case "dummy_nonusage_usageend_bonus":
-					case "cross_nonusage_usageend_bonus":
+					case "nonusage_usageend_bonus":
 						menus.custom_create._disabled = false;
 						menus.custom_create.submenu = {
 							//"mobile_nonusage_usageend_bonus" : {
@@ -722,13 +590,7 @@
 						};
 						break;
 
-					case "mobile_nonusage_subscription_charge":
-					case "iptv_nonusage_subscription_charge":
-					case "voip_nonusage_subscription_charge":
-					case "broadband_nonusage_subscription_charge":
-					case "satellite_nonusage_subscription_charge":
-					case "dummy_nonusage_subscription_charge":
-					case "cross_nonusage_subscription_charge":
+					case "nonusage_subscription_charge":
 						menus.custom_create._disabled = false;
 						menus.custom_create.submenu = {
 							//"mobile_nonusage_subscription_charge" : {
@@ -743,13 +605,7 @@
 						};
 						break;
 
-					case "mobile_nonusage_unsubscription_charge":
-					case "iptv_nonusage_unsubscription_charge":
-					case "voip_nonusage_unsubscription_charge":
-					case "broadband_nonusage_unsubscription_charge":
-					case "satellite_nonusage_unsubscription_charge":
-					case "dummy_nonusage_unsubscription_charge":
-					case "cross_nonusage_unsubscription_charge":
+					case "nonusage_unsubscription_charge":
 						menus.custom_create._disabled = false;
 						menus.custom_create.submenu = {
 							//"mobile_nonusage_unsubscription_charge" : {
@@ -764,13 +620,7 @@
 						};
 						break;
 
-					case "mobile_nonusage_unsubscription_penalty":
-					case "iptv_nonusage_unsubscription_penalty":
-					case "voip_nonusage_unsubscription_penalty":
-					case "broadband_nonusage_unsubscription_penalty":
-					case "satellite_nonusage_unsubscription_penalty":
-					case "dummy_nonusage_unsubscription_penalty":
-					case "cross_nonusage_unsubscription_penalty":
+					case "nonusage_unsubscription_penalty":
 						menus.custom_create._disabled = false;
 						menus.custom_create.submenu = {
 							//"mobile_nonusage_unsubscription_penalty" : {
@@ -785,13 +635,7 @@
 						};
 						break;
 
-					case "mobile_nonusage_unittransfer_charge":
-					case "iptv_nonusage_unittransfer_charge":
-					case "voip_nonusage_unittransfer_charge":
-					case "broadband_nonusage_unittransfer_charge":
-					case "satellite_nonusage_unittransfer_charge":
-					case "dummy_nonusage_unittransfer_charge":
-					case "cross_nonusage_unittransfer_charge":
+					case "nonusage_unittransfer_charge":
 						menus.custom_create._disabled = false;
 						menus.custom_create.submenu = {
 							//"mobile_nonusage_unittransfer_charge" : {
@@ -806,13 +650,7 @@
 						};
 						break;
 
-					case "mobile_nonusage_recurring_bonus":
-					case "iptv_nonusage_recurring_bonus":
-					case "voip_nonusage_recurring_bonus":
-					case "broadband_nonusage_recurring_bonus":
-					case "satellite_nonusage_recurring_bonus":
-					case "dummy_nonusage_recurring_bonus":
-					case "cross_nonusage_recurring_bonus":
+					case "nonusage_recurring_bonus":
 						menus.custom_create._disabled = false;
 						menus.custom_create.submenu = {
 							// "mobile_nonusage_recurring_bonus" : {
@@ -834,7 +672,8 @@
 						};
 						break;
 
-					case 'tree_node_counter_accumulated_optional':
+					case 'tree_node_counter_accumulated_optional_prepaid':
+					case 'tree_node_counter_accumulated_optional_postpaid':
 						menus.custom_delete._disabled = false;
 						menus.custom_delete.action = function(node) {
 							$.fn.deleteNode(node);
@@ -851,7 +690,26 @@
 							},
 						};
 						break;
-
+						
+					case 'tree_node_counter_accumulated_rollover_prepaid':
+					case 'tree_node_counter_accumulated_rollover_postpaid':
+						menus.custom_delete._disabled = false;
+						menus.custom_delete.action = function(node) {
+							$.fn.deleteNode(node);
+						};
+						menus.custom_create._disabled = false;
+						menus.custom_create.submenu = {
+							"actionpricechargeonetime" : {
+								"label" : "ConditionSet",
+								action : function(node) {
+									$.fn.addNode(node, {
+										'childContentType' : 'conditioncommonand'
+									});
+								}
+							},
+						};
+						break;
+					
 					case "actionpriceallowanceonetime":
 						menus.custom_delete._disabled = false;
 						menus.custom_delete.action = function(node) {
@@ -1066,6 +924,22 @@
 							"who" : {
 								"label" : "Who",
 								"submenu" : {
+									"subscriber MDN" : {
+										"label" : "Subscriber MDN",
+										action : function(node) {
+											$.fn.addNode(node, {
+												'childContentType' : 'conditionwhosubscribermdn'
+											});
+										}
+									},
+									"Subscrbier Status" : {
+										"label" : "Subscrbier Status",
+										action : function(node) {
+											$.fn.addNode(node, {
+												'childContentType' : 'conditionwhosubscriberstatus'
+											});
+										}
+									},
 									"prefix" : {
 										"label" : "Called Number",
 										action : function(node) {
@@ -1210,6 +1084,14 @@
 											});
 										}
 									},
+									"dom" : {
+										"label" : "Day of Month",
+										action : function(node) {
+											$.fn.addNode(node, {
+												'childContentType' : 'conditionwhendayofmonth'
+											});
+										}
+									},
 									"subscription_day" : {
 										"label" : "Subscription Date",
 										action : function(node) {
@@ -1312,6 +1194,22 @@
 													});
 												}
 											},
+											"subscriber MDN" : {
+												"label" : "Subscriber MDN",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhosubscribermdn'
+													});
+												}
+											},
+											"Subscrbier Status" : {
+												"label" : "Subscrbier Status",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhosubscriberstatus'
+													});
+												}
+											},
 										}
 									},
 									"what" : {
@@ -1343,6 +1241,14 @@
 												action : function(node) {
 													$.fn.addNode(node, {
 														'childContentType' : 'conditionwhendayfactors'
+													});
+												}
+											},
+											"dom" : {
+												"label" : "Day of Month",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhendayofmonth'
 													});
 												}
 											},
@@ -1448,6 +1354,23 @@
 													});
 												}
 											},
+											"subscriber MDN" : {
+												"label" : "Subscriber MDN",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhosubscribermdn'
+													});
+												}
+											},
+											"Subscrbier Status" : {
+												"label" : "Subscrbier Status",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhosubscriberstatus'
+													});
+												}
+											},
+											
 										}
 									},
 									"what" : {
@@ -1471,6 +1394,14 @@
 												action : function(node) {
 													$.fn.addNode(node, {
 														'childContentType' : 'conditionwhendayfactors'
+													});
+												}
+											},
+											"dom" : {
+												"label" : "Day of Month",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhendayofmonth'
 													});
 												}
 											},
@@ -1576,6 +1507,23 @@
 													});
 												}
 											},
+											"subscriber MDN" : {
+												"label" : "Subscriber MDN",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhosubscribermdn'
+													});
+												}
+											},
+											"Subscrbier Status" : {
+												"label" : "Subscrbier Status",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhosubscriberstatus'
+													});
+												}
+											},
+											
 										}
 									},
 									"what" : {
@@ -1607,6 +1555,14 @@
 												action : function(node) {
 													$.fn.addNode(node, {
 														'childContentType' : 'conditionwhendayfactors'
+													});
+												}
+											},
+											"dom" : {
+												"label" : "Day of Month",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhendayofmonth'
 													});
 												}
 											},
@@ -1712,6 +1668,23 @@
 													});
 												}
 											},
+											"subscriber MDN" : {
+												"label" : "Subscriber MDN",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhosubscribermdn'
+													});
+												}
+											},
+											"Subscrbier Status" : {
+												"label" : "Subscrbier Status",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhosubscriberstatus'
+													});
+												}
+											},
+											
 										}
 									},
 									"what" : {
@@ -1743,6 +1716,14 @@
 												action : function(node) {
 													$.fn.addNode(node, {
 														'childContentType' : 'conditionwhendayfactors'
+													});
+												}
+											},
+											"dom" : {
+												"label" : "Day of Month",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhendayofmonth'
 													});
 												}
 											},
@@ -1840,6 +1821,23 @@
 									"who_" : {
 										"label" : "Who",
 										"submenu" : {
+												"subscriber MDN" : {
+													"label" : "Subscriber MDN",
+													action : function(node) {
+														$.fn.addNode(node, {
+															'childContentType' : 'conditionwhosubscribermdn'
+														});
+													}
+												},
+												"Subscrbier Status" : {
+													"label" : "Subscrbier Status",
+													action : function(node) {
+														$.fn.addNode(node, {
+															'childContentType' : 'conditionwhosubscriberstatus'
+														});
+													}
+												},
+												
 											"prefix" : {
 												"label" : "Called Number",
 												action : function(node) {
@@ -1956,6 +1954,14 @@
 												action : function(node) {
 													$.fn.addNode(node, {
 														'childContentType' : 'conditionwhendayfactors'
+													});
+												}
+											},
+											"dom" : {
+												"label" : "Day of Month",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhendayofmonth'
 													});
 												}
 											},
@@ -2054,6 +2060,23 @@
 									"who_" : {
 										"label" : "Who",
 										"submenu" : {
+											"subscriber MDN" : {
+												"label" : "Subscriber MDN",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhosubscribermdn'
+													});
+												}
+											},
+											"Subscrbier Status" : {
+												"label" : "Subscrbier Status",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhosubscriberstatus'
+													});
+												}
+											},
+										
 											"customer level" : {
 												"label" : "Customer level",
 												action : function(node) {
@@ -2085,6 +2108,14 @@
 												action : function(node) {
 													$.fn.addNode(node, {
 														'childContentType' : 'conditionwhendayfactors'
+													});
+												}
+											},
+											"dom" : {
+												"label" : "Day of Month",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhendayofmonth'
 													});
 												}
 											},
@@ -2183,6 +2214,23 @@
 									"who_" : {
 										"label" : "Who",
 										"submenu" : {
+											"subscriber MDN" : {
+												"label" : "Subscriber MDN",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhosubscribermdn'
+													});
+												}
+											},
+											"Subscrbier Status" : {
+												"label" : "Subscrbier Status",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhosubscriberstatus'
+													});
+												}
+											},
+											
 											"prefix" : {
 												"label" : "Called Number",
 												action : function(node) {
@@ -2275,6 +2323,14 @@
 												action : function(node) {
 													$.fn.addNode(node, {
 														'childContentType' : 'conditionwhendayfactors'
+													});
+												}
+											},
+											"dom" : {
+												"label" : "Day of Month",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhendayofmonth'
 													});
 												}
 											},
@@ -2373,6 +2429,23 @@
 									"who_" : {
 										"label" : "Who",
 										"submenu" : {
+											"subscriber MDN" : {
+												"label" : "Subscriber MDN",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhosubscribermdn'
+													});
+												}
+											},
+											"Subscrbier Status" : {
+												"label" : "Subscrbier Status",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhosubscriberstatus'
+													});
+												}
+											},
+											
 											"prefix" : {
 												"label" : "Called Number",
 												action : function(node) {
@@ -2465,6 +2538,14 @@
 												action : function(node) {
 													$.fn.addNode(node, {
 														'childContentType' : 'conditionwhendayfactors'
+													});
+												}
+											},
+											"dom" : {
+												"label" : "Day of Month",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhendayofmonth'
 													});
 												}
 											},
@@ -2562,6 +2643,23 @@
 									"who_" : {
 										"label" : "Who",
 										"submenu" : {
+											"subscriber MDN" : {
+												"label" : "Subscriber MDN",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhosubscribermdn'
+													});
+												}
+											},
+											"Subscrbier Status" : {
+												"label" : "Subscrbier Status",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhosubscriberstatus'
+													});
+												}
+											},
+											
 											"customer level" : {
 												"label" : "Customer level",
 												action : function(node) {
@@ -2638,6 +2736,14 @@
 												action : function(node) {
 													$.fn.addNode(node, {
 														'childContentType' : 'conditionwhendayfactors'
+													});
+												}
+											},
+											"dom" : {
+												"label" : "Day of Month",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhendayofmonth'
 													});
 												}
 											},
@@ -2739,6 +2845,22 @@
 									"who_" : {
 										"label" : "Who",
 										"submenu" : {
+											"subscriber MDN" : {
+												"label" : "Subscriber MDN",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhosubscribermdn'
+													});
+												}
+											},
+											"Subscrbier Status" : {
+												"label" : "Subscrbier Status",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhosubscriberstatus'
+													});
+												}
+											},
 											"customer level" : {
 												"label" : "Customer level",
 												action : function(node) {
@@ -2791,6 +2913,14 @@
 												action : function(node) {
 													$.fn.addNode(node, {
 														'childContentType' : 'conditionwhendayfactors'
+													});
+												}
+											},
+											"dom" : {
+												"label" : "Day of Month",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhendayofmonth'
 													});
 												}
 											},
@@ -2893,6 +3023,8 @@
 					case "conditionwhendayfactors":
 					case "conditionwhendurationfactors":
 					case "conditionwhenholidayfactors":
+					case "conditionwhendayofmonth":
+					case "conditionwhenactivedays":
 					case "conditionwhentimeslotfactors":
 					case "conditionwhenweekfactors":
 					case "conditionwherecountryfactors":
@@ -2905,6 +3037,8 @@
 					case "conditionwheredevicetype":
 					case "conditionwhomemberfactors":
 					case "conditionwhonumberfactors":
+					case "conditionwhosubscribermdn":
+					case "conditionwhosubscriberstatus":
 					case "conditionwhoprefixfactors":
 					case "conditionwhocustom":
 					case "conditionwhocustomerlevel":
@@ -2918,11 +3052,9 @@
 						};
 						break;
 						
-					case "mobile_usage_voice":
-					case "voip_usage_voice":
+					case "usage_voice":
 						menus.custom_create._disabled = false;
 						menus.custom_create.submenu = {
-							//"mobile_usage_voice" : {
 							"usage_voice" : {	
 								"label" : "Tariff Plan",
 								action : function(node) {
@@ -2941,7 +3073,6 @@
 					case "cross_mobile_usage_voice":
 						menus.custom_create._disabled = false;
 						menus.custom_create.submenu = {
-							//"mobile_usage_voice" : {
 							"cross_mobile_usage_voice" : {	
 								"label" : "Tariff Plan",
 								action : function(node) {
@@ -2974,11 +3105,9 @@
 						};
 						break;
 						
-					case "mobile_usage_sms":
-					case "voip_usage_sms":
+					case "usage_sms":
 						menus.custom_create._disabled = false;
 						menus.custom_create.submenu = {
-							//"mobile_usage_sms" : {
 							"usage_sms" : {
 								"label" : "Tariff Plan",
 								action : function(node) {
@@ -3193,7 +3322,6 @@
 					case "cross_mobile_usage_loyaltypoint":
 						menus.custom_create._disabled = false;
 						menus.custom_create.submenu = {
-							// "mobile_usage_loyaltypoint" : {
 							"cross_mobile_usage_loyaltypoint" : {	
 								"label" : "Tariff Plan",
 								action : function(node) {
@@ -3207,7 +3335,6 @@
 					case "cross_voip_usage_loyaltypoint":
 						menus.custom_create._disabled = false;
 						menus.custom_create.submenu = {
-							// "mobile_usage_loyaltypoint" : {
 							"cross_voip_usage_loyaltypoint" : {	
 								"label" : "Tariff Plan",
 								action : function(node) {

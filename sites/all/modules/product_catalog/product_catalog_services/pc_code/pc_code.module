@@ -69,11 +69,21 @@ function pc_code_update($code_group) {
 function _commoncode_update_or_create($code_list, $code_group) {
 
     // $voca_machine_name = str_replace(' ', '_', strtolower($code_group));
-	$voca_machine_name = strtolower($code_group);
+	  $voca_machine_name = strtolower($code_group);
     $vocabulary = taxonomy_vocabulary_machine_name_load($voca_machine_name);
 
     if($vocabulary == NULL) {
-        $vocabulary = new stdClass();
+    		
+    		// PCatalog에서 사용하지 않는 taxonomy는 만들지 않음.
+    		$codeGroupVoca = taxonomy_vocabulary_machine_name_load('COMMON_CODE_GROUP_LIST');
+    		$requiredCodeGroupList = taxonomy_get_tree($codeGroupVoca->vid);
+    		$requiredCodeGroupNames = array();
+    		foreach($requiredCodeGroupList as $record) {
+					$requiredCodeGroupNames[] = $record->name;
+    		}
+    		if(!in_array($code_group, $requiredCodeGroupNames)) return;
+    		
+    		$vocabulary = new stdClass();
         $vocabulary->name = $code_group;
         $vocabulary->machine_name = strtolower($code_group);
         taxonomy_vocabulary_save($vocabulary);

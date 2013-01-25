@@ -53,11 +53,11 @@ function _load_tree_item_mixed_with_node_and_term($rootNode,$grandParentNode=NUL
 		);
 		
 	 switch($term->field_rel_type['und'][0]['safe_value']) {
-		 case 'mobile_attribute':
-		 case 'mobile_attribute_packaged':
-		 case 'mobile_counter':
-		 case 'mobile_nonusage':
-		 case 'mobile_usage':
+		 case 'attribute':
+		 case 'attribute_packaged':
+		 case 'counter':
+		 case 'nonusage':
+		 case 'usage':
 		 		$itemArray['state'] = 'open';
 		 		break;
 	 }
