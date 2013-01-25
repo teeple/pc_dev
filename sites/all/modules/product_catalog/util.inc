@@ -336,7 +336,7 @@ function build_navigation_bar()
                     'sub' => array( array( '/product_designer/Mobile', 'Mobile'), 
                         array( '/product_designer/IPTV', 'IPTV'),
                         array( '/product_designer/Broadband', 'Broadband'),
-                        array( '/product_designer/VOIP', 'VOIP'),
+                        array( '/product_designer/VoIP', 'VOIP'),
                         array( '/product_designer/Satellite', 'Satellite'),
                         array( '/product_designer/Cross', 'Bundle'))),
 			'relation' => array( 'href' => '/relation/product/hierarchy/Mobile', 'icon' => 'widgets', 
@@ -457,3 +457,61 @@ function field_instance_copy() {
 	   }
 	}
 }
+
+function get_voca_list_machine_names() {
+	$voca_list = taxonomy_get_vocabularies();
+	
+	$temp = array();
+	foreach($voca_list as $voca) {
+	   if(strncasecmp($voca->name, "tpl_default", 11) == 0) {
+	     $temp[] = strtolower($voca->name);
+	   }
+	}
+  return $temp;
+}
+
+function remove_service_domain_from_voca() {
+
+  $tpl_list = get_voca_list_machine_names();
+  	
+	$domain_list = array('mobile', 'broadband', 'iptv', 'voip', 'cross', 'satellite', 'dummy');
+	
+	foreach($tpl_list as $tpl) {
+	  $voca = taxonomy_vocabulary_machine_name_load($tpl);
+	  $terms = taxonomy_get_tree($voca->vid);
+	
+	  foreach($terms as $term) {
+	     $termDetail = taxonomy_term_load($term->tid);
+	     if(!empty($termDetail->field_rel_type)) { 
+	     
+	     	/*
+	     	 if($termDetail->field_rel_type['und'][0]['value'] == 'nonusage_fee_recurring') {
+	     	 	$termDetail->field_rel_type['und'][0]['value'] == 'nonusage_recurring_charge';
+	     	 	taxonomy_term_save($termDetail);
+	     	 }
+	     	 */
+	     	 if($termDetail->field_rel_type['und'][0]['value'] == 'nonusage_voucher') {
+	     	 	 	$termDetail->field_rel_type['und'][0]['value'] == 'nonusage_recharge_voucher';
+	     	 	 	taxonomy_term_save($termDetail);
+	     	 	 }
+	     	 
+	     	 /*
+				 $typeDetail = explode('_', $termDetail->field_rel_type['und'][0]['value']);
+	       if( in_array($typeDetail[0], $domain_list )) {
+	          array_shift($typeDetail);
+	       }
+	       $termDetail->field_rel_type['und'][0]['value'] = join('_', $typeDetail);
+	       taxonomy_term_save($termDetail);
+	       */
+	       
+	     } 
+	  }
+	}
+}
+
+
+
+
+
+
+

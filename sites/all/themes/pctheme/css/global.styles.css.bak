@@ -2435,32 +2435,3 @@ td.supported_lang ul li.last {
 	list-style-image: url( ../img/usa_flag.png);
 }
 
-
-.jstree-default li[rel="attribute_required_device"] > a:after {content: " >> ";font-weight: bold;}
-.jstree-default li[rel="attribute_subscriber_lifecycle_scheme"] > a:after {content: " >> ";font-weight: bold;}
-.jstree-default li[rel*="packaged_"] > a:after {content: " >> ";font-weight: bold;}
-.jstree-default li[rel*="counter_"] > a:after {content: " >> ";font-weight: bold;}
-.jstree-default li[rel*="tree_node_counter"] > a:after {content: " >> ";font-weight: bold;}
-.jstree-default li[rel*="conditioncommonand"] > a:after {content: " >> ";font-weight: bold;}
-.jstree-default li[rel*="nonusage_subscription_"] > a:after {content: " >> ";font-weight: bold;}
-.jstree-default li[rel*="nonusage_activation_"] > a:after {content: " >> ";font-weight: bold;}
-.jstree-default li[rel*="nonusage_unsubscription_"] > a:after {content: " >> ";font-weight: bold;}
-.jstree-default li[rel*="nonusage_recharge_"] > a:after {content: " >> ";font-weight: bold;}
-.jstree-default li[rel*="nonusage_usageend_"] > a:after {content: " >> ";font-weight: bold;}
-.jstree-default li[rel*="nonusage_recurring_"] > a:after {content: " >> ";font-weight: bold;}
-.jstree-default li[rel*="nonusage_unittransfer_"] > a:after {content: " >> ";font-weight: bold;}
-.jstree-default li[rel*="nonusage_activation_"] > a:after {content: " >> ";font-weight: bold;}
-.jstree-default li[rel*="nonusage_otheronetimecharge"] > a:after {content: " >> ";font-weight: bold;}
-
-.jstree-default li[rel*="treeNodeCustom"] > a:after {content: " >> ";font-weight: bold;}
-.jstree-default li[rel*="action"] > a:after {content: " >> ";font-weight: bold;}
-
-.jstree-default li[rel="data_tariffplan_basicrate"] > a:after {content: " >> ";font-weight: bold;}
-.jstree-default li[rel="basicrate_data"] > a:after {content: " >> ";font-weight: bold;}
-
-.jstree-default li[rel*="sms_tariffplan_specialnumber"] > a:after {content: " >> ";font-weight: bold;}
-.jstree-default li[rel*="voice_tariffplan_specialnumber"] > a:after {content: " >> ";font-weight: bold;}
-
-.jstree-default li[rel*="treenodepacket"] > a:after {content: " >> ";font-weight: bold;}
-
-
