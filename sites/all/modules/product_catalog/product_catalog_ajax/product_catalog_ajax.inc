@@ -637,7 +637,7 @@ function _get_max_weight_in_children($parentNid){
     return $weight;
 }
 
-function _add_command_after_dismiss_modal($refNodeNid,$refTreeTid,$defaultTabIndex){
+function _add_command_after_dismiss_modal($refNodeNid,$refTreeTid=NULL,$defaultTabIndex=NULL){
 	
 	if(empty($refTreeTid)) {
 		$nodeId = 'node_'.$refNodeNid;	
