@@ -45,6 +45,13 @@
 					      	},
 				},
 				
+				'attribute_available_channel': {
+					"valid_children" : ["prdattributeavailablechannel"],
+					  		"icon" : {
+					      		"image" : "/sites/default/files/icons/attribute_detail.png"
+					      	},
+				},
+				
 				'attribute_allowed_device': {
 					"valid_children" : ["prdattributeallowedmodel"],
 					  		"icon" : {
@@ -358,6 +365,19 @@
         	"icon" : {
         	"image" : "/sites/default/files/icons/ui-menu.png"
         	        }
+        },
+        
+        "nonusage_fee_recurring" : {
+        	"valid_children" : ["actionpricechargerecurring"],
+        	"icon" : {
+        	"image" : "/sites/default/files/icons/money.png"
+        	        }
+        },
+        "actionpricechargerecurring" : {
+		        "valid_children" : ["conditioncommonand_nonusage_recurring"],
+    		    	"icon" : {
+        		"image" : "/sites/default/files/icons/money.png"
+            }
         },
         "nonusage_recurring_charge" : {
         	"valid_children" : ["actionpricechargerecurring"],
