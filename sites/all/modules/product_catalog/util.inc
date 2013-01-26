@@ -336,11 +336,7 @@ function build_navigation_bar()
                     'sub' => array( array( '/product_designer/Mobile', 'Mobile'), 
                         array( '/product_designer/IPTV', 'IPTV'),
                         array( '/product_designer/Broadband', 'Broadband'),
-<<<<<<< HEAD
-                        array( '/product_designer/VoIP', 'VOIP'),
-=======
                         array( '/product_designer/VoIP', 'VoIP'),
->>>>>>> 133378ec4e0e6e43090c843470bcc533090406b7
                         array( '/product_designer/Satellite', 'Satellite'),
                         array( '/product_designer/Cross', 'Bundle'))),
 			'relation' => array( 'href' => '/relation/product/hierarchy/Mobile', 'icon' => 'widgets', 
@@ -487,17 +483,23 @@ function remove_service_domain_from_voca() {
 	  foreach($terms as $term) {
 	     $termDetail = taxonomy_term_load($term->tid);
 	     if(!empty($termDetail->field_rel_type)) { 
-	     
-	     	/*
-	     	 if($termDetail->field_rel_type['und'][0]['value'] == 'nonusage_fee_recurring') {
-	     	 	$termDetail->field_rel_type['und'][0]['value'] == 'nonusage_recurring_charge';
-	     	 	taxonomy_term_save($termDetail);
-	     	 }
-	     	 */
+
 	     	 if($termDetail->field_rel_type['und'][0]['value'] == 'nonusage_voucher') {
-	     	 	 	$termDetail->field_rel_type['und'][0]['value'] == 'nonusage_recharge_voucher';
-	     	 	 	taxonomy_term_save($termDetail);
+	     	 	$termDetail->field_rel_type['und'][0]['value'] == 'nonusage_recharge_voucher';
+	     	 	field_attach_update('taxonomy_term', $termDetail);
+	     	 	// taxonomy_term_save($termDetail);
+	     	 }
+
+				/*	     	 
+	     	 if($termDetail->field_rel_type['und'][0]['value'] == 'nonusage_voucher') {
+	     	 		dsm($termDetail, 'termDetail');
+	     	 		$termDetail->field_rel_type['und'][0]['value'] == 'nonusage_recharge_voucher';
+	     	 		field_attach_update('taxonomy_term', $termDetail);
+	     	 	 	// taxonomy_term_save($termDetail);
 	     	 	 }
+	     	 	 */
+	     	 	 
+	     	 	 
 	     	 
 	     	 /*
 				 $typeDetail = explode('_', $termDetail->field_rel_type['und'][0]['value']);

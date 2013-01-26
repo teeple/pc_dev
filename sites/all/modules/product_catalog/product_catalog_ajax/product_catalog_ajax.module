@@ -1570,18 +1570,21 @@ function product_catalog_ajax_add_content($js = NULL) {
             break;
      */
      
-		case 'conditioncommonor':
 		case 'conditioncommonand':
-				$child = new StdClass();
+						$child = new StdClass();
 		    		$child->uid = $user->uid;
 		    		$child->type = $childContentType;
 		    		$child->language = 'und';
 		    		$child->field_parent_node = array('und' => array(0 => array('nid' => $parentNid)));
 		    		$child->field_weight = array('und' => array(0 => array('value' => $weight)));
 		    		node_save($child);
-		
+		    		
+		    		$parent = node_load($parentNid);
+		    		$child->parent_nid = $parentNid;
+		    		$rel_type = _get_rel_type_on_condition($child);
+		    		
 		    		// js tree node add function call
-		    		$output = array('parent_id' => $parentId, 'child_id' => 'node_'.$child->nid,'title' => $child->title, 'node_type' => $child->type, 'weight' => $weight);
+		    		$output = array('parent_id' => $parentId, 'child_id' => 'node_'.$child->nid,'title' => $child->title, 'node_type' => $child->type, 'rel_type' => $rel_type, 'weight' => $weight);
 		    		print json_encode($output);
 		    		exit;
 		    		break;
