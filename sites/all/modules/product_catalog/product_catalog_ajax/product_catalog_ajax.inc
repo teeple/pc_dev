@@ -230,6 +230,7 @@ function _get_rel_type_by_nonusage_type($tempRelType) {
 	$nonUsageType = $tempRelTypes[$length-2];
 	switch($nonUsageType) {
 		case 'recurring':
+		case 'fee':
 			$rel_type_suffix = '_nonusage_recurring';
 			break;
 		case 'subscription':
