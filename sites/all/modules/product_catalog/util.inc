@@ -483,22 +483,19 @@ function remove_service_domain_from_voca() {
 	  foreach($terms as $term) {
 	     $termDetail = taxonomy_term_load($term->tid);
 	     if(!empty($termDetail->field_rel_type)) { 
-
-	     	 if($termDetail->field_rel_type['und'][0]['value'] == 'nonusage_voucher') {
-	     	 	$termDetail->field_rel_type['und'][0]['value'] == 'nonusage_recharge_voucher';
+	     
+	     	 if($termDetail->field_rel_type['und'][0]['value'] == 'nonusage_fee_recurring') {
+	     	 	$termDetail->field_rel_type['und'][0]['value'] == 'nonusage_recurring_charge';
 	     	 	field_attach_update('taxonomy_term', $termDetail);
 	     	 	// taxonomy_term_save($termDetail);
 	     	 }
 
-				/*	     	 
 	     	 if($termDetail->field_rel_type['und'][0]['value'] == 'nonusage_voucher') {
-	     	 		dsm($termDetail, 'termDetail');
-	     	 		$termDetail->field_rel_type['und'][0]['value'] == 'nonusage_recharge_voucher';
-	     	 		field_attach_update('taxonomy_term', $termDetail);
+	     	 	 	$termDetail->field_rel_type['und'][0]['value'] == 'nonusage_recharge_voucher';
+	     	 	field_attach_update('taxonomy_term', $termDetail);
+
 	     	 	 	// taxonomy_term_save($termDetail);
 	     	 	 }
-	     	 	 */
-	     	 	 
 	     	 	 
 	     	 
 	     	 /*

@@ -10,8 +10,8 @@ function _array_voucher_cardtype($nid=NULL){
 
         $jsonCounter['id'] = isset($record->field_field_voucher_id)?$record->field_field_voucher_id[0]['rendered']['#markup']: null;
         $jsonCounter['title'] = isset($record->node_title) ? $record->node_title: null;
-        $jsonCounter['active_period'] = !empty($record->field_field_active_period) ? $record->field_field_active_period[0]['rendered']['#markup']: null;
-        $jsonCounter['grace_period'] = !empty($record->field_field_grace_period) ? $record->field_field_grace_period[0]['rendered']['#markup']: null;
+        //$jsonCounter['active_period'] = !empty($record->field_field_active_period) ? $record->field_field_active_period[0]['rendered']['#markup']: null;
+        //$jsonCounter['grace_period'] = !empty($record->field_field_grace_period) ? $record->field_field_grace_period[0]['rendered']['#markup']: null;
         $jsonCounter['price'] = !empty($record->field_field_price_amount) ? $record->field_field_price_amount[0]['rendered']['#markup']: null;
         $jsonCounter['voucher_type'] = _add_commoncode($record->field_field_ref_voucher_type);
         $jsonCounter['description'] = !empty($record->field_field_description_long) ? $record->field_field_description_long[0]['rendered']['#markup']: null;
@@ -22,12 +22,17 @@ function _array_voucher_cardtype($nid=NULL){
 		// product별 counter처리
 		//$listProduct = views_get_view_result('list_product_by_vouchercardtype', 'panel_pane_1', $record->nid);
 		$listProduct = views_get_view_result('list_treenodeproductforvoucher', 'panel_pane_1', $record->nid);
-
+		
+		dsm($listProduct, 'listProduct');
+		
 		$ret_product = array();
 		foreach($listProduct as $product) {
             $originalProductNode = node_load($product->node_field_data_field_ref_product_nid);
             $tmpProduct['product_id'] = $originalProductNode->field_product_id['und'][0]['safe_value'];
+            
 			$tmpProduct['product_name'] = $product->node_title;
+			$tmpProduct['active_period'] = $product->field_field_active_period[0]['raw']['value'];
+			$tmpProduct['grace_period'] = $product->field_field_grace_period[0]['raw']['value'];
 			
 			$ret_product[] = $tmpProduct;
 			/*
