@@ -287,18 +287,14 @@
 						};
 						break;
 					case 'treenodedepositscheme':
-						menus.custom_delete._disabled = false;
-						menus.custom_delete.action = function(node) {
-							$.fn.deleteNode(node);
-						};
-						break;
 					case 'treenodethresholdscheme':
+					case 'treenodeunittransferscheme':
 						menus.custom_delete._disabled = false;
 						menus.custom_delete.action = function(node) {
 							$.fn.deleteNode(node);
 						};
 						break;
-
+						
 					case "nonusage_threshold":
 						menus.custom_create._disabled = false;
 						menus.custom_create.submenu = {
@@ -670,6 +666,17 @@
 						menus.custom_delete.action = function(node) {
 							$.fn.deleteNode(node);
 						};
+						menus.custom_create._disabled = false;
+						menus.custom_create.submenu = {
+							"actionpricechargeonetime" : {
+								"label" : "ConditionSet",
+								action : function(node) {
+									$.fn.addNode(node, {
+										'childContentType' : 'conditioncommonand'
+									});
+								}
+							},
+						};
 						break;
 
 					case 'tree_node_counter_accumulated_optional_prepaid':
@@ -730,11 +737,11 @@
 					case "actionpricechargerecurring":
 						menus.custom_create._disabled = false;
 						menus.custom_create.submenu = {
-							"actionpricechargerecurring_discount" : {
-								"label" : "Discount",
+							"actionpricechargerecurring" : {
+								"label" : "ConditionSet",
 								action : function(node) {
 									$.fn.addNode(node, {
-										'childContentType' : 'actionpricediscount'
+										'childContentType' : 'conditioncommonand'
 									});
 								}
 							},

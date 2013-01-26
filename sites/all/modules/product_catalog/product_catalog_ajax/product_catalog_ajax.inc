@@ -224,8 +224,11 @@ function _get_rel_type_by_usage_type($tariffplan_machinename) {
 }
 
 function _get_rel_type_by_nonusage_type($tempRelType) {
+	dsm('here');
 	$tempRelTypes = explode('_', $tempRelType);
 	$length = count($tempRelTypes);
+	
+	dsm($tempRelType, 'tempRelTypes');
 	
 	$nonUsageType = $tempRelTypes[$length-2];
 	switch($nonUsageType) {
