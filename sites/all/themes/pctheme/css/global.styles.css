@@ -2438,6 +2438,7 @@ td.supported_lang ul li.last {
 
 .jstree-default li[rel="attribute_allowed_device"] > a:after {content: " >> ";font-weight: bold;}
 .jstree-default li[rel="attribute_required_device"] > a:after {content: " >> ";font-weight: bold;}
+.jstree-default li[rel="attribute_available_channel"] > a:after {content: " >> ";font-weight: bold;}
 .jstree-default li[rel="attribute_subscriber_lifecycle_scheme"] > a:after {content: " >> ";font-weight: bold;}
 .jstree-default li[rel*="packaged_"] > a:after {content: " >> ";font-weight: bold;}
 .jstree-default li[rel*="counter_"] > a:after {content: " >> ";font-weight: bold;}
