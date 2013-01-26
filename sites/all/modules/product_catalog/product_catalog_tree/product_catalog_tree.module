@@ -16,7 +16,7 @@ function product_catalog_tree_form($form, &$form_state) {
 
     $form['dummyLink'] = array(
    		'#type' => 'markup',
-   		'#markup' => '<div id="dummy-link"></div>'
+   		'#markup' => '<div id="dummy-link" class="main-tree"></div>'
     );
 
 	$form['tree'] = array(

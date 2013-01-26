@@ -319,6 +319,12 @@
 					"image" : "/sites/default/files/icons/ui-menu.png"
 					        }
 				},
+				"nonusage_voucher" : {
+					"valid_children" : "none",
+							"icon" : {
+									"image" : "/sites/default/files/icons/voucher.png"
+								},
+						},
 				"nonusage_recharge_voucher" : {
 					"valid_children" : "none",
 							"icon" : {
@@ -374,15 +380,21 @@
         
         // Unit Transfer
         "nonusage_unittransfer" : {
-        	"valid_children" : ["treenodedepositscheme"],
+        	"valid_children" : ["nonusage_unittransfer_scheme"],
         	"icon" : {
         	"image" : "/sites/default/files/icons/ui-menu.png"
         	        }
         },
         "nonusage_unittransfer_scheme" : {
-        	"valid_children" : ["treenodedepositscheme"],
+        	"valid_children" : ["treenodeunittransferscheme"],
         	"icon" : {
         			"image" : "/sites/default/files/icons/scheme.png"
+        		},
+        },
+        "treenodeunittransferscheme" : {
+        	"valid_children" : "none",
+        	"icon" : {
+        			"image" : "/sites/default/files/icons/file.png"
         		},
         },
         "nonusage_deposit" : {
@@ -709,7 +721,6 @@
                     }
                 },
         "conditioncommonand_usage_mms" : {
-        			"valid_children" : ["tariffplan"],
                     "icon" : {
         		"image" : "/sites/default/files/icons/conditioncommonand.png"
                     }

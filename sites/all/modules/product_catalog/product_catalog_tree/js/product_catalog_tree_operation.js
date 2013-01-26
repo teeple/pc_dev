@@ -600,7 +600,7 @@
 				var output = $.parseJSON(data);			
 				if(output != null){
 					if(output instanceof Array == false){
-						$.fn.addTreeItemCallback(output.parent_id, output.child_id,output.title, output.node_type, output.weight);
+						$.fn.addTreeItemCallback(output.parent_id, output.child_id,output.title, output.node_type, output.weight, output.rel_type);
 					}else{
 						var settings = output[0].settings;
 						var context = output[1];
@@ -692,9 +692,9 @@
         //history.go(0);
 	};	
 	 
-	$.fn.addTreeItemCallback = function(parentId, childId, title,contentType, weight) {
+	$.fn.addTreeItemCallback = function(parentId, childId, title,contentType, weight, relType) {
 		$.fn.masking("Adding...");
-		$(".product_catalog_tree").jstree("create", $('#' + parentId),"inside", {"data" : title,"attr" : {"id" : childId,"node_type" : contentType,"rel" : contentType,"weight" : weight}}, function() {}, true);
+		$(".product_catalog_tree").jstree("create", $('#' + parentId),"inside", {"data" : title,"attr" : {"id" : childId,"node_type" : contentType,"rel" : relType,"weight" : weight}}, function() {}, true);
 		$.fn.unmasking();
 	};
 	

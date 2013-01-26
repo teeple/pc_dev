@@ -255,10 +255,25 @@ function _get_rel_type_on_condition($item) {
 	
 	$parent = node_load($item->parent_nid);
 	$treeTerm = taxonomy_term_load($parent->field_ref_tree_tid['und'][0]['value']);
-
+	
 	$rel_type = 'conditioncommonand';
 	
 	switch($treeTerm->name) {
+	  case 'Penalty':
+	  	$tempRelType = $treeTerm->field_rel_type['und'][0]['value'];
+	  	$rel_type .= _get_rel_type_by_nonusage_type($tempRelType);
+	  	break;
+	  	
+	  case 'Charge': 
+		  $tempRelType = $treeTerm->field_rel_type['und'][0]['value'];
+		  
+		  if($tempRelType == 'treeNodeCustomCharge') {
+		  		$rel_type .= _get_rel_type_by_usage_type($treeTerm->vocabulary_machine_name);
+		  } else {
+		  		$rel_type .= _get_rel_type_by_nonusage_type($tempRelType);
+		  }
+		  break;
+		  
 		case 'Discount':
 			$tempRelType = $treeTerm->field_rel_type['und'][0]['value'];
 			
@@ -637,7 +652,7 @@ function _get_max_weight_in_children($parentNid){
     return $weight;
 }
 
-function _add_command_after_dismiss_modal($refNodeNid,$refTreeTid=NULL,$defaultTabIndex=NULL){
+function _add_command_after_dismiss_modal($refNodeNid,$refTreeTid,$defaultTabIndex){
 	
 	if(empty($refTreeTid)) {
 		$nodeId = 'node_'.$refNodeNid;	

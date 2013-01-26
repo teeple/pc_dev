@@ -2436,6 +2436,7 @@ td.supported_lang ul li.last {
 }
 
 
+.jstree-default li[rel="attribute_allowed_device"] > a:after {content: " >> ";font-weight: bold;}
 .jstree-default li[rel="attribute_required_device"] > a:after {content: " >> ";font-weight: bold;}
 .jstree-default li[rel="attribute_subscriber_lifecycle_scheme"] > a:after {content: " >> ";font-weight: bold;}
 .jstree-default li[rel*="packaged_"] > a:after {content: " >> ";font-weight: bold;}
@@ -2463,4 +2464,8 @@ td.supported_lang ul li.last {
 
 .jstree-default li[rel*="treenodepacket"] > a:after {content: " >> ";font-weight: bold;}
 
-
+/*
+.div.main_tree {
+	resize: both;
+}
+*/
