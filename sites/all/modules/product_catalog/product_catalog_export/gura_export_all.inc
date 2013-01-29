@@ -902,7 +902,8 @@ function view_get_field_value($view , $field_name , $record)
 						{
 							if($value == 1)
 								$value = "true";
-							$value = "false";
+							else
+								$value = "false";
 						}
 
 
