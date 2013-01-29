@@ -30,7 +30,8 @@ function _array_export_counter($nid=NULL){
 	$counterNids = array();
 	
     foreach($viewResult as $record) {
-
+//dsm($record);
+        $jsonCounter = array();
         // $jsonCounter['ID'] = !empty($record->field_field_code[0]['raw']['value']) ? $record->field_field_code[0]['raw']['value'] : null;
         $jsonCounter['counter_id'] = $record->field_field_counter_id[0]['raw']['value'];
         $jsonCounter['counter_name'] = isset($record->node_title) ? $record->node_title: null;
@@ -41,7 +42,12 @@ function _array_export_counter($nid=NULL){
         $jsonCounter['counter_unit_type'] = _add_commoncode($record->field_field_counter_unit_type);
         $jsonCounter['counter_type'] = _add_commoncode($record->field_field_counter_type);
         // $jsonCounter['main_or_accumulated'] = _add_commoncode($record->field_field_main_or_accumulated);
-
+        $counterTypeTerm = $record->field_field_counter_type[0]['raw']['taxonomy_term'];
+        
+        if($counterTypeTerm->name === 'Rollover'){
+           $jsonCounter['rollover_month'] = $record->field_field_rollover_months[0]['raw']['value'];
+           //dsm($record);
+        }
         $jsonCounter['description'] = !empty($record->field_field_description) ? $record->field_field_description[0]['rendered']['#markup']: null;
         $jsonCounter['scale'] = !empty($record->field_field_scale) ? $record->field_field_scale[0]['rendered']['#title']: null;
 
