@@ -898,6 +898,13 @@ function view_get_field_value($view , $field_name , $record)
 							$value = $field_handler->field_info['settings']['allowed_values'][$value];
 						}
 
+						if(get_field_type_string($field_name) == 'list_boolean')
+						{
+							if($value == 1)
+								$value = "true";
+							$value = "false";
+						}
+
 
 						if(array_key_exists('value2' , $raw_item['raw']))
 						{
@@ -1158,8 +1165,8 @@ function rating_rules_export_from_view($title, $view_name, $display_name, $nid=N
                                 }
                                 else if($field_info['type'] == 'list_boolean')
                                 {
-                                    $factorMeta['type'] = 'int';
-                                    //$factorMeta['size'] = 0;
+                                    $factorMeta['type'] = 'string';
+                                    $factorMeta['size'] = 6;
                                 }
                                 else if($field_info['type'] == 'list_text')
                                 {
