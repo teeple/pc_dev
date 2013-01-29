@@ -118,9 +118,16 @@
 					            			|| m.o.attr('rel') == 'tree_node_counter_main_optional_prepaid' 
 					            			|| m.o.attr('rel') == 'tree_node_counter_main_optional_postpaid' 
 					            			|| m.o.attr('rel') == 'tree_node_counter_main_rollover_prepaid' 
-					            			|| m.o.attr('rel') == 'tree_node_counter_main_rollover_postpaid' ) {
+					            			|| m.o.attr('rel') == 'tree_node_counter_main_rollover_postpaid' 
+					            			|| m.o.attr('rel') == 'actionpriceallowanceonetime'
+					            			) {
 					            			
-					            			return true;
+						            			if(m.op.attr('rel') == m.np.attr('rel') ) {
+						            				return true;
+															} else {
+						            					return false;
+						            			}
+						            			
 					            		} else {
 					            			return false;
 					            		}

@@ -675,18 +675,28 @@
 				"nodes" : children
 			},
 			success : function(data) {
-				var rel_type = node.attr("rel");				
+				var rel_type = node.attr("rel");
 				$.jstree._focused().delete_node(node);
 				$.fn.clearTreeContentDiv();
 				$.fn.unmasking();
 				
+				switch(rel_type) {
+					case 'simpleproductoffering':
+					case 'number_special':
+					case 'vouchercardtype':
+						$(location).attr('href', data.urlpath);
+						break;
+				}
+				
+				/*
 				if(rel_type === 'simpleproductoffering'){
-					$(location).attr('href',"/product_designer");
+					$(location).attr('href',"/product_designer/Mobile#quickset-products=2");
 				}else if(rel_type === 'number_special'){
 					$(location).attr('href',"/common/vouchercardtype#quickset-qtabs_common_data=6");
 				}else if(rel_type === 'vouchercardtype'){
 					$(location).attr('href',"/common/vouchercardtype");
-				}						
+				}*/
+									
 			}
 		});
         //history.go(0);

@@ -451,6 +451,7 @@
 						};
 						break;
 					case 'nonusage_fee_recurring':
+					case 'nonusage_recurring_charge':
 						menus.custom_create._disabled = false;
 						menus.custom_create.submenu = {
 							//"mobile_nonusage_fee_recurring" : {
@@ -3071,10 +3072,6 @@
 								}
 							},
 						};
-						menus.custom_paste._disabled = false;
-						menus.custom_paste.action = function(node) {
-							$.fn.pasteNode(node);
-						};
 						break;
 						
 					case "cross_mobile_usage_voice":
@@ -3124,10 +3121,6 @@
 								}
 							},
 						};
-						menus.custom_paste._disabled = false;
-						menus.custom_paste.action = function(node) {
-							$.fn.pasteNode(node);
-						};
 						break;
 						
 					case "cross_mobile_usage_sms":
@@ -3165,7 +3158,7 @@
 						};					
 						break;
 						
-					case "mobile_usage_data":
+					case "usage_data":
 						menus.custom_create._disabled = false;
 						menus.custom_create.submenu = {
 							"mobile_usage_data" : {
@@ -3176,10 +3169,6 @@
 									});
 								}
 							},
-						};
-						menus.custom_paste._disabled = false;
-						menus.custom_paste.action = function(node) {
-							$.fn.pasteNode(node);
 						};
 						break;
 					case "cross_mobile_usage_data":
@@ -3200,7 +3189,7 @@
 						};
 						break;
 						
-					case "mobile_usage_mms":
+					case "usage_mms":
 						menus.custom_create._disabled = false;
 						menus.custom_create.submenu = {
 							"mobile_usage_mms" : {
@@ -3228,7 +3217,7 @@
 						};
 						break;
 						
-					case "mobile_usage_crbt":
+					case "usage_crbt":
 						menus.custom_create._disabled = false;
 						menus.custom_create.submenu = {
 							"mobile_usage_crbt" : {
@@ -3264,8 +3253,7 @@
 						};
 						break;
 						
-					case "mobile_usage_vod":
-					case "iptv_usage_vod":
+					case "usage_vod":
 						menus.custom_create._disabled = false;
 						menus.custom_create.submenu = {
 							"usage_vod" : {
@@ -3306,12 +3294,7 @@
 						};
 						break;
 					
-					case "mobile_usage_loyaltypoint":
-					case "iptv_usage_loyaltypoint":
-					case "voip_usage_loyaltypoint":
-					case "broadband_usage_loyaltypoint":
-					case "satellite_usage_loyaltypoint":
-					case "dummy_usage_loyaltypoint":
+					case "usage_loyaltypoint":
 						menus.custom_create._disabled = false;
 						menus.custom_create.submenu = {
 							// "mobile_usage_loyaltypoint" : {

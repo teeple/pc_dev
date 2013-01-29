@@ -1645,7 +1645,6 @@ function product_catalog_ajax_delete_from_tree($js = NULL){
 	ctools_include('ajax');
 	
 	$deleteNodes = $_POST['nodes'];
-	
 	$deleteNids = array();
 	foreach($deleteNodes as $delItem){
 		$delItem = explode('_',$delItem);
@@ -1654,9 +1653,18 @@ function product_catalog_ajax_delete_from_tree($js = NULL){
 		}
 	}
 	
+	$url = array();
+	$fullpath = '';
+	if(!empty($deleteNids)) {
+		$node = node_load($deleteNids[0]);
+		
+		$url = _get_redirect_url_in_delete($node);
+	}
+	$fullpath = '/'.$url['path'];
+	$fullpath .= !empty($url['fragment'])? '#'.$url['fragment'] : '';
 	node_delete_multiple($deleteNids);
 	
-	$output = array('return' => true);
+	$output = array('return' => true, 'urlpath' => $fullpath);
 
 	print json_encode($output);
 	exit;
