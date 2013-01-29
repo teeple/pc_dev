@@ -2440,6 +2440,8 @@ td.supported_lang ul li.last {
 .jstree-default li[rel="attribute_required_device"] > a:after {content: " >> ";font-weight: bold;}
 .jstree-default li[rel="attribute_available_channel"] > a:after {content: " >> ";font-weight: bold;}
 .jstree-default li[rel="attribute_subscriber_lifecycle_scheme"] > a:after {content: " >> ";font-weight: bold;}
+.jstree-default li[rel="attribute_number_saving"] > a:after {content: " >> ";font-weight: bold;}
+
 .jstree-default li[rel*="packaged_"] > a:after {content: " >> ";font-weight: bold;}
 .jstree-default li[rel*="counter_"] > a:after {content: " >> ";font-weight: bold;}
 .jstree-default li[rel*="tree_node_counter"] > a:after {content: " >> ";font-weight: bold;}
@@ -2450,6 +2452,8 @@ td.supported_lang ul li.last {
 .jstree-default li[rel*="nonusage_recharge_"] > a:after {content: " >> ";font-weight: bold;}
 .jstree-default li[rel*="nonusage_usageend_"] > a:after {content: " >> ";font-weight: bold;}
 .jstree-default li[rel*="nonusage_recurring_"] > a:after {content: " >> ";font-weight: bold;}
+.jstree-default li[rel*="nonusage_deposit"] > a:after {content: " >> ";font-weight: bold;}
+.jstree-default li[rel*="nonusage_threshold"] > a:after {content: " >> ";font-weight: bold;}
 .jstree-default li[rel*="nonusage_unittransfer_"] > a:after {content: " >> ";font-weight: bold;}
 .jstree-default li[rel*="nonusage_activation_"] > a:after {content: " >> ";font-weight: bold;}
 .jstree-default li[rel*="nonusage_otheronetimecharge"] > a:after {content: " >> ";font-weight: bold;}
