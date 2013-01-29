@@ -38,8 +38,13 @@ function pc_commoncode_services_update($code) {
     $account = user_load(1);
     $user = $account;
     
-    dsm($code,'code');
-    $ret_array['test'] = 'hehehe';
+    $commonCode = _services_arg_value($code, 'code');
+    
+    $code_list = array();
+    $code_list[] = $commonCode;
+    _commoncode_update_or_create($code_list, $commonCode['codeGroup']);
+    
+    $ret_array['result'] = 'success';
     return $ret_array;
 }
 
