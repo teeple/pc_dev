@@ -35,8 +35,8 @@ function pc_commoncode_services_access() {
 }
 
 function pc_commoncode_services_update($code) {
+    dsm($code,code);
     $ret_array['test'] = 'hehehe';
-
     return $ret_array;
 }
 
