@@ -16,9 +16,9 @@ function pc_commoncode_services_services_resources() {
             'args' => array(
                 array(
                     'name' => 'code',
-                    'optional' => TRUE,
-                    'source' => array('param' => 'code'),
-                    'type' => 'string',
+                    'optional' => FALSE,
+                    'source' => 'data',
+                    'type' => 'array',
                     'description' => 'The commoncode name(vocabulary) to update',
                 ),
             ),
