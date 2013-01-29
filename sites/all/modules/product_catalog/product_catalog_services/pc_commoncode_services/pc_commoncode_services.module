@@ -30,11 +30,14 @@ function pc_commoncode_services_services_resources() {
 }
 
 function pc_commoncode_services_access() {
-
-   return TRUE;
+    return TRUE;
 }
 
 function pc_commoncode_services_update($code) {
+    global $user;
+    $account = user_load(1);
+    $user = $account;
+    
     dsm($code,'code');
     $ret_array['test'] = 'hehehe';
     return $ret_array;
