@@ -14,12 +14,12 @@ function pc_commoncode_services_services_resources() {
             'callback' => 'pc_commoncode_services_update',
             'access callback' => 'pc_commoncode_services_access',
             'args' => array(
-                array(
+                 array(
                     'name' => 'code',
                     'optional' => FALSE,
                     'source' => 'data',
+                    'description' => 'The data to update',
                     'type' => 'array',
-                    'description' => 'The commoncode name(vocabulary) to update',
                 ),
             ),
         ),
