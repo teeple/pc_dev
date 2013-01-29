@@ -131,11 +131,13 @@ function _add_ajax_submit_callback($form_id,&$form){
         case 'simpleproductoffering_node_form':
             unset($form['field_is_cloned']);
             if(isset($form['nid']['#value'])) { // edit
+                /*
                 $form['clone_button'] = array(
                     '#type' => 'markup',
                     '#markup' => '<input type="button" id="product_clone_button" class="form-submit" value="Clone"/>',
                     '#weight' => 1000
                 );
+                */
             }
 			$firstPathName = current(explode('/', current_path()));
 			
