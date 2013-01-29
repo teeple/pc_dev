@@ -452,8 +452,19 @@
 		        	"image" : "/sites/default/files/icons/money.png"
 		        	        }	
 		        },
-
-        
+		    "actionpriceallowanceonetime" : {
+		    	"valid_children" : ["conditioncommonand_nonusage_subscription",
+		    											"conditioncommonand_nonusage_unsubscription",
+		    											"conditioncommonand_nonusage_activation",
+		    											"conditioncommonand_nonusage_recharge",
+		    											"conditioncommonand_nonusage_usageend",
+		    											"conditioncommonand_nonusage_recurring"],
+		    	"icon" : {
+		    	"image" : "/sites/default/files/icons/file.png"
+		    	        }
+		    },
+		        
+				
 				// USAGE
 				///////////////////////////////////////////////////
 				// Usage

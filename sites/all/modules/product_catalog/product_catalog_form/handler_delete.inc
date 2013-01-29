@@ -133,6 +133,23 @@ function product_catalog_form_node_delete($node){
              * 
              */
 		case 'counter':
+			dsm($node, 'node');
+			// 지울려는 해당 counter를 참조하고 있는 content type이 존재하는지 
+			$view = views_get_view('list_reverse_reference_items');
+			$view->set_display('panel_pane_1');
+			$view->set_arguments($node->nid);
+			$view->execute();
+			
+			dsm($view->result, 'view_result');
+			if(!empty($view->resut)) {
+				drupal_set_message("You should remove the items referencing this counter",'error');
+				drupal_form_error("You should remove the items referencing this counter");
+				return;
+			}
+			drupal_set_message("You should remove the items referencing this counter",'error');
+			form_set_error("You should remove the items referencing this counter");
+			return;
+			
 			//unittransfer view
 			$unitTransferView = views_get_view('list_unittransfer');
 			$unitTransferView->set_display('panel_pane_1');
@@ -154,9 +171,8 @@ function product_catalog_form_node_delete($node){
     						}
     					}
     				}		
-                }		
+				}		
 			}
-					
 			break;
         
 	}

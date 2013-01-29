@@ -606,9 +606,14 @@ function load_required_js_css_before_ajax_load(){
     	$product_catalog_tree_path = drupal_get_path('module', 'product_catalog_tree');
     	
     	$paths = explode('/', current_path());
+    	$serviceDomains = array('Mobile', 'IPTV', 'VoIP', 'Broadband', 'Satellite', 'Dummy', 'Cross');
+    	
     	if(!empty($paths) && $paths[0] == 'product_designer') {
-	    	$serviceDomain = $paths[1];
-
+    	  $serviceDomain = 'Mobile';
+    	  if(in_array($paths[1], $serviceDomains)) {
+	    		$serviceDomain = $paths[1];
+	    	} 
+	    	
 				$jsContextMenuSettingsPath = '/js/product_catalog_tree_context_menu_setting_'.$serviceDomain.'.js';
 				drupal_add_js($product_catalog_tree_path  . $jsContextMenuSettingsPath);
 				

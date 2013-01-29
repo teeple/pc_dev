@@ -512,9 +512,123 @@ function remove_service_domain_from_voca() {
 	}
 }
 
+function _get_redirect_url_in_list_all($content_type, $params) {
+	$url = array();
+	
+	switch($content_type) {
+	case 'simpleproductoffering':
+		$tempArray = explode('/', $params);
+		$url['path'] = 'product_designer/' . join('/', $tempArray) . '/list';
+		
+		$productType = $tempArray[1];
+		
+		$fragment = array('Main' => '',
+				'Additional' =>'quickset-products=1',
+				'VAS' =>'quickset-products=2',
+				'Package' =>'quickset-products=3');
+		$url['fragment'] = $fragment[$productType];
+		break;
+	case 'counter':
+		$url['path'] = 'common/counter/list/'.$params;
+		$fragment = array('Basic' => '',
+											'Optional' => 'quickset-counters=1',
+											'Rollover' => 'quickset-counters=2');
+		$url['fragment'] = $fragment[$params];
+	}
+	return $url;
+}
 
+function _get_redirect_url_in_create($content_type, $params) {
+	$url = array();
+	
+	switch($content_type) {
+	case 'simpleproductoffering':
+		$tempArray = explode('/', $params);
+		$url['path'] = 'product_designer/' . join('/', $tempArray) . '/add';
+		
+		$productType = $tempArray[1];
+		
+		$fragment = array('Main' => '',
+				'Additional' =>'quickset-products=1',
+				'VAS' =>'quickset-products=2',
+				'Package' =>'quickset-products=3');
+		$url['fragment'] = $fragment[$productType];
+		break;
+	case 'counter':
+		$url['path'] = 'common/counter/add/'.$params;
+		$fragment = array('Basic' => '',
+											'Optional' => 'quickset-counters=1',
+											'Rollover' => 'quickset-counters=2');
+		$url['fragment'] = $fragment[$params];
+		break;
+	
+	case 'numberingplan_domestic':
+		break;
+		
+	case 'numberingplan_idd':
+		break;
+	}
+	return $url;
+}
 
+function _get_redirect_url_in_delete($node) {
+	$url = array();
+	
+	switch($node->type) {
+	case 'simpleproductoffering':
+		$serviceDomain = taxonomy_term_load($node->field_service_type_of_provider['und'][0]['tid']);
+		$productType = taxonomy_term_load($node->field_product_type['und'][0]['tid']);
+		$url['path'] = 'product_designer/' . $serviceDomain->name;
+		
+		$fragment = array('Main' => '',
+				'Additional' =>'quickset-products=1',
+				'VAS' =>'quickset-products=2',
+				'Package' =>'quickset-products=3');
+		$url['fragment'] = $fragment[$productType->name];
+		break;
+	case 'number_special':
+		$url['path'] = 'common/numberingplan/number_special/list';
+		$url['fragment'] = 'quickset-numbering_plan=3';
+		break;
+	case 'vouchercardtype':
+		$url['path'] = 'common/vouchercardtype';
+		break;
+	}
+	return $url;
+}
 
+function _get_custom_page_in_pcatalog($node) {
+	$url = array();
+	switch($node->type) {
+	case 'simpleproductoffering':
+		$serviceDomain = taxonomy_term_load($node->field_service_type_of_provider['und'][0]['tid']);
+		$productType = taxonomy_term_load($node->field_product_type['und'][0]['tid']);
+		$url['path'] = 'product_designer/' . $serviceDomain->name. '/'. $productType->name . '/edit/'. $node->nid;
 
+		$fragment = array('Main' => '',
+				'Additional' =>'quickset-products=1',
+				'VAS' =>'quickset-products=2',
+				'Package' =>'quickset-products=3');
+		$url['fragment'] = $fragment[$productType->name];
+		break;
 
-
+	case 'counter':
+		$counterType = taxonomy_term_load($node->field_counter_type['und'][0]['tid']);
+		$url['path'] = 'common/counter/edit/' . $counterType->name . '/' . $node->nid;
+		$fragment = array('Basic' => '',
+				'Optional' => 'quickset-counters=1',
+				'Rollover' => 'quickset-counters=2');
+		$url['fragment'] = $fragment[$counterType->name];
+		break;
+	
+	case 'numberingplan_domestic':
+		$url['path'] = 'common/numberingplan/domestic/'.$node->nid.'/ratinggroup';
+		$url['fragment' ] = '';
+		break;
+	case 'numberingplan_idd':
+		$url['path'] = 'common/numberingplan/idd/'.$node->nid.'/ratinggroup';
+		$url['fragment' ] = '';
+		break;
+	}
+	return $url;
+}

@@ -23,8 +23,6 @@ function _array_voucher_cardtype($nid=NULL){
 		//$listProduct = views_get_view_result('list_product_by_vouchercardtype', 'panel_pane_1', $record->nid);
 		$listProduct = views_get_view_result('list_treenodeproductforvoucher', 'panel_pane_1', $record->nid);
 		
-		dsm($listProduct, 'listProduct');
-		
 		$ret_product = array();
 		foreach($listProduct as $product) {
             $originalProductNode = node_load($product->node_field_data_field_ref_product_nid);

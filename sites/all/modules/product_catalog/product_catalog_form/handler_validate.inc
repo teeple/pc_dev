@@ -10,7 +10,7 @@ function _is_condition_duplicated($args) {
 };
 
 function product_catalog_form_node_validate($node, $form, &$form_state){
-	
+
 	switch($form['form_id']['#value']){
 		case 'conditionwheremacaddress_node_form':
 			if(is_macaddress($form_state['values']['field_mac_address']['und'][0]['value']) == FALSE) {
@@ -53,6 +53,26 @@ function product_catalog_form_node_validate($node, $form, &$form_state){
 			}
 			break;
 		case 'counter_node_form':
+		
+			// In case Delete Confirmation
+			// 
+			if($form_state['values']['op'] == 'Delete') {
+				$view = views_get_view('list_reverse_reference_items');
+				$view->set_display('panel_pane_1');
+				$view->set_arguments(array('0' => $form['nid']['#value']));
+				$view->execute();
+				
+				dsm($form['nid']['#value'], 'Nid Value');
+				dsm($view->result, 'result');
+				
+				if(!empty($view->result)) {
+					drupal_set_message("You should remove the items referencing this counter FIRST! ",'error');
+					form_set_error("You should remove the items referencing this counter FIRST!");
+					drupal_goto('Common/counter/edit/Optional/53409');
+				}
+				return;
+			}
+			
 			$counterType = taxonomy_term_load($form_state['values']['field_counter_type']['und'][0]['tid']);
 			$counterId = $form_state['values']['field_counter_id']['und'][0]['value'];
 			if($counterType->name == 'Rollover') {
