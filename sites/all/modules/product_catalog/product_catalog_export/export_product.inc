@@ -426,16 +426,15 @@ function _get_attribute_exceptions($product) {
 		
 	$retArray = array();
 	
-	$validForStr = 
-    	isset($product->field_validfor_product['und'][0]['value'])? 
-    		$product->field_validfor_product['und'][0]['value']: '0001-01-01 00:00:00';
-			   
-    $validForStr .= ' ~ ';
-    if(isset($product->field_validfor_product['und'][0]['value2'])){
-        $validForStr .= $product->field_validfor_product['und'][0]['value2'];
-    }else{
-        $validForStr .= '9999-12-31 23:59:59';
+    $validStart = isset($product->field_validfor_product['und'][0]['value'])? 
+            $product->field_validfor_product['und'][0]['value']: '0001-01-01 00:00:00';
+    $validEnd = isset($product->field_validfor_product['und'][0]['value2'])?
+            $product->field_validfor_product['und'][0]['value2']: '9999-12-31 23:59:59';
+    if($validStart == $validEnd){
+        $validEnd = '9999-12-31 23:59:59';
     }
+	$validForStr = $validStart . ' ~ '. $validEnd;
+	
 	$retArray['valid_for'] = $validForStr;
 	
 	if(!empty($product->field_parent_node_for_rp['und'][0]['nid'])){
