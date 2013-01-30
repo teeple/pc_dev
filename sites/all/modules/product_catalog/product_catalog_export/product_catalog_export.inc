@@ -58,6 +58,9 @@ function _make_json_string($termName,$refNid=NULL){
 		case 'PCRF_COMMON_DATA':
 			$jsonString = json_encode(rating_rules_export_by_content_type('pcrf_rule_export',  array()));
 			break;
+		case 'OCS_GLOBAL_CONFIG':
+			$jsonString = export_ocs_config();
+			break;
 		
 	}
 	
