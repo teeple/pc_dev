@@ -5,6 +5,53 @@ function is_macaddress($val)
 	return (bool)preg_match('/^([0-9a-fA-F][0-9a-fA-F]:){2}([0-9a-fA-F][0-9a-fA-F])$/',	$val);
 }
 
+function _clone_field_collection($type,$orgEntity,$newEntity,$collectionName){
+    $evalStr = '$orgCollections = $orgEntity->'.$collectionName.';';
+    eval($evalStr);
+    
+    if(isset($orgCollections['und'][0]['value'])){
+        $evalStr = 'unset($newEntity->'.$collectionName.');';
+        eval($evalStr);
+        $fieldsetCount = count($orgCollections['und']);
+        
+        for($i=0;$i<$fieldsetCount;$i++){
+            $evalStr = '$orgCollectionInfo = field_collection_item_load($orgEntity->'.$collectionName.'[\'und\']['.$i.'][\'value\']);';
+            eval($evalStr);
+            $newCollectionInfo = entity_create('field_collection_item', array('field_name' => $collectionName));
+            $newCollectionInfo->setHostEntity($type, $newEntity);
+            //$orgCollectionInfo = field_collection_item_load($orgEntity->$collectionName['und'][$i]['value']);
+            
+            switch($collectionName){
+                case 'field_charge_collection':
+                    $newCollectionInfo->field_range_start = $orgCollectionInfo->field_range_start;
+                    $newCollectionInfo->field_range_end = $orgCollectionInfo->field_range_end;
+                    $newCollectionInfo->field_uom_amount = $orgCollectionInfo->field_uom_amount;
+                    $newCollectionInfo->field_price_amount_float = $orgCollectionInfo->field_price_amount_float;
+                    break;
+                case 'field_discount_collection':
+                    $newCollectionInfo->field_range_start = $orgCollectionInfo->field_range_start;
+                    $newCollectionInfo->field_range_end = $orgCollectionInfo->field_range_end;
+                    $newCollectionInfo->field_discount_ = $orgCollectionInfo->field_discount_;
+                    break;
+            }
+            $newCollectionInfo->save(); 
+            $evalStr = '$newEntity->'.$collectionName.'[\'und\']['.$i.'][\'value\'] = $newCollectionInfo->item_id;';
+            eval($evalStr);
+            //$newEntity->$collectionName['und'][$i]['value'] = $newCollectionInfo->item_id;
+        }
+         
+    }
+    
+    switch($type){
+        case 'taxonomy_term';
+            taxonomy_term_save($newEntity);
+            break;
+        case 'node':
+            node_save($newEntity);
+            break;
+    }
+}
+
 function _clone_vocabulary($baseVocaName,$targetVocaName,$param=array()){
     $baseVocaMachineName = strtolower($baseVocaName);
     $baseVoca = taxonomy_vocabulary_machine_name_load($baseVocaMachineName);
