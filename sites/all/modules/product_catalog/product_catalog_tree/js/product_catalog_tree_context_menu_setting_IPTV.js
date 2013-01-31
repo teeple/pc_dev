@@ -3266,6 +3266,7 @@
 						
 					case "mobile_usage_vod":
 					case "iptv_usage_vod":
+					case "usage_vod":
 						menus.custom_create._disabled = false;
 						menus.custom_create.submenu = {
 							"usage_vod" : {
