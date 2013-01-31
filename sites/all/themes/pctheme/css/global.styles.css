@@ -2457,6 +2457,7 @@ td.supported_lang ul li.last {
 .jstree-default li[rel*="nonusage_unittransfer_"] > a:after {content: " >> ";font-weight: bold;}
 .jstree-default li[rel*="nonusage_activation_"] > a:after {content: " >> ";font-weight: bold;}
 .jstree-default li[rel*="nonusage_otheronetimecharge"] > a:after {content: " >> ";font-weight: bold;}
+.jstree-default li[rel*="nonusage_fee_recurring"] > a:after {content: " >> ";font-weight: bold;}
 
 .jstree-default li[rel*="treeNodeCustom"] > a:after {content: " >> ";font-weight: bold;}
 .jstree-default li[rel*="action"] > a:after {content: " >> ";font-weight: bold;}

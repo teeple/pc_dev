@@ -139,10 +139,10 @@
 							$.fn.deleteNode(node);
 						};
 						break;
-					case "cross_available_product":
+					case "available_product":
 						menus.custom_create._disabled = false;
 						menus.custom_create.submenu = {
-							"cross_available_product" : {
+							"available_product" : {
 								"label" : "Select Product",
 								action : function(node) {
 									$.fn.loadSelectForm(node);
@@ -234,7 +234,7 @@
 						menus.custom_create._disabled = false;
 						menus.custom_create.submenu = {
 							// "mobile_counter_main" : {
-							"cross_counter_main" : {
+							"counter_main" : {
 								"label" : "Select Counter",
 								action : function(node) {
 									$.fn.loadSelectForm(node);
@@ -3077,10 +3077,10 @@
 						};
 						break;
 						
-					case "cross_mobile_usage_voice":
+					case "mobile_usage_voice":
 						menus.custom_create._disabled = false;
 						menus.custom_create.submenu = {
-							"cross_mobile_usage_voice" : {	
+							"mobile_usage_voice" : {	
 								"label" : "Tariff Plan",
 								action : function(node) {
 									$.fn.addNode(node, {
@@ -3094,10 +3094,10 @@
 							$.fn.pasteNode(node);
 						};
 						break;
-					case "cross_voip_usage_voice":
+					case "voip_usage_voice":
 						menus.custom_create._disabled = false;
 						menus.custom_create.submenu = {
-							"cross_voip_usage_voice" : {
+							"voip_usage_voice" : {
 								"label" : "Tariff Plan",
 								action : function(node) {
 									$.fn.addNode(node, {
@@ -3130,10 +3130,10 @@
 						};
 						break;
 						
-					case "cross_mobile_usage_sms":
+					case "mobile_usage_sms":
 						menus.custom_create._disabled = false;
 						menus.custom_create.submenu = {
-							"cross_mobile_usage_sms" : {
+							"mobile_usage_sms" : {
 								"label" : "Tariff Plan",
 								action : function(node) {
 									$.fn.addNode(node, {
@@ -3147,10 +3147,10 @@
 							$.fn.pasteNode(node);
 						};
 						break;
-					case "cross_voip_usage_sms":
+					case "voip_usage_sms":
 						menus.custom_create._disabled = false;
 						menus.custom_create.submenu = {
-							"cross_mobile_usage_sms" : {
+							"mobile_usage_sms" : {
 								"label" : "Tariff Plan",
 								action : function(node) {
 									$.fn.addNode(node, {
@@ -3182,10 +3182,10 @@
 							$.fn.pasteNode(node);
 						};
 						break;
-					case "cross_mobile_usage_data":
+					case "mobile_usage_data":
 						menus.custom_create._disabled = false;
 						menus.custom_create.submenu = {
-							"cross_mobile_usage_data" : {
+							"mobile_usage_data" : {
 								"label" : "Tariff Plan",
 								action : function(node) {
 									$.fn.addNode(node, {
@@ -3214,10 +3214,10 @@
 						};
 						break;
 						
-					case "cross_mobile_usage_mms":
+					case "mobile_usage_mms":
 						menus.custom_create._disabled = false;
 						menus.custom_create.submenu = {
-							"cross_mobile_usage_mms" : {
+							"mobile_usage_mms" : {
 								"label" : "Tariff Plan",
 								action : function(node) {
 									$.fn.addNode(node, {
@@ -3246,10 +3246,10 @@
 						};
 						break;
 						
-					case "cross_mobile_usage_crbt":
+					case "mobile_usage_crbt":
 						menus.custom_create._disabled = false;
 						menus.custom_create.submenu = {
-							"cross_mobile_usage_crbt" : {
+							"mobile_usage_crbt" : {
 								"label" : "Tariff Plan",
 								action : function(node) {
 									$.fn.addNode(node, {
@@ -3278,10 +3278,10 @@
 							},
 						};
 						break;
-					case "cross_mobile_usage_vod":
+					case "mobile_usage_vod":
 						menus.custom_create._disabled = false;
 						menus.custom_create.submenu = {
-							"cross_mobile_usage_vod" : {
+							"mobile_usage_vod" : {
 								"label" : "Tariff Plan",
 								action : function(node) {
 									$.fn.addNode(node, {
@@ -3292,10 +3292,10 @@
 						};
 						break;
 						
-					case "cross_iptv_usage_vod":
+					case "iptv_usage_vod":
 						menus.custom_create._disabled = false;
 						menus.custom_create.submenu = {
-							"cross_iptv_usage_vod" : {
+							"iptv_usage_vod" : {
 								"label" : "Tariff Plan",
 								action : function(node) {
 									$.fn.addNode(node, {
@@ -3326,10 +3326,10 @@
 						};
 						break;
 						
-					case "cross_mobile_usage_loyaltypoint":
+					case "mobile_usage_loyaltypoint":
 						menus.custom_create._disabled = false;
 						menus.custom_create.submenu = {
-							"cross_mobile_usage_loyaltypoint" : {	
+							"mobile_usage_loyaltypoint" : {	
 								"label" : "Tariff Plan",
 								action : function(node) {
 									$.fn.addNode(node, {
@@ -3339,10 +3339,10 @@
 							},
 						};
 						break;
-					case "cross_voip_usage_loyaltypoint":
+					case "voip_usage_loyaltypoint":
 						menus.custom_create._disabled = false;
 						menus.custom_create.submenu = {
-							"cross_voip_usage_loyaltypoint" : {	
+							"voip_usage_loyaltypoint" : {	
 								"label" : "Tariff Plan",
 								action : function(node) {
 									$.fn.addNode(node, {
@@ -3436,10 +3436,10 @@
 						};
 						break;
 						
-					case "cross_mobile_data_tariffplan_predefined":
+					case "mobile_data_tariffplan_predefined":
 						menus.custom_create._disabled = false;
 						menus.custom_create.submenu = {
-							"cross_mobile_data_tariffplan_predefined" : {
+							"mobile_data_tariffplan_predefined" : {
 								"label" : "Select Rule",
 								action : function(node) {
 									$.fn.loadSelectForm(node);
@@ -3460,10 +3460,10 @@
 						};
 						break;
 						
-					case "cross_mobile_data_tariffplan_dynamic":
+					case "mobile_data_tariffplan_dynamic":
 						menus.custom_create._disabled = false;
 						menus.custom_create.submenu = {
-							"cross_mobile_data_tariffplan_dynamic" : {
+							"mobile_data_tariffplan_dynamic" : {
 								"label" : "Select Rule",
 								action : function(node) {
 									$.fn.loadSelectForm(node);
