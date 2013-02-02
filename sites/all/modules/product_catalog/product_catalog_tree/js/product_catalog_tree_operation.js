@@ -684,6 +684,7 @@
 					case 'simpleproductoffering':
 					case 'number_special':
 					case 'vouchercardtype':
+					case 'unittransfer':
 						$(location).attr('href', data.urlpath);
 						break;
 				}

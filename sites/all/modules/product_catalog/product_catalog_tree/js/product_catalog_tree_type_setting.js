@@ -391,6 +391,12 @@
         	"image" : "/sites/default/files/icons/discount.png"
         	        }
         },
+        "nonusage_recurring_discount_on_main" : {
+        	"valid_children" : ["actionpricediscount"],
+        	"icon" : {
+        	"image" : "/sites/default/files/icons/discount.png"
+        	        }
+        },
         "nonusage_recurring_bonus" : {
         	"valid_children" : ["actionpriceallowanceonetime"],
         "icon" : {
