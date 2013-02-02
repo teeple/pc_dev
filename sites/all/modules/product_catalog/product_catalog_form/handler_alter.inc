@@ -23,8 +23,10 @@ function _unset_menu_items(&$form,$formId){
         case 'roaming_plan_node_form':
 		case 'counter_node_form':
 		case 'depositscheme_node_form':
+		case 'thresholdscheme_node_form':
 		    case 'tvchannel_node_form':
         case 'lifecyclescheme_node_form':
+        case 'timetable_node_form':
 			$unsetDeleteButton = FALSE;
 			//dsm($form);
 			break;
@@ -322,7 +324,6 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			break;
 			
         case 'depositscheme_node_form':
-        	// unset($form['field_service_domain']);
         	unset($form['field_ref_depositschemefactors']);
         	unset($form['field_ref_depositschemeadjustmen']);
         	unset($form['rdf_mapping']);
@@ -856,8 +857,9 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			_unset_menu_items($form,$form_id);
 			unset($form['field_parent_node']);
             unset($form['field_weight']);
+            
 			if(!isset($form['nid']['#value'])){
-				$form['actions']['submit']['#submit'][]  = 'product_catalog_form_form_redirect_handler';
+				// $form['actions']['submit']['#submit'][]  = 'product_catalog_form_form_redirect_handler';
 			}else{
 			    $form['field_target_usage_type‎']['und']['#disabled'] = TRUE;
 			}
@@ -941,7 +943,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
         	break;
         case 'numberingplan_idd_node_form':
         	unset($form['field_ref_idd_ratinggroup']);
-        	$form['actions']['submit']['#submit'][] = 'product_catalog_form_form_redirect_handler';
+        	// $form['actions']['submit']['#submit'][] = 'product_catalog_form_form_redirect_handler';
         	_unset_menu_items($form,$form_id);
         	break;        
         case 'idd_ratinggroup_node_form':
@@ -977,16 +979,14 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             unset($form['field_parent_node']);
             unset($form['field_weight']);
         	_unset_menu_items($form,$form_id);
+        	
         	break;
         case 'numberingplan_domestic_node_form':
-        	
-        	//unset($form['field_ref_domestic_ratinggroup']);
-        	$form['actions']['submit']['#submit'][] = 'product_catalog_form_form_redirect_handler';
+        
         	unset($form['field_ref_domestic_ratinggroup']);
         	_unset_menu_items($form,$form_id);
         	break;
         case 'roaming_plan_node_form':
-            $form['actions']['submit']['#submit'][] = 'product_catalog_form_form_redirect_handler';
             unset($form['field_ref_roaming_ratinggroup']);
             _unset_menu_items($form,$form_id);
             break;
@@ -1087,7 +1087,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
         	if(!isset($form['nid']['#value'])){
         		$form['actions']['submit']['#submit'][] = 'timetable_submit_handler';
         	}
-        	$form['actions']['submit']['#submit'][] = 'product_catalog_form_form_redirect_handler';
+        	// $form['actions']['submit']['#submit'][] = 'product_catalog_form_form_redirect_handler';
         	break;
         case 'timetablefactors_node_form':
         	unset($form['field_timeslot']['und'][0]['_remove']);
@@ -1485,7 +1485,6 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
         	break;
         case 'carrier_mobile_node_form':
         	_unset_menu_items($form,$form_id);
-        	$form['actions']['submit']['#submit'][] = 'product_catalog_form_form_redirect_handler';
            break;
         case 'treenodevouchercardforproduct_node_form':
         	_unset_menu_items($form,$form_id);
@@ -1501,7 +1500,6 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
         case 'roaming_country_node_form':
         case 'roaming_carrier_node_form':
             _unset_menu_items($form,$form_id);
-            $form['actions']['submit']['#submit'][] = 'product_catalog_form_form_redirect_handler';           
             break;
         case 'treenodeotheronetimecharge_node_form':
             _unset_menu_items($form,$form_id);

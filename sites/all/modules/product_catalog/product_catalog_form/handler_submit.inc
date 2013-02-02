@@ -720,11 +720,6 @@ function _unittransfer_submit_handler($form,$form_state){
 	}
 	
 	node_save($unitTransferNode);
-
-	if(!isset($form['nid']['#value'])) { //create
-		$redirectUrl = 'common/unittransfer/'.$form_state['values']['nid'];
-		drupal_goto($redirectUrl);
-	}
 }
 
 function _common_counter_submit_handler($form,$form_state){

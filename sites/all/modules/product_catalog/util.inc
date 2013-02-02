@@ -512,109 +512,65 @@ function remove_service_domain_from_voca() {
 	}
 }
 
+
 function _get_redirect_url_in_list_all($content_type, $params) {
 	$url = array();
+	$url = _get_redirect_url_in_create_n_list('list', $content_type, $params);
 	
-	switch($content_type) {
-	case 'simpleproductoffering':
-		$tempArray = explode('/', $params);
-		$url['path'] = 'product_designer/' . join('/', $tempArray) . '/list';
-		
-		$productType = $tempArray[1];
-		
-		$fragment = array('Main' => '',
-				'Additional' =>'quickset-products=1',
-				'VAS' =>'quickset-products=2',
-				'Package' =>'quickset-products=3');
-		$url['fragment'] = $fragment[$productType];
-		break;
-	case 'counter':
-		$url['path'] = 'common/counter/list/'.$params;
-		$fragment = array('Basic' => '',
-											'Optional' => 'quickset-counters=1',
-											'Rollover' => 'quickset-counters=2');
-		$url['fragment'] = $fragment[$params];
-	}
 	return $url;
 }
 
 function _get_redirect_url_in_create($content_type, $params) {
 	$url = array();
 	
-	switch($content_type) {
-	case 'simpleproductoffering':
-		$tempArray = explode('/', $params);
-		$url['path'] = 'product_designer/' . join('/', $tempArray) . '/add';
-		
-		$productType = $tempArray[1];
-		
-		$fragment = array('Main' => '',
-				'Additional' =>'quickset-products=1',
-				'VAS' =>'quickset-products=2',
-				'Package' =>'quickset-products=3');
-		$url['fragment'] = $fragment[$productType];
-		break;
-	case 'counter':
-		$url['path'] = 'common/counter/add/'.$params;
-		$fragment = array('Basic' => '',
-											'Optional' => 'quickset-counters=1',
-											'Rollover' => 'quickset-counters=2');
-		$url['fragment'] = $fragment[$params];
-		break;
+	$url = _get_redirect_url_in_create_n_list('add', $content_type, $params);
 	
-	case 'numberingplan_domestic':
-		break;
-		
-	case 'numberingplan_idd':
-		break;
-	}
 	return $url;
 }
 
 function _get_redirect_url_in_delete($node) {
 	$url = array();
-	
+	$url = _get_redirect_url_in_view_n_delete('del', $node);
+	return $url;
+}
+
+function _get_custom_page_in_pcatalog($node) {
+	$url = array();
+	$url = _get_redirect_url_in_view_n_delete('view', $node);
+	return $url;
+}
+
+function _get_redirect_url_in_view_n_delete($viewOrDel, $node) {
+
+	$url = array();
 	switch($node->type) {
 	case 'simpleproductoffering':
 		$serviceDomain = taxonomy_term_load($node->field_service_type_of_provider['und'][0]['tid']);
 		$productType = taxonomy_term_load($node->field_product_type['und'][0]['tid']);
-		$url['path'] = 'product_designer/' . $serviceDomain->name;
+		
+		if($viewOrDel == 'view') {
+			$url['path'] = 'product_designer/' . $serviceDomain->name. '/'. $productType->name . '/edit/'. $node->nid;
+		} else {
+			$url['path'] = 'product_designer/' . $serviceDomain->name. '/'. $productType->name . '/list';
+		}
 		
 		$fragment = array('Main' => '',
 				'Additional' =>'quickset-products=1',
 				'VAS' =>'quickset-products=2',
 				'Package' =>'quickset-products=3');
 		$url['fragment'] = $fragment[$productType->name];
-		break;
-	case 'number_special':
-		$url['path'] = 'common/numberingplan/number_special/list';
-		$url['fragment'] = 'quickset-numbering_plan=3';
-		break;
-	case 'vouchercardtype':
-		$url['path'] = 'common/vouchercardtype';
-		break;
-	}
-	return $url;
-}
-
-function _get_custom_page_in_pcatalog($node) {
-	$url = array();
-	switch($node->type) {
-	case 'simpleproductoffering':
-		$serviceDomain = taxonomy_term_load($node->field_service_type_of_provider['und'][0]['tid']);
-		$productType = taxonomy_term_load($node->field_product_type['und'][0]['tid']);
-		$url['path'] = 'product_designer/' . $serviceDomain->name. '/'. $productType->name . '/edit/'. $node->nid;
-
-		$fragment = array('Main' => '',
-				'Additional' =>'quickset-products=1',
-				'VAS' =>'quickset-products=2',
-				'Package' =>'quickset-products=3');
-		$url['fragment'] = $fragment[$productType->name];
+		
 		break;
 
 	case 'counter':
 		$counterType = taxonomy_term_load($node->field_counter_type['und'][0]['tid']);
-		$url['path'] = 'common/counter/edit/' . $counterType->name . '/' . $node->nid;
+		
+		if($viewOrDel == 'view') {
+			$url['path'] = 'common/counter/edit/' . $counterType->name . '/' . $node->nid;
+		} else {
+			$url['path'] = 'common/counter/' . $counterType->name . '/list';
+		}
+			
 		$fragment = array('Basic' => '',
 				'Optional' => 'quickset-counters=1',
 				'Rollover' => 'quickset-counters=2');
@@ -622,13 +578,200 @@ function _get_custom_page_in_pcatalog($node) {
 		break;
 	
 	case 'numberingplan_domestic':
-		$url['path'] = 'common/numberingplan/domestic/'.$node->nid.'/ratinggroup';
+		if($viewOrDel == 'view') {
+			$url['path'] = 'common/numberingplan/domestic/'.$node->nid.'/ratinggroup';
+		} else {
+			$url['path'] = 'common/numberingplan/domestic/list';
+		}
 		$url['fragment' ] = '';
 		break;
+		
+	case 'number_special':
+		if($viewOrDel == 'view') {
+			$url['path'] = 'common/numberingplan/'.$node->type.'/'.$node->nid;
+		} else {
+			$url['path'] = 'common/numberingplan/'.$node->type.'/list';
+		}
+		$url['fragment' ] = 'quickset-numbering_plan=3';
+		break;
+		
 	case 'numberingplan_idd':
-		$url['path'] = 'common/numberingplan/idd/'.$node->nid.'/ratinggroup';
-		$url['fragment' ] = '';
+		if ($viewOrDel == 'view') {
+			$url['path'] = 'common/numberingplan/idd/'.$node->nid.'/ratinggroup';
+		} else {
+			$url['path'] = 'common/numberingplan/idd/list';
+		}
+		$url['fragment'] = 'quickset-numbering_plan=1';
+		break;
+		
+	case 'vouchercardtype':
+		if ($viewOrDel == 'view') {
+			$url['path'] = 'common/vouchercardtype/edit/'.$node->nid;
+		} else {
+			$url['path'] = 'common/vouchercardtype/list';
+		}
+		$url['fragment'] = '';
+		break;
+		
+	case 'timetable':
+		if ($viewOrDel == 'view') {
+			$url['path'] = 'common/numberingplan/'.$node->type. '/' .$node->nid.'/timetablefactors';
+		} else {
+			$url['path'] = 'common/numberingplan/'.$node->type. '/list';
+		}
+		$url['fragment'] = 'quickset-numbering_plan=2';
+		break;
+	
+	case 'carrier_mobile':
+		if ($viewOrDel == 'view') {
+			$url['path'] = 'common/numberingplan/'.$node->type. '/' .$node->nid;
+		} else {
+			$url['path'] = 'common/numberingplan/'.$node->type. '/list';
+		}
+		$url['fragment'] = 'quickset-numbering_plan=4';
+		break;
+	
+	case 'roaming_country':
+	case 'roaming_carrier':
+	case 'roaming_plan':
+		$fragments = array('roaming_country' =>  '',
+											'roaming_carrier' =>  'quickset-roaming=1',
+											'roaming_plan' =>  'quickset-roaming=2');
+	
+		$tempArr = explode('_', $node->type);
+		if ($viewOrDel == 'view') {
+			$url['path'] = 'common/'.join('/', $tempArr). '/' .$node->nid;
+			if($node->type == 'roaming_plan') $url['path'] .= '/ratinggroup';
+			
+		} else {
+			$url['path'] = 'common/'.join('/', $tempArr). '/list';
+		}
+		$url['fragment'] = $fragments[$node->type];
+		break;
+		
+	case 'depositscheme':
+	case 'thresholdscheme':
+	case 'unittransfer':
+		$fragments = array('depositscheme' =>  'quickset-qtabs_common_data=2',
+												'thresholdscheme' =>  'quickset-qtabs_common_data=3',
+												'unittransfer' =>  'quickset-qtabs_common_data=4');
+	
+		if ($viewOrDel == 'view') {
+			$url['path'] = 'common/'.$node->type.'/'.$node->nid;
+		} else {
+			$url['path'] = 'common/'.$node->type.'/list';
+		}
+		$url['fragment'] = $fragments[$node->type];
+		break;
+
+	case 'packetpredefinedchargingrule':
+	case 'packetdynamicchargingrule':
+	case 'packetdynamicl4':
+		$paths = array('packetpredefinedchargingrule' => 'packet/predefined/charging_rule',
+								'packetdynamicchargingrule' => 'packet/dynamic/charging_rule',
+								'packetdynamicl4' => 'packet/dynamic/l4');
+		$fragments = array('packetpredefinedchargingrule' => '',
+								'packetdynamicchargingrule' => 'quickset-packet=1',
+								'packetdynamicl4' => 'quickset-packet=2');
+		
+		if ($viewOrDel == 'view') {
+			$url['path'] = 'common/'.$paths[$node->type].'/'.$node->nid;
+		} else {
+			$url['path'] = 'common/'.$paths[$node->type].'/list';
+		}
+		$url['fragment'] = $fragments[$node->type];
 		break;
 	}
+		
+	dsm($url, 'url view and delete');
 	return $url;
 }
+// $createOrList = 'add', 'list'
+//
+function _get_redirect_url_in_create_n_list($addOrList, $content_type, $params) {
+	$url = array();
+	
+	switch($content_type) {
+	case 'simpleproductoffering':
+		$tempArray = explode('/', $params);
+		$url['path'] = 'product_designer/' . join('/', $tempArray) . '/' . $addOrList;
+		
+		$productType = $tempArray[1];
+		
+		$fragment = array('Main' => '',
+				'Additional' =>'quickset-products=1',
+				'VAS' =>'quickset-products=2',
+				'Package' =>'quickset-products=3');
+		$url['fragment'] = $fragment[$productType];
+		break;
+	case 'counter':
+		$url['path'] = 'common/counter/'.$addOrList.'/'.$params;
+		$fragment = array('Basic' => '',
+											'Optional' => 'quickset-counters=1',
+											'Rollover' => 'quickset-counters=2');
+		$url['fragment'] = $fragment[$params];
+		break;
+	case 'numberingplan_domestic':
+		$url['path'] = 'common/numberingplan/domestic/'. $addOrList;
+		$url['fragment'] = '';
+		break;
+	case 'numberingplan_idd':
+		$url['path'] = 'common/numberingplan/idd/'. $addOrList;
+		$url['fragment'] = 'quickset-numbering_plan=1';
+		break;
+
+	case 'timetable':
+	case 'number_special':
+	case 'carrier_mobile':
+	case 'area_code':
+		$fragments = array('timetable' => 'quickset-numbering_plan=2',
+											'number_special' => 'quickset-numbering_plan=3',
+											'carrier_mobile' => 'quickset-numbering_plan=4',
+											'area_code' => 'quickset-numbering_plan=5',);
+		$url['path'] = 'common/numberingplan/'.$content_type.'/'.$addOrList;
+		$url['fragment'] = $fragments[$content_type];
+		break;
+		
+	case 'vouchercardtype':
+	case 'unittransfer':
+	case 'depositscheme':
+	case 'thresholdscheme':
+		$fragments = array('vouchercardtype' => '',
+										'unittransfer' => 'quickset-qtabs_common_data=1',
+										'depositscheme' => 'quickset-qtabs_common_data=2',
+										'thresholdscheme' => 'quickset-qtabs_common_data=3');
+		$url['path'] = 'common/vouchercardtype/'. $addOrList;
+		$url['fragment'] = $fragments[$content_type];
+		break;
+		
+	case 'roaming_country':
+	case 'roaming_carrier':
+	case 'roaming_plan':
+		$fragments = array('roaming_country' =>  '',
+										'roaming_carrier' =>  'quickset-roaming=1',
+										'roaming_plan' => 'quickset-roaming=2');
+					
+		$tempArr = explode('_', $content_type);
+		$url['path'] = 'common/'. join('/', $tempArr) .'/'. $addOrList;
+		$url['fragment'] = $fragments[$content_type];
+		break;
+		
+	case 'packetpredefinedchargingrule':
+	case 'packetdynamicchargingrule':
+	case 'packetdynamicl4':
+		$paths = array('packetpredefinedchargingrule' => 'packet/predefined/charging_rule',
+								'packetdynamicchargingrule' => 'packet/dynamic/charging_rule',
+								'packetdynamicl4' => 'packet/dynamic/l4');
+		$fragments = array('packetpredefinedchargingrule' => '',
+								'packetdynamicchargingrule' => 'quickset-packet=1',
+								'packetdynamicl4' => 'quickset-packet=2');
+		
+		$url['path'] = 'common/'.$paths[$content_type].'/'.$addOrList;
+		$url['fragment'] = $fragments[$content_type];
+		break;
+		
+	}
+	dsm($url, 'url create n list');
+	return $url;
+}
+

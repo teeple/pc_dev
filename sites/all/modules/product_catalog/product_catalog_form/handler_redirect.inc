@@ -152,7 +152,7 @@ function product_catalog_form_form_redirect_handler(&$form, &$form_state){
         	break;        
         case 'timetable_node_form':
         	$redirect_url = 'common/timetable/'.$form_state['values']['nid'].'/timetablefactors';
-			$urlFragment = 'quickset-qtabs_common_data=5';
+					$urlFragment = 'quickset-qtabs_common_data=5';
         	break;
         case 'vouchercardtype_node_form':
             $redirect_url = 'common/vouchercardtype/edit/'.$form_state['values']['nid'];
