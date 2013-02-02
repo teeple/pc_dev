@@ -576,7 +576,8 @@ function ocs_admin_product_load( $product_id)
 function ocs_admin_form_alter(&$form, &$form_state, $form_id) 
 {
 
-    if($form_id == 'ocs_state_machine_node_form') {
+    if($form_id == 'ocs_state_machine_node_form' ||
+			$form_id == 'ocs_global_config_node_form') {
         unset($form['menu']);
 		unset($form['path']);
 		unset($form['author']);
@@ -586,7 +587,9 @@ function ocs_admin_form_alter(&$form, &$form_state, $form_id)
 		unset($form['actions']['preview']);
 		unset($form['revision_information']);
 
-		ocs_lifecycle_node_form( $form, $form_state, $form_id);
+		if($form_id == 'ocs_state_machine_node_form' ) {
+			ocs_lifecycle_node_form( $form, $form_state, $form_id);
+		}
 		//dpm( $form);
     }
 }

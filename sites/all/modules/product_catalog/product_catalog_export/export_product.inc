@@ -87,6 +87,8 @@ function _get_deposit_scheme($product) {
     $view->execute();
     if(!empty($view->result)){
         $scheme['deposit_scheme_id'] = $view->result[0]->node_field_data_field_ref_depositscheme_nid;    
+    }else{
+        $scheme = NULL;
     }
 	return $scheme;
 	
@@ -116,6 +118,8 @@ function _get_thresdhold_scheme($product) {
     if(!empty($view->result)){
         $schemeNode = node_load($view->result[0]->nid);
         $scheme['threshold_scheme_id'] = $schemeNode->field_ref_thresholdscheme['und'][0]['nid'];    
+    }else{
+        $scheme = NULL;
     }
 	return $scheme;
 }
