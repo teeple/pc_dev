@@ -227,6 +227,12 @@ function product_catalog_ajax_clone_product($targetProductId){
                 $childNode->field_ref_product['und'][0]['nid'] = $productNode->nid;
                 _unset_unused_field_of_cloned_node($childNode);
                 node_save($childNode);
+                if(isset($targetChildNode->field_charge_collection)){
+                    _clone_field_collection('node',$targetChildNode,$childNode,'field_charge_collection');
+                }
+                if(isset($targetChildNode->field_discount_collection)){
+                    _clone_field_collection('node',$targetChildNode,$childNode,'field_discount_collection');
+                }
                 _clone_nested_child_node($targetChildNode,$childNode);
                 
                 $actionSetView = views_get_view('query_actionset_children');
@@ -315,6 +321,7 @@ function _paste_tariffplan($targetNode,$productNid,$baseTid,$weight){
                     break;
                 case 'rate':
                     node_save($childNode);
+                    _clone_field_collection('node',$targetChildNode,$childNode,'field_charge_collection');
                     $newRates[$targetChildNode->nid] = $childNode->nid;
                     break;                
             }
@@ -347,6 +354,12 @@ function _paste_tariffplan($targetNode,$productNid,$baseTid,$weight){
            
            _unset_unused_field_of_cloned_node($childNode);
            node_save($childNode);
+           if(isset($targetChildNode->field_charge_collection)){
+                _clone_field_collection('node',$targetChildNode,$childNode,'field_charge_collection');
+           }
+           if(isset($targetChildNode->field_discount_collection)){
+                _clone_field_collection('node',$targetChildNode,$childNode,'field_discount_collection');
+           }
            _clone_nested_child_node($targetChildNode,$childNode);
         }
         
@@ -374,6 +387,12 @@ function _clone_nested_child_node($oldParentNode,$newParentNode){
        _unset_unused_field_of_cloned_node($childNode);
        $childNode->field_parent_node['und'][0]['nid'] = $newParentNode->nid;
        node_save($childNode);
+       if(isset($targetChildNode->field_charge_collection)){
+            _clone_field_collection('node',$targetChildNode,$childNode,'field_charge_collection');
+       }
+       if(isset($targetChildNode->field_discount_collection)){
+            _clone_field_collection('node',$targetChildNode,$childNode,'field_discount_collection');
+       }
        _clone_nested_child_node($targetChildNode,$childNode);
     }
 }

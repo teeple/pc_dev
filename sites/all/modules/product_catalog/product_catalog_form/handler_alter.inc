@@ -133,11 +133,13 @@ function _add_ajax_submit_callback($form_id,&$form){
         case 'simpleproductoffering_node_form':
             unset($form['field_is_cloned']);
             if(isset($form['nid']['#value'])) { // edit
+                /*
                 $form['clone_button'] = array(
                     '#type' => 'markup',
                     '#markup' => '<input type="button" id="product_clone_button" class="form-submit" value="Clone"/>',
                     '#weight' => 1000
                 );
+                */
             }
 			$firstPathName = current(explode('/', current_path()));
 			
@@ -1129,7 +1131,9 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 				$termTid = array_search('Seconds', $form['field_range_units']['und']['#options']);
 				$form_state['build_info']['args'][0]->field_range_units['und'][0]['tid'] = $termTid;
 			    unset($form['field_discount_']); 
+                $form['field_range_units']['und']['#default_value'] = $termTid;
 				$form['field_range_units']['und']['#disabled'] = TRUE;
+                //dsm($form,'form');
 			}
             break;
 			
@@ -1244,6 +1248,16 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
                 unset($form['field_uom_units']);
                 unset($form['field_charge_collection']);                
             }else{
+                $termTid = array_search('Seconds', $form['field_range_units']['und']['#options']);
+                $form_state['build_info']['args'][0]->field_range_units['und'][0]['tid'] = $termTid;
+                $form['field_range_units']['und']['#default_value'] = $termTid;
+                $form['field_range_units']['und']['#disabled'] = TRUE;
+                
+                $termTid = array_search('Seconds', $form['field_uom_units']['und']['#options']);
+                $form_state['build_info']['args'][0]->field_uom_units['und'][0]['tid'] = $termTid;
+                $form['field_uom_units']['und']['#default_value'] = $termTid;
+                $form['field_uom_units']['und']['#disabled'] = TRUE;
+                
                 unset($form['field_price']);
                 $form['chart_button'] = array(
                 		'#type' => 'markup',
