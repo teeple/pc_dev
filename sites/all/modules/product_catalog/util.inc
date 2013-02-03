@@ -678,6 +678,15 @@ function _get_redirect_url_in_view_n_delete($viewOrDel, $node) {
 		$url['fragment'] = 'quickset-numbering_plan=4';
 		break;
 	
+	case 'area_code':
+		if ($viewOrDel == 'view') {
+			$url['path'] = 'common/numberingplan/'.$node->type. '/' .$node->nid;
+		} else {
+			$url['path'] = 'common/numberingplan/'.$node->type. '/list';
+		}
+		$url['fragment'] = 'quickset-numbering_plan=5';
+		break;
+	
 	case 'roaming_country':
 	case 'roaming_carrier':
 	case 'roaming_plan':
@@ -787,7 +796,7 @@ function _get_redirect_url_in_create_n_list($addOrList, $content_type, $params) 
 										'unittransfer' => 'quickset-qtabs_common_data=1',
 										'depositscheme' => 'quickset-qtabs_common_data=2',
 										'thresholdscheme' => 'quickset-qtabs_common_data=3');
-		$url['path'] = 'common/vouchercardtype/'. $addOrList;
+		$url['path'] = 'common/vouchercardtype/'. $content_type.'/'.$addOrList;
 		$url['fragment'] = $fragments[$content_type];
 		break;
 		
