@@ -96,17 +96,17 @@ function _get_vocabulary_name($contentType, $productNode, $serviceType = NULL){
 					),
 					"Cross" => array(
 								"Main" => array(
-										'Mobile_Voice' => 'tpl_tariffplan_cross_mobile_voice',
-										'Mobile_SMS'   => 'tpl_tariffplan_cross_mobile_sms',
-										'Mobile_Data'  => 'tpl_tariffplan_cross_mobile_data',
-										'Mobile_MMS'	=> 'tpl_tariffplan_cross_mobile_mms',
-										'Mobile_CRBT'	=> 'tpl_tariffplan_cross_mobile_crbt',
-										'Mobile_Loyalty Point' => 'tpl_tariffplan_cross_mobile_loyalty_point_deduct',
-										'Mobile_VOD'	=> 'tpl_tariffplan_cross_mobile_vod',
+										'Mobile_Voice' => 'tpl_tariffplan_mobile_voice_additional',
+										'Mobile_SMS'   => 'tpl_tariffplan_mobile_sms_additional',
+										'Mobile_Data'  => 'tpl_tariffplan_mobile_data_additional',
+										'Mobile_MMS'	=> 'tpl_tariffplan_mobile_mms_additional',
+										'Mobile_CRBT'	=> 'tpl_tariffplan_mobile_crbt_additional',
+										'Mobile_Loyalty Point' => 'tpl_tariffplan_mobile_loyalty_point_deduct_additional',
+										'Mobile_VOD'	=> 'tpl_tariffplan_mobile_vod_additional',
 										
-										'VoIP_Voice' => 'tpl_tariffplan_cross_voip_voice',
-										'VoIP_SMS'   => 'tpl_tariffplan_cross_voip_sms',
-										'VoIP_Loyalty Point'  => 'tpl_tariffplan_cross_voip_loyalty_point_deduct',
+										'VoIP_Voice' => 'tpl_tariffplan_voip_voice_additional',
+										'VoIP_SMS'   => 'tpl_tariffplan_voip_sms_additional',
+										'VoIP_Loyalty Point'  => 'tpl_tariffplan_voip_loyalty_point_deduct_additional',
 										
 										'IPTV_VOD'  => 'tpl_tariffplan_cross_iptv_vod',
 								),

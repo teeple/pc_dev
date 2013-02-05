@@ -1390,7 +1390,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 					$relType = $relTypeTerm->field_rel_type['und'][0]['value'];
 					$temp_list = explode('_', $relType);
 					
-					switch($temp_list[1]) {
+					switch($temp_list[0]) {
 						case 'mobile':
 							$serviceType = 'Mobile_'.$serviceTypeTerm->name;
 							break;
