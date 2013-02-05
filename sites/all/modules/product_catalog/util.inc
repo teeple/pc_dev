@@ -787,22 +787,16 @@ function _get_redirect_url_in_create_n_list($addOrList, $content_type, $params) 
 		$url['path'] = 'common/numberingplan/'.$content_type.'/'.$addOrList;
 		$url['fragment'] = $fragments[$content_type];
 		break;
-	case 'thresholdscheme':
-		$url['path'] = 'common/'. $content_type. '/'. $addOrList;
-		$url['fragment'] = 'quickset-qtabs_common_data=3';
-		break;
-	case 'depositscheme':
-		$url['path'] = 'common/'. $content_type. '/'. $addOrList;
-		$url['fragment'] = 'quickset-qtabs_common_data=2';
-		break;
 		
+	case 'thresholdscheme':
+	case 'depositscheme':
 	case 'vouchercardtype':
 	case 'unittransfer':
 		$fragments = array('vouchercardtype' => '',
 										'unittransfer' => 'quickset-qtabs_common_data=1',
 										'depositscheme' => 'quickset-qtabs_common_data=2',
 										'thresholdscheme' => 'quickset-qtabs_common_data=3');
-		$url['path'] = 'common/vouchercardtype/'. $content_type. '/'. $addOrList;
+		$url['path'] = 'common/'. $content_type. '/'. $addOrList;
 		$url['fragment'] = $fragments[$content_type];
 		break;
 		
