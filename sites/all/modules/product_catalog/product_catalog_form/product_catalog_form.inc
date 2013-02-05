@@ -103,12 +103,17 @@ function _get_vocabulary_name($contentType, $productNode, $serviceType = NULL){
 										'Mobile_CRBT'	=> 'tpl_tariffplan_mobile_crbt_additional',
 										'Mobile_Loyalty Point' => 'tpl_tariffplan_mobile_loyalty_point_deduct_additional',
 										'Mobile_VOD'	=> 'tpl_tariffplan_mobile_vod_additional',
+										'VoIP_Voice' => 'tpl_tariffplan_mobile_voice_additional',
+										'VoIP_SMS'   => 'tpl_tariffplan_mobile_sms_additional',
+										'VoIP_Loyalty Point'  => 'tpl_tariffplan_mobile_loyalty_point_deduct_additional',
 										
-										'VoIP_Voice' => 'tpl_tariffplan_voip_voice_additional',
-										'VoIP_SMS'   => 'tpl_tariffplan_voip_sms_additional',
-										'VoIP_Loyalty Point'  => 'tpl_tariffplan_voip_loyalty_point_deduct_additional',
+										'IPTV_VOD'  => 'tpl_tariffplan_mobile_vod_additional',
 										
-										'IPTV_VOD'  => 'tpl_tariffplan_cross_iptv_vod',
+										// 'VoIP_Voice' => 'tpl_tariffplan_voip_voice_additional',
+										// 'VoIP_SMS'   => 'tpl_tariffplan_voip_sms_additional',
+										// 'VoIP_Loyalty Point'  => 'tpl_tariffplan_voip_loyalty_point_deduct_additional',
+										
+										// 'IPTV_VOD'  => 'tpl_tariffplan_cross_iptv_vod',
 								),
 					),
 					"IPTV" => array(
