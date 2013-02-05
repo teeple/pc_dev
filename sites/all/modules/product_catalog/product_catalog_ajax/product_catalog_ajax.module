@@ -874,7 +874,9 @@ function product_catalog_ajax_select_submit() {
       }
 
       $weight += $weightStep;
-
+      
+      dsm($rel_type, 'rel_type');
+      
       switch($rel_type) {
 	  
       case 'nonusage_unittransfer_scheme':
@@ -963,7 +965,7 @@ function product_catalog_ajax_select_submit() {
         $js_data['append_to'] = 'inside';
         break;
 		
-      case 'cross_available_product':
+      case 'available_product':
   		$child->type = 'prdattributepackaged';
   		$child->field_weight['und'][0]['value'] = $weight;
   		$child->field_ref_product['und'][0]['nid'] = $tmpProductNid[1];
