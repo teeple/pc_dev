@@ -789,7 +789,7 @@ function _get_redirect_url_in_create_n_list($addOrList, $content_type, $params) 
 		break;
 	case 'thresholdscheme':
 		$url['path'] = 'common/'. $content_type. '/'. $addOrList;
-		$url['fragment'] = 'uickset-qtabs_common_data=3';
+		$url['fragment'] = 'quickset-qtabs_common_data=3';
 		break;
 		
 	case 'vouchercardtype':
