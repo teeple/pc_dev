@@ -385,6 +385,7 @@ function build_navigation_bar()
                         array( '/product_designer/Broadband', 'Broadband'),
                         array( '/product_designer/VoIP', 'VoIP'),
                         array( '/product_designer/Satellite', 'Satellite'),
+                        array( '/product_designer/Dummy', 'Dummy'),
                         array( '/product_designer/Cross', 'Bundle'))),
 			'relation' => array( 'href' => '/relation/product/hierarchy/Mobile', 'icon' => 'widgets', 
 					'prefix' => 'relation', 'title' => 'Relation Manager'),

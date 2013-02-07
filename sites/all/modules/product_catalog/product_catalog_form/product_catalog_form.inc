@@ -59,12 +59,30 @@ function _get_vocabulary_name($contentType, $productNode, $serviceType = NULL){
 												'Prepaid'  	=> 'tpl_default_tree_voip_main_prepaid',
 												'Hybrid'   => 'tpl_default_tree_voip_main_hybrid'
 										),
+								'Additional' => array(	'Postpaid' => 'tpl_default_tree_voip_additional_postpaid',
+														'Prepaid'  	=> 'tpl_default_tree_voip_additional_prepaid'
+											),
+								'VAS'		=> array(	'Postpaid' => 'tpl_default_tree_voip_vas_postpaid',
+														'Prepaid'  	=> 'tpl_default_tree_voip_vas_prepaid'
+											),
+								'Package'   => array(   'Postpaid' => 'tpl_default_tree_voip_package_postpaid',
+								                                        'Prepaid'   => 'tpl_default_tree_voip_package_prepaid'
+								                            ),
 					),
 					'Satellite' => array(
 								'Main' => array('Postpaid' => 'tpl_default_tree_satellite_main_postpaid',
 												'Prepaid'  	=> 'tpl_default_tree_satellite_main_prepaid',
 												'Hybrid'   => 'tpl_default_tree_satellite_main_hybrid'
 										),
+								'Additional' => array(	'Postpaid' => 'tpl_default_tree_satellite_additional_postpaid',
+														'Prepaid'  	=> 'tpl_default_tree_satellite_additional_prepaid'
+											),
+								'VAS'		=> array(	'Postpaid' => 'tpl_default_tree_satellite_vas_postpaid',
+														'Prepaid'  	=> 'tpl_default_tree_satellite_vas_prepaid'
+											),
+								'Package'   => array(   'Postpaid' => 'tpl_default_tree_satellite_package_postpaid',
+								                                        'Prepaid'   => 'tpl_default_tree_satellite_package_prepaid'
+								                            ),
 					),
 					'Dummy' => array(
 								'Main' => array('Postpaid' => 'tpl_default_tree_dummy_main_postpaid',

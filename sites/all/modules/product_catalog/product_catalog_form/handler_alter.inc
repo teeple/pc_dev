@@ -133,31 +133,10 @@ function _add_ajax_submit_callback($form_id,&$form){
         case 'simpleproductoffering_node_form':
             unset($form['field_is_cloned']);
             if(isset($form['nid']['#value'])) { // edit
-                /*
-                $form['clone_button'] = array(
-                    '#type' => 'markup',
-                    '#markup' => '<input type="button" id="product_clone_button" class="form-submit" value="Clone"/>',
-                    '#weight' => 1000
-                );
-                */
-            }
-			$firstPathName = current(explode('/', current_path()));
-			
-			if($firstPathName == 'relation') {
-				$change = FALSE;
-				$redirectUrl = current_path();
-				$urlFragment = 'quickset-relation_manager_1';
-				$form_state['redirect'] = array(
-	  				$redirectUrl,
-	  				array(
-						NULL,
-	  					'fragment' => $urlFragment,
-	  				)
-	  			);
-			} else if (isset($form['nid']['#value'])) { //edit 
-			    $form['field_billing_type']['#disabled'] = TRUE;
-				$change = TRUE;
-			}
+            		$change = TRUE;
+            	} else {
+            		$change = FALSE;
+            	}
         	break;
 	}
 	
@@ -683,8 +662,8 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			// in case Edit 
 			} else {
 				$form['field_product_type']['#type'] = 'hidden';
-                $form['field_service_type_of_provider']['#type'] = 'hidden';
-            }
+        $form['field_service_type_of_provider']['#type'] = 'hidden';
+      }
 			
 			unset($form['field_parent_node_for_rp']);
 			unset($form['field_weight_for_ratingpriority']);
@@ -718,13 +697,13 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 				unset($form['field_is_bundle']);
 				unset($form['field_deferred_subscription_flag']);
 				unset($form['field_price_units']);
+				unset($form['field_treatment_price_amount']);
+				unset($form['field_treatment_day']);
+				unset($form['field_contract_period']);
+				unset($form['field_roaming_allowed']);
+				
 			} else {
 				unset($form['field_exclusiveness']);
-			}
-			
-			// 새로 생성 시 
-			if(!isset($form['nid']['#value'])){
-				$form['actions']['submit']['#submit'][] = 'simpleproductoffering_redirect_handler';
 			}
 			
 			break;
