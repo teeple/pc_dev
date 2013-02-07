@@ -683,7 +683,7 @@ function product_catalog_ajax_select_modal_content($js = NULL, $contentType, $ni
 	ctools_include('ajax');
 	ctools_modal_add_js();
 	
-	if($contentType == 'actionsetnotification') {
+	if($contentType == 'actionsetnotification' || $contentType == 'vouchercardtypenotification' ) {
 		$renderedView = views_embed_view('list_messages', 'panel_pane_1');
 	}
 	
@@ -692,6 +692,7 @@ function product_catalog_ajax_select_modal_content($js = NULL, $contentType, $ni
 	
     switch($contentType){
         case 'actionsetnotification':
+        case 'vouchercardtypenotification':
             $renderOutput .= '<input type="button" id="vbo-message-select-button" value="Select"/>';
         break;
     }
