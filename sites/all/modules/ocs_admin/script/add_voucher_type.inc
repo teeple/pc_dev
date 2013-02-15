@@ -515,7 +515,7 @@ foreach( $case as $tc) {
 		print 'Existing voucher type : '. $voucher_type . $nl;
 	}
 
-	$node->field_price_amount['und'][0]['value'] = $tc[4];
+	$node->field_price_amount_float['und'][0]['value'] = $tc[4];
 	$node->field_active_period['und'][0]['value'] = $tc[2];
 	$node->field_grace_period['und'][0]['value'] = $tc[3];
 	$v_usage = $usage[$tc[0]];
