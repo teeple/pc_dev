@@ -6,7 +6,7 @@
 
 (function ($) {
   if (Drupal.states) {
-  	var states = Drupal.states.Dependent.comparisons;
+    var states = Drupal.states.Dependent.comparisons;
     var trigger = false;
 
     var arrayState = {
@@ -110,7 +110,7 @@
     // _only_ passes the values to our comparison function, but
     // we need additional info. So we just hack that additional
     // info into the value :)
-    Drupal.behaviors.states.attach = function(context, settings) {    	
+    Drupal.behaviors.states.attach = function(context, settings) {
       for (var k in Drupal.settings.states) {
     	  var triggered_field = Drupal.settings.states[k];
         for (var t in triggered_field) {
