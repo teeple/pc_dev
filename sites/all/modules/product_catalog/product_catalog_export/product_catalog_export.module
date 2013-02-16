@@ -21,8 +21,8 @@ module_load_include('inc', 'product_catalog_export', 'export_message');
 module_load_include('inc', 'product_catalog_export', 'export_tvchannel');
 module_load_include('inc', 'product_catalog_export', 'export_exclusiveness');
 
-function export_product($nid=NULL){
-    $data = _product_for_export($nid);
+function export_product($export_item_list=NULL){
+    $data = _product_for_export($export_item_list);
 	return json_encode($data);
 }
 
