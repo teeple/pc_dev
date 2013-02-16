@@ -3,93 +3,13 @@ function _get_vocabulary_name($contentType, $productNode, $serviceType = NULL){
 
   $reserved_voca_name = array();
   $reserved_voca_name['simpleproductoffering'] = array(
-					'Cross' => array(
-								'Main' => 	array(	'Postpaid' => 'tpl_default_tree_cross_main',
-													'Prepaid'  	=> 'tpl_default_tree_cross_main',
-													'Hybrid' => 'tpl_default_tree_cross_main'
-													),
-					),
-					'IPTV' => array(
-								'Main' 		=> array(	'Postpaid' => 'tpl_default_tree_iptv_main_postpaid',
-														'Prepaid'  	=> 'tpl_default_tree_iptv_main_prepaid',
-														'Hybrid'     => 'tpl_default_tree_iptv_main_hybrid'
-													),
-								'Additional' => array(	'Postpaid' => 'tpl_default_tree_iptv_additional_postpaid',
-																			'Prepaid'  	=> 'tpl_default_tree_iptv_additional_prepaid'
-														),
-								'VAS' 		=> array(	'Postpaid' => 'tpl_default_tree_iptv_vas_postpaid',
-														'Prepaid'  	=> 'tpl_default_tree_iptv_vas_prepaid'
-															),
-								'Package'   => array(   'Postpaid' => 'tpl_default_tree_iptv_package_postpaid',
-                                                        'Prepaid'   => 'tpl_default_tree_iptv_package_prepaid'
-                 						),
-          ),
-					'Mobile' => array(
-								'Main' 		=> array(	'Postpaid' => 'tpl_default_tree_mobile_main_postpaid',
-														'Prepaid'  	=> 'tpl_default_tree_mobile_main_prepaid',
-														'Hybrid'     => 'tpl_default_tree_mobile_main_hybrid'
-											),
-								'Additional' => array(	'Postpaid' => 'tpl_default_tree_mobile_additional_postpaid',
-														'Prepaid'  	=> 'tpl_default_tree_mobile_additional_prepaid'
-											),
-								'VAS' 		=> array(	'Postpaid' => 'tpl_default_tree_mobile_vas_postpaid',
-														'Prepaid'  	=> 'tpl_default_tree_mobile_vas_prepaid'
-											),
-								'Package'   => array(   'Postpaid' => 'tpl_default_tree_mobile_package_postpaid',
-														'Prepaid'   => 'tpl_default_tree_mobile_package_prepaid'
-          						),
-					),
-					'Broadband' => array(
-								'Main' 		=> array(	'Postpaid' => 'tpl_default_tree_broadband_main_postpaid',
-														'Prepaid'  	=> 'tpl_default_tree_broadband_main_prepaid',
-														'Hybrid'     => 'tpl_default_tree_broadband_main_hybrid'
-											),
-								'Additional' => array(	'Postpaid' => 'tpl_default_tree_broadband_additional_postpaid',
-														'Prepaid'  	=> 'tpl_default_tree_broadband_additional_prepaid'
-											),
-								'VAS'		=> array(	'Postpaid' => 'tpl_default_tree_broadband_vas_postpaid',
-														'Prepaid'  	=> 'tpl_default_tree_broadband_vas_prepaid'
-											),
-								'Package'   => array(   'Postpaid' => 'tpl_default_tree_broadband_package_postpaid',
-                                                        'Prepaid'   => 'tpl_default_tree_broadband_package_prepaid'
-                                            ),
-					),
-					'VoIP' => array(
-								'Main' => array('Postpaid' => 'tpl_default_tree_voip_main_postpaid',
-												'Prepaid'  	=> 'tpl_default_tree_voip_main_prepaid',
-												'Hybrid'   => 'tpl_default_tree_voip_main_hybrid'
-										),
-								'Additional' => array(	'Postpaid' => 'tpl_default_tree_voip_additional_postpaid',
-														'Prepaid'  	=> 'tpl_default_tree_voip_additional_prepaid'
-											),
-								'VAS'		=> array(	'Postpaid' => 'tpl_default_tree_voip_vas_postpaid',
-														'Prepaid'  	=> 'tpl_default_tree_voip_vas_prepaid'
-											),
-								'Package'   => array(   'Postpaid' => 'tpl_default_tree_voip_package_postpaid',
-								                                        'Prepaid'   => 'tpl_default_tree_voip_package_prepaid'
-								                            ),
-					),
-					'Satellite' => array(
-								'Main' => array('Postpaid' => 'tpl_default_tree_satellite_main_postpaid',
-												'Prepaid'  	=> 'tpl_default_tree_satellite_main_prepaid',
-												'Hybrid'   => 'tpl_default_tree_satellite_main_hybrid'
-										),
-								'Additional' => array(	'Postpaid' => 'tpl_default_tree_satellite_additional_postpaid',
-														'Prepaid'  	=> 'tpl_default_tree_satellite_additional_prepaid'
-											),
-								'VAS'		=> array(	'Postpaid' => 'tpl_default_tree_satellite_vas_postpaid',
-														'Prepaid'  	=> 'tpl_default_tree_satellite_vas_prepaid'
-											),
-								'Package'   => array(   'Postpaid' => 'tpl_default_tree_satellite_package_postpaid',
-								                                        'Prepaid'   => 'tpl_default_tree_satellite_package_prepaid'
-								                            ),
-					),
-					'Dummy' => array(
-								'Main' => array('Postpaid' => 'tpl_default_tree_dummy_main_postpaid',
-												'Prepaid'  	=> 'tpl_default_tree_dummy_main_prepaid',
-												'Hybrid'   => 'tpl_default_tree_dummy_main_hybrid'
-										),
-					),
+					'Cross' => 'tpl_default_tree_cross_main',
+					'IPTV' => 'tpl_default_tree_iptv',
+					'Mobile' => 'tpl_default_tree_mobile',
+					'Broadband' => 'tpl_default_tree_broadband',
+					'VoIP' => 'tpl_default_tree_voip',
+					'Satellite' => 'tpl_default_tree_satellite',
+					'Dummy' => 'tpl_default_tree_dummy',
 				);
 			$reserved_voca_name['tariffplan'] = array(
 					"Mobile" => array(
@@ -156,7 +76,7 @@ function _get_vocabulary_name($contentType, $productNode, $serviceType = NULL){
 	
 	switch($contentType) {
 		case 'simpleproductoffering':
-			$voca_name = $reserved_voca_name[$contentType][$serviceDomain][$productType][$billingType];
+			$voca_name = $reserved_voca_name[$contentType][$serviceDomain];
 			break;
 		case 'tariffplan':
 			//$voca_name = $reserved_voca_name[$contentType][$serviceDomain][$serviceType];
