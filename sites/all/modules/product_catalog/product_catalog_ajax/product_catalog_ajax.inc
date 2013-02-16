@@ -9,11 +9,16 @@ function _load_tree_item_mixed_with_node_and_term($rootNode,$grandParentNode=NUL
 			'data' => $rootNode->title,
 	);
 	
+    $filterTerm = FALSE;
 	switch($rootNode->type){
 		case 'simpleproductoffering':
 			$vocaName = _get_vocabulary_name('simpleproductoffering', $rootNode);
-			$children['state'] = 'open';
-			break;			
+            $children['state'] = 'open';
+            $filterTerm = TRUE;
+            $productTypeTerm = taxonomy_term_load($rootNode->field_product_type['und'][0]['tid']);
+            $billTypeTerm = taxonomy_term_load($rootNode->field_billing_type['und'][0]['tid']);
+            $notAllowedCombinationStr = $productTypeTerm->name.'_'.$billTypeTerm->name;
+            break;			
 		case 'tariffplan':
 		case 'vouchercardtype':
 			$vocaName = $rootNode->field_tree_child_voca_name['und'][0]['value'];
@@ -28,7 +33,8 @@ function _load_tree_item_mixed_with_node_and_term($rootNode,$grandParentNode=NUL
 	$vocabulary = taxonomy_vocabulary_machine_name_load($vocaName);
 	
 	$tree  = taxonomy_get_tree($vocabulary->vid);
-
+    
+    $skipParents = array();
 	foreach($tree as $item){
 		$term = taxonomy_term_load($item->tid);
         
@@ -43,6 +49,26 @@ function _load_tree_item_mixed_with_node_and_term($rootNode,$grandParentNode=NUL
             }
         }       
         
+        if($filterTerm){//filter tree item based on product type and billing type
+            //check parent is already removed from tree
+            if(in_array($term->parents[0],$skipParents)){
+                $skipParents[] = $term->tid;
+                continue;
+            }
+            
+            //check combination is not allowed
+            $notAllowedCombination = array();
+            if(isset($term->field_not_visible['und'])){
+                foreach($term->field_not_visible['und'] as $notAllowed){
+                    $notAllowedCombination[] = $notAllowed['value'];
+                }
+                if(in_array($notAllowedCombinationStr,$notAllowedCombination)){
+                    $skipParents[] = $term->tid;
+                    continue;
+                }
+            }
+        }
+        
 		$itemArray = array(
 				'attr' => array('id' => 'term_'.$item->tid.'_'.$rootNode->nid,
 						'node_type' => 'term',
@@ -52,15 +78,15 @@ function _load_tree_item_mixed_with_node_and_term($rootNode,$grandParentNode=NUL
 				'data' => $item->name
 		);
 		
-	 switch($term->field_rel_type['und'][0]['safe_value']) {
-		 case 'attribute':
-		 case 'attribute_packaged':
-		 case 'counter':
-		 case 'nonusage':
-		 case 'usage':
-		 		$itemArray['state'] = 'open';
-		 		break;
-	 }
+    	 switch($term->field_rel_type['und'][0]['safe_value']) {
+    		 case 'attribute':
+    		 case 'attribute_packaged':
+    		 case 'counter':
+    		 case 'nonusage':
+    		 case 'usage':
+    		 		$itemArray['state'] = 'open';
+    		 		break;
+    	 }
 	 		
 		if(isset($term->field_qtabs_loading['und'][0]['value'])){
 			$loadingInfo = field_collection_item_load($term->field_qtabs_loading['und'][0]['value']);
@@ -116,18 +142,20 @@ function _load_tree_item_mixed_with_node_and_term($rootNode,$grandParentNode=NUL
 		}else{
 			$itemArray['attr']['parent_nid'] = 'term_'.$item->parents[0].'_'.$rootNode->nid;
 			$keyPath = array_searchRecursive_get_key_path('term_'.$item->parents[0].'_'.$rootNode->nid,$children,true);
-
-			$keyString = '$children';
-			$keyPathLength = count($keyPath);
-			for($i = 0; $i < $keyPathLength -2; $i++){
-				if(is_numeric($keyPath[$i])){
-					$keyString .= '['.$keyPath[$i].']';
-				}else{
-					$keyString .= '[\''.$keyPath[$i].'\']';
-				}
-			}
-			$keyString .= '[\'children\'][] = $itemArray;';
-			eval($keyString);
+            
+            if(!empty($keyPath)){
+    			$keyString = '$children';
+    			$keyPathLength = count($keyPath);
+    			for($i = 0; $i < $keyPathLength -2; $i++){
+    				if(is_numeric($keyPath[$i])){
+    					$keyString .= '['.$keyPath[$i].']';
+    				}else{
+    					$keyString .= '[\''.$keyPath[$i].'\']';
+    				}
+    			}
+    			$keyString .= '[\'children\'][] = $itemArray;';
+    			eval($keyString);
+            }
 		}
 	}	
 	return $children;

@@ -9,20 +9,22 @@ function touch_product($childNode){
     if(isset($childNode->field_ref_product['und'][0]['nid'])){
         _touch_product($childNode->field_ref_product['und'][0]['nid']);
     }else{
-        $parentNode = NULL;
-        
-        if(isset($childNode->field_ref_tariffplan['und'][0]['nid'])){
-            $parentNode = node_load($childNode->field_ref_tariffplan['und'][0]['nid']);
-        }else if(isset($childNode->field_parent_node['und'][0]['nid'])){
-            $parentNode = node_load($childNode->field_parent_node['und'][0]['nid']);
-        }else if(isset($childNode->field_ref_source_action['und'][0]['nid'])){
-            $parentNode = node_load($childNode->field_ref_source_action['und'][0]['nid']);
-        }else if(isset($childNode->field_ref_nonusagerollover['und'][0]['nid'])){
-            $parentNode = node_load($childNode->field_ref_nonusagerollover['und'][0]['nid']);
-        }
-        
-        if($parentNode != NULL){
-            touch_product($parentNode);
+        if($childNode->type != 'simpleproductoffering'){
+            $parentNode = NULL;
+            
+            if(isset($childNode->field_ref_tariffplan['und'][0]['nid'])){
+                $parentNode = node_load($childNode->field_ref_tariffplan['und'][0]['nid']);
+            }else if(isset($childNode->field_parent_node['und'][0]['nid'])){
+                $parentNode = node_load($childNode->field_parent_node['und'][0]['nid']);
+            }else if(isset($childNode->field_ref_source_action['und'][0]['nid'])){
+                $parentNode = node_load($childNode->field_ref_source_action['und'][0]['nid']);
+            }else if(isset($childNode->field_ref_nonusagerollover['und'][0]['nid'])){
+                $parentNode = node_load($childNode->field_ref_nonusagerollover['und'][0]['nid']);
+            }
+            
+            if($parentNode != NULL){
+                touch_product($parentNode);
+            }
         }
     }
 }
