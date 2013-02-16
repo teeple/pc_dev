@@ -1,10 +1,11 @@
 <?php
 
-function _product_for_export($nids=NULL){
+function _product_for_export($export_item_list=NULL){
     $retData = array();
 	$retDataTmp = array();
 	$productNids = array();
-	
+		
+		/*
     $productView = views_get_view('query_product_export');
     $productView->set_arguments(array('0'=>$nids));
     $productView->execute();
@@ -13,11 +14,12 @@ function _product_for_export($nids=NULL){
 
     $productsCount = count($products);
     for($i=0;$i<$productsCount;$i++) {
+    */
+    foreach($export_item_list as $node) {
         
-        //Basic Attributes
-        $product = array();
-        $product['type'] = 'product';
-        $node = node_load($products[$i]->nid);
+      //Basic Attributes
+      $product = array();
+      $product['type'] = 'product';
 		
 	    $product['attribute'] = _get_attribute($node);
 		
@@ -63,17 +65,13 @@ function _product_for_export($nids=NULL){
 		$retDataTmp[] = $product;        
     }
     
-    // return json_encode($jsonData);
-    //if($nid==NULL) return $retData['products'][0];
-    //else return $retData;
-        
-    if($nids!=NULL) {
+    if(!empty($export_item_list)) {
     	$retData['ifvalues']['resources'] = array_values($productNids);
-	} else {
+   	} else {
     	$retData['ifvalues']['resources'] = '';
-	}
+	  }
+	  
 	$retData['products'] = $retDataTmp;
-	//dsm(json_encode($retData),'after json');
 	
 	return $retData;
 }
