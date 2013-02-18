@@ -1535,9 +1535,12 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
         case 'servicefeaturecode_node_form':
             _unset_menu_items($form, $form_id);
             $newServiceDomainOptions = array();
-            foreach($form['field_service_domain']['und']['#options'] as $item){
-                if($item === 'Cross' || $item == 'Dummy') continue;
-                $newServiceDomainOptions[] = $item;
+            $keys = array_keys($form['field_service_domain']['und']['#options']);
+            $values = array_values($form['field_service_domain']['und']['#options']);
+            $count = count($values);
+            for($i=0;$i<$count;$i++){
+                if($values[$i] === 'Cross' || $values[$i] == 'Dummy') continue;
+                $newServiceDomainOptions[$keys[$i]] = $values[$i];
             }
             $form['field_service_domain']['und']['#options'] = $newServiceDomainOptions;
             break;
