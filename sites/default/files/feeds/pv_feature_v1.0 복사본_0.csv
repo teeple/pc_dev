@@ -1,0 +1,55 @@
+PROV_FTR_CD,SVC_DOMAIN,NE_ID,IS_USER_DEFINE,IS_BSS_PROV,MAX_PARAM_CNT,DESCR
+RBT,Mobile,HLR,0,B,0,Ring Back Tone server
+MSL,Mobile,HLR,0,B,0,Missed call log
+HOLD,Mobile,HLR,0,B,0,Call Hold supplementary services for a susscriber
+GPRS,Mobile,HLR,0,B,0,GPRS Service
+CID,Mobile,HLR,0,B,0,Caller ID (Call Screening)
+CH,Mobile,HLR,0,B,0,Call Holding Service(Aaaoa? aooaeaaa oeeo)
+RV,Mobile,HLR,0,B,0,Roaming Voice
+VMS,Mobile,HLR,0,B,0,Voice Message Service
+COLR,Mobile,HLR,0,B,0,Supplemantary Service 
+SMSMT,Mobile,HLR,0,B,0,Terminating SMS
+CRBT,Mobile,HLR,0,B,0,Uni Music (Ayeaooo aioei ?a?o)
+SPINI_2,Mobile,HLR,0,B,0,Call Restrict (Aa?ao aooaeaaaa eia oeeo)
+CFNRC,Mobile,HLR,1,B,0,Call Forwarding on Mobile Subscriber Not Reachable
+CFU,Mobile,HLR,1,B,0,Call Forwarding-Unconditinal (Aooaeaaa oee?vveyo-oooa)
+ODBINFO,Mobile,HLR,0,B,0,Barring Information Call
+CWAIT,Mobile,HLR,0,B,0,Call Waiting
+BOPRC_2,Mobile,HLR,0,B,0,BOPRC(ENT) (entertainment)
+CLIR,Mobile,HLR,0,B,0,Identification restriction service
+DND_1,Mobile,HLR,0,B,0,Incoming Call Suspension directly  (I?io aooaeaaa oaao)
+ECT,Mobile,HLR,0,B,0,Explicit Call Transfer
+PLMNSS,Mobile,HLR,1,B,0,PLMN specific supplementary services (PLMN specific SS)
+TPLGPRS,Mobile,HLR,1,B,0,Modify subscriber's GPRS service parameters with 160
+MPTY,Mobile,HLR,0,B,0,Multiparty Service
+CFB,Mobile,HLR,1,B,0,Call Forwarding-Busy (Aooaeaaa oee?vveyo-caaave)
+CFNRY,Mobile,HLR,1,B,0,Call Forwarding No Answer (Aooaeaaa oee?vveyo-oa?eoeaaave)
+SIM_REF,Mobile,HLR,0,B,0,SIM  Card Refresh
+WAP,Mobile,HLR,0,B,0,Wireless Application Protocol
+BOIC_EXHC,Mobile,HLR,0,B,0,Conference Call(Oaeaoii oo?ae)
+BOPRC,Mobile,HLR,0,B,0,BOPRC(INFO)
+COLP,Mobile,HLR,0,B,0,Connected Line Identification
+CLIP,Mobile,HLR,0,B,0,Calling Line Identification 
+FAX,Mobile,HLR,0,B,0,Fax Data
+SMSMO,Mobile,HLR,0,B,0,Originate SMS
+DBIC,Mobile,HLR,0,B,0,Barring Of Incoming Call
+DBOC,Mobile,HLR,0,B,0,Barring Of Outgoing Call
+TST_1,Mobile,HLR,0,B,0,TUMUR_SVC
+TEST,Mobile,HLR,0,B,0,TEST Service
+WEBSMS,Mobile,HLR,0,B,0,Web to SMS 
+WSC,Mobile,HLR,0,B,0,WebSelfCare
+WSCS,Mobile,HLR,0,B,0,WebSelfCare Secure
+CRBTP,Mobile,HLR,0,B,0,CRBT Plus
+CRBTF,Mobile,HLR,0,B,0,CRBT Free
+CRBTPF,Mobile,HLR,0,B,0,CRBT Plus Free
+VCALL,Mobile,HLR,0,B,0,Video Call
+PDOWN,Mobile,HLR,0,B,0,Package Upgrade fee
+ULOAN,Mobile,HLR,0,B,0,UnitLoan/UnitGift
+USSD,Mobile,HLR,0,B,0,USSD Checking
+ACT BAOC,Mobile,HLR,0,B,0,Action Barring Of Outgoing Call
+VPN,Mobile,HLR,1,B,0,Virtual Private Network
+FF,Mobile,HLR,0,B,0,
+Couple,Mobile,HLR,1,B,0,CUG-Couple service
+Homezone,Mobile,HLR,0,B,0,Homezone service
+CAC,Mobile,HLR,0,B,0,
+CRM,Mobile,HLR,0,B,0,
