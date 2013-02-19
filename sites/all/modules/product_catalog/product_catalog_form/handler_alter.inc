@@ -965,7 +965,19 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             //unset($form['field_ref_numberingplan_idd']);
             _unset_menu_items($form, $form_id);
             //for selecting all carrier
-            $form['field_ref_carrier_mobile']['und']['#options']['_none'] = 'All';
+            $newOptions = array();
+            $newOptions['_none'] = 'All';
+            
+            //filter only idd carrier
+            //dsm($form['field_ref_carrier_mobile']['und']['#options'],'carriers')
+            $view = views_get_view('list_carrier_mobile');
+            $view -> set_display('panel_pane_3');
+            $view -> set_arguments(array('0' => 'International'));
+            $view -> execute();
+            foreach($view->result as $item){
+                $newOptions[$item->nid] = $item->node_title;
+            }
+            $form['field_ref_carrier_mobile']['und']['#options'] = $newOptions;
             break;
         case 'basicrate_idd_node_form' :
             unset($form['title']);
@@ -1077,8 +1089,20 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             }
             //unset($form['field_ref_numberingplan_domestic']);
             _unset_menu_items($form, $form_id);
-            //for select all carrier
-            $form['field_ref_carrier_mobile']['und']['#options']['_none'] = 'All';
+            //for selecting all carrier
+            $newOptions = array();
+            $newOptions['_none'] = 'All';
+            
+            //filter only domestic carrier
+            $view = views_get_view('list_carrier_mobile');
+            $view -> set_display('panel_pane_3');
+            $view -> set_arguments(array('0' => 'Domestic'));
+            $view -> execute();
+            foreach($view->result as $item){
+                $newOptions[$item->nid] = $item->node_title;
+            }
+            $form['field_ref_carrier_mobile']['und']['#options'] = $newOptions;
+            
             //for select all area
             $form['field_ref_area_code_from']['und']['#options']['_none'] = 'All';
             $form['field_ref_area_code_to']['und']['#options']['_none'] = 'All';
