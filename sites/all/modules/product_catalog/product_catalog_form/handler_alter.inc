@@ -1439,6 +1439,22 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             $form['field_ref_tree_tid']['#type'] = 'hidden';
             $form['field_ref_numberspecial']['#type'] = 'hidden';
 
+            //dsm($form,'form');
+            //unset unused unit type
+            $optionKeys = array_keys($form['field_range_units']['und']['#options']);
+            forEach($optionKeys as $key){
+                if($form['field_range_units']['und']['#options'][$key] === 'MBytes'){
+                    unset($form['field_range_units']['und']['#options'][$key]);
+                }
+            }
+            $optionKeys = array_keys($form['field_uom_units']['und']['#options']);
+            forEach($optionKeys as $key){
+                if($form['field_uom_units']['und']['#options'][$key] === 'Bytes'){
+                    unset($form['field_uom_units']['und']['#options'][$key]);
+                }
+            }
+          
+            unset($form['field_range_units']['und']['#options'][391]);
             $numberSpecialNode = node_load($form['#node'] -> field_ref_numberspecial['und'][0]['nid']);
 
             if (isset($numberSpecialNode -> field_target_usage_type['und'][0]['tid'])) {
