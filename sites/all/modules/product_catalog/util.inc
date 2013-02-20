@@ -828,7 +828,7 @@ function _get_redirect_url_in_create_n_list($addOrList, $content_type, $params) 
 		break;
 		
 	}
-	dsm($url, 'url create n list');
+	//dsm($url, 'url create n list');
 	return $url;
 }
 

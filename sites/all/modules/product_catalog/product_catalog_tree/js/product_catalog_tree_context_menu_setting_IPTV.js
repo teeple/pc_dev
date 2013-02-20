@@ -72,6 +72,24 @@
 							$.fn.deleteNode(node);
 						};
 						break;
+					case "attribute_featurecode":
+						menus.custom_create._disabled = false;
+						menus.custom_create.submenu = {
+							//"mobile_packaged_hidden" : {
+							"attribute_featurecode" : {
+								"label" : "Select FeatureCode",
+								action : function(node) {
+									$.fn.loadSelectForm(node);
+								}
+							},
+						};
+						break;
+					case 'prdattributefeaturecode':
+						menus.custom_delete._disabled = false;
+						menus.custom_delete.action = function(node) {
+							$.fn.deleteNode(node);
+						};
+						break;
 					case "treenodespecialnumberscheme":
 						menus.custom_delete._disabled = false;
 						menus.custom_delete.action = function(node) {
