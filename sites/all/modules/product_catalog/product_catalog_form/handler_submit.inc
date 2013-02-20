@@ -1,7 +1,9 @@
 <?php
 
 function node_save_handler_to_touch_product($node){
-    touch_product($node);
+    if(session_get('TOUCH_PRODUCT', 'TRUE') === TRUE){
+        touch_product($newNode);
+    }
 };
 
 function product_catalog_form_node_submit($node, $form, &$form_state)
@@ -222,11 +224,13 @@ function _create_default_items_by_voca($product, $voca_name) {
 function _create_default_items_in_product($product) {
     //dsm('_create_default_items_in_product');
     //dsm($product->field_is_cloned); 
+    session_set('TOUCH_PRODUCT', 'FALSE');
 	if(!empty($product->field_is_cloned) && $product->field_is_cloned['und'][0]['value'] == 0){
 			
 		$voca_name = _get_vocabulary_name('simpleproductoffering', $product);
 		_create_default_items_by_voca($product, $voca_name);
 	}
+    session_set('TOUCH_PRODUCT', 'TRUE');
 }
 
 function _create_default_items_in_product_old($product) {
