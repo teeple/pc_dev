@@ -11,7 +11,7 @@ function product_catalog_form_node_submit($node, $form, &$form_state)
 
 	$form_id = $form['form_id']['#value'];
 	
-	node_save_handler_to_touch_product($node);
+	//node_save_handler_to_touch_product($node);
 	
 	switch($form_id){
 		case 'prodoffernonusagesubitem_node_form':
