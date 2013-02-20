@@ -876,7 +876,7 @@ function product_catalog_ajax_select_submit() {
 
       $weight += $weightStep;
       
-      dsm($rel_type, 'rel_type');
+      //dsm($rel_type, 'rel_type');
       
       switch($rel_type) {
 	  
@@ -951,7 +951,33 @@ function product_catalog_ajax_select_submit() {
       	node_save($child);
       	$js_data['append_to'] = 'inside';
       	break;
-		
+	  case 'packaged_optional':
+        $child->type = 'prdattributepackaged';
+        $child->field_weight['und'][0]['value'] = $weight;
+        $child->field_ref_product['und'][0]['nid'] = $tmpProductNid[1];
+        $child->field_ref_connected_product['und'][0]['nid'] = $childNid;
+        
+        $term = taxonomy_get_term_by_name('Optional', 'prdrelationtype');
+        $child->field_ref_prdrelationtype['und'][0]['tid'] = current($term)->tid;
+        
+        node_save($child);
+        $js_data['append_to'] = 'inside';
+        break;
+        
+    case 'packaged_hidden':
+          
+        $child->type = 'prdattributepackaged';
+        $child->field_weight['und'][0]['value'] = $weight;
+        $child->field_ref_product['und'][0]['nid'] = $tmpProductNid[1];
+        $child->field_ref_connected_product['und'][0]['nid'] = $childNid;
+        
+                $term = taxonomy_get_term_by_name('Mandatory_MarketHidden','prdrelationtype');
+        $child->field_ref_prdrelationtype['und'][0]['tid'] = current($term)->tid;
+        
+        node_save($child);
+        
+        $js_data['append_to'] = 'inside';
+        break;
       case 'packaged_product':
         $child->type = 'prdattributepackaged';
         $child->field_weight['und'][0]['value'] = $weight;
@@ -979,35 +1005,7 @@ function product_catalog_ajax_select_submit() {
   		node_save($child);
   		$js_data['append_to'] = 'inside';
   	  	break;
-		
-	  case 'packaged_optional':
-      	$child->type = 'prdattributepackaged';
-      	$child->field_weight['und'][0]['value'] = $weight;
-      	$child->field_ref_product['und'][0]['nid'] = $tmpProductNid[1];
-      	$child->field_ref_connected_product['und'][0]['nid'] = $childNid;
-      	
-      	$term = taxonomy_get_term_by_name('Optional', 'prdrelationtype');
-      	$child->field_ref_prdrelationtype['und'][0]['tid'] = current($term)->tid;
-      	
-      	node_save($child);
-      	$js_data['append_to'] = 'inside';
-        break;
-		
-    case 'packaged_hidden':
-		  
-      	$child->type = 'prdattributepackaged';
-      	$child->field_weight['und'][0]['value'] = $weight;
-      	$child->field_ref_product['und'][0]['nid'] = $tmpProductNid[1];
-      	$child->field_ref_connected_product['und'][0]['nid'] = $childNid;
-      	
-				$term = taxonomy_get_term_by_name('Mandatory_MarketHidden','prdrelationtype');
-      	$child->field_ref_prdrelationtype['und'][0]['tid'] = current($term)->tid;
-      	
-      	node_save($child);
-		
-      	$js_data['append_to'] = 'inside';
-      	break;
-      	
+			
       case 'voucher_product_specific':
       	$voucharcardtype = node_load($tmpProductNid[1]);
       	$voucherTypeTerm = taxonomy_term_load($voucharcardtype->field_ref_voucher_type['und'][0]['tid']);
