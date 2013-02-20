@@ -551,7 +551,9 @@ function _get_attribute_exceptions($product) {
         foreach($view->result as $record){
             $numberSavingNode = node_load($record->nid);
             $numberSavingInfo = array();            
-            $numberSavingInfo['saving_days'] = isset($numberSavingNode->field_saving_days['und'][0]['value'])?$numberSavingNode->field_saving_days['und'][0]['value']:0;
+            $numberSavingInfo['saving_period'] = isset($numberSavingNode->field_saving_period['und'][0]['value'])?$numberSavingNode->field_saving_period['und'][0]['value']:0;
+            $savingPeriodType = taxonomy_term_load($numberSavingNode->field_period_type['und'][0]['tid']);
+            $numberSavingInfo['period_type'] = $savingPeriodType->name;
             $numberSavingInfo['deposit_price'] = isset($numberSavingNode->field_deposit_price['und'][0]['value'])?$numberSavingNode->field_deposit_price['und'][0]['value']:0;
             $numberSavings [] = $numberSavingInfo;
         }
