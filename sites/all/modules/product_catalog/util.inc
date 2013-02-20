@@ -740,7 +740,7 @@ function _get_redirect_url_in_view_n_delete($viewOrDel, $node) {
 		break;
 	}
 		
-	dsm($url, 'url view and delete');
+	//dsm($url, 'url view and delete');
 	return $url;
 }
 // $createOrList = 'add', 'list'
