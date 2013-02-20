@@ -383,6 +383,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             _unset_menu_items($form, $form_id);
             //dsm($form,'form');
             //$form['field_ref_service_feature_code']['und']['#options'][78657] = '<a href="">haha</a>';
+            /*
             $product = node_load($form['#node']->field_ref_product['und'][0]['nid']);
             $serviceDomainTid = $product->field_service_type_of_provider['und'][0]['tid'];
             
@@ -414,6 +415,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             
             $form['field_ref_service_feature_code']['und']['#options'] = $newOptions;
             //dsm($form,'form');
+            */ 
             break;
 
         case 'prdattributebenefit_node_form' :

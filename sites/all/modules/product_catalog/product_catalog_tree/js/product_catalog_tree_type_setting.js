@@ -25,12 +25,17 @@
 				},
 				
 				'attribute_featurecode': {
-					"valid_children" : "none",
+					"valid_children" : ["prdattributefeaturecode"],
 					  		"icon" : {
 					      		"image" : "/sites/default/files/icons/attribute_detail.png"
 					      	},
 				},
-				
+				"prdattributefeaturecode" : {
+					"valid_children" : "none",
+				  "icon" : {
+							"image" : "/sites/default/files/file.png"
+				  }
+				},
 				'attribute_allowed_prefix': {
 					"valid_children" : "none",
 					  		"icon" : {
