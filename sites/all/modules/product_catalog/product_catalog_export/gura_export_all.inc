@@ -1164,6 +1164,11 @@ function rating_rules_export_from_view($title, $view_name, $display_name, $nid=N
                                     $factorMeta['type'] = 'int';
                                     //$factorMeta['size'] = 0;
                                 }
+                                else if($field_info['type'] == 'number_float')
+                                {
+                                    $factorMeta['type'] = 'double';
+                                    //$factorMeta['size'] = 0;
+                                }
                                 else if($field_info['type'] == 'list_boolean')
                                 {
                                     $factorMeta['type'] = 'string';
