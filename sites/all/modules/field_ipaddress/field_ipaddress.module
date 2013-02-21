@@ -78,7 +78,7 @@ function field_ipaddress_field_formatter_view($entity_type, $entity, $field, $in
     case 'field_ipaddress_cidr':
       $networks = array();
       foreach ($items as $delta => $item) {
-        if (!empty($item)) {
+        if (!empty($item) && isset($item['start']) && isset($item['end'])) {
           $networks[] = _field_ipaddress_long2cidr($item['start'], $item['end']);
         }
       }
