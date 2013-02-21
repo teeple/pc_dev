@@ -618,12 +618,16 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
                     $basicCounterList[$record -> nid] = $record -> node_title . '(' . $counterUnitType . ')';
                 }
                 $existingCounterList = _get_existing_counter_list($productNid);
-
+                
                 foreach ($basicCounterList as $key => $value) {
                     $mergedCounterList[$key] = $value;
                 }
                 foreach ($existingCounterList as $key => $value) {
-                    $mergedCounterList[$key] = $value;
+                    $existingCounterNode = node_load($key);
+                    $mainOrAccuTerm = taxonomy_term_load($existingCounterNode->field_main_or_accumulated['und'][0]['tid']);
+                    if($mainOrAccuTerm->name ==='Main'){
+                        $mergedCounterList[$key] = $value;
+                    }
                 }
 
                 $options = $mergedCounterList;
