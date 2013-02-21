@@ -397,7 +397,7 @@ function build_navigation_bar()
 						array( '/common/counter/list', 'Counters'),
 						array( '/common/numberingplan/domestic/list', 'Numbering Plan'),
 						array( '/common/roaming/country', 'Roaming Plan'),
-                        array( '/common/packet/predefined/charging_rule','Packet'),					    
+                        array( '/common/packet/predefined/charging_rule/list','Packet'),	    
 					    array( '/common/vouchercardtype', 'ETC'),
                         )),
             'simulator' => array( 'href' => '/simulator/test/voice', 'icon' => 'grid', 
