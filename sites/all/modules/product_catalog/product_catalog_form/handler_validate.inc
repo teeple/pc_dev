@@ -12,6 +12,79 @@ function _is_condition_duplicated($args) {
 function product_catalog_form_node_validate($node, $form, &$form_state){
 
 	switch($form['form_id']['#value']){
+        case 'packetdynamicl4_node_form':
+            //dsm($node,'$node');
+            //check ip address is valid or not.
+            $ipValues = $node->field_ip['und'];
+            unset($ipValues['add_more']);
+            $isInvalidIP = FALSE;
+            $isInvalidPort = FALSE;
+            
+            foreach($ipValues as $item){
+                $ipStr = $item['value'];
+                if(strlen($ipStr) > 0){
+                    //check '/'
+                    $ipStr = explode('/',$ipStr);
+                    if(count($ipStr) != 2){
+                        $isInvalidIP = TRUE;
+                        break;
+                    }
+                    //check .
+                    $ip = explode('.',$ipStr[0]);
+                    if(count($ip) != 4){
+                        $isInvalidIP = TRUE;
+                        break;
+                    }
+                    //check ip numeric
+                    foreach($ip as $digit){
+                        //check digit
+                        if(!is_numeric($digit)){
+                            $isInvalidIP = TRUE;
+                            break 2;
+                        }
+                        //check ip range
+                        if($digit < 0 || $digit > 255){
+                             $isInvalidIP = TRUE;
+                            break 2;
+                        }
+                    }
+                    //check network mask
+                    if(!is_numeric($ipStr[1])){
+                        $isInvalidIP = TRUE;
+                        break;
+                    }
+                    //check network mask range
+                    if($ipStr[1] < 0 || $ipStr[1] > 25){
+                        $isInvalidIP = TRUE;
+                        break;
+                    }
+                }
+            }
+
+            $portValues = $node->field_port['und'];
+            unset($portValues['add_more']);
+            foreach($portValues as $item){
+                $portStr = $item['value'];
+                if(strlen($portStr)){
+                    //check digit
+                    if(!is_numeric($portStr)){
+                        $isInvalidPort = TRUE;
+                        break;
+                    }
+                    if($portStr < 0){
+                        $isInvalidPort = TRUE;
+                        break;
+                    }
+                }
+            }
+            
+            if($isInvalidIP){
+                form_set_error('field_ip','Invalid IP format');
+            }
+            if($isInvalidPort){
+                form_set_error('field_port','Invalid Port');
+            }
+            break;
 		case 'conditionwheremacaddress_node_form':
 			if(is_macaddress($form_state['values']['field_mac_address']['und'][0]['value']) == FALSE) {
 				drupal_set_message("Only 3 bytes of Mac Address Format is allowed", 'error');
@@ -62,8 +135,8 @@ function product_catalog_form_node_validate($node, $form, &$form_state){
 				$view->set_arguments(array('0' => $form['nid']['#value']));
 				$view->execute();
 				
-				dsm($form['nid']['#value'], 'Nid Value');
-				dsm($view->result, 'result');
+				//dsm($form['nid']['#value'], 'Nid Value');
+				//dsm($view->result, 'result');
 				
 				if(!empty($view->result)) {
 					drupal_set_message("You should remove the items referencing this counter FIRST! ",'error');
