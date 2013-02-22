@@ -1504,18 +1504,41 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 
             $parentTerm = taxonomy_term_load($form_state['build_info']['args'][0] -> field_ref_tree_tid['und'][0]['value']);
 
-            if ($parentTerm -> vocabulary_machine_name == 'tpl_tariffplan_mobile_sms' || $parentTerm -> vocabulary_machine_name == 'tpl_tariffplan_mobile_data' || $parentTerm -> vocabulary_machine_name == 'tpl_tariffplan_mobile_sms_additional' || $parentTerm -> vocabulary_machine_name == 'tpl_tariffplan_mobile_data_additional') {//for single price such as sms
-                unset($form['field_range_units']);
-                unset($form['field_uom_units']);
-                unset($form['field_charge_collection']);
-            } else {//for voice
-                unset($form['field_price']);
-                $form['chart_button'] = array('#type' => 'markup', '#markup' => '<input id="chart_show" type="button" value="Refresh Chart"/>', '#weight' => 199);
-
-                $form['chart_fieldset'] = array('#type' => 'fieldset', '#title' => 'Chart', '#weight' => 200, );
-                $form['chart_fieldset']['chart'] = array('#type' => 'markup',
-                //'#markup' => '<div id="flot_div" class="hidden" style="height:500px;width:90%;" ></div>',
-                '#markup' => '<div id="flot_div" style="height:500px;width:90%;" ></div>', '#weight' => 0);
+            switch($parentTerm->vocabulary_machine_name){
+                case 'tpl_tariffplan_mobile_sms':
+                case 'tpl_tariffplan_mobile_sms_additional':
+                    unset($form['field_range_units']);
+                    unset($form['field_uom_units']);
+                    unset($form['field_charge_collection']);
+                    break;
+                case 'tpl_tariffplan_mobile_data':
+                case 'tpl_tariffplan_mobile_data_additional':
+                    unset($form['field_range_units']);
+                    unset($form['field_uom_units']);
+                    unset($form['field_charge_collection']);
+                    break;
+                default:
+                    $optionKeys = array_keys($form['field_range_units']['und']['#options']);
+                    forEach($optionKeys as $key){
+                        if($form['field_range_units']['und']['#options'][$key] === 'MBytes'){
+                            unset($form['field_range_units']['und']['#options'][$key]);
+                        }
+                    }
+                    $optionKeys = array_keys($form['field_uom_units']['und']['#options']);
+                    forEach($optionKeys as $key){
+                        if($form['field_uom_units']['und']['#options'][$key] === 'Bytes'){
+                            unset($form['field_uom_units']['und']['#options'][$key]);
+                        }
+                    }
+                    
+                    unset($form['field_price']);
+                    $form['chart_button'] = array('#type' => 'markup', '#markup' => '<input id="chart_show" type="button" value="Refresh Chart"/>', '#weight' => 199);
+    
+                    $form['chart_fieldset'] = array('#type' => 'fieldset', '#title' => 'Chart', '#weight' => 200, );
+                    $form['chart_fieldset']['chart'] = array('#type' => 'markup',
+                    //'#markup' => '<div id="flot_div" class="hidden" style="height:500px;width:90%;" ></div>',
+                    '#markup' => '<div id="flot_div" style="height:500px;width:90%;" ></div>', '#weight' => 0);
+                    break;
             }
             _unset_menu_items($form, $form_id);
             break;

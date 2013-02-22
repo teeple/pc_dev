@@ -1,14 +1,17 @@
 (function($) {
 	$.fn.drawFlotLinkInit = function(){
+		/*
 		if ($("#flot_div").length > 0) {
 			$.fn.makeCollectionItemAttributes();
 			var showChartLink = $("#chart_show");
 			showChartLink.bind('click',function(){$.fn.drawFlot();});
 			$.fn.drawFlot();
 		}
+		*/
 	};	
 
 	$.fn.makeCollectionItemAttributes = function (){
+		/*
 		var rowNum = 0;
 		$("#field-charge-collection-values").find('tbody').find('tr').each(
 			function(){
@@ -21,9 +24,11 @@
 				$(this).find('.field-name-field-price-amount-float').find('input').attr('collection_field','price_amount');
 			}
 		);
+		*/
 	};
 	
 	$.fn.createDrawRawData = function(){
+		/*
 		var settings = {};
 		//('[collection_rownum=0]')
 		
@@ -70,13 +75,7 @@
 	    		xaxisTicks.push(new Array(i,i.toString()));	    
 	    	}
 	    }
-	    /*	    
-	    if(rangeStart.length == 0 && rangeEnd.length == 0){
-	    	xaxisTicks.push(new Array(0,'0'));
-	    	xaxisTicks.push(new Array(1,'Infinity'));
-	    	maxRangeEnd = 1;
-	    } 
-	    */
+	    
 	    settings.xaxis = {
 	    	ticks: xaxisTicks
 	    };
@@ -158,9 +157,11 @@
 	    }    
 	    
 		return settings;
+		*/
 	};
 	
 	$.fn.drawFlot = function(){
+		/*
 		if ($("#flot_div").length > 0) {
 			//init data		
 			$.fn.makeCollectionItemAttributes();
@@ -184,6 +185,7 @@
 			 }		 
 			);
 		}		
+		*/
 	};
 	
 })(jQuery);
