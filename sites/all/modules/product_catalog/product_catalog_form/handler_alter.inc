@@ -1352,6 +1352,14 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             $form['field_ref_counter']['und']['#options'] = $mergedCounterList;
 
             _unset_menu_items($form, $form_id);
+            //dsm($form);
+            $form['field_enddate_option1']['#prefix'] = '<div id="actionsetcounter_fields_wrapper">';
+            $form['field_enddate_option2']['#postfix'] = '</div>';
+            
+            $form['field_ref_counter']['und']['#ajax'] = array(
+                'callback' => 'actionsetcounter_ajax_callback',
+                'wrapper' => 'actionsetcounter_fields_wrapper'
+            );
             break;
 
         case 'actionsetcounteronbonus_node_form' :
@@ -1674,6 +1682,23 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
     //dsm($form_id);
     _add_ajax_submit_callback($form_id, $form);
     return $form;
+}
+
+function actionsetcounter_ajax_callback($form, $form_state){
+    //dsm($form,'form');
+    $counterNode = node_load($form_state['values']['field_ref_counter']['und'][0]['nid']);
+    $counterTypeTerm = taxonomy_term_load($counterNode->field_counter_type['und'][0]['tid']);
+    
+    if($counterTypeTerm->name !== 'Rollover'){
+        $returnStr .= drupal_render($form['field_enddate_option1']);
+        $returnStr .= drupal_render($form['field_startdate_option1']);
+        $returnStr .= drupal_render($form['field_enddate_option3']);
+        $returnStr .= drupal_render($form['field_enddate_option4']);
+        $returnStr .= drupal_render($form['field_enddate_option2']);
+    }else{
+        $returnStr = '<div id="actionsetcounter_fields_wrapper"></div>';
+    }
+    return $returnStr;
 }
 
 function _get_existing_counter_list($productNid) {
