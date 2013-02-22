@@ -545,6 +545,22 @@
     $.fn.bindCollectionItemRemoveButton();
     //$.fn.drawFlotLinkInit();
     
+    //resizable
+    var leftPane = $(".panels-flexible-region-first").last();
+    var rightPane = $(".panels-flexible-region-last").last();
+    var maximumLeftWidth = $("#content").width();
+    var leftHeight = leftPane.height();
+    
+    leftPane.resizable({
+			maxWidth: maximumLeftWidth,
+			minHeight: leftHeight,
+			maxHeight: leftHeight
+		});
+		
+		leftPane.resize(function() {
+			rightPane.width($("#content").width() - leftPane.width());
+		});
+
     //qtip
     $(".qtipEnabled").each(function (){
     	$(this).qtip({
@@ -571,7 +587,7 @@
 	      }
       }); 
      });
-	};
+  };
 	
 	
 	
