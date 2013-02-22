@@ -797,7 +797,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
                 if (empty($view -> result)) {
                     unset($form['actions']);
                     unset($form['field_subscriber_status']);
-                    $form['chart_button'] = array('#type' => 'markup', '#markup' => '<h3> You should select lifecycle scheme First! </h3>', );
+                    //$form['chart_button'] = array('#type' => 'markup', '#markup' => '<h3> You should select lifecycle scheme First! </h3>', );
                 } else {
                     $options = array();
                     foreach ($view->result as $record) {
@@ -1292,12 +1292,14 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
                 $form['field_uom_units']['und']['#disabled'] = TRUE;
 
                 unset($form['field_price']);
+                /*
                 $form['chart_button'] = array('#type' => 'markup', '#markup' => '<input id="chart_show" type="button" value="Refresh Chart"/>', '#weight' => 199);
 
                 $form['chart_fieldset'] = array('#type' => 'fieldset', '#title' => 'Chart', '#weight' => 200, );
                 $form['chart_fieldset']['chart'] = array('#type' => 'markup',
                 //'#markup' => '<div id="flot_div" class="hidden" style="height:500px;width:90%;" ></div>',
                 '#markup' => '<div id="flot_div" style="height:500px;width:90%;" ></div>', '#weight' => 0);
+                */
             }
             break;
         case 'actionpricediscount_node_form' :
@@ -1532,12 +1534,14 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
                     }
                     
                     unset($form['field_price']);
+                    /*
                     $form['chart_button'] = array('#type' => 'markup', '#markup' => '<input id="chart_show" type="button" value="Refresh Chart"/>', '#weight' => 199);
     
                     $form['chart_fieldset'] = array('#type' => 'fieldset', '#title' => 'Chart', '#weight' => 200, );
                     $form['chart_fieldset']['chart'] = array('#type' => 'markup',
                     //'#markup' => '<div id="flot_div" class="hidden" style="height:500px;width:90%;" ></div>',
                     '#markup' => '<div id="flot_div" style="height:500px;width:90%;" ></div>', '#weight' => 0);
+                    */
                     break;
             }
             _unset_menu_items($form, $form_id);
