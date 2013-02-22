@@ -543,7 +543,7 @@
     //Drupal.behaviors.qt_ui_tabs.attach(document,settings);
         
     $.fn.bindCollectionItemRemoveButton();
-    $.fn.drawFlotLinkInit();
+    //$.fn.drawFlotLinkInit();
     
     //qtip
     $(".qtipEnabled").each(function (){
