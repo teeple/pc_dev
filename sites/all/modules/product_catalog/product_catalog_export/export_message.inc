@@ -1,11 +1,16 @@
 <?php
 
-function _array_message($nid = NULL)
+function _array_message($exportItemNids = NULL)
 {
 	$jsonData = array();
-
+	$messageIds = array();
+	
+	if(!empty($exportItemNids) && count($exportItemNids) > 1) {
+		$exportItemNids = join('+', $exportItemNids);
+	}
+	
 	//fetch data
-	$viewResult = views_get_view_result('ocs_messages', 'panel_json', $nid);
+	$viewResult = views_get_view_result('ocs_messages', 'panel_json', $exportItemNids);
 	//dpm( $viewResult, 'messages');
 
 	foreach ($viewResult as $record) {
@@ -20,10 +25,12 @@ function _array_message($nid = NULL)
 			$msg['ui_param'][] = $export['rendered']['#markup'];
 		}
 		
+		$messageIds[] = $msg['message_id'];
+		
 		$jsonData['messages'][] = $msg;
 	}
 
-	$viewResult = views_get_view_result('ocs_message_group', 'panel_json', $nid);
+	$viewResult = views_get_view_result('ocs_message_group', 'panel_json', $exportItemNids);
 	// dpm( $viewResult, 'messages');
 
 	$msg = array();
@@ -35,21 +42,27 @@ function _array_message($nid = NULL)
 			$msg[$record->nid]['name'] = $record->node_title;
 			$msg[$record->nid]['composed_messages'][] = $msg_nid;
 		}
+		$messageIds[] = $msg['message_id'];
 	}
 	
-	$jsonData['ifvalues']['resources'] = array();
+	if(!empty($messageIds)){
+		$jsonData['ifvalues']['resources'] = $messageIds;
+	} else {
+		$jsonData['ifvalues']['resources'] = array();
+	}
+		
 	$jsonData['messages'] = array_merge( $jsonData['messages'], array_values( $msg));
 	
 	return $jsonData;
 }
 
-function _json_message($nid = NULL)
+function _json_message($exportItemNids = NULL)
 {
 	$retArray = array();
-	$jsonData = _array_message($nid);
+	$jsonData = _array_message($exportItemNids);
 	$retArray = $jsonData;
 
-	$enc = ($nid != NULL) ? json_encode($jsonData) : json_encode($retArray);
+	$enc = ($exportItemNids != NULL) ? json_encode($jsonData) : json_encode($retArray);
     //remove carrage return and line feed
     $enc = str_replace('\r\n','', $enc);
     

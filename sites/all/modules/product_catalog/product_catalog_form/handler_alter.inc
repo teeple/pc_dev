@@ -21,7 +21,7 @@ function _unset_menu_items(&$form, $formId) {
         case 'roaming_country_node_form' :
         case 'roaming_carrier_node_form' :
         case 'roaming_plan_node_form' :
-        case 'counter_node_form' :
+        case 'counter_node_form':
         case 'depositscheme_node_form' :
         case 'thresholdscheme_node_form' :
         case 'tvchannel_node_form' :
@@ -30,17 +30,30 @@ function _unset_menu_items(&$form, $formId) {
         case 'servicefeaturecode_node_form' :
         case 'servicefeaturecodescheme_node_form':
             $unsetDeleteButton = FALSE;
-            //dsm($form);
             break;
     }
     if ($unsetDeleteButton)
         unset($form['actions']['delete']);
+}
 
+function _ajax_counter_type_validate($form, &$form_state) {
+	$counter = node_load($form_state['values']['field_ref_counter']['und'][0]['nid']);
+	$counterTypeTerm = taxonomy_term_load($counter->field_counter_type['und'][0]['tid']);
+	
+	if($counterTypeTerm->name == 'Rollover') {
+		/*
+		$form_state['values']['flag'] = TRUE;
+		dsm($form_state['values'], 'form_state values in ajax');
+		*/
+		unset($form['field_startdate_option1']);
+		
+	}
+	// $form_state['rebuild'] = TRUE;
+	return $form;
 }
 
 function _add_ajax_submit_callback($form_id, &$form) {
     $change = FALSE;
-    //dsm($form_id);
     $changeEachRow = FALSE;
 
     switch($form_id) {
@@ -133,13 +146,14 @@ function _add_ajax_submit_callback($form_id, &$form) {
                 $change = TRUE;
             }
             break;
-        case 'simpleproductoffering_node_form' :
-            unset($form['field_is_cloned']);
+        case 'simpleproductoffering_node_form':
+        		unset($form['field_is_cloned']);
             if (isset($form['nid']['#value'])) {// edit
                 $change = TRUE;
-            } else {
-                $change = FALSE;
             }
+            $paths = explode('/', current_path());
+            if($paths[0] == 'relation') $change = FALSE;
+            
             break;
     }
 
@@ -159,9 +173,6 @@ function _add_ajax_submit_callback($form_id, &$form) {
 }
 
 function edit_pane_callback($form, &$form_state) {
-
-    // dsm($form, 'form_in_ajax');
-    // dsm($form_state, 'formstate_in_ajax');
 
     $newNode = node_load($form['nid']['#value']);
     $form_state['values']['changed'] = $newNode -> changed;
@@ -183,8 +194,6 @@ function edit_pane_callback($form, &$form_state) {
 
 function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 
-    // dsm($form_id, 'form_id');
-    //dsm($form_state, 'form_state');
     load_required_js_css_before_ajax_load();
 
     if ((isset($form['#attributes']) && isset($form['#attributes']['class'])) && gettype($form['#attributes']['class']) == 'array') {
@@ -329,10 +338,15 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             unset($form['field_active_period']);
             unset($form['field_grace_period']);
 
-            if (!isset($form['nid']['#value'])) {
+						if (!isset($form['nid']['#value'])) {
                 $form['actions']['submit']['#submit'][] = '_vouchercardtype_submit_handler';
                 $form['actions']['submit']['#submit'][] = 'product_catalog_form_form_redirect_handler';
+            } else {
+            	$form['field_ref_voucher_type']['und']['#disabled'] = TRUE;
+            	$form['field_voucher_id']['und']['#disabled'] = TRUE;
+            	$form['field_service_operator']['und']['#disabled'] = TRUE;
             }
+            
             break;
 
         case 'treenodeproductforvoucher_node_form' :
@@ -381,7 +395,6 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             unset($form['field_ref_tree_tid']);
             unset($form['field_weight']);
             _unset_menu_items($form, $form_id);
-            //dsm($form,'form');
             //$form['field_ref_service_feature_code']['und']['#options'][78657] = '<a href="">haha</a>';
             /*
             $product = node_load($form['#node']->field_ref_product['und'][0]['nid']);
@@ -391,7 +404,6 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             $view->set_display('panel_pane_3');
             $view->set_arguments(array('0' => $serviceDomainTid));
             $view->execute();
-            //dsm($view,'view result');
             $newOptions = array();
             foreach($view->result as $item){
                 $selectStr = '<span class="qtipEnabled" qtipTitle="';
@@ -414,7 +426,6 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             }
             
             $form['field_ref_service_feature_code']['und']['#options'] = $newOptions;
-            //dsm($form,'form');
             */ 
             break;
 
@@ -685,7 +696,9 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
                 unset($form['field_r_productofferingprice']);
             if (isset($form['field_r_productofferingprice']))
                 unset($form['field_r_productofferingprice']);
-
+            if (isset($form['field_version'])) unset($form['field_version']);
+            if (isset($form['field_is_bundle'])) unset($form['field_is_bundle']);
+            
             // in case Create
             if (!isset($form['nid']['#value'])) {
                 $paths = explode('/', current_path());
@@ -699,8 +712,14 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             } else {
                 $form['field_product_type']['#type'] = 'hidden';
                 $form['field_service_type_of_provider']['#type'] = 'hidden';
+             		$form['field_billing_type']['und']['#disabled'] = TRUE;
+             		$form['field_price_units']['und']['#disabled'] = TRUE;
+             		$form['field_product_id']['und']['#disabled'] = TRUE;
+             		
             }
 
+            unset($form['field_roaming_allowed']);
+            unset($form['field_offering_status']);
             unset($form['field_parent_node_for_rp']);
             unset($form['field_weight_for_ratingpriority']);
             unset($form['field_weight']);
@@ -823,11 +842,6 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             $lst_day_of_month = date('Y-m-t 23:59:00');
 
             if (!isset($form['nid']['#value'])) {
-                dsm($form, 'form');
-                dsm($form_state, 'form_state');
-                dsm($first_day_this_month, 'first_day_this_month');
-                dsm($lst_day_of_month, 'lst_day_of_month');
-
                 $form['field_duration']['und'][0]['#default_value']['value'] = $first_day_this_month;
                 $form['field_duration']['und'][0]['#default_value']['value2'] = $lst_day_of_month;
             }
@@ -855,8 +869,6 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             //$form['actions']['submit']['#submit'][] = '_condition_submit_handler';
             break;
         case 'conditionwhenduration_node_form' :
-            dsm($form, 'form');
-            dsm($form_state, 'form_state');
             _unset_menu_items($form, $form_id);
             break;
         case 'feeds_import_form' :
@@ -975,7 +987,6 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             $newOptions['_none'] = 'All';
             
             //filter only idd carrier
-            //dsm($form['field_ref_carrier_mobile']['und']['#options'],'carriers')
             $view = views_get_view('list_carrier_mobile');
             $view -> set_display('panel_pane_3');
             $view -> set_arguments(array('0' => 'International'));
@@ -1120,7 +1131,6 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
         case 'timetable_node_form' :
             _unset_menu_items($form, $form_id);
             unset($form['field_ref_timetablefactors']);
-            //dsm($form,'form');
             if (!isset($form['nid']['#value'])) {
                 $form['actions']['submit']['#submit'][] = 'timetable_submit_handler';
             }
@@ -1168,7 +1178,6 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
                 unset($form['field_discount_']);
                 $form['field_range_units']['und']['#default_value'] = $termTid;
                 $form['field_range_units']['und']['#disabled'] = TRUE;
-                //dsm($form,'form');
             }
             break;
 
@@ -1243,7 +1252,6 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             $form['field_ref_tree_tid']['#type'] = 'hidden';
             $form['field_ref_tree_nid']['#type'] = 'hidden';
             _unset_menu_items($form, $form_id);
-            //dsm($form);
             // only for create
             //
             if (!isset($form['nid']['#value'])) {
@@ -1261,11 +1269,9 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             $productCountView -> execute();
             $counters = $productCountView -> result;
 
-            //dsm($counters,'counters');
             foreach ($counters as $counter) {
                 $form['field_ref_counter']['und']['#options'][$counter -> nid] = $counter -> node_field_data_field_ref_counter_title;
             }
-            //dsm($form);
             break;
         case 'actionpricechargefactors_node_form' :
             unset($form['field_parent_node']);
@@ -1326,11 +1332,12 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
                 $currencyTerm = taxonomy_term_load($currencyTid);
                 $form['field_price_amount']['und'][0]['value']['#field_suffix'] = $currencyTerm -> name;
             } else {
-                drupal_set_message(t('First ! you should set currency in product edit page'));
+                // drupal_set_message(t('First ! you should set currency in product edit page'));
             }
 
             _unset_menu_items($form, $form_id);
             break;
+            
         case 'actionsetcounter_node_form' :
             $form['field_ref_source_action']['#type'] = 'hidden';
             $productNid = $form_state['product_nid'];
@@ -1363,6 +1370,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             break;
 
         case 'actionsetcounteronbonus_node_form' :
+        
             $form['field_ref_source_action']['#type'] = 'hidden';
             $productNid = $form_state['product_nid'];
 
@@ -1385,12 +1393,16 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
                     $mergedCounterList[$key] = $value;
                 }
             }
-
+            
             foreach ($existingCounterList as $key => $value) {
                 $mergedCounterList[$key] = $value;
             }
             $form['field_ref_counter']['und']['#options'] = $mergedCounterList;
-
+            
+            $form['field_ref_counter']['#ajax'] = 
+            	array('callback' => '_ajax_counter_type_validate',
+            				'event' => 'change');
+            
             _unset_menu_items($form, $form_id);
             break;
 
@@ -1455,7 +1467,6 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             $form['field_ref_tree_tid']['#type'] = 'hidden';
             $form['field_ref_numberspecial']['#type'] = 'hidden';
 
-            //dsm($form,'form');
             //unset unused unit type
             $optionKeys = array_keys($form['field_range_units']['und']['#options']);
             forEach($optionKeys as $key){
@@ -1595,7 +1606,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
                 $currencyTerm = taxonomy_term_load($currencyTid);
                 $form['field_price_amount']['und'][0]['value']['#field_suffix'] = $currencyTerm -> name;
             } else {
-                drupal_set_message(t('First ! you should set currency in product edit page'));
+                // drupal_set_message(t('First ! you should set currency in product edit page'));
             }
 
             $custom_title = $form['title']['#default_value'];
@@ -1679,7 +1690,6 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
          break;
          */
     }
-    //dsm($form_id);
     _add_ajax_submit_callback($form_id, $form);
     return $form;
 }

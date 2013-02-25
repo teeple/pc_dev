@@ -9,6 +9,13 @@ function _is_condition_duplicated($args) {
 	return FALSE;
 };
 
+function is_machine_name($argStr) {
+	if(preg_match('/[^0-9a-zA-Z_]/', $argStr)) {
+		return FALSE;
+	}
+	return TRUE;
+}
+
 function product_catalog_form_node_validate($node, $form, &$form_state){
 
 	switch($form['form_id']['#value']){
@@ -126,7 +133,6 @@ function product_catalog_form_node_validate($node, $form, &$form_state){
 			}
 			break;
 		case 'counter_node_form':
-		
 			// In case Delete Confirmation
 			// 
 			if($form_state['values']['op'] == 'Delete') {
@@ -134,9 +140,6 @@ function product_catalog_form_node_validate($node, $form, &$form_state){
 				$view->set_display('panel_pane_1');
 				$view->set_arguments(array('0' => $form['nid']['#value']));
 				$view->execute();
-				
-				//dsm($form['nid']['#value'], 'Nid Value');
-				//dsm($view->result, 'result');
 				
 				if(!empty($view->result)) {
 					drupal_set_message("You should remove the items referencing this counter FIRST! ",'error');
@@ -146,18 +149,56 @@ function product_catalog_form_node_validate($node, $form, &$form_state){
 				return;
 			}
 			
+			// counter id range validataion
 			$counterType = taxonomy_term_load($form_state['values']['field_counter_type']['und'][0]['tid']);
 			$counterId = $form_state['values']['field_counter_id']['und'][0]['value'];
 			if($counterType->name == 'Rollover') {
 				if($counterId < 1000000 && $counterId > 2000000) {
+					drupal_set_message("rollover counter id should be between 1000000 and 2000000",'error');
 					form_set_error('rollover counter id should be between 1000000 and 2000000');
 				}
+				$counterGroupTerm = taxonomy_term_load($form_state['values']['field_counter_group']['und'][0]['tid']);
+				if($counterGroupTerm->name == 'REMAINS') {
+					drupal_set_message("Rollover Counter cannot be the 'REMAINS' counter group",'error');
+					form_set_error("Rollover Counter cannot be the 'REMAINS' counter group");
+				}
+				
 			} else {
+				$counterGroupTerm = taxonomy_term_load($form_state['values']['field_counter_group']['und'][0]['tid']);
+				$counterUnitTerm = taxonomy_term_load($form_state['values']['field_counter_unit_type']['und'][0]['tid']);
+				if( ($counterGroupTerm->name == 'REMAINS') && ($counterUnitTerm->name != 'Money') ) {
+					drupal_set_message("Only 'Money' type counter can be 'REMAINS' counter group",'error');
+					form_set_error("Only 'Money' type counter can be 'REMAINS' counter group");
+				}
+				
 				if($counterId >= 1000000) {
+					drupal_set_message('counter id should be less than 1000000');
 					form_set_error('counter id should be less than 1000000');
 				}
 			}
-      break;
+			break;
+		
+		case 'counter_node_form':
+			if(!is_machine_name($form_state['values']['field_counter_id']['und'][0]['value'])) {
+					drupal_set_message("Only letters and underscore is allowed for counter id",'error');
+					form_set_error("Only letters and underscore is allowed for counter id");
+				}
+			break;
+			
+		case 'vouchercardtype_node_form':
+			if(!is_machine_name($form_state['values']['field_voucher_id']['und'][0]['value'])) {
+				drupal_set_message("Only letters and underscore is allowed for voucher card type  id",'error');
+				form_set_error("Only letters and underscore is allowed for voucher card type id");
+			}
+			break;
+			
+		case 'simpleproductoffering_node_form':
+			if(!is_machine_name($form_state['values']['field_product_id']['und'][0]['value'])) {
+				drupal_set_message("Only letters and underscore is allowed for product id",'error');
+				form_set_error("Only letters and underscore is allowed for product id");
+			}
+			break;
+			
    	case 'depositschemefactors_node_form':
 		  // create
 		  if(!isset($form['nid']['#value'])){

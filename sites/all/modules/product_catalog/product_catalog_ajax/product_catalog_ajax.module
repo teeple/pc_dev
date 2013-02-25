@@ -24,6 +24,13 @@ function product_catalog_ajax_menu() {
       'access callback' => TRUE,
       'type' => MENU_CALLBACK,
   );
+  $items['product_catalog_ajax/check_rollover_type/%'] = array( 
+      'title' => 'Add New',
+      'page callback' => 'product_catalog_ajax_check_belong_to_rollover',
+      'page arguments' => array(2),
+      'access callback' => TRUE,
+      'type' => MENU_CALLBACK,
+  );
   $items['product_catalog_ajax/%ctools_js/select_modal/%'] = array( 
       'title' => 'Add New',
       'page callback' => 'product_catalog_ajax_select_modal_content',
@@ -184,6 +191,27 @@ function product_catalog_ajax_remove_field_collection_item($fieldCollectionDomID
     exit;
 };
 
+function product_catalog_ajax_check_rollover_type($counterId) {
+	ctools_include('node.pages', 'node', '');
+	ctools_include('ajax');
+	global $user;
+	
+	$output = FALSE;
+	$counter = node_load($counterId);
+	
+	dsm($counter, 'counter');
+	if(!empty($counter)) {
+		$counterGroupTypeTerm = taxonomy_term_load($counter->field_counter_type['und'][0]['tid']);
+		
+		if($counterGroupTypeTerm->name == 'Rollover') {
+			$output = 'TRUE';
+		}
+		dsm($output, 'output');
+	}
+	print json_encode($output);
+	exit;
+}
+
 function product_catalog_ajax_clone_product($targetProductId){
     ctools_include('node.pages', 'node', '');
     ctools_include('ajax');
@@ -194,7 +222,6 @@ function product_catalog_ajax_clone_product($targetProductId){
     $targetProductNid = explode('_', $targetProductId);
     $targetProductNid = $targetProductNid[1];
     $targetProductNode = node_load($targetProductNid);
-    //dsm($targetProductNode,'$targetProductNode');
     
     $clonedTime = time();
     $productNode = clone $targetProductNode;
@@ -730,9 +757,9 @@ function product_catalog_ajax_add_modal_content($js = NULL, $contentType, $refNo
 		case 'idd_ratinggroup':
 			$node->field_ref_numberingplan_idd['und'][0]['nid'] = $refNodeNid;
 			break;
-        case 'roaming_ratinggroup':
-            $node->field_ref_roaming_plan['und'][0]['nid'] = $refNodeNid;
-            break;
+    case 'roaming_ratinggroup':
+    	$node->field_ref_roaming_plan['und'][0]['nid'] = $refNodeNid;
+      break;
 		case 'depositschemefactors':
 		case 'depositschemeadjustment':
 			$node->field_ref_depositscheme['und'][0]['nid'] = $refNodeNid;
@@ -755,6 +782,7 @@ function product_catalog_ajax_add_modal_content($js = NULL, $contentType, $refNo
 			
 			$refNode = node_load($refNodeNid);
 			$form_state['product_nid'] = $refNode->field_ref_product['und'][0]['nid'];
+			
 			break;
 
 		case 'holidaylist_repeatable':
@@ -773,12 +801,12 @@ function product_catalog_ajax_add_modal_content($js = NULL, $contentType, $refNo
 	}
 	$form_state['title'] = 'Add a new '.$contentType;
 	$form_state['ajax'] = 'TRUE';
-		
+	
 	$form_state['build_info']['args'] = array($node);
 	$formName = $contentType . '_node_form';
 
 	$output = ctools_modal_form_wrapper($formName, $form_state);
-
+	
 	if (!empty($form_state['executed'])) {
 		$output = array();
 		//$output[] = ctools_modal_command_display(t('Node created'),'<div class="modal-message">Node creation successful.</div>');
@@ -829,7 +857,6 @@ function product_catalog_ajax_add_modal_content($js = NULL, $contentType, $refNo
 				break;
 		}
 		
-		//dsm($output,'output');
 	}
 	else{
 		if($contentType == 'rate'){
@@ -838,7 +865,7 @@ function product_catalog_ajax_add_modal_content($js = NULL, $contentType, $refNo
 	}
 	$output[] = ajax_command_invoke(NULL,'bindCollectionItemRemoveButton');
 	print ajax_render($output);
-	exit;	
+	exit;
 }
 
 function product_catalog_ajax_select_submit() {
@@ -875,8 +902,6 @@ function product_catalog_ajax_select_submit() {
       }
 
       $weight += $weightStep;
-      
-      //dsm($rel_type, 'rel_type');
       
       switch($rel_type) {
 	  
@@ -1169,8 +1194,6 @@ function product_catalog_ajax_select_submit() {
 	'data' => $js_data
   );
   
-// dsm($js_settings, 'js_settings');
-  
   drupal_add_js(array('product_catalog_ajax_result' => $js_settings), 'setting');
   
   $renderOutput = '';
@@ -1342,8 +1365,6 @@ function _replace_arguments($origArgs, $qtabConfig, $args) {
 				break;
 		}
 	}
-//dsm($args,'args');
-//dsm($newArgString,'new argstring');
 	return $newArgString;
 }
 
@@ -1404,10 +1425,7 @@ function product_catalog_ajax_load_select_form($nid,$eventType,$rootNid,$relType
 			break;
 	}
 	
-// dsm($termInTree, 'termInTree');
 	$qtabConfigs = _qtabconfig_loading($targetCollection, $termInTree);
-	
-//dsm($qtabConfigs, 'qtabConfigs');
 	
 	$qtabs = array();
     $weight = 0;
@@ -1496,8 +1514,6 @@ function product_catalog_ajax_load_select_form($nid,$eventType,$rootNid,$relType
     $output[] = $renderOutput;
     $output = ajax_render($output);
     
-// dsm($output,'output');
-    
     print $output;
     exit;
 }
@@ -1527,7 +1543,6 @@ function product_catalog_ajax_move_node($js = NULL ) {
 
 function product_catalog_ajax_load_tree($js = NULL, $rootNid) {
 
-    //dsm(date('H:i:s'));
     //$children = get_children($rootNid);
     $rootNode = node_load($rootNid);
     switch($rootNode->type){
@@ -1540,9 +1555,7 @@ function product_catalog_ajax_load_tree($js = NULL, $rootNid) {
 	    	$children = get_children_stored_procedure($rootNid);
 	    break;
 	}
-    // dsm($children,'children'); 
     print json_encode($children); 
-    //dsm(date('H:i:s'));    
     exit;
 }
 
@@ -1636,7 +1649,6 @@ function product_catalog_ajax_add_content($js = NULL) {
     		$qtabs = array();
     		
     		$path = 'tree/create/'.$childContentType.'/'.$parentType.'/'.$parentNid.'/'.$weight.'/'.$rootNid.'/'.$refTreeNid;
-			//dsm($path,'path');
 			$qtabs[] = array(
     				'title' => 'Add',
     				'type' => 'callback',
@@ -1877,7 +1889,6 @@ function product_catalog_modal_form_edit_modal_content($js = NULL, $contentType,
     }
     
     $output[] = ajax_command_invoke(NULL,'bindCollectionItemRemoveButton');
-//dsm($output,'modal output');
     print ajax_render($output);
     exit;
 }
@@ -1902,6 +1913,7 @@ function product_catalog_ajax_delete_from_view($nodeNid, $refNodeNid, $additiona
 		case 'depositschemeadjustment':
 		case 'thresholdschemefactors':
 		case 'area_code':
+		case 'locationfactor':
 		case 'holidaylist_repeatable':
 		case 'holidaylist_specific':
 			$output[] = ctools_ajax_command_reload();

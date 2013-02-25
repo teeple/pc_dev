@@ -89,7 +89,7 @@ function _create_modal_edit_delete_link($contentType,$params){
 	$delete_output = l(t('delete'), $delete_url, array('attributes' => array('class' => array('use-ajax'))));
 		
 	$link_string = '<div><a href="'.$edit_url.'" class='.$link_class.'>edit</a>&nbsp;'.$delete_output.'</div>';
-	echo $link_string;	
+	echo $link_string;
 }
 
 function _create_modal_form_view_link($linkTitle,$formName,$params){

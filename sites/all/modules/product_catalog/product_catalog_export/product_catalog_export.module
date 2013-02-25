@@ -20,22 +20,24 @@ module_load_include('inc', 'product_catalog_export', 'export_ocs_config');
 module_load_include('inc', 'product_catalog_export', 'export_message');
 module_load_include('inc', 'product_catalog_export', 'export_tvchannel');
 module_load_include('inc', 'product_catalog_export', 'export_exclusiveness');
+module_load_include('inc', 'product_catalog_export', 'export_unittransfer_scheme');
 
-function export_product($export_item_list=NULL){
-    $data = _product_for_export($export_item_list);
+
+function export_product($export_item_nids=NULL){
+    $data = _product_for_export($export_item_nids);
 	return json_encode($data);
 }
 
-function export_counter($nid=NULL){
-    return _json_counter($nid);
+function export_counter($export_item_nids=NULL){
+    return _json_counter($export_item_nids);
 }
 
-function export_numberingplan_domestic($nid=NULL){
-	return _json_numberingplan_domestic($nid);
+function export_numberingplan_domestic($export_item_nids=NULL){
+	return _json_numberingplan_domestic($export_item_nids);
 }
 
-function export_numberingplan_idd($nid=NULL){
-	return _json_numberingplan_idd($nid);
+function export_numberingplan_idd($export_item_nids=NULL){
+	return _json_numberingplan_idd($export_item_nids);
 }
 
 function export_area_code(){
@@ -50,43 +52,47 @@ function export_timetablefactors(){
 	return _json_timetablefactors();
 }
 
-function export_content_rateid(){
+function export_content_rateid($export_item_nids=NULL){
 	return _json_content_rateid();
 }
 
-function export_voucher_cardtype(){
-	return _json_voucher_cardtype();
+function export_voucher_cardtype($export_item_nids=NULL){
+	return _json_voucher_cardtype($export_item_nids);
 }
 
-function export_number_special(){
-	return _json_number_special();
+function export_number_special($export_item_nids=NULL){
+	return _json_number_special($export_item_nids);
 }
 
-function export_deposit_scheme(){
-    return _json_deposit_scheme();
+function export_deposit_scheme($export_item_nids=NULL){
+    return _json_deposit_scheme($export_item_nids);
 }
 
-function export_threshold_scheme(){
-    return _json_threshold_scheme();
+function export_unittransfer_scheme($export_item_nids=NULL){
+    return _json_unittransfer_scheme($export_item_nids);
 }
 
-function export_lifecycle_scheme(){
-	return _json_lifecycle_scheme();
+function export_threshold_scheme($export_item_nids=NULL){
+    return _json_threshold_scheme($export_item_nids);
+}
+
+function export_lifecycle_scheme($export_item_nids=NULL){
+	return _json_lifecycle_scheme($export_item_nids);
 }
 
 function export_ocs_config(){
 	return _json_ocs_config();
 }
 
-function export_message(){
-	return _json_message();
+function export_message($export_item_nids=NULL){
+	return _json_message($export_item_nids);
 }
 
-function export_tvchannel(){
-    return _json_tvchannel();
+function export_tvchannel($export_item_nids=NULL){
+    return _json_tvchannel($export_item_nids);
 }
 
-function export_exclusiveness(){
-	return _json_exclusiveness();
+function export_exclusiveness($export_item_nids=NULL){
+	return _json_exclusiveness($export_item_nids);
 }
 ?>

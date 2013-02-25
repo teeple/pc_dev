@@ -389,7 +389,7 @@ function build_navigation_bar()
                         array( '/product_designer/Cross', 'Bundle'))),
 			'relation' => array( 'href' => '/relation/product/hierarchy/Mobile', 'icon' => 'widgets', 
 					'prefix' => 'relation', 'title' => 'Relation Manager'),
-			'lifecycle' => array( 'href' => '/lifecycles/product', 'icon' => 'anlt', 
+			'lifecycle' => array( 'href' => '/lifecycles/deploy/PRODUCT', 'icon' => 'anlt', 
 					'prefix' => 'lifecycles', 'title' => 'Lifecycle'),
 			'common' => array( 'href' => '/common/numberingplan/domestic/list', 'icon' => 'typ', 
 					'prefix' => 'common', 'title' => 'Common Data',

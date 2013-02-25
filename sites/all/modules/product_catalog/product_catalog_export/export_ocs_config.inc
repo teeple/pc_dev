@@ -22,7 +22,6 @@ function _array_ocs_config($nid=NULL){
 }
 
 
-
 function _json_ocs_config($nid=NULL) {
     $retArray = array();
     $jsonData  = _array_ocs_config($nid);

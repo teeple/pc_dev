@@ -36,11 +36,19 @@ function pc_counter_services_access() {
    return TRUE;
 }
 
-function pc_counter_services_retrieve($nid) {
-
-	$return_array = _array_export_counter($nid);
-
-    return $return_array[0];
+function pc_counter_services_retrieve($counter_id) {
+	$jsonData = array();
+	$viewResult = views_get_view_result('list_counter', 'panel_pane_13', $counter_id);
+	
+	if(!empty($viewResult)) {
+		$jsonData = _array_export_counter($viewResult[0]->nid);
+	} else {
+		$jsonData['PCatalog']['result_code'] = '0';
+		$jsonData['PCatalog']['result_reason'] = 'Fail';
+		$jsonData['PCatalog']['result_description'] = 'Cannot find counter id';
+	}
+	
+	return $jsonData;
 }
 
 ?>

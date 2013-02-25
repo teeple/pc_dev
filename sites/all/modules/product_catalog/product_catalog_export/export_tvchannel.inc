@@ -1,10 +1,17 @@
 <?php
 
-function _array_tvchannel($nid=NULL){
+function _array_tvchannel($exportItemNids=NULL){
     $output = array();
-
-    //fetch data    
-    $viewResult = views_get_view_result('list_tvchannel', 'panel_pane_5', $nid);
+    $channelCodes = array();
+    $jsonData = array();
+    $jsonData_common = array();
+    
+    if(!empty($exportItemNids) && count($exportItemNids) > 1) {
+    	$exportItemNids = join('+', $exportItemNids);
+    }
+    
+    //fetch data
+    $viewResult = views_get_view_result('list_tvchannel', 'panel_pane_5', $exportItemNids);
     
     foreach($viewResult as $record) {
         $channelInfo = array();
@@ -22,20 +29,35 @@ function _array_tvchannel($nid=NULL){
         $channelInfo['status'] = _get_common_code($statusTerm);
        
         $output[] = $channelInfo;
+        
+        $channelCodes[] = $channelInfo['code'];
     }
     
-    return $output;   
+    if(!empty($exportItemNids)) {
+    	$jsonData_common['resources'] = $channelCodes;
+    } else {
+      $jsonData_common['resources'] = array();
+    }
+    
+    $jsonData['ifvalues'] = $jsonData_common;
+    $jsonData['tv_channel'] = $output;
+    
+    return $jsonData;   
 }
 
-function _json_tvchannel($nid=NULL) {
+function _json_tvchannel($exportItemNids=NULL) {
     $retArray = array();
-    $jsonData  = _array_tvchannel($nid);
+    $jsonData  = _array_tvchannel($exportItemNids);
+    
+    return json_encode($jsonData);
+    /*
     $retArray['ifvalues']['resources'] = array();
     $retArray['tv_channel'] = $jsonData;
-
+    
     if($nid != NULL) {
         return json_encode($jsonData);
     } else {
         return json_encode($retArray);
     }
+    */
 }

@@ -3717,7 +3717,6 @@
 							$.fn.deleteNode(node);
 						};
 						break;
-						break;
 				}
 				break;
 
