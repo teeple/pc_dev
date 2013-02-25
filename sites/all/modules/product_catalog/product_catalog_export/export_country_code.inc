@@ -4,12 +4,6 @@ function _json_country_code(){
 	$jsonData = array();
 	
 	//fetch data
-	/*
-	$jsonData['CountryCode']['meta'] = array(
-		array('name' => 'country_code','condition' => true, 'type' => 'string','maxlength' => $stringMaxLength),
-		array('name' => 'country_name','condition' => false, 'type' => 'string','maxlength' => $stringMaxLength),
-	);
-	*/
 	$countryCodeView = views_get_view('list_country_code_lifecycle');
 	$countryCodeView->execute();
 	
@@ -24,9 +18,6 @@ function _json_country_code(){
 		//add countrycode to array
 		$jsonData['CountryCode'][] = $countryCode;
 	}
-	
-	//dsm($jsonData,'before json');
-	//dsm(json_encode($jsonData),'after json');
 	
 	return json_encode($jsonData);
 }

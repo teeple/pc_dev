@@ -387,8 +387,6 @@ function get_children_stored_procedure($nid,$parentId=NULL){
 		}		
 	}
 	
-	//dsm($result);
-	
 	return $result;
 }
 
@@ -502,7 +500,6 @@ function get_viewdata($viewName, $nid, $additionalParam=NULL) {
 
 function add_js_settings_after_node_save($node){
 	
-	//dsm('add_js_settings_after_node_save');
 	if(isset($node->field_parent_node['und'][0]['nid'])){
 		$parentId = 'node_'.$node->field_parent_node['und'][0]['nid'];
 	}else if(isset($node->field_ref_tree_tid['und'][0]['value'])){
@@ -538,7 +535,6 @@ function add_js_settings_after_node_save($node){
 }
 
 function add_js_settings_after_node_update($node) {
-	//dsm($node, 'node');
 	
 	if($node->type == 'prdcounterlist') {
 	    $rootNode = node_load($node->field_ref_product['und'][0]['nid']);
@@ -558,7 +554,6 @@ function add_js_settings_after_node_update($node) {
 		'parent_nid' => !empty($parentId)? $parentId: NULL
 	);
 	
-//	dsm($js_settings, 'js_settings in node update');
 	drupal_add_js(array('product_catalog_ajax_result' => $js_settings), 'setting');
 }
 /*
@@ -747,11 +742,8 @@ function _basicrate_timetablefactors_custom_form($form, &$form_state){
 	    
     $rows = array();
     $viewCount = count($viewResult);
-    //dsm($viewCount);
-    //dsm($viewResult);
     
     foreach($viewResult as $item){
-    	//dsm($item);
     	$priceDefaultValue = isset($item->field_field_price_amount)?$item->field_field_price_amount[0]['raw']['value']:'';
     	$uomDefaultValue = isset($item->field_field_uom_amount)?$item->field_field_uom_amount[0]['raw']['value']:'';
     	$priceAmount = '<input type="text" id="price_amount_'.$item->nid.'" name="price_amount_'.$item->nid.'" value="'.$priceDefaultValue.'"/>';
@@ -854,8 +846,6 @@ function _basicrate_timetablefactors_custom_form_submit($form, &$form_state){
 }
 
 function _basicrate_timetablefactors_custom_form_validate($form, &$form_state){
-	//dsm($form,'validate form');
-	//dsm($form_state,'validate form_state');
 	if(!$form_state['values']['price_unit']){
 		form_set_error('price_unit','price_unit is not selected'); 
 	}

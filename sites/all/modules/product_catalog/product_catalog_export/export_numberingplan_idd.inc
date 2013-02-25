@@ -74,8 +74,5 @@ function _json_numberingplan_idd($nid=NULL){
 		$jsonData['NumberingplanIDD'][] = $plan;
 	}
 	
-//	dsm($jsonData,'before json');
-	//dsm(json_encode($jsonData),'after json');
-	
 	return json_encode($jsonData);
 }

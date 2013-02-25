@@ -36,8 +36,19 @@ function pc_product_services_access() {
    return TRUE;
 }
 
-function pc_product_services_retrieve($nid) {
-    $data = _product_for_export($nid);
-    return $data;
+function pc_product_services_retrieve($product_id) {
+	$jsonData = array();
+		$viewResult = views_get_view_result('list_simple_product_offering', 'panel_pane_8', $product_id);
+		
+		if(!empty($viewResult)) {
+			$jsonData = _product_for_export($viewResult[0]->nid);
+		} else {
+			$jsonData['PCatalog']['result_code'] = '0';
+			$jsonData['PCatalog']['result_reason'] = 'Fail';
+			$jsonData['PCatalog']['result_description'] = 'Cannot find product id';
+	}
+		
+	return $jsonData;
 }
+
 ?>

@@ -1,23 +1,33 @@
 <?php
 
-function _product_for_export($export_item_list=NULL){
+function _product_for_export($exportItemNids=NULL){
     $retData = array();
 	$retDataTmp = array();
 	$productNids = array();
-		
+	
 		/*
-    $productView = views_get_view('query_product_export');
-    $productView->set_arguments(array('0'=>$nids));
+		if(!empty($exportItemNids) && count($exportItemNids) > 1) {
+			$exportItemNids = join('+', $exportItemNids);
+		}
+		
+		$productView = views_get_view('query_product_export');
+    $productView->set_arguments(array('0'=>$export_item_list));
     $productView->execute();
-
-    $products = $productView->result;
-
-    $productsCount = count($products);
-    for($i=0;$i<$productsCount;$i++) {
+		$products = $productView->result;
+		$productsCount = count($products);
+		
+    $viewResult = views_get_view_result('query_product_export', 'panel_pane_5', $exportItemNids);
+    
+    foreach($viewResult as $record) {
     */
-    foreach($export_item_list as $node) {
-        
-      //Basic Attributes
+    if(count($exportItemNids) == 1) {
+    	$exportItemNids = array($exportItemNids);
+    }
+    
+		foreach($exportItemNids as $nid) {
+			$node = node_load($nid);
+			
+    	//Basic Attributes
       $product = array();
       $product['type'] = 'product';
 		
@@ -65,7 +75,7 @@ function _product_for_export($export_item_list=NULL){
 		$retDataTmp[] = $product;        
     }
     
-    if(!empty($export_item_list)) {
+    if(!empty($productNids)) {
     	$retData['ifvalues']['resources'] = array_values($productNids);
    	} else {
     	$retData['ifvalues']['resources'] = '';
@@ -393,7 +403,7 @@ function _get_attribute($product) {
 
 function _get_result($reqArray, $product) {
 	$retArray = array();
-	foreach($reqArray as $key => $item) { 
+	foreach($reqArray as $key => $item) {
 		if($item['through_common_code']) {
 			$command = '$field = isset($product->'.$item['field'].')?$product->'.$item['field'].':0'.';';
 			eval($command);
@@ -408,7 +418,7 @@ function _get_result($reqArray, $product) {
 			
 		} else {
 			//$command = '$field = $product->'.$item['field'].';';
-            $command = '$field = isset($product->'.$item['field'].')?$product->'.$item['field'].':0'.';';
+      $command = '$field = isset($product->'.$item['field'].')?$product->'.$item['field'].':0'.';';
 			eval($command);
 			
 			if(!empty($field)) {
@@ -428,13 +438,22 @@ function _get_attribute_exceptions($product) {
 		
 	$retArray = array();
 	
-    $validStart = isset($product->field_validfor_product['und'][0]['value'])? 
-            $product->field_validfor_product['und'][0]['value']: '0001-01-01 00:00:00';
-    $validEnd = isset($product->field_validfor_product['und'][0]['value2'])?
-            $product->field_validfor_product['und'][0]['value2']: '9999-12-31 23:59:59';
-    if($validStart == $validEnd){
-        $validEnd = '9999-12-31 23:59:59';
-    }
+  $validStart = isset($product->field_validfor_product['und'][0]['value'])? 
+          $product->field_validfor_product['und'][0]['value']: '0001-01-01 00:00:00';
+
+	$validEnd = isset($product->field_validfor_product['und'][0]['value2'])? 
+        $product->field_validfor_product['und'][0]['value2']: '0001-01-01 00:00:00';
+          
+	if($validStart == $validEnd){
+	    $validEnd = '9999-12-31 23:59:59';
+	} else {
+		if(!empty($record->field_validfor_product)) {
+	  	$tempArr = explode(' ', $record->field_validfor_product['und'][0]['value2']);
+	  	$validEnd = $tempArr[0].' 23:59:59';
+	  } else {
+	    $validEnd = '9999-12-31 23:59:59';
+	  }
+	}
 	$validForStr = $validStart . ' ~ '. $validEnd;
 	
 	$retArray['valid_for'] = $validForStr;
@@ -604,6 +623,7 @@ function _get_attribute_exceptions($product) {
 
 function _get_common_code($term){
 	$data = array();
+
 	
 	$voca = taxonomy_vocabulary_machine_name_load($term->vocabulary_machine_name);
 	$data['codeGroup'] = $voca->name;

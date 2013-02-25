@@ -1,77 +1,84 @@
 <?php
 
-function _array_voucher_cardtype($nid=NULL){
+function _array_voucher_cardtype($exportItemNids=NULL){
 	$jsonData = array();
-
+	$jsonData_common = array();
+	
 	//fetch data	
-	$viewResult = views_get_view_result('list_vouchercardtype', 'panel_pane_2', $nid);
+	if(!empty($exportItemNids) && count($exportItemNids) > 1) {
+		$exportItemNids = join('+', $exportItemNids);
+	}
+	
+	$viewResult = views_get_view_result('list_vouchercardtype', 'panel_pane_2', $exportItemNids);
 
     foreach($viewResult as $record) {
-
-        $jsonCounter['id'] = isset($record->field_field_voucher_id)?$record->field_field_voucher_id[0]['rendered']['#markup']: null;
-        $jsonCounter['title'] = isset($record->node_title) ? $record->node_title: null;
-        //$jsonCounter['active_period'] = !empty($record->field_field_active_period) ? $record->field_field_active_period[0]['rendered']['#markup']: null;
-        //$jsonCounter['grace_period'] = !empty($record->field_field_grace_period) ? $record->field_field_grace_period[0]['rendered']['#markup']: null;
-        $jsonCounter['price'] = !empty($record->field_field_price_amount) ? $record->field_field_price_amount[0]['rendered']['#markup']: null;
-        $jsonCounter['voucher_type'] = _add_commoncode($record->field_field_ref_voucher_type);
-        $jsonCounter['description'] = !empty($record->field_field_description_long) ? $record->field_field_description_long[0]['rendered']['#markup']: null;
+    	
+    		$jsonRecord['id'] = isset($record->field_field_voucher_id)?$record->field_field_voucher_id[0]['rendered']['#markup']: null;
+        $jsonRecord['title'] = isset($record->node_title) ? $record->node_title: null;
+        $jsonRecord['price'] = !empty($record->field_field_price_amount_float) ? $record->field_field_price_amount_float[0]['raw']['value']: null;
+        $jsonRecord['voucher_type'] = _add_commoncode($record->field_field_ref_voucher_type);
+        $jsonRecord['description'] = !empty($record->field_field_description_long) ? $record->field_field_description_long[0]['rendered']['#markup']: null;
         
-		// domain별 counter처리
-		// $listProduct = views_get_view_result('list_product_by_vouchercardtype', 'panel_pane_1', $record->nid);
-		
-		// product별 counter처리
-		//$listProduct = views_get_view_result('list_product_by_vouchercardtype', 'panel_pane_1', $record->nid);
-		$listProduct = views_get_view_result('list_treenodeproductforvoucher', 'panel_pane_1', $record->nid);
-		
-		$ret_product = array();
-		foreach($listProduct as $product) {
-            $originalProductNode = node_load($product->node_field_data_field_ref_product_nid);
-            $tmpProduct['product_id'] = $originalProductNode->field_product_id['und'][0]['safe_value'];
-            
-			$tmpProduct['product_name'] = $product->node_title;
-			$tmpProduct['active_period'] = $product->field_field_active_period[0]['raw']['value'];
-			$tmpProduct['grace_period'] = $product->field_field_grace_period[0]['raw']['value'];
-			
-			$ret_product[] = $tmpProduct;
-			/*
-			$listCounter = views_get_view_result('list_treenodecounterforvoucherprd', 'panel_pane_2', $product->nid);
-			
-			foreach($listCounter as $counter) {
-				if(isset($counter->node_field_data_field_ref_counter_nid)) {
-					$ret_counter = array();
-					$ret_counter['counter_id'] = $counter->field_field_counter_id[0]['raw']['value'];
-					$ret_counter['amount'] = !empty($counter->field_field_amount)? $counter->field_field_amount[0]['rendered']['#markup']: null;
+        $jsonRecord['service_operator'] = _add_commoncode($record->field_field_service_operator);
+        $jsonRecord['use_area'] = !empty($record->field_field_use_area)? $record->field_field_use_area[0]['rendered']['#markup']: null;
 
-					$ret_product['counters'][] = $ret_counter;
-					
+        $validStart = isset($record->field_field_valid_date_ymd_w_enddate[0]['raw']['value'])? 
+         				$record->field_field_valid_date_ymd_w_enddate[0]['raw']['value']: '0001-01-01 00:00:00';
+				$validStart = isset($record->field_field_valid_date_ymd_w_enddate[0]['raw']['value2'])? 
+ 								$record->field_field_valid_date_ymd_w_enddate[0]['raw']['value2']: '9999-12-31 23:59:59';
+
+        if(!empty($record->field_field_valid_date_ymd_w_enddate)) {
+					$tempArr = explode(' ', $record->field_field_valid_date_ymd_w_enddate[0]['raw']['value']);
+					$validEnd = $tempArr[0].' 23:59:59';
+				} else {
+				  $validEnd = '9999-12-31 23:59:59';
 				}
-			
-			}
-			if(empty($ret_counter)) {
-				$ret_product['counters'] = null;
-			}*/
-			
-		}
-
-		if(empty($ret_product)) {
-			$jsonCounter['products'] = null;
-
-		} else {
-			$jsonCounter['products'] = $ret_product;
-		}
-
-        $jsonData[] = $jsonCounter;
+				$validFor = $validStart . ' ~ '. $validEnd;
+				$jsonRecord['valid_for'] = $validFor;
+				
+        $listProduct = views_get_view_result('list_treenodeproductforvoucher', 'panel_pane_1', $record->nid);
+				
+				$ret_product = array();
+				foreach($listProduct as $product) {
+		      $originalProductNode = node_load($product->node_field_data_field_ref_product_nid);
+		      
+		      if(!empty($originalProductNode)) {
+			      $tmpProduct['product_id'] = $originalProductNode->field_product_id['und'][0]['safe_value'];
+			      $tmpProduct['product_name'] = $product->node_title;
+						$tmpProduct['active_period'] = !empty($product->field_field_active_period)? $product->field_field_active_period[0]['raw']['value'] : null;
+						$tmpProduct['grace_period'] = !empty($product->field_field_grace_period)? $product->field_field_grace_period[0]['raw']['value'] : null;
+						
+						$ret_product[] = $tmpProduct;
+					}
+				}
+		
+				if(empty($ret_product)) {
+					$jsonRecord['products'] = null;
+		
+				} else {
+					$jsonRecord['products'] = $ret_product;
+				}
+				$jsonRecord_vouchers[] = $jsonRecord;
+				$voucherIds[] = $jsonRecord['id'];
     }
     
-	return $jsonData;
+    if(!empty($exportItemNids)) {
+    	$jsonData_common['resources'] = array_values($voucherIds);
+    } else {
+      $jsonData_common['resources'] = array();
+    }
+    
+    $jsonData['ifvalues'] = $jsonData_common;
+    $jsonData['vouchers'] = $jsonRecord_vouchers;
+    
+		return $jsonData;
 }
 
-function _json_voucher_cardtype($nid=NULL) {
+function _json_voucher_cardtype($exportItemNids=NULL) {
 	$retArray = array();
-	$jsonData  = _array_voucher_cardtype($nid);
-    $retArray['ifvalues']['resources'] = array();
-    
-	$retArray['vouchers'] = $jsonData;
+	$jsonData  = _array_voucher_cardtype($exportItemNids);
+	
+	$retArray = $jsonData;
 	$retArray['rating_rules'] = array();
 
 	$arr = array();
@@ -86,9 +93,5 @@ function _json_voucher_cardtype($nid=NULL) {
 		}
 	}
 
-	if($nid != NULL) {
-		return json_encode($jsonData);
-	} else {
-		return json_encode($retArray);
-	}
+  return json_encode($retArray);
 }

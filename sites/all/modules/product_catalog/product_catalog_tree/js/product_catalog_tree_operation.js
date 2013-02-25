@@ -91,9 +91,34 @@
 		$('#vbo-message-select-button').bind('click', {nid:nid, defaultTabIndex: defaultTabIndex}, $.fn.selectMessageItemHandler);
 		
 	};
+
+	/*	
+	$.fn.bindCounterTypeValidator = function() {
+		$('#edit-field-ref-counter-und').bind('change', $.fn.counterTypeChangeHandler);
+	};
+	*/
+	
+	$.fn.counterTypeChangeHandler = function(event){
+	
+		var counterId = event.currentTarget.value;
+		
+		var ajaxLink = '/product_catalog_ajax/check_rollover_type/' + counterId;
+		$.fn.masking("Waiting...");
+		$.ajax({
+			url : ajaxLink,
+			success : function(data) {
+				var output = $.parseJSON(data);
+				//if(output == true) $('#node_actionsetcounter_form_group_end_date').hide();
+				$.fn.unmasking();
+			}
+		});
+		
+		// $('#node_actionsetcounter_form_group_end_date').hide();
+	};
 	
 	$.fn.bindCollectionItemRemoveButton = function(){
 		$('input[id^=remove_collection_item_]').bind('click',$.fn.collectionItemRemoveHandler);
+		// $('#edit-field-ref-counter-und').bind('change', $.fn.counterTypeChangeHandler);
 	};
 	
 	$.fn.collectionItemRemoveHandler = function(event){

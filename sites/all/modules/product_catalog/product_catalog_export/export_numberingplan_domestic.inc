@@ -75,8 +75,5 @@ function _json_numberingplan_domestic($nid=NULL){
 		$jsonData['NumberingplanDomestic'][] = $plan;
 	}
 	
-	//dsm($jsonData,'before json');
-	//dsm(json_encode($jsonData),'after json');
-	
 	return json_encode($jsonData);
 }

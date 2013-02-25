@@ -67,8 +67,5 @@ function _json_number_special(){
 		$jsonData['NumberSpecial']['data'][] = $numberSpecial;
 	}
 	
-	//dsm($jsonData,'before json');
-	//dsm(json_encode($jsonData),'after json');
-	
 	return json_encode($jsonData);
 }

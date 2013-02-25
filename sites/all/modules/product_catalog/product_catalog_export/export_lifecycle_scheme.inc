@@ -1,10 +1,16 @@
 <?php
 
-function _array_lifecycle_scheme($nid=NULL){
-    $jsonData = array();
-
+function _array_lifecycle_scheme($exportItemNids=NULL){
+		$jsonData = array();
+		$jsonData_schemes = array();
+    $schemeIds = array();
+    
+		if(!empty($exportItemNids) && count($exportItemNids) > 1) {
+			$exportItemNids = join('+', $exportItemNids);
+		}
+		
     //fetch data    
-    $viewResult = views_get_view_result('list_lifecycle_scheme', 'panel_json', $nid);
+    $viewResult = views_get_view_result('list_lifecycle_scheme', 'panel_json', $exportItemNids);
 	//dpm( $viewResult, 'lifecycle scheme');
 	
 	foreach( $viewResult as $record) {
@@ -84,10 +90,18 @@ function _array_lifecycle_scheme($nid=NULL){
 			
 			$scheme['transition'] = $transition;
 		}
-		$jsonData[] = $scheme;
+		$jsonData_schemes[] = $scheme;
+		$schemeIds[] = $scheme['id'];
 	}
-	$retData['ifvalues']['resources'] = array();
-	$retData['lifecycle_scheme'] = $jsonData;
+	
+	if($exportItemNids!=NULL) {
+		$jsonData_common['resources'] = $schemeIds;
+	} else {
+	  $jsonData_common['resources'] = array();
+	}
+	
+	$jsonData['ifvalues'] = $jsonData_common;
+	$jsonData['lifecycle_scheme'] = $jsonData_schemes;
 
 	$arr = array();
 	$arr[] = rating_rules_export_by_content_type_and_item_name("rating_rule_export", "rating_status_permission");
@@ -95,11 +109,11 @@ function _array_lifecycle_scheme($nid=NULL){
 	{
 		foreach($a as $t => $v)
 		{
-			$retData['rating_rules'][$t] = $v;
+			$jsonData['rating_rules'][$t] = $v;
 		}
 	}
 	
-    return $retData;   
+    return $jsonData;   
 }
 
 // string fomat : Array( [0]=>13033:12191=0212355,[1]=>13033:12184=0, 13033:12186=12336)
@@ -125,13 +139,14 @@ function _decode_action_param_values( $param_list)
 
 
 
-function _json_lifecycle_scheme($nid=NULL) {
+function _json_lifecycle_scheme($exportItemNids=NULL) {
     $retArray = array();
-    $jsonData  = _array_lifecycle_scheme($nid);
+    $jsonData  = _array_lifecycle_scheme($exportItemNids);
     // $retArray['lifecycle_scheme'] = $jsonData;
     $retArray = $jsonData;
 
-    $enc = ($nid != NULL) ? json_encode($jsonData) : json_encode($retArray);
+    // $enc = ($exportItemNids != NULL) ? json_encode($jsonData) : json_encode($retArray);
+    $enc = json_encode($retArray);
     
 	// write to file
     try{

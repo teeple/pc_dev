@@ -20,37 +20,44 @@ function get_children_for_export($nid) {
     return $item;
 }
 
-function _make_json_string($termName,$export_item_list){
+function _make_json_string($termName,$exportItemNids = NULL){
+
+	$jsonString = '';
 	switch($termName){
 		case 'COUNTER':
-			$jsonString = export_counter($export_item_list);
+			$jsonString = export_counter($exportItemNids);
 			break;
 		case 'PRODUCT':
-			$jsonString = export_product($export_item_list);
+		case 'ARCHIVE':
+		case 'AUDIT':
+			$jsonString = export_product($exportItemNids);
 			break;
 		case 'VOUCHER':
-			$jsonString = export_voucher_cardtype($export_item_list);
+			$jsonString = export_voucher_cardtype($exportItemNids);
+			break;
+		case 'UNITTRANSFER_SCHEME':
+			$jsonString = export_unittransfer_scheme($exportItemNids);
 			break;
 		case 'CONTENT':
-			$jsonString = export_content_rateid($export_item_list);
+			$jsonString = export_content_rateid($exportItemNids);
 			break; 
 		case 'DEPOSIT_SCHEME':
-    	$jsonString = export_deposit_scheme($export_item_list);
+			$jsonString = export_deposit_scheme($exportItemNids);
       break;
 		case 'THRESHOLD_SCHEME':
-    	$jsonString = export_threshold_scheme($export_item_list);
+    	$jsonString = export_threshold_scheme($exportItemNids);
       break;
 		case 'LIFECYCLE_SCHEME' :
-			$jsonString = export_lifecycle_scheme($export_item_list);
+			$jsonString = export_lifecycle_scheme($exportItemNids);
 			break;
 		case 'MESSAGES':
-			$jsonString = export_message($export_item_list);
+			$jsonString = export_message($exportItemNids);
 			break;
     case 'TV_CHANNEL':
-    	$jsonString = export_tvchannel($export_item_list);
+    	$jsonString = export_tvchannel($exportItemNids);
       break;
 		case 'EXCLUSIVENESS':
-			$jsonString = export_exclusiveness($export_item_list);
+			$jsonString = export_exclusiveness($exportItemNids);
 			break;
 		case 'RATING_RULES':
 			$jsonString = rating_rules_export_all();
@@ -61,32 +68,25 @@ function _make_json_string($termName,$export_item_list){
 		case 'OCS_GLOBAL_CONFIG':
 			$jsonString = export_ocs_config();
 			break;
-		
 	}
 	
 	return $jsonString;
 }
 
 // function export_json($tid,$termName,$refNid=NULL){
-function export_json($export_type,$export_nid=NULL){
+function export_json($export_type,$exportItemNid=NULL){
 
-	$export_item_list = array();
-	if(!empty($export_nid)) {
-		$export_item_list = array(node_load($export_nid));
-  } 
-  
-	$jsonString = _make_json_string($export_type,$export_item_list);
+	$jsonString = _make_json_string($export_type,$exportItemNid);
 	$output = _indent_json_string($jsonString);
 	return $output;
 }
 
-function export_deploy($export_type,$export_item_list, $target){
+function export_deploy($export_type,$export_item_list = NULL, $target){
 	global $user;
 	
-	if(count($export_item_list) == 1) {
-		$export_item_list = array($export_item_list);
-	}
-	$jsonString = _make_json_string($export_type,$export_item_list);
+	$exportItemNids = !empty($export_item_list)? array_keys($export_item_list): array();
+	
+	$jsonString = _make_json_string($export_type,$exportItemNids);
 	
 	$exportTypeTerm = current(taxonomy_get_term_by_name($export_type));
 	
@@ -96,7 +96,6 @@ function export_deploy($export_type,$export_item_list, $target){
   $historyNode->type = 'export_history';
   $historyNode->language = 'und';
 
-	$exportItemNids = array_keys($export_item_list);
 	$index=0;
 	foreach($exportItemNids as $nid) {
 		$historyNode->field_reference_node['und'][$index++]['nid'] = $nid;
@@ -104,7 +103,6 @@ function export_deploy($export_type,$export_item_list, $target){
 	
   $historyNode->field_export_data['und'][0]['safe_value'] = $jsonString;
   $historyNode->field_export_data['und'][0]['value'] = $jsonString;
-  
   $historyNode->field_export_type['und'][0]['tid'] = $exportTypeTerm->tid;
 
 	//send deploy request
@@ -114,19 +112,29 @@ function export_deploy($export_type,$export_item_list, $target){
 	$options['headers']['User-Agent'] = 'Product Catalog';
 	$options['data'] = $jsonString;
 	
-    if($target == 'testbed'){
-        $targetItem = $exportTypeTerm->field_export_url_testbed['und'];
-    }else if($target == 'commercial'){
-        $targetItem = $exportTypeTerm->field_export_url_commercial['und'];
-    }
-    $historyNode->field_export_target['und'][0]['value'] = $target;
-    $historyNode->field_export_target['und'][0]['safe_value'] = $target;
-    
+	if(empty($export_item_list)) {
+		if($target == 'testbed'){
+	      $targetItem = $exportTypeTerm->field_export_url_testbed['und'];
+	  } else if($target == 'commercial'){
+	      $targetItem = $exportTypeTerm->field_export_url_commercial['und'];
+	  }
+	  
+	} else {
+		if($target == 'testbed'){
+		      $targetItem = $exportTypeTerm->field_export_url_testbed_by_id['und'];
+		} else if($target == 'commercial'){
+		      $targetItem = $exportTypeTerm->field_export_url_commercial_by_i['und'];
+		}
+	}
+	
+	$historyNode->field_export_target['und'][0]['value'] = $target;
+  $historyNode->field_export_target['und'][0]['safe_value'] = $target;
+  
 	foreach($targetItem as $item){
 		$url = $item['safe_value'];
 		$result = drupal_http_request($url, $options);
 		 
-		dsm($result,'deploy result');
+dsm($result,'deploy result');
 
 		if($result->code === '200'){
 			//$historyNode = node_load($historyNodeNid);
@@ -136,13 +144,14 @@ function export_deploy($export_type,$export_item_list, $target){
 			//node_save($historyNode);
 		}
         
-        unset($result->request);
-        $resultString = json_encode($result);
-        $historyNode->field_export_result['und'][] = array('value' => $resultString,'safe_value' => $resultString);
+		unset($result->request);
+    $resultString = json_encode($result);
+    $historyNode->field_export_result['und'][] = array('value' => $resultString,'safe_value' => $resultString);
 	}
 	node_save($historyNode);
 	
-	$redirect_url = 'lifecycles/history/'.$exportTypeTerm->tid;
+	// $redirect_url = 'lifecycles/history/'.$exportTypeTerm->tid;
+	$redirect_url = 'lifecycles/history/'.$export_type;
 	drupal_goto($redirect_url);
 }
 
@@ -153,7 +162,7 @@ function _get_export_type_by_content_type($content_type) {
 												'depositscheme'					=> 'DEPOSIT_SCHEME',
 												'thresholdscheme'				=> 'THRESHOLD_SCHEME',
 												'lifecyclescheme'				=> 'LIFECYCLE_SCHEME',
-												'unittransfer'					=> 'UNIT_TRANSFER_SCHEME',
+												'unittransfer'					=> 'UNITTRANSFER_SCHEME',
 												'ocs_messages'					=> 'MESSAGES',
 												'ocs_message_group'			=> 'MESSAGES',
 												'tvchannel'							=> 'TV_CHANNEL',

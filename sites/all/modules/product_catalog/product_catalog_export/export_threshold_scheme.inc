@@ -1,10 +1,16 @@
 <?php
 
-function _array_threshold_scheme($nid=NULL){
+function _array_threshold_scheme($exportItemNids=NULL){
     $jsonData = array();
-
+    $jsonData_schemes = array();
+    $schemeIds = array();
+    
+    if(!empty($exportItemNids) && count($exportItemNids) > 1) {
+    	$exportItemNids = join('+', $exportItemNids);
+    }
+    
     //fetch data    
-    $viewResult = views_get_view_result('list_thresholdscheme', 'panel_pane_4', $nid);
+    $viewResult = views_get_view_result('list_thresholdscheme', 'panel_pane_4', $exportItemNids);
 
     foreach($viewResult as $record) {
 
@@ -50,21 +56,28 @@ function _array_threshold_scheme($nid=NULL){
             }
             $thresholdScheme['factors'] = $factorArray;            
         }
-        $jsonData[] = $thresholdScheme;
+        $jsonData_schemes[] = $thresholdScheme;
+        $schemeIds[] = $thresholdScheme['id'];
     }
+    if($exportItemNids!=NULL) {
+    	$jsonData_common['resources'] = $schemeIds;
+    } else {
+      $jsonData_common['resources'] = array();
+    }
+    
+    $jsonData['ifvalues'] = $jsonData_common;
+    $jsonData['threshold_scheme'] = $jsonData_schemes;
     
     return $jsonData;   
 }
 
-function _json_threshold_scheme($nid=NULL) {
-    $retArray = array();
-    $jsonData  = _array_threshold_scheme($nid);
-    $retArray['threshold_scheme'] = $jsonData;
-	$retArray['ifvalues']['resources'] = array();
+function _json_threshold_scheme($exportItemNids=NULL) {
+  $retArray = array();
+  $jsonData  = _array_threshold_scheme($exportItemNids);
 
-    if($nid != NULL) {
-        return json_encode($jsonData);
-    } else {
-        return json_encode($retArray);
-    }
+  if($exportItemNids != NULL) {
+  	return json_encode($jsonData);
+  } else {
+  	return json_encode($retArray);
+  }
 }

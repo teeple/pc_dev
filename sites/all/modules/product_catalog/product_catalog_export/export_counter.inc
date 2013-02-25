@@ -2,7 +2,7 @@
 
 function _add_commoncode($field) {
 	$retData = array();
-
+	
 	if(!empty($field)) {
 		$vocabulary = taxonomy_vocabulary_load($field[0]['rendered']['#options']['entity']->vid);
 		if(!empty($vocabulary)) {
@@ -16,50 +16,45 @@ function _add_commoncode($field) {
 	return $retData = null;
 }
 
-function _array_export_counter($nid=NULL){
+function _array_export_counter($exportItemNids=NULL){
 	$jsonData = array();
 	$jsonData_counters = array();
 	$jsonData_common = array();
 	
 	//fetch data
 	$view = views_get_view('list_counter');
-	//$view->set_display('panel_pane_5');
-
-	$viewResult = views_get_view_result('list_counter', 'panel_pane_5', $nid);
+	if(!empty($exportItemNids) && count($exportItemNids) > 1) {
+		$exportItemNids = join('+', $exportItemNids);
+	} 
+	$viewResult = views_get_view_result('list_counter', 'panel_pane_5', $exportItemNids);
+	$counterIds = array();
 	
-	$counterNids = array();
-	
-    foreach($viewResult as $record) {
-//dsm($record);
-        $jsonCounter = array();
-        // $jsonCounter['ID'] = !empty($record->field_field_code[0]['raw']['value']) ? $record->field_field_code[0]['raw']['value'] : null;
-        $jsonCounter['counter_id'] = $record->field_field_counter_id[0]['raw']['value'];
-        $jsonCounter['counter_name'] = isset($record->node_title) ? $record->node_title: null;
-
+  foreach($viewResult as $record) {
+    $jsonCounter = array();
+    $jsonCounter['counter_id'] = $record->field_field_counter_id[0]['raw']['value'];
+    $jsonCounter['counter_name'] = isset($record->node_title) ? $record->node_title: null;
 		$jsonCounter['service_domain'] = _add_commoncode($record->field_field_service_domain);
 		$jsonCounter['counter_group'] = _add_commoncode($record->field_field_counter_group);
 		$jsonCounter['bill_type'] = _add_commoncode($record->field_field_billing_type_counter);
-        $jsonCounter['counter_unit_type'] = _add_commoncode($record->field_field_counter_unit_type);
-        $jsonCounter['counter_type'] = _add_commoncode($record->field_field_counter_type);
-        // $jsonCounter['main_or_accumulated'] = _add_commoncode($record->field_field_main_or_accumulated);
-        $counterTypeTerm = $record->field_field_counter_type[0]['raw']['taxonomy_term'];
-        
-        if($counterTypeTerm->name === 'Rollover'){
-           $jsonCounter['rollover_month'] = $record->field_field_rollover_months[0]['raw']['value'];
-           //dsm($record);
-        }
-        $jsonCounter['description'] = !empty($record->field_field_description) ? $record->field_field_description[0]['rendered']['#markup']: null;
-        $jsonCounter['scale'] = !empty($record->field_field_scale) ? $record->field_field_scale[0]['rendered']['#title']: null;
-
-        $jsonData_counters[] = $jsonCounter;
-		
-		$counterNids[] = $record->nid;
+    $jsonCounter['counter_unit_type'] = _add_commoncode($record->field_field_counter_unit_type);
+    $jsonCounter['counter_type'] = _add_commoncode($record->field_field_counter_type);
+    $counterTypeTerm = $record->field_field_counter_type[0]['raw']['taxonomy_term'];
+    
+    if($counterTypeTerm->name === 'Rollover'){
+				$jsonCounter['rollover_month'] = $record->field_field_rollover_months[0]['raw']['value'];
     }
+    $jsonCounter['description'] = !empty($record->field_field_description) ? $record->field_field_description[0]['rendered']['#markup']: null;
+    $jsonCounter['scale'] = !empty($record->field_field_scale) ? $record->field_field_scale[0]['rendered']['#title']: null;
 
-    if($nid!=NULL) {
-    	$jsonData_common['resources'] = array(array_values($counterNids));
+    $jsonData_counters[] = $jsonCounter;
+		
+		$counterIds[] = $record->field_field_counter_id[0]['raw']['value'];
+  }
+
+  if($exportItemNids!=NULL) {
+  	$jsonData_common['resources'] = $counterIds;
 	} else {
-    	$jsonData_common['resources'] = array();
+    $jsonData_common['resources'] = array();
 	}
 	
 	$jsonData['ifvalues'] = $jsonData_common;
@@ -76,20 +71,13 @@ function _array_export_counter($nid=NULL){
 	}
 	
 	return $jsonData;
-
 }
 
-function _json_counter($nid=NULL) {
-
+function _json_counter($exportItemNids=NULL) {
 	$retArray = array();
-	$jsonData  = _array_export_counter($nid);
-	// $retArray['counters'] = $jsonData;
 	
-	if($nid != NULL) {
-		return json_encode($jsonData);
-	} else {
-		return json_encode($jsonData);
-	}
+	$jsonData  = _array_export_counter($exportItemNids);
+
 	return json_encode($jsonData);
 }
 

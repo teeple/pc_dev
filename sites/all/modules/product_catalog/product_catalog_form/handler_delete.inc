@@ -140,7 +140,7 @@ function product_catalog_form_node_delete($node){
 			$view->set_arguments($node->nid);
 			$view->execute();
 			
-			//dsm($view->result, 'view_result');
+			dsm($view->result, 'view_result');
 			if(!empty($view->resut)) {
 				drupal_set_message("You should remove the items referencing this counter",'error');
 				drupal_form_error("You should remove the items referencing this counter");
@@ -205,8 +205,6 @@ function product_catalog_form_node_delete($node){
             foreach($view->result as $item){
                 $childNodes[] = $item->nid;
             }
-            break;
-        case 'unittransfer':
             break;
            
     }

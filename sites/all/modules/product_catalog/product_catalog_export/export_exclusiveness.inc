@@ -1,15 +1,16 @@
 <?php
-function _json_exclusiveness($nid=NULL){
+function _json_exclusiveness($exportItemNids=NULL){
 	$jsonData = array();
-
-	$viewExclusiveness = views_get_view('list_exclusiveness');
-	$viewExclusiveness->set_display('panel_pane_1');
-	$viewExclusiveness->execute();
+	$productIds = array();
 	
-	$productExclusiveness = $viewExclusiveness->result;
+	if(!empty($exportItemNids) && count($exportItemNids) > 1) {
+		$exportItemNids = join('+', $exportItemNids);
+	}
 	
-	foreach($productExclusiveness as $record) {
-		$product = array();
+	$viewResult = views_get_view_result('list_exclusiveness', 'panel_pane_1', $exportItemNids);
+	
+	foreach($viewResult as $record) {
+		$product = array();	
 		$exclusive_product_nids = array();
 		
 		foreach($record->field_field_exclusiveness as $exclusiveIds) {
@@ -28,7 +29,15 @@ function _json_exclusiveness($nid=NULL){
 		$product['product_id'] = $record->field_field_product_id[0]['raw']['value'];
 		$product['exclusiveness'] = $exclusive_product_ids;
 		$jsonData['ProductExclusiveness'][] = $product;
+		
+		$productIds[] = $product['product_id'];
 	}
-	$jsonData['ifvalues']['resources'] = array();
+	
+	if(!empty($productIds)) {
+		$jsonData['ifvalues']['resources'] = $productIds;
+		} else {
+		$jsonData['ifvalues']['resources'] = array();
+	}
+	
 	return json_encode($jsonData);
 }
