@@ -1,8 +1,0 @@
-filename = "ProductCatalog-2012-10-11T13-26-47"
-description = ""
-datestamp = "1349929608"
-generator = "Backup and Migrate (http://drupal.org/project/backup_migrate)"
-generatorversion = "7.x-2.x"
-sites[0][version] = "7.14"
-sites[0][name] = "Product Catalog"
-sites[0][url] = "http://192.168.1.103/"
