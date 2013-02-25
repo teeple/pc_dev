@@ -133,7 +133,7 @@ function product_catalog_form_node_delete($node){
              * 
              */
 		case 'counter':
-			dsm($node, 'node');
+			//dsm($node, 'node');
 			// 지울려는 해당 counter를 참조하고 있는 content type이 존재하는지 
 			$view = views_get_view('list_reverse_reference_items');
 			$view->set_display('panel_pane_1');
@@ -174,8 +174,18 @@ function product_catalog_form_node_delete($node){
 				}		
 			}
 			break;
-        
-	}
+        case 'thresholdscheme':
+            //thresholdschemefactors..
+            $view = views_get_view('list_thresholdschemefactors');
+            $view->set_display('panel_pane_1');
+            $view->set_arguments(array('0' => $node->nid));
+            $view->execute();
+            
+            foreach($view->result as $item){
+                $childNodes[] = $item->nid;
+            }
+            break;
+    }
 	
 	$childNodes = array_unique($childNodes); 
 	if(!empty($childNodes)){
