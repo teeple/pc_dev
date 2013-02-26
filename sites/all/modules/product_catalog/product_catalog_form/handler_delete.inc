@@ -140,7 +140,7 @@ function product_catalog_form_node_delete($node){
 			$view->set_arguments($node->nid);
 			$view->execute();
 			
-			dsm($view->result, 'view_result');
+			//dsm($view->result, 'view_result');
 			if(!empty($view->resut)) {
 				drupal_set_message("You should remove the items referencing this counter",'error');
 				drupal_form_error("You should remove the items referencing this counter");
@@ -217,12 +217,29 @@ function product_catalog_form_node_delete($node){
                 $childNodes[] = $item->nid;
             }
             break;
+        case 'vouchercardtype':
+            _add_defered_delete($node);
+            break;
     }
 	
 	$childNodes = array_unique($childNodes); 
 	if(!empty($childNodes)){
 		node_delete_multiple($childNodes);
 	}
+}
+
+function _add_defered_delete($node){
+    global $user;
+    module_load_include('inc', 'node', 'node.pages');
+    
+    $deferedNode = new StdClass();
+    $deferedNode->uid = $user->uid;
+    $deferedNode->type = 'defereddelete';
+    $deferedNode->language = 'und';
+    $deferedNode->field_node_type['und'][0]['value'] = $node->type;
+    $deferedNode->field_deleted_node['und'][0]['nid'] = $node->nid;
+    
+    node_save($deferedNode);
 }
 
 function _unlink_conditionfactors_from_sp_rule($param){

@@ -9,6 +9,10 @@ module_load_include('inc', 'product_catalog_form', 'handler_delete');
 module_load_include('inc', 'product_catalog_form', 'handler_alter');
 module_load_include('inc', 'product_catalog_form', 'handler_theme');
 
+function product_catalog_form_cron() {
+  dsm('product_catalog_form_cron');
+}
+
 function product_catalog_form_init() {
   if (($_GET['q'] == 'system/ajax' || strstr($_GET['q'], 'file/ajax/')) && preg_match('/^[0-9a-zA-Z_]+_node_form/', $_POST['form_id'])) {
     module_load_include('inc', 'node', 'node.pages');
