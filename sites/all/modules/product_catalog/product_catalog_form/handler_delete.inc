@@ -259,7 +259,10 @@ function _cleanup_defered_delete(){
         $deleteNids[] = $deferedNode->nid;
     }
     
-    dsm($deleteNids,'deleteNids');
+    $childNodes = array_unique($childNodes); 
+    if(!empty($childNodes)){
+        node_delete_multiple($childNodes);
+    }
 }
 
 function _cleanup_voucher_card_type($voucherNid){
