@@ -711,7 +711,7 @@ function _get_redirect_url_in_view_n_delete($viewOrDel, $node) {
 	case 'unittransfer':
 		$fragments = array('depositscheme' =>  'quickset-qtabs_common_data=2',
 												'thresholdscheme' =>  'quickset-qtabs_common_data=3',
-												'unittransfer' =>  'quickset-qtabs_common_data=4');
+												'unittransfer' =>  'quickset-qtabs_common_data=1');
 	
 		if ($viewOrDel == 'view') {
 			$url['path'] = 'common/'.$node->type.'/'.$node->nid;

@@ -206,7 +206,17 @@ function product_catalog_form_node_delete($node){
                 $childNodes[] = $item->nid;
             }
             break;
-           
+        case 'unittransfer':
+            //unittransfer_factors
+            $view = views_get_view('list_unittransfer_factors');
+            $view->set_display('panel_pane_2');
+            $view->set_arguments(array('0' => $node->nid));
+            $view->execute();
+            
+            foreach($view->result as $item){
+                $childNodes[] = $item->nid;
+            }
+            break;
     }
 	
 	$childNodes = array_unique($childNodes); 
