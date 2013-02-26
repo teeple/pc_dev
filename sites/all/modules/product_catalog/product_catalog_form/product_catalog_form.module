@@ -10,7 +10,7 @@ module_load_include('inc', 'product_catalog_form', 'handler_alter');
 module_load_include('inc', 'product_catalog_form', 'handler_theme');
 
 function product_catalog_form_cron() {
-  dsm('product_catalog_form_cron');
+  _cleanup_defered_delete();
 }
 
 function product_catalog_form_init() {

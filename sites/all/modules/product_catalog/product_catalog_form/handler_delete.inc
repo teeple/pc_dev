@@ -242,6 +242,84 @@ function _add_defered_delete($node){
     node_save($deferedNode);
 }
 
+function _cleanup_defered_delete(){
+    $deleteNids = array();
+    $deferedNodes = node_load_multiple(NULL, array('type' => 'defereddelete'));
+    
+    foreach($deferedNodes as $deferedNode){
+        $parentNid = $deferedNode->field_deleted_node['und'][0]['nid'];
+        $parentType = $deferedNode->field_node_type['und'][0]['value'];
+        
+        switch($parentType){
+            case 'vouchercardtype':
+                $deleteNids = _cleanup_voucher_card_type($parentNid);
+                break;
+        }
+        
+        $deleteNids[] = $deferedNode->nid;
+    }
+    
+    dsm($deleteNids,'deleteNids');
+}
+
+function _cleanup_voucher_card_type($voucherNid){
+    $deleteNids = array();
+    
+    //loyaltypoint
+    $loyaltyPointView = views_get_view('list_vouchercardtype_delete');
+    $loyaltyPointView->set_display('panel_pane_1');
+    $loyaltyPointView->set_arguments(array('0' => $voucherNid));
+    $loyaltyPointView->execute();
+    
+    foreach($loyaltyPointView->result as $loyaltyPoint){
+        $deleteNids[] = $loyaltyPoint->nid;
+        //loyaltypointfactors
+        $loyaltyPointFactorsView = views_get_view('list_vouchercardtype_delete');
+        $loyaltyPointFactorsView->set_display('panel_pane_2');
+        $loyaltyPointFactorsView->set_arguments(array('0' => $loyaltyPoint->nid));
+        $loyaltyPointFactorsView->execute();
+        foreach($loyaltyPointFactorsView->result as $loyaltyPointFactors){
+            $deleteNids[] = $loyaltyPointFactors->nid;
+        }
+    }
+    
+    //treenodecounterforvoucher
+    $treeNodeCounterForVoucherView = views_get_view('list_vouchercardtype_delete');
+    $treeNodeCounterForVoucherView->set_display('panel_pane_3');
+    $treeNodeCounterForVoucherView->set_arguments(array('0' => $voucherNid));
+    $treeNodeCounterForVoucherView->execute();
+    foreach($treeNodeCounterForVoucherView->result as $treeNodeCounterForVoucher){
+        $deleteNids[] = $treeNodeCounterForVoucher->nid;
+    }
+    
+    //treenodeproductforvoucher
+    $treeNodeProductForVoucherView = views_get_view('list_vouchercardtype_delete');
+    $treeNodeProductForVoucherView->set_display('panel_pane_4');
+    $treeNodeProductForVoucherView->set_arguments(array('0' => $voucherNid));
+    $treeNodeProductForVoucherView->execute();
+    foreach($treeNodeProductForVoucherView->result as $treeNodeProductForVoucher){
+        $deleteNids[] = $treeNodeProductForVoucher->nid;
+        //treenodecounterforvoucherprd
+        $treeNodeCounterForVoucherPrdView = views_get_view('list_vouchercardtype_delete');
+        $treeNodeCounterForVoucherPrdView->set_display('panel_pane_5');
+        $treeNodeCounterForVoucherPrdView->set_arguments(array('0' => $treeNodeProductForVoucher->nid));
+        $treeNodeCounterForVoucherPrdView->execute();
+        foreach($treeNodeCounterForVoucherPrdView->result as $treeNodeCounterForVoucherPrd){
+            $deleteNids[] = $treeNodeCounterForVoucherPrd->nid;
+        }
+        //actionsetnotification
+        $actionSetNotificationView = views_get_view('list_vouchercardtype_delete');
+        $actionSetNotificationView->set_display('panel_pane_6');
+        $actionSetNotificationView->set_arguments(array('0' => $treeNodeProductForVoucher->nid));
+        $actionSetNotificationView->execute();
+        foreach($actionSetNotificationView->result as $actionSetNotification){
+            $deleteNids[] = $actionSetNotification->nid;
+        }
+    }
+    
+    return $deleteNids;
+}
+
 function _unlink_conditionfactors_from_sp_rule($param){
 
 	$rule = node_load($param['rule_nid']);
