@@ -819,6 +819,7 @@ function module_invoke_all($hook) {
   $return = array();
   foreach (module_implements($hook) as $module) {
     $function = $module . '_' . $hook;
+    if ($hook == 'cron') watchdog('cron', "hit $module cron");    
     if (function_exists($function)) {
       $result = call_user_func_array($function, $args);
       if (isset($result) && is_array($result)) {
