@@ -259,9 +259,9 @@ function _cleanup_defered_delete(){
         $deleteNids[] = $deferedNode->nid;
     }
     
-    $childNodes = array_unique($childNodes); 
-    if(!empty($childNodes)){
-        node_delete_multiple($childNodes);
+    $deleteNids = array_unique($deleteNids); 
+    if(!empty($deleteNids)){
+        node_delete_multiple($deleteNids);
     }
 }
 
