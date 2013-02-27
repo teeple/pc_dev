@@ -329,6 +329,7 @@ function _get_rel_type_on_condition($item) {
 			
 		case 'Predefined':
 		case 'Dynamic':
+		case 'DefaultQoS':
 			$rel_type .= _get_rel_type_by_usage_type($treeTerm->vocabulary_machine_name);
 			break;
 			
