@@ -188,6 +188,7 @@ function product_catalog_form_node_delete($node){
         case 'vouchercardtype':
         case 'tariffplan':
         case 'roaming_plan':
+        case 'number_special':
             _add_defered_delete($node);
             break;
     }
@@ -230,6 +231,9 @@ function _cleanup_defered_delete(){
             case 'roaming_plan':
                 $deleteNids = _cleanup_roaming_plan($parentNid);
                 break;
+            case 'number_special':
+                $deleteNids = _cleanup_number_special($parentNid);
+                break;
         }
         
         $deleteNids[] = $deferedNode->nid;
@@ -239,6 +243,31 @@ function _cleanup_defered_delete(){
         }
     }
     
+}
+
+function _cleanup_number_special($numberSpNid){
+    $deleteNids = array();
+    
+    //NumberSpecialFactors    
+    $view = views_get_view('list_numberspecial_child_node');
+    $view->set_display('panel_pane_6');
+    $view->set_arguments(array('0' => $numberSpNid));
+    $view->execute(); 
+    
+    foreach($view->result as $record){
+        $deleteNids[] = $record->nid;
+    }
+
+    //NumberSpecialRate 
+    $view = views_get_view('list_numberspecial_child_node');
+    $view->set_display('panel_pane_7');
+    $view->set_arguments(array('0' => $numberSpNid));
+    $view->execute(); 
+    
+    foreach($view->result as $record){
+        $deleteNids[] = $record->nid;
+    }
+    return $deleteNids;
 }
 
 function _cleanup_roaming_plan($planNid){
