@@ -15,7 +15,8 @@ function _array_unittransfer_scheme($exportItemNids=NULL){
 	foreach($viewResult as $record) {
 		$jsonRecord['id'] = isset($record->nid)? $record->nid: null;
 		$jsonRecord['title'] = isset($record->node_title) ? $record->node_title: null;
-    $jsonRecord['maximum_amount'] = !empty($record->field_field_maximum_amount) ? $record->field_field_maximum_amount[0]['raw']['value']: null;
+		$jsonRecord['price_amount'] = isset($record->field_field_price_amount_float) ? $record->field_field_price_amount_float[0]['raw']['value']: null;
+		$jsonRecord['maximum_amount'] = !empty($record->field_field_maximum_amount) ? $record->field_field_maximum_amount[0]['raw']['value']: null;
     $jsonRecord['maximum_counter'] = !empty($record->field_field_maximum_counter_) ? $record->field_field_maximum_counter_[0]['raw']['value']: null;
     $jsonRecord['maximum_amount'] = !empty($record->field_field_maximum_total_amount) ? $record->field_field_maximum_total_amount[0]['raw']['value']: null;
     $jsonRecord['minimum_amount'] = !empty($record->field_field_minimum_amount) ? $record->field_field_minimum_amount[0]['raw']['value']: null;
