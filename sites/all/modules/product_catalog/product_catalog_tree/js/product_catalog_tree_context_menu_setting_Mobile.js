@@ -3197,7 +3197,10 @@
 								}
 							},
 						};
-						
+						menus.custom_paste._disabled = false;
+						menus.custom_paste.action = function(node) {
+							$.fn.pasteNode(node);
+						};
 						break;
 					case "cross_mobile_usage_data":
 						menus.custom_create._disabled = false;
