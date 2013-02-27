@@ -41,15 +41,6 @@ function product_catalog_form_node_delete($node){
                 node_save($node);
 			}
 			break;	
-        case 'roaming_plan':  
-            if(!empty($node->field_ref_roaming_ratinggroup)){
-                foreach($node->field_ref_roaming_ratinggroup['und'] as $child){
-                    $childNodes[] = $child['nid'];
-                }
-                unset($node->field_ref_roaming_ratinggroup);
-                node_save($node);
-            }
-            break;  
 		case 'domestic_ratinggroup':
 			// unlink numberingplan_domestic's link
 			if(isset($node->field_ref_numberingplan_domestic['und'][0]['nid'])){
@@ -82,21 +73,6 @@ function product_catalog_form_node_delete($node){
     			node_save($parent);
             }
 			break;
-        case 'roaming_ratinggroup':
-            if(isset($node->field_ref_roaming_plan['und'][0]['nid'])){
-                $parent = node_load($node->field_ref_roaming_plan['und'][0]['nid']);
-                $searchTargets = $parent->field_ref_roaming_ratinggroup['und'];
-                $totalSearchTargets = count($searchTargets);
-                for($i = 0; $i < $totalSearchTargets; $i++){
-                    if($searchTargets[$i]['nid'] == $node->nid){
-                        unset($searchTargets[$i]);
-                        break;
-                    }
-                }
-                $parent->field_ref_roaming_ratinggroup['und'] = $searchTargets;
-                node_save($parent);
-            }
-            break;
         /*case 'lifecyclescheme':
             if(!empty($node->field_lifecycle_states)){
                 foreach($node->field_lifecycle_states['und'] as $child){
@@ -211,6 +187,7 @@ function product_catalog_form_node_delete($node){
             break;
         case 'vouchercardtype':
         case 'tariffplan':
+        case 'roaming_plan':
             _add_defered_delete($node);
             break;
     }
@@ -250,6 +227,9 @@ function _cleanup_defered_delete(){
             case 'tariffplan':
                 $deleteNids = _cleanup_tariffplan($parentNid);
                 break;
+            case 'roaming_plan':
+                $deleteNids = _cleanup_roaming_plan($parentNid);
+                break;
         }
         
         $deleteNids[] = $deferedNode->nid;
@@ -261,6 +241,21 @@ function _cleanup_defered_delete(){
     
 }
 
+function _cleanup_roaming_plan($planNid){
+    $deleteNids = array();
+    
+    //roaming_ratinggroup    
+    $view = views_get_view('list_roaming_plan_ratinggroup');
+    $view->set_display('panel_pane_3');
+    $view->set_arguments(array('0' => $planNid));
+    $view->execute(); 
+    
+    foreach($view->result as $record){
+        $deleteNids[] = $record->nid;
+    }
+
+    return $deleteNids;
+}
 
 function _cleanup_tariffplan($planNid){
     $deleteNids = array();
