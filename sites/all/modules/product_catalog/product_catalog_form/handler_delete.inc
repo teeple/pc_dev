@@ -21,32 +21,6 @@ function product_catalog_form_node_delete($node){
 				$childNodes[] = $item->nid;
 			}			
 			break;
-		case 'numberingplan_domestic':	
-			//find domestic_ratinggroup nodes		
-			if(!empty($node->field_ref_domestic_ratinggroup)){
-				foreach($node->field_ref_domestic_ratinggroup['und'] as $child){
-					$childNodes[] = $child['nid'];
-				}
-                unset($node->field_ref_domestic_ratinggroup);
-                node_save($node);
-			}
-			break;	
-		case 'domestic_ratinggroup':
-			// unlink numberingplan_domestic's link
-			if(isset($node->field_ref_numberingplan_domestic['und'][0]['nid'])){
-    			$parent = node_load($node->field_ref_numberingplan_domestic['und'][0]['nid']);				
-    			$searchTargets = $parent->field_ref_domestic_ratinggroup['und'];
-    			$totalSearchTargets = count($searchTargets);
-    			for($i = 0; $i < $totalSearchTargets; $i++){
-    				if($searchTargets[$i]['nid'] == $node->nid){
-    					unset($searchTargets[$i]);
-    					break;
-    				}
-    			}
-    			$parent->field_ref_domestic_ratinggroup['und'] = $searchTargets;				
-    			node_save($parent);			
-            }
-			break;	
 		/*case 'lifecyclescheme':
             if(!empty($node->field_lifecycle_states)){
                 foreach($node->field_lifecycle_states['und'] as $child){
@@ -164,6 +138,7 @@ function product_catalog_form_node_delete($node){
         case 'roaming_plan':
         case 'number_special':
         case 'numberingplan_idd':
+        case 'numberingplan_domestic':  
             _add_defered_delete($node);
             break;
     }
@@ -212,6 +187,9 @@ function _cleanup_defered_delete(){
             case 'numberingplan_idd':
                 $deleteNids = _cleanup_numberingplan_idd($parentNid);
                 break;
+            case 'numberingplan_domestic':  
+                $deleteNids = _cleanup_numberingplan_domestic($parentNid);
+                break;
         }
         
         $deleteNids[] = $deferedNode->nid;
@@ -221,6 +199,22 @@ function _cleanup_defered_delete(){
         }
     }
     
+}
+
+function _cleanup_numberingplan_domestic($planNid){
+    $deleteNids = array();
+    
+    //NumberSpecialFactors    
+    $view = views_get_view('list_numberingplan_domestic_ratinggroup');
+    $view->set_display('panel_pane_3');
+    $view->set_arguments(array('0' => $planNid));
+    $view->execute(); 
+    
+    foreach($view->result as $record){
+        $deleteNids[] = $record->nid;
+    }
+
+    return $deleteNids;
 }
 
 function _cleanup_numberingplan_idd($planNid){
