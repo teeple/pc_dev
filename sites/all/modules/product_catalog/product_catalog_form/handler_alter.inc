@@ -41,10 +41,6 @@ function _ajax_counter_type_validate($form, &$form_state) {
 	$counterTypeTerm = taxonomy_term_load($counter->field_counter_type['und'][0]['tid']);
 	
 	if($counterTypeTerm->name == 'Rollover') {
-		/*
-		$form_state['values']['flag'] = TRUE;
-		dsm($form_state['values'], 'form_state values in ajax');
-		*/
 		unset($form['field_startdate_option1']);
 		
 	}
@@ -130,9 +126,11 @@ function _add_ajax_submit_callback($form_id, &$form) {
         case 'actionpriceallowancerecurring_node_form' :
         case 'treenodeotheronetimecharge_node_form' :
         case 'treenodepacketdynamic_node_form' :
+        case 'treenodepacketdefaultqos_node_form' :        
         case 'basicrate_data_node_form' :
         case 'prdattributerequireddevice_node_form' :
         case 'prdattributenumbersaving_node_form' :
+        case 'article_node_form':
             $change = TRUE;
             break;
 
@@ -156,7 +154,7 @@ function _add_ajax_submit_callback($form_id, &$form) {
             
             break;
     }
-
+    
     if ($change) {
         unset($form['actions']['submit']['#submit']);
         unset($form['#validate']);
@@ -179,6 +177,14 @@ function edit_pane_callback($form, &$form_state) {
 
     node_form_validate($form, $form_state);
 
+		if(!empty($form_state['values']['field_negative'])) {
+			if($form_state['values']['field_negative']['und'][0]['value'] == 1) {
+				$form_state['values']['field_rating_operation']['und'][0]['tid'] = 84; // Rating Operation = notin
+			} else {
+				$form_state['values']['field_rating_operation']['und'][0]['tid'] = 81; // Rating Operation = is equal to
+			}
+		}
+		
     if (!form_get_errors()) {
         node_form_submit($form, $form_state);
         error_log('node_form_submit');
@@ -199,8 +205,15 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
     if ((isset($form['#attributes']) && isset($form['#attributes']['class'])) && gettype($form['#attributes']['class']) == 'array') {
         $form['#attributes']['class'][] = 'myform';
     }
-
+    
     switch($form_id) {
+    		case 'article_node_form';
+    		    _unset_menu_items($form, $form_id);
+    		    
+    		    unset($form['field_image']);
+    		    unset($form['body']);
+    		    unset($form['body']['und'][0]['#columns'][2]);
+    		    break;
         case 'views_exposed_form' :
             switch($form['#id']) {
                 case 'views-exposed-form-list-vouchercardtype-panel-pane-1' :
@@ -767,6 +780,10 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
         case 'prodoffernonusagesubitem_node_form' :
 
         // sub factors
+        case 'conditionwherecallerzone_node_form' :
+        case 'conditionwherecalleezone_node_form' :
+        case 'conditionwhereclientip_node_form' :
+        		$form['field_rating_operation']['#type'] = 'hidden';
         case 'conditionwhatusagetypefactors_node_form' :
         case 'conditionwhatnonusagetypefactors_node_form' :
         case 'conditionwhatcustomfactors_node_form' :
@@ -782,10 +799,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
         case 'conditionwherecountryfactors_node_form' :
         case 'conditionwherecustomfactors_node_form' :
         case 'conditionwherenetworkfactors_node_form' :
-        case 'conditionwherecallerzone_node_form' :
         case 'conditionwhereissamezone_node_form' :
-        case 'conditionwherecalleezone_node_form' :
-        case 'conditionwhereclientip_node_form' :
         case 'conditionwheremacaddress_node_form' :
         case 'conditionwheredevicetype_node_form' :
         case 'conditionwhocustomfactors_node_form' :
@@ -1359,7 +1373,6 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             $form['field_ref_counter']['und']['#options'] = $mergedCounterList;
 
             _unset_menu_items($form, $form_id);
-            //dsm($form);
             $form['field_enddate_option1']['#prefix'] = '<div id="actionsetcounter_fields_wrapper">';
             $form['field_enddate_option2']['#postfix'] = '</div>';
             
@@ -1643,6 +1656,16 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             $refAttributeMarkupStr .= '</div>';
             $form['ref_attribute'] = array('#type' => 'markup', '#markup' => $refAttributeMarkupStr, '#weight' => -100);
             break;
+        case 'treenodepacketdefaultqos_node_form':
+            _unset_menu_items($form, $form_id);
+            $form['field_ref_product']['#type'] = 'hidden';
+            $form['field_ref_tree_tid']['#type'] = 'hidden';
+            $form['field_ref_tree_nid']['#type'] = 'hidden';
+            $form['field_ref_tariffplan']['#type'] = 'hidden';
+            $form['field_ref_packet_dynamic']['#type'] = 'hidden';
+            $form['field_weight']['#type'] = 'hidden';
+        
+        		break;    
         case 'basicrate_data_node_form' :
             _unset_menu_items($form, $form_id);
             $form['field_ref_product']['#type'] = 'hidden';
@@ -1695,7 +1718,6 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 }
 
 function actionsetcounter_ajax_callback($form, $form_state){
-    //dsm($form,'form');
     $counterNode = node_load($form_state['values']['field_ref_counter']['und'][0]['nid']);
     $counterTypeTerm = taxonomy_term_load($counterNode->field_counter_type['und'][0]['tid']);
     

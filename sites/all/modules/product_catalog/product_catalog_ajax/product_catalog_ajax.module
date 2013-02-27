@@ -745,7 +745,7 @@ function product_catalog_ajax_add_modal_content($js = NULL, $contentType, $refNo
 			'language' => 'und',			
 	);
 	$form_state = array();
-
+	
 	switch($contentType){
 		case 'rate':
 			$node->field_ref_tariffplan['und'][0]['nid'] = $refNodeNid;
@@ -843,6 +843,7 @@ function product_catalog_ajax_add_modal_content($js = NULL, $contentType, $refNo
 			case 'holidaylist_specific':
 			case 'locationfactor':
 			case 'homezonefactor':
+			case 'article':
 				$output[] = ctools_ajax_command_reload();
 				break;
 			case 'actionsetcounter':
@@ -856,14 +857,16 @@ function product_catalog_ajax_add_modal_content($js = NULL, $contentType, $refNo
 				$output[] = _add_command_after_dismiss_modal($refNodeNid,$refTreeTid);
 				break;
 		}
-		
 	}
 	else{
 		if($contentType == 'rate'){
 			$output[] = ajax_command_invoke(NULL, 'drawFlotLinkInit');
 		}
 	}
-	$output[] = ajax_command_invoke(NULL,'bindCollectionItemRemoveButton');
+	
+//	if($contentType != 'article') {
+	  $output[] = ajax_command_invoke(NULL,'bindCollectionItemRemoveButton');
+	//}
 	print ajax_render($output);
 	exit;
 }

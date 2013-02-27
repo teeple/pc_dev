@@ -676,7 +676,13 @@
 						"image" : "/sites/default/files/icons/basic_rate.png"
 					 }
 				},
-							"treenodepacketdynamic" : {
+				"data_tariffplan_qos" : {
+					"valid_children" : ["treenodepacketdefaultqos"],
+					"icon" : {
+						"image" : "/sites/default/files/icons/basic_rate.png"
+					 }
+				},
+							"treenodepacketdefaultqos" : {
 								"valid_children" : ["conditioncommonand_usage_data"],
 								"icon" : {
 									"image" : "/sites/default/files/icons/file.png"

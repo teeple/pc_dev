@@ -909,6 +909,25 @@
 							$.fn.deleteNode(node);
 						};
 					  break;
+					case 'treenodepacketdefaultqos':
+						menus.custom_create._disabled = false;
+						menus.custom_create.submenu = {
+							"treenodepacketdynamic" : {
+								"label" : "ConditionSet",
+								action : function(node) {
+									$.fn.addNode(node, {
+										'childContentType' : 'conditioncommonand'
+									});
+								}
+							},
+						};
+						menus.custom_delete._disabled = false;
+						menus.custom_delete.action = function(node) {
+							$.fn.deleteNode(node);
+						};
+					  break;
+					
+						break;
 					case 'conditionwhatincomingcall':
 						menus.custom_delete._disabled = false;
 						menus.custom_delete.action = function(node) {
@@ -3466,6 +3485,20 @@
 								"label" : "Select Rule",
 								action : function(node) {
 									$.fn.loadSelectForm(node);
+								}
+							},
+						};
+						break;
+
+					case "data_tariffplan_qos":
+						menus.custom_create._disabled = false;
+						menus.custom_create.submenu = {
+							"data_tariffplan_qos" : {
+								"label" : "Default QoS",
+								action : function(node) {
+									$.fn.addNode(node, {
+										'childContentType' : 'treenodepacketdefaultqos' 
+									});
 								}
 							},
 						};
