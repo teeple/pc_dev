@@ -124,14 +124,6 @@ function product_catalog_form_node_delete($node){
 			}
 			
 			break;
-            /*
-        case 'number_special':
-            //TODO: Delete children node
-            $redirectUrl = 'common/numberingplan/number_special/list';
-            $urlFragment = 'quickset-numbering_plan=3';
-            break;
-             * 
-             */
 		case 'counter':
 			//dsm($node, 'node');
 			// 지울려는 해당 counter를 참조하고 있는 content type이 존재하는지 
@@ -218,6 +210,7 @@ function product_catalog_form_node_delete($node){
             }
             break;
         case 'vouchercardtype':
+        case 'tariffplan':
             _add_defered_delete($node);
             break;
     }
@@ -254,15 +247,45 @@ function _cleanup_defered_delete(){
             case 'vouchercardtype':
                 $deleteNids = _cleanup_voucher_card_type($parentNid);
                 break;
+            case 'tariffplan':
+                $deleteNids = _cleanup_tariffplan($parentNid);
+                break;
         }
         
         $deleteNids[] = $deferedNode->nid;
+        $deleteNids = array_unique($deleteNids); 
+        if(!empty($deleteNids)){
+            node_delete_multiple($deleteNids);
+        }
     }
     
-    $deleteNids = array_unique($deleteNids); 
-    if(!empty($deleteNids)){
-        node_delete_multiple($deleteNids);
+}
+
+
+function _cleanup_tariffplan($planNid){
+    $deleteNids = array();
+    
+    //covers for basicrate_domestic, basicrate_idd, basicrate_data,basicrate_roaming,tariffplan_idd_carrier,rate content type        
+    $view = views_get_view('query_tariffplan_children');
+    $view->set_display('panel_pane_3');
+    $view->set_arguments(array('0' => $planNid));
+    $view->execute(); 
+    
+    foreach($view->result as $record){
+        $deleteNids[] = $record->nid;
     }
+
+    //covers for actionpricechargefactors, actionpricediscountfactors, treenodespecialnumberscheme,
+    //treenodepacketpredefined,treenodepacketdynamic,actionblockfactors, basicrate_data content type
+    $view = views_get_view('query_tariffplan_children');
+    $view->set_display('panel_pane_4');
+    $view->set_arguments(array('0' => $planNid));
+    $view->execute(); 
+    foreach($view->result as $record){
+       $deleteNids[] = $record->nid;
+    }
+
+    return $deleteNids;
 }
 
 function _cleanup_voucher_card_type($voucherNid){
