@@ -957,6 +957,19 @@
 							$.fn.deleteNode(node);
 						};
 						break;
+					case 'conditionwhenstatechangedate':
+						menus.custom_delete._disabled = false;
+						menus.custom_delete.action = function(node) {
+							$.fn.deleteNode(node);
+						};
+						break;
+					case 'conditionwhenbilldate':
+						menus.custom_delete._disabled = false;
+						menus.custom_delete.action = function(node) {
+							$.fn.deleteNode(node);
+						};
+						break;
+						
 					case "conditioncommonand":
 						menus.custom_create._disabled = false;
 						menus.custom_create.submenu = {
@@ -1131,6 +1144,22 @@
 											});
 										}
 									},
+									"statechangedate" : {
+										"label" : "State Change Date",
+										action : function(node) {
+											$.fn.addNode(node, {
+												'childContentType' : 'conditionwhenstatechangedate'
+											});
+										}
+									},
+									"billdate" : {
+										"label" : "Bill Date",
+										action : function(node) {
+											$.fn.addNode(node, {
+												'childContentType' : 'conditionwhenbilldate'
+											});
+										}
+									},
 									"subscription_day" : {
 										"label" : "Subscription Date",
 										action : function(node) {
@@ -1291,6 +1320,22 @@
 													});
 												}
 											},
+											"statechangedate" : {
+												"label" : "State Change Date",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhenstatechangedate'
+													});
+												}
+											},
+											"billdate" : {
+												"label" : "Bill Date",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhenbilldate'
+													});
+												}
+											},
 											"subscription_day" : {
 												"label" : "Subscription Date",
 												action : function(node) {
@@ -1441,6 +1486,22 @@
 												action : function(node) {
 													$.fn.addNode(node, {
 														'childContentType' : 'conditionwhendayofmonth'
+													});
+												}
+											},
+											"statechangedate" : {
+												"label" : "State Change Date",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhenstatechangedate'
+													});
+												}
+											},
+											"billdate" : {
+												"label" : "Bill Date",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhenbilldate'
 													});
 												}
 											},
@@ -1605,6 +1666,22 @@
 													});
 												}
 											},
+											"statechangedate" : {
+												"label" : "State Change Date",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhenstatechangedate'
+													});
+												}
+											},
+											"billdate" : {
+												"label" : "Bill Date",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhenbilldate'
+													});
+												}
+											},
 											"subscription_day" : {
 												"label" : "Subscription Date",
 												action : function(node) {
@@ -1763,6 +1840,22 @@
 												action : function(node) {
 													$.fn.addNode(node, {
 														'childContentType' : 'conditionwhendayofmonth'
+													});
+												}
+											},
+											"statechangedate" : {
+												"label" : "State Change Date",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhenstatechangedate'
+													});
+												}
+											},
+											"billdate" : {
+												"label" : "Bill Date",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhenbilldate'
 													});
 												}
 											},
@@ -2004,6 +2097,22 @@
 													});
 												}
 											},
+											"statechangedate" : {
+												"label" : "State Change Date",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhenstatechangedate'
+													});
+												}
+											},
+											"billdate" : {
+												"label" : "Bill Date",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhenbilldate'
+													});
+												}
+											},
 											"subscription_day" : {
 												"label" : "Subscription Date",
 												action : function(node) {
@@ -2155,6 +2264,22 @@
 												action : function(node) {
 													$.fn.addNode(node, {
 														'childContentType' : 'conditionwhendayofmonth'
+													});
+												}
+											},
+											"statechangedate" : {
+												"label" : "State Change Date",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhenstatechangedate'
+													});
+												}
+											},
+											"billdate" : {
+												"label" : "Bill Date",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhenbilldate'
 													});
 												}
 											},
@@ -2373,6 +2498,22 @@
 													});
 												}
 											},
+											"statechangedate" : {
+												"label" : "State Change Date",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhenstatechangedate'
+													});
+												}
+											},
+											"billdate" : {
+												"label" : "Bill Date",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhenbilldate'
+													});
+												}
+											},
 											"subscription_day" : {
 												"label" : "Subscription Date",
 												action : function(node) {
@@ -2588,6 +2729,22 @@
 													});
 												}
 											},
+											"statechangedate" : {
+												"label" : "State Change Date",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhenstatechangedate'
+													});
+												}
+											},
+											"billdate" : {
+												"label" : "Bill Date",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhenbilldate'
+													});
+												}
+											},
 											"subscription_day" : {
 												"label" : "Subscription Date",
 												action : function(node) {
@@ -2786,6 +2943,22 @@
 													});
 												}
 											},
+											"statechangedate" : {
+												"label" : "State Change Date",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhenstatechangedate'
+													});
+												}
+											},
+											"billdate" : {
+												"label" : "Bill Date",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhenbilldate'
+													});
+												}
+											},
 											"subscription_day" : {
 												"label" : "Subscription Date",
 												action : function(node) {
@@ -2963,6 +3136,22 @@
 													});
 												}
 											},
+											"statechangedate" : {
+												"label" : "State Change Date",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhenstatechangedate'
+													});
+												}
+											},
+											"billdate" : {
+												"label" : "Bill Date",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhenbilldate'
+													});
+												}
+											},
 											"subscription_day" : {
 												"label" : "Subscription Date",
 												action : function(node) {
@@ -3066,6 +3255,8 @@
 					case "conditionwhenactivedays":
 					case "conditionwhentimeslotfactors":
 					case "conditionwhenweekfactors":
+					case "conditionwhenstatechangedate":
+					case "conditionwhenbilldate":
 					case "conditionwherecountryfactors":
 					case "conditionwherenetworkfactors":
 					case "conditionwherecallerzone":

@@ -66,6 +66,8 @@ function _add_ajax_submit_callback($form_id, &$form) {
         case 'conditionwhencustomerbirthday_node_form' :
         case 'conditionwhencompanybirthday_node_form' :
         case 'conditionwhenfirstmonth_node_form' :
+        case 'conditionwhenstatechangedate_node_form' :
+        case 'conditionwhenbilldate_node_form' :
         case 'conditionwherecountryfactors_node_form' :
         case 'conditionwherecustomfactors_node_form' :
         case 'conditionwhereissamezone_node_form' :
@@ -288,6 +290,8 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
         case 'conditionwhenactivedays_node_form' :
         case 'conditionwhencustomerbirthday_node_form' :
         case 'conditionwhencompanybirthday_node_form' :
+        case 'conditionwhenstatechangedate_node_form' :
+        case 'conditionwhenbilldate_node_form' :
             _unset_menu_items($form, $form_id);
             $form['field_weight']['#type'] = 'hidden';
             $form['field_parent_node']['#type'] = 'hidden';
