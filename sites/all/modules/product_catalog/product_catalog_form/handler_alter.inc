@@ -125,12 +125,12 @@ function _add_ajax_submit_callback($form_id, &$form) {
         case 'actionpriceallowanceonetime_node_form' :
         case 'actionpriceallowancerecurring_node_form' :
         case 'treenodeotheronetimecharge_node_form' :
+        case 'treenodeotheronetimechargediscou_node_form' :
         case 'treenodepacketdynamic_node_form' :
         case 'treenodepacketdefaultqos_node_form' :        
         case 'basicrate_data_node_form' :
         case 'prdattributerequireddevice_node_form' :
         case 'prdattributenumbersaving_node_form' :
-        case 'article_node_form':
             $change = TRUE;
             break;
 
@@ -164,10 +164,8 @@ function _add_ajax_submit_callback($form_id, &$form) {
         $form['#suffix'] = '</div>';
 
         $form['actions']['submit']['#ajax'] = array('wrapper' => 'form_content', 'callback' => 'edit_pane_callback', 'method' => 'replace', 'effect' => 'fade',
-        //'parameters' => array('haha' => 'hoho')
         );
     }
-
 }
 
 function edit_pane_callback($form, &$form_state) {
@@ -1625,6 +1623,15 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             $custom_title = $form['title']['#default_value'];
             $form['custom_title'] = array('#type' => 'markup', '#markup' => '<h3>' . $custom_title . '</h3>', '#weight' => 0);
             break;
+        case 'treenodeotheronetimechargediscou_node_form':
+        		_unset_menu_items($form, $form_id);
+        		$form['field_weight']['#type'] = 'hidden';
+        		$form['field_ref_product']['#type'] = 'hidden';
+        		$form['field_ref_tree_tid']['#type'] = 'hidden';
+        		$form['field_ref_otherontimecharge']['#type'] = 'hidden';
+        		$form['field_parent_node']['#type'] = 'hidden';
+        		
+        		break;    
         case 'treenodepacketdynamic_node_form' :
             _unset_menu_items($form, $form_id);
             $form['field_ref_product']['#type'] = 'hidden';

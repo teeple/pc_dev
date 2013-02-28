@@ -784,13 +784,10 @@ function product_catalog_ajax_add_modal_content($js = NULL, $contentType, $refNo
 			$form_state['product_nid'] = $refNode->field_ref_product['und'][0]['nid'];
 			
 			break;
-
 		case 'holidaylist_repeatable':
 		case 'holidaylist_specific':
 			$form_state['holidaylist_nid']= $refNodeNid;
-			
 			break;
-		
 		case 'numberspecialfactors':
 			$node->field_ref_numberspecial['und'][0]['nid'] = $refNodeNid;
 			break;
@@ -838,12 +835,12 @@ function product_catalog_ajax_add_modal_content($js = NULL, $contentType, $refNo
 			case 'depositschemeadjustment':
 			case 'thresholdschemefactors':
 			case 'area_code':
+			case 'article':
 			case 'ocs_state_machine':
 			case 'holidaylist_repeatable':
 			case 'holidaylist_specific':
 			case 'locationfactor':
 			case 'homezonefactor':
-			case 'article':
 				$output[] = ctools_ajax_command_reload();
 				break;
 			case 'actionsetcounter':
@@ -907,7 +904,6 @@ function product_catalog_ajax_select_submit() {
       $weight += $weightStep;
       
       switch($rel_type) {
-	  
       case 'nonusage_unittransfer_scheme':
       	_remove_existing_children($tmpProductNid[1], $tmpParentNid[1]);
       	
@@ -1117,7 +1113,18 @@ function product_catalog_ajax_select_submit() {
 	        node_save($child);        
 	        $js_data['append_to'] = 'inside';
       	break;
-	  
+      
+      case 'nonusage_otheronetimecharge_discount_on_main':
+      		error_log('here');
+      		$child->type = 'treenodeotheronetimechargediscou';
+          $child->field_weight['und'][0]['value'] = $weight;
+          $child->field_ref_product['und'][0]['nid'] = $tmpProductNid[1];
+          $child->field_ref_otherontimecharge['und'][0]['tid'] = $childNid;
+          
+          node_save($child);
+          $js_data['append_to'] = 'inside';
+      	break;
+      	
       case 'voice_tariffplan_specialnumber':
       case 'sms_tariffplan_specialnumber':
         $planNode = node_load($tmpParentNid[2]);
@@ -1873,6 +1880,7 @@ function product_catalog_modal_form_edit_modal_content($js = NULL, $contentType,
 			case 'holidaylist_specific':
 			case 'holidaylist_repeatable':
         	case 'area_code':
+        	case 'article':
 			case 'locationfactor':
 			case 'homezonefactor':
 				$output[] = ctools_ajax_command_reload();

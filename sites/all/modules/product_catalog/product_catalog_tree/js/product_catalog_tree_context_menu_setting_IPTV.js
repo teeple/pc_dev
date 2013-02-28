@@ -285,6 +285,20 @@
 							},
 						};
 						break;
+					
+					case 'nonusage_otheronetimecharge_discount_on_main':
+						menus.custom_create._disabled = false;
+						menus.custom_create.submenu = {
+							// "mobile_nonusage_otheronetimecharge" : {
+							"nonusage_otheronetimecharge_discount_on_main" : {	
+								"label" : "Select Other Onetime Charge",
+								action : function(node) {
+									$.fn.loadSelectForm(node);
+								}
+							},
+						};
+						break;
+						
 					case 'treenodeotheronetimecharge':
 						menus.custom_delete._disabled = false;
 						menus.custom_delete.action = function(node) {
