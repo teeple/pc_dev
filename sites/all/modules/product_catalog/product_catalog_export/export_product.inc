@@ -63,6 +63,7 @@ function _product_for_export($exportItemNids=NULL){
 		$nonUsage['deposit_scheme'] = _get_deposit_scheme($node);
         $nonUsage['recurring_scheme'] = _get_recurring_scheme($node->nid);
 		$nonUsage['onetime_charge'] = _get_onetime_charge($node->nid);
+		$nonUsage['onetime_charge_discount_on_main'] = _get_onetime_charge_discount($node->nid);
 		
         $product['nonusage'] = $nonUsage;
 		$product['usage'] = array();
@@ -261,11 +262,11 @@ function _get_onetime_charge($productNid) {
     $charges = array();
     
     foreach($view->result as $item){
-        $onetimeChargeTerm = taxonomy_term_load($item->taxonomy_term_data_field_data_field_ref_otherontimecharge_ti);
+    		$onetimeChargeTerm = taxonomy_term_load($item->taxonomy_term_data_field_data_field_ref_otherontimecharge_ti);
         $onetimeChargeNode = node_load($item->nid);
         $chargeType = _get_common_code($onetimeChargeTerm);
-        if(isset($onetimeChargeNode->field_price_amount['und'][0]['value'])){
-            $price = $onetimeChargeNode->field_price_amount['und'][0]['value'];
+        if(isset($onetimeChargeNode->field_price_amount_float['und'][0]['value'])){
+            $price = $onetimeChargeNode->field_price_amount_float['und'][0]['value'];
         }else{
             $price = NULL;
         }
@@ -278,6 +279,42 @@ function _get_onetime_charge($productNid) {
     }
     return $charges; 
 }
+
+function _get_onetime_charge_discount($productNid) {
+    $view = views_get_view('list_other_onetime_charge_discount');
+    $view->set_display('panel_pane_2');
+    $view->set_arguments(array('0' => $productNid));
+    $view->execute();
+    $charges = array();
+    
+    foreach($view->result as $item){
+        $onetimeChargeTerm = taxonomy_term_load($item->taxonomy_term_data_field_data_field_ref_otherontimecharge_ti);
+        $onetimeChargeNode = node_load($item->nid);
+        $chargeType = _get_common_code($onetimeChargeTerm);
+        
+        // Discont by Amount Flag , 1 = Discount by Amount, 0 = Discount by Percentage
+        if($item->field_field_discount_by_amount_flag[0]['raw']['value'] == 1) {
+        	$term = current(taxonomy_get_term_by_name('Amount', 'discounttype'));
+        	$discountRate = $item->field_field_discount_amount[0]['raw']['value'];
+
+        } else {
+        	$term = current(taxonomy_get_term_by_name('Percentage', 'discounttype'));
+        	$discountRate = $item->field_field_discount_percentage[0]['raw']['value'];
+        }
+        $discountType = _get_common_code($term);
+        
+        $charge = array(
+            'charge_type' => $chargeType,
+            'discount_type' => $discountType,
+            'discount_rate' => $discountRate,
+            // 'price' => $price
+        );
+        
+        $charges[] = $charge; 
+    }
+    return $charges; 
+}
+
 
 function _get_attribute($product) {
 	
@@ -624,7 +661,6 @@ function _get_attribute_exceptions($product) {
 function _get_common_code($term){
 	$data = array();
 
-	
 	$voca = taxonomy_vocabulary_machine_name_load($term->vocabulary_machine_name);
 	$data['codeGroup'] = $voca->name;
 	$data['code'] = isset($term->field_common_code['und'][0]['safe_value'])?$term->field_common_code['und'][0]['safe_value']:$term->name;

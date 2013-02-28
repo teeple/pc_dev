@@ -457,12 +457,23 @@
         	"image" : "/sites/default/files/icons/ui-menu.png"
         	        }
         },
-		        "treenodeotheronetimecharge" : {
+        "nonusage_otheronetimecharge_discount_on_main" : {
+        	"icon" : {
+        	"image" : "/sites/default/files/icons/discount.png"
+        	        }
+        },
+            "treenodeotheronetimecharge" : {
 		        	"valid_children" : "none",
 		        	"icon" : {
 		        	"image" : "/sites/default/files/icons/money.png"
 		        	        }	
 		        },
+		     "treenodeotheronetimechargediscou" : {
+		     	"valid_children" : "none",
+		     	"icon" : {
+		     	"image" : "/sites/default/files/icons/discount.png"
+		     	        }	
+		     },   
 		    "actionpriceallowanceonetime" : {
 		    	"valid_children" : ["conditioncommonand_nonusage_subscription",
 		    											"conditioncommonand_nonusage_unsubscription",

@@ -1,9 +1,0 @@
-
-package = youngmin Test 
-name = Youngmin Test 
-description = "Youngmin Test"
-core = 7.x
-
-; Providers.
-files[] = youngmin_test.inc
-
