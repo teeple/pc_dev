@@ -295,19 +295,14 @@ function _get_onetime_charge_discount($productNid) {
         // Discont by Amount Flag , 1 = Discount by Amount, 0 = Discount by Percentage
         if($item->field_field_discount_by_amount_flag[0]['raw']['value'] == 1) {
         	$term = current(taxonomy_get_term_by_name('Amount', 'discounttype'));
+        	$discountRate = $item->field_field_discount_amount[0]['raw']['value'];
 
         } else {
         	$term = current(taxonomy_get_term_by_name('Percentage', 'discounttype'));
+        	$discountRate = $item->field_field_discount_percentage[0]['raw']['value'];
         }
         $discountType = _get_common_code($term);
         
-        /*
-        if(isset($onetimeChargeNode->field_price_amount['und'][0]['value'])){
-            $price = $onetimeChargeNode->field_price_amount['und'][0]['value'];
-        }else{
-            $price = NULL;
-        }
-        */
         $charge = array(
             'charge_type' => $chargeType,
             'discount_type' => $discountType,
