@@ -53,13 +53,12 @@ function _array_message($exportItemNids = NULL)
 		
 	$jsonData['messages'] = array_merge( $jsonData['messages'], array_values( $msg));
 	
-    //$temp1 = $jsonData['ifvalues'];
-    //$temp2 = $jsonData['messages'];
-    //$jsonData2 = array();
-    //$jsonData2['ifvalues'] = $temp1;
-    //$jsonData2['messages'] = $temp2;
-    return $jsonData;
-    //return $jsonData2;
+    $temp1 = $jsonData['ifvalues'];
+    $temp2 = $jsonData['messages'];
+    $jsonData2 = array();
+    $jsonData2['ifvalues'] = $temp1;
+    $jsonData2['messages'] = $temp2;
+    return $jsonData2;
 }
 
 function _json_message($exportItemNids = NULL)
