@@ -133,7 +133,7 @@ function export_deploy($export_type,$export_item_list = NULL, $target){
 	foreach($targetItem as $item){
 		$url = $item['safe_value'];
 		$result = drupal_http_request($url, $options);
-		 
+dsm($url,'url');		 
 dsm($result,'deploy result');
 
 		if($result->code === '200'){
