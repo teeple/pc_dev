@@ -10,9 +10,9 @@ function _array_message($exportItemNids = NULL)
 	}
 	
 	//fetch data
-	$viewResult = views_get_view_result('ocs_messages', 'panel_json', $exportItemNids);
+	$viewResult = views_get_view_result('ocs_messages', 'panel_json', empty($exportItemNids)?NULL:$exporItemNids);
 	//dpm( $viewResult, 'messages');
-
+	
 	foreach ($viewResult as $record) {
 	    $msg = array();
 		$msg['message_id'] = isset($record->nid) ? $record->nid : null;
@@ -60,6 +60,7 @@ function _json_message($exportItemNids = NULL)
 {
 	$retArray = array();
 	$jsonData = _array_message($exportItemNids);
+    
 	$retArray = $jsonData;
 
 	$enc = ($exportItemNids != NULL) ? json_encode($jsonData) : json_encode($retArray);
