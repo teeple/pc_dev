@@ -587,6 +587,7 @@
 		});
 
     //qtip
+    /*
     $(".qtipEnabled").each(function (){
     	$(this).qtip({
 	    	//content: $(this).attr('qtipInfo'),
@@ -612,6 +613,7 @@
 	      }
       }); 
      });
+     */
   };
 	
 	

@@ -620,8 +620,8 @@ function load_required_js_css_before_ajax_load(){
     	drupal_add_css(libraries_get_path('jquery-loadmask') . '/jquery.loadmask.css');
     	
         //qtip
-        drupal_add_js(libraries_get_path('qtip2') . '/jquery.qtip.min.js');
-        drupal_add_css(libraries_get_path('qtip2') . '/jquery.qtip.min.css');
+        //drupal_add_js(libraries_get_path('qtip2') . '/jquery.qtip.min.js');
+        //drupal_add_css(libraries_get_path('qtip2') . '/jquery.qtip.min.css');
         
     	//flot for chart
     	$floatPath = libraries_get_path('flot');
