@@ -45,21 +45,21 @@ function _array_message($exportItemNids = NULL)
 		$messageIds[] = $msg['message_id'];
 	}
 	
-	if(!empty($messageIds)){
-		$jsonData['ifvalues']['resources'] = $messageIds;
-	} else {
+	//if(!empty($messageIds)){
+	//	$jsonData['ifvalues']['resources'] = $messageIds;
+	//} else {
 		$jsonData['ifvalues']['resources'] = array();
-	}
+	//}
 		
 	$jsonData['messages'] = array_merge( $jsonData['messages'], array_values( $msg));
 	
-    $temp1 = $jsonData['ifvalues'];
-    $temp2 = $jsonData['messages'];
-    $jsonData2 = array();
-    $jsonData2['ifvalues'] = $temp1;
-    $jsonData2['messages'] = $temp2;
-    
-    return $jsonData2;
+    //$temp1 = $jsonData['ifvalues'];
+    //$temp2 = $jsonData['messages'];
+    //$jsonData2 = array();
+    //$jsonData2['ifvalues'] = $temp1;
+    //$jsonData2['messages'] = $temp2;
+    return $jsonData;
+    //return $jsonData2;
 }
 
 function _json_message($exportItemNids = NULL)
