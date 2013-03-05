@@ -571,6 +571,7 @@
     //$.fn.drawFlotLinkInit();
     
     //resizable
+    /*
     var leftPane = $(".panels-flexible-region-first").last();
     var rightPane = $(".panels-flexible-region-last").last();
     var maximumLeftWidth = $("#content").width();
@@ -585,6 +586,7 @@
 		leftPane.resize(function() {
 			rightPane.width($("#content").width() - leftPane.width());
 		});
+		*/
   };
 	
 	
