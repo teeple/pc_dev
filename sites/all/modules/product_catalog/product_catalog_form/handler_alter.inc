@@ -1375,6 +1375,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             $form['field_ref_counter']['und']['#options'] = $mergedCounterList;
 
             _unset_menu_items($form, $form_id);
+            
             $form['field_enddate_option1']['#prefix'] = '<div id="actionsetcounter_fields_wrapper">';
             $form['field_enddate_option2']['#postfix'] = '</div>';
             
@@ -1738,8 +1739,11 @@ function actionsetcounter_ajax_callback($form, $form_state){
         $returnStr .= drupal_render($form['field_enddate_option3']);
         $returnStr .= drupal_render($form['field_enddate_option4']);
         $returnStr .= drupal_render($form['field_enddate_option2']);
+        $returnStr .= drupal_render($form['actions']);
     }else{
-        $returnStr = '<div id="actionsetcounter_fields_wrapper"></div>';
+        $returnStr = '<div id="actionsetcounter_fields_wrapper">';
+        $returnStr .= drupal_render($form['actions']);
+        $returnStr .= '</div>';
     }
     return $returnStr;
 }

@@ -199,14 +199,14 @@ function product_catalog_ajax_check_rollover_type($counterId) {
 	$output = FALSE;
 	$counter = node_load($counterId);
 	
-	dsm($counter, 'counter');
+	//dsm($counter, 'counter');
 	if(!empty($counter)) {
 		$counterGroupTypeTerm = taxonomy_term_load($counter->field_counter_type['und'][0]['tid']);
 		
 		if($counterGroupTypeTerm->name == 'Rollover') {
 			$output = 'TRUE';
 		}
-		dsm($output, 'output');
+		//dsm($output, 'output');
 	}
 	print json_encode($output);
 	exit;
