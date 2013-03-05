@@ -410,38 +410,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             unset($form['field_ref_tree_tid']);
             unset($form['field_weight']);
             _unset_menu_items($form, $form_id);
-            //$form['field_ref_service_feature_code']['und']['#options'][78657] = '<a href="">haha</a>';
-            /*
-            $product = node_load($form['#node']->field_ref_product['und'][0]['nid']);
-            $serviceDomainTid = $product->field_service_type_of_provider['und'][0]['tid'];
             
-            $view = views_get_view('list_service_feature_code');
-            $view->set_display('panel_pane_3');
-            $view->set_arguments(array('0' => $serviceDomainTid));
-            $view->execute();
-            $newOptions = array();
-            foreach($view->result as $item){
-                $selectStr = '<span class="qtipEnabled" qtipTitle="';
-                if(isset($item->field_field_description[0]['raw']['safe_value'])){
-                    $selectStr .= $item->field_field_description[0]['raw']['safe_value'];
-                }
-                $selectStr .= '" qtipText="';
-                
-                $tooltipHtml = '<br/>Network ID : ' . $item->field_field_network_id[0]['raw']['safe_value'] . '<br/>';
-                $tooltipHtml .= 'BSS Provisioning : ' . $item->field_field_bss_provisioning[0]['raw']['safe_value'] . '<br/>';
-                $tooltipHtml .= 'Max Param Cnt : ' . $item->field_field_maximum_param_count[0]['raw']['value'] . '<br/>';
-                $tooltipHtml .= 'User Defined : ' . $item->field_field_user_defined[0]['raw']['value'].'<br/>';
-                
-                $selectStr .= htmlspecialchars($tooltipHtml);
-                
-                $selectStr .= '">';
-                $selectStr .= $item->node_title.'</span>';
-                
-                $newOptions[$item->nid] = $selectStr;
-            }
-            
-            $form['field_ref_service_feature_code']['und']['#options'] = $newOptions;
-            */ 
             break;
 
         case 'prdattributebenefit_node_form' :

@@ -585,35 +585,6 @@
 		leftPane.resize(function() {
 			rightPane.width($("#content").width() - leftPane.width());
 		});
-
-    //qtip
-    /*
-    $(".qtipEnabled").each(function (){
-    	$(this).qtip({
-	    	//content: $(this).attr('qtipInfo'),
-	    	content: {
-				   //text: 'I really like owls!<br/>HaHa',
-				   text: $(this).attr('qtipText'),
-				   title: { text: $(this).attr('qtipTitle') }
-				},
-		    position: {
-	         my: 'left center',
-		       at: 'right center'
-		    },
-	      style: {
-	         tip: true, // Give it a speech bubble tip
-	         border: {
-	            width: 3, 
-	            radius: 8, 
-	            color: '#646358'
-	         },
-	         title: {
-	            color: '#fff',
-	         },
-	      }
-      }); 
-     });
-     */
   };
 	
 	
