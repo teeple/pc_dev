@@ -53,7 +53,8 @@ function _add_ajax_submit_callback($form_id, &$form) {
     $changeEachRow = FALSE;
 
     switch($form_id) {
-        case 'conditionwhatcustomfactors_node_form' :
+    		case 'devicemodel_node_form':
+    		case 'conditionwhatcustomfactors_node_form' :
         case 'conditionwhaturlgroupfactors_node_form' :
         case 'conditionwhencustomfactors_node_form' :
         case 'conditionwhendurationfactors_node_form' :
@@ -207,6 +208,15 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
     }
     
     switch($form_id) {
+    		case 'devicemodel_node_form':
+    				dsm($form, 'form');
+    				_unset_menu_items($form, $form_id);
+    				$form['title']['und']['#disabled'] = TRUE;
+    				$form['field_model_code']['und']['#disabled'] = TRUE;
+    				$form['field_model_class']['und']['#disabled'] = TRUE;
+    				$form['field_model_class_code']['und']['#disabled'] = TRUE;
+    				break;
+    				
     		case 'article_node_form';
     		    _unset_menu_items($form, $form_id);
     		    
@@ -612,11 +622,12 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
                     $counterUnitType = $record -> field_field_counter_unit_type[0]['rendered']['#options']['entity'] -> name;
                     $basicCounterList[$record -> nid] = $record -> node_title . '(' . $counterUnitType . ')';
                 }
-                $existingCounterList = _get_existing_counter_list($productNid);
-                
                 foreach ($basicCounterList as $key => $value) {
                     $mergedCounterList[$key] = $value;
                 }
+                
+                $existingCounterList = _get_existing_counter_list($productNid);
+                dsm($existingCounterList, 'existingCounterList');
                 foreach ($existingCounterList as $key => $value) {
                     $existingCounterNode = node_load($key);
                     $mainOrAccuTerm = taxonomy_term_load($existingCounterNode->field_main_or_accumulated['und'][0]['tid']);

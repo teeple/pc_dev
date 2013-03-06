@@ -99,6 +99,7 @@ function _array_lifecycle_scheme($exportItemNids=NULL){
 	} else {
 	  $jsonData_common['resources'] = array();
 	}
+	  $jsonData_common['resources'] = array();
 	
 	$jsonData['ifvalues'] = $jsonData_common;
 	$jsonData['lifecycle_scheme'] = $jsonData_schemes;
