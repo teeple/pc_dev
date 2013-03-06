@@ -288,10 +288,13 @@ function get_rating_factor_value_from_partial_date($value)
 function get_rating_factor_values_from_drupal_field($obj , $field_name_arr, $use_title, $use_field = NULL)
 {
 	$ret = array();
-	//if($field_name_arr[0] == "field_is_same_zone")
-	//{
-		//dsm($obj);
-	//}
+	/*
+	if($field_name_arr[0] == "field_ip_adress")
+	{
+		dsm($obj);
+		dsm(get_field_type_string($field_name_arr[0]));
+	}
+	*/
 	foreach($field_name_arr as $field_name)
 	{
 		if(property_exists($obj , $field_name))
@@ -373,6 +376,11 @@ function get_rating_factor_values_from_drupal_field($obj , $field_name_arr, $use
 					{
 						$ret[]  = get_rating_factor_value_from_partial_date($und['to']);
 					}
+				}
+				else if(get_field_type_string($field_name) == 'field_ipaddress')
+				{
+					$ret[] = $und['start'];
+					$ret[] = $und['end'];
 				}
 				else
 				{
@@ -581,6 +589,7 @@ function generate_condition_string_by_condition_node($nid, &$factor_list )
 				$factor_list[$type->field_rating_factor_name['und'][0]['value']] = $type;
 				$value = NULL;
 				$use_title = FALSE;
+				$override_op = FALSE;
 				$use_field = NULL;
 				$tags = get_drupal_field_values($type, "field_rating_factor_tags");
 				foreach($tags as $tag)
@@ -589,6 +598,11 @@ function generate_condition_string_by_condition_node($nid, &$factor_list )
 					if($tag=="use_title")
 					{
 						$use_title = TRUE;
+					}
+
+					if($tag == "override_op")
+					{
+						$override_op = TRUE;
 					}
 
 					if(string_startsWith($tag,"use_field"))
@@ -621,6 +635,19 @@ function generate_condition_string_by_condition_node($nid, &$factor_list )
 				else
 				{
 					$op = $type->field_rating_factor_op['und'][0]['value'];
+				}
+
+				if($override_op)
+				{
+					$op_in_conversion_rule = $type->field_rating_factor_op['und'][0]['value'];
+					if(string_startsWith($op, "not"))
+					{
+						$op = "not $op_in_conversion_rule";
+					}
+					else
+					{
+						$op = $op_in_conversion_rule;
+					}
 				}
 
 				if(array_key_exists('und' , $type->field_value) && count($type->field_value['und'])>0)
@@ -662,7 +689,7 @@ function generate_condition_string_by_condition_node($nid, &$factor_list )
 						else
 							return $factor_name . ' ' . $op . ' ' . join(',' , $value);
 					}
-					else if($op == 'between')
+					else if($op == 'between' || $op == 'not between')
 					{
 						/*
 						array_apply($value , 'to_rating_rule_string');
@@ -680,14 +707,22 @@ function generate_condition_string_by_condition_node($nid, &$factor_list )
 						else if(count($value) >=4)
 						{
 							array_apply($value , 'to_rating_rule_string');
-							$condstr = "(";
+							if($op == 'between')
+								$condstr = "(";
 							for($i = 0;$i<count($value);$i=$i+2)
 							{
 								if($i!=0)
-									$condstr = $condstr . " or ";
+								{
+									if($op == 'between')
+										$condstr = $condstr . " or ";
+									else
+										$condstr = $condstr . " and ";
+								}
 								$condstr = $condstr . $factor_name . ' ' . $op . ' ' . $value[$i] . ',' . $value[$i+1];
 							}
-							return $condstr . ")";
+							if($op == 'between')
+								return $condstr . ")";
+							return $condstr;
 						}
 					}
 					else
