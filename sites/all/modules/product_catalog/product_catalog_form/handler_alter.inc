@@ -1759,11 +1759,11 @@ function _get_available_counter_list($productNid, $existingCounterNids) {
 
     // counter type (Basic ,Optional or all)
     if ($term_product_type -> name == 'Main') {
+        $args[0] = 'all';
+    } else {
         $temp1Term = taxonomy_get_term_by_name('Optional', 'countertype');
         $temp2Term = taxonomy_get_term_by_name('Rollover', 'countertype');
         $args[0] =  current($temp1Term) -> tid . '+' .  current($temp2Term) -> tid;
-    } else {
-        $args[0] = 'all';
     }
 
     // service domain
