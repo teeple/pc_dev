@@ -488,15 +488,25 @@ function product_catalog_ajax_select_modal_item_submit($contentTypes) {
     $source_action = node_load($source_nid);
     $source_tree_term = taxonomy_term_load($source_action->field_ref_tree_tid['und'][0]['value']);
 
-    if($source_tree_term->name == 'Bonus') {
-        $view = views_get_view('list_actionsetnotification');
-        $view->set_display('panel_pane_3');
-        $view->set_arguments(array('0' => $source_nid));
-        $view->execute();
-        
-        foreach($view->result as $record) {
-            node_delete($record->nid);
-        }
+    $deleteNids = array();
+    switch($source_tree_term->name){
+        case 'Bonus':
+        case 'Charge':
+            $view = views_get_view('list_actionsetnotification');
+            $view->set_display('panel_pane_3');
+            $view->set_arguments(array('0' => $source_nid));
+            $view->execute();
+            
+            foreach($view->result as $record) {
+                $deleteNids[] = $record->nid;
+            }
+            break;
+        default:
+            break;
+    }
+    
+    if(!empty($deleteNids)){
+        node_delete_multiple($deleteNids);
     }
 
 	foreach($nids as $nid) {
