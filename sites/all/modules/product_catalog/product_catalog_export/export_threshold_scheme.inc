@@ -75,6 +75,19 @@ function _json_threshold_scheme($exportItemNids=NULL) {
   $retArray = array();
   $jsonData  = _array_threshold_scheme($exportItemNids);
 
+	$arr = array();
+    if(!empty($exportItemNids) && count($exportItemNids) > 1) {
+    	$exportItemNids = join('+', $exportItemNids);
+    }
+	$arr[] = rating_rules_export_by_content_type_and_item_name("rating_rule_export", "rating_deposit_threshold", $exportItemNids);
+	foreach($arr as $a)
+	{
+		foreach($a as $t => $v)
+		{
+			$jsonData['rating_rules'][$t] = $v;
+		}
+	}
+
   if($exportItemNids != NULL) {
   	return json_encode($jsonData);
   } else {

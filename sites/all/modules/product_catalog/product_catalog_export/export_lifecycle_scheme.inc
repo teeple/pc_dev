@@ -104,7 +104,7 @@ function _array_lifecycle_scheme($exportItemNids=NULL){
 	$jsonData['lifecycle_scheme'] = $jsonData_schemes;
 
 	$arr = array();
-	$arr[] = rating_rules_export_by_content_type_and_item_name("rating_rule_export", "rating_status_permission");
+	$arr[] = rating_rules_export_by_content_type_and_item_name("rating_rule_export", "rating_status_permission", $exportItemNids);
 	foreach($arr as $a)
 	{
 		foreach($a as $t => $v)
