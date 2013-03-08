@@ -189,7 +189,10 @@ function _create_default_items_by_voca($product, $voca_name) {
 			
 			switch($contentType) {
 				case 'treenodecounter':
-					_create_default_basic_counters($product->nid, $treeTerm->tid);
+                    $productTypeTerm = taxonomy_term_load($product->field_product_type['und'][0]['tid']);
+                    if($productTypeTerm->name === 'Main'){
+					   _create_default_basic_counters($product->nid, $treeTerm->tid);
+                    }
 					break;
 					
 				default:
