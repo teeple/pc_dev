@@ -550,7 +550,7 @@
 		delete Drupal.settings.views.ajaxViews;
 		Drupal.behaviors.quicktabs.attach(document,settings);
 		Drupal.behaviors.ViewsAjaxView.attach();		
-		Drupal.behaviors.multiselect.attach(document);		
+		//Drupal.behaviors.multiselect.attach(document);		
 		Drupal.behaviors.AJAX.attach(document, settings);
 		Drupal.settings.datePopup = settings.datePopup;
 		Drupal.behaviors.date_popup.attach(document);
@@ -564,6 +564,7 @@
     //Drupal.behaviors.bef_live_filter.attach(document);
 		
     Drupal.behaviors.CToolsCollapsible.attach(document);
+    Drupal.behaviors.jquery_ui_multiselect_widget.attach(document,settings);
     //Drupal.behaviors.qt_accordion.attach($('#tree_content_div'),settings);
     //Drupal.behaviors.qt_ui_tabs.attach(document,settings);
         
