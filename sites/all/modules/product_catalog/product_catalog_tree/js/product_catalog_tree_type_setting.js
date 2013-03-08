@@ -635,7 +635,9 @@
 					        }
 				},
 							"actionpricediscountfactors" : {
-								"valid_children" : ["conditioncommonand_usage_voice",
+								"valid_children" : [
+																		"conditioncommonand",
+																		"conditioncommonand_usage_voice",
 																		"conditioncommonand_usage_sms",
 																		"conditioncommonand_usage_data",
 																		"conditioncommonand_usage_mms",

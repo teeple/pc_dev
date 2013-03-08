@@ -111,6 +111,7 @@ function export_deploy($export_type,$export_item_list = NULL, $target){
 	$options['headers']['content-type']= 'application/json';
 	$options['headers']['User-Agent'] = 'Product Catalog';
 	$options['data'] = $jsonString;
+	$options['timeout'] = 60;
 	
 	if(empty($export_item_list)) {
 		if($target == 'testbed'){

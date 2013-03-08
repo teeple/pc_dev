@@ -49,6 +49,7 @@ function product_catalog_form_node_delete($node){
 			
 			break;
 		case 'counter':
+			/*
 			//dsm($node, 'node');
 			// 지울려는 해당 counter를 참조하고 있는 content type이 존재하는지 
 			$view = views_get_view('list_reverse_reference_items');
@@ -90,7 +91,8 @@ function product_catalog_form_node_delete($node){
 				}		
 			}
 			break;
-        case 'thresholdscheme':
+			*/
+			  case 'thresholdscheme':
             //thresholdschemefactors..
             $view = views_get_view('list_thresholdschemefactors');
             $view->set_display('panel_pane_1');
