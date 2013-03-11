@@ -766,4 +766,24 @@
 		$("#modal-content").unmask();
 	};
 	
+	//operation
+	$.fn.treeOpExpand = function(){
+		var nodeId = $('.product_catalog_tree').jstree('get_selected').attr('id');
+		var node = $('#'+nodeId);
+		$('.product_catalog_tree').jstree('open_all',node,0);
+	}
+	$.fn.treeOpClose = function(){
+		var nodeId = $('.product_catalog_tree').jstree('get_selected').attr('id');
+		var node = $('#'+nodeId);
+		$('.product_catalog_tree').jstree('close_all',node,0);
+	}
+	$.fn.treeOpSearch = function(){
+		$searchText = $('#tree_op_search_input').val();
+		$('.product_catalog_tree').jstree('search',$searchText);
+	}
+	$.fn.treeOpSearchClear = function(){
+		$('#tree_op_search_input').val('');
+		$('.product_catalog_tree').jstree('clear_search');
+	}
+
 })(jQuery);

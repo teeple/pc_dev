@@ -91,3 +91,17 @@ function product_catalog_tree_load_tree($rootNid, $treeTemplate) {
 	}
 
 }
+
+function _tree_operation_html(){
+    //expand
+    $opStr = '<input type="button" value="Expand" id="tree_op_expand"/>';
+    //close
+    $opStr .= '<input type="button" value="Close" id="tree_op_close"/>';
+    //search
+    $opStr .= '<input type="text" id="tree_op_search_input"/>
+               <input type="button" value="Search" id="tree_op_search_button"/>
+               <input type="button" value="Clear" id="tree_op_search_clear"/>';
+    
+    $opStr .= '<div>&nbsp;</div>';
+    return $opStr;
+}

@@ -105,7 +105,7 @@
 						"progressive_render" : true,
 					},
 					"plugins" : [ "types", "themes", "json_data",
-							"ui", "contextmenu", "crrm", "dnd" ],
+							"ui", "contextmenu", "crrm", "dnd" ,"search"],
 					"ui" : {
 						"select_multiple_modifier" : false,
 						"initially_select" : [ settings.product_catalog_tree_data[0].attr.root_nid ]
@@ -305,6 +305,12 @@
 			});
 			*/
 			// Drupal.detachBehaviors(productCatalogTreeBehavior);
+			
+			//operations
+			$('#tree_op_expand').bind('click',{},$.fn.treeOpExpand);
+			$('#tree_op_close').bind('click',{},$.fn.treeOpClose);
+			$('#tree_op_search_button').bind('click',{},$.fn.treeOpSearch);
+			$('#tree_op_search_clear').bind('click',{},$.fn.treeOpSearchClear);
 			delete Drupal.behaviors.ProductCatalogTreeBehavior;
 		}
 	};
