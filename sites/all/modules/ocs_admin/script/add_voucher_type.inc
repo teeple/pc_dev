@@ -532,9 +532,24 @@ foreach( $case as $tc) {
 		print 'Invalid usage type : ' . $v_usage;
 		$node->field_ref_voucher_type['und'][0]['tid'] = $vtype_term['Entry'];
 	}
-
-	$node->field_description_long['und'][0]['value'] = 'FCE voucher ' . $tc[0];
-	$node->field_voucher_id['und'][0]['value'] = $tc[0];
+	
+	// get max voucher_id
+	// youngmin 
+	{
+		$view = views_get_view('query_vouchercardtype_max_id');
+		$view->set_display('panel_pane_1');
+		$view->execute();
+		$viewResult = $view->result;
+		
+		foreach ($viewResult as $record) {
+		    $maxVoucherCardTypeId = view_get_field_value_by_label($view, 'max_vouchercardtype_id', $record) + 1;
+		}
+	}
+	$node->field_description_long['und'][0]['value'] = 'FCE voucher ' . $maxVoucherCardTypeId;
+	$node->field_voucher_id['und'][0]['value'] = $maxVoucherCardTypeId;
+	
+	//$node->field_description_long['und'][0]['value'] = 'FCE voucher ' . $tc[0];
+	//$node->field_voucher_id['und'][0]['value'] = $tc[0];
 
 	//$node->field_use_area['und'][0]['value'] = $tc[19];
 	/*

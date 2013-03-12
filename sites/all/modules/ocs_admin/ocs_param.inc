@@ -130,9 +130,9 @@ class OcsParam
     {
         $type = $this->type( $param);
         $title = $this->get_title( $param);
-                
+
         if ($type == OCS_PARAM_TYPE_ENUM) {
-            $options = array_flip( $this->params[$param.':enum']);
+            $options = $this->get_options( $type, $param);
             //dpm( $options, 'enum');
             $form = array(
                 '#type' => ($operator == 'in list') ? 'checkboxes' : 'radios',
@@ -140,17 +140,8 @@ class OcsParam
                 '#options' => $options,
             );
         }
-        else if ( $type == OCS_PARAM_TYPE_COUNTER) {
-            $options = ocs_admin_get_counter_id_list();
-            $form = array(
-                '#type' => 'select',
-                '#title' => $title,
-                '#options' => $options,
-            );
-        }
         else if ( $type == OCS_PARAM_TYPE_MESSAGE) {
-            $options['Message'] = ocs_admin_get_message_list();
-            $options['Group'] = ocs_admin_get_message_group_list();
+            $options = $this->get_options( $type, $param);
             $form = array(
                 '#type' => 'select',
                 '#title' => $title,
@@ -170,6 +161,19 @@ class OcsParam
                 '#options' => $date_format,
             );
         }
+		else if ( $type == OCS_PARAM_TYPE_ACCOUNT_STATUS ||
+			$type == OCS_PARAM_TYPE_COUNTER ||
+			$type == OCS_PARAM_TYPE_PIVOT_DATE ||
+			$type == OCS_PARAM_TYPE_DAYS_TO_ADD) {
+
+			// get all the account status
+            $options = $this->get_options( $type, $param);
+            $form = array(
+                '#type' => 'select',
+                '#title' => $title,
+                '#options' => $options,
+            );
+		}
         else {
             $form = array(
                 '#type' => 'textfield',
@@ -180,6 +184,49 @@ class OcsParam
 
         return $form;
     }
+
+	function get_options( $type, $param) 
+	{
+		$options = array();
+
+        if ($type == OCS_PARAM_TYPE_ENUM) {
+            $options = array_flip( $this->params[$param.':enum']);
+        }
+        else if ( $type == OCS_PARAM_TYPE_COUNTER) {
+            $options = ocs_admin_get_counter_id_list();
+        }
+        else if ( $type == OCS_PARAM_TYPE_MESSAGE) {
+            $options['Message'] = ocs_admin_get_message_list();
+            $options['Group'] = ocs_admin_get_message_group_list();
+        }
+		else if ( $type == OCS_PARAM_TYPE_ACCOUNT_STATUS) {
+			// get all the account status
+			$opt = ocs_admin_get_account_state_list();
+			foreach( $opt as $k => $v) {
+				$options[$v] = 'Expire Date of ' . $v;
+			}
+		}
+		else if ( $type == OCS_PARAM_TYPE_PIVOT_DATE) {
+			$opt = ocs_admin_get_account_state_list();
+			$opt2 = array();
+			foreach( $opt as $k => $v) {
+				$options[$v] = 'Expire Date of ' . $v;
+				$options['MAX(NOW,'.$v.')'] = 'Later date between Now and Expire Date of ' . $v;
+			}
+
+			return array_merge( array( 'Now' => 'Now'), $options);
+		}
+		else if ( $type == OCS_PARAM_TYPE_DAYS_TO_ADD) {
+			$opt = ocs_admin_get_account_state_list();
+			foreach( $opt as $k => $v) {
+				$options[$v] = 'Duration of ' . $v;
+			}
+
+			return array_merge( $options, array( 'Voucher.Active' => 'Active Days of the Voucher', 'Voucher.Expire' => 'Expire Days of the Voucher'));
+		}
+
+		return $options;
+	}
 
     function get_value( $param, $value)
     {
@@ -238,10 +285,18 @@ function ocs_lifecycle_decode_action_param_values( $param_list, $toArray=FALSE)
 		
 		$param = node_load( $param_nid);
 
-		if ( $param->field_ocs_param_type['und'][0]['value'] == OCS_PARAM_TYPE_ENUM) {
+		$type =  $param->field_ocs_param_type['und'][0]['value'];
+		if ( $type == OCS_PARAM_TYPE_ENUM) {
 			$options = array_flip( json_decode( $param->field_ocs_param_value['und'][0]['value'], TRUE));
 			$v = $options[$v];
         }
+		else {
+			$params = new OcsParam; 
+            $options = $params->get_options( $type, '');	// bhtak TODO: check 2nd parameter. it should be some valid value
+			if ( ! empty( $options) && isset( $options[$v])) {
+				$v = $options[$v];
+			}
+		}
             
 		$output[] = $param->title . ' = ' . $v;
 	}

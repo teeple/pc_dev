@@ -10,6 +10,9 @@ define( 'OCS_PARAM_TYPE_PRODUCT_KEY', '7');
 define( 'OCS_PARAM_TYPE_COUNTER', '8');
 define( 'OCS_PARAM_TYPE_MESSAGE', '9');
 define( 'OCS_PARAM_TYPE_FUNCTION', '10');
+define( 'OCS_PARAM_TYPE_ACCOUNT_STATUS', '11');
+define( 'OCS_PARAM_TYPE_PIVOT_DATE', '12');
+define( 'OCS_PARAM_TYPE_DAYS_TO_ADD', '13');
 
 function ocs_admin_get_param_type( $name)
 {
@@ -24,6 +27,9 @@ function ocs_admin_get_param_type( $name)
         'counter' => OCS_PARAM_TYPE_COUNTER,
         'message' => OCS_PARAM_TYPE_MESSAGE,
         'function' => OCS_PARAM_TYPE_FUNCTION,
+        'account_status' => OCS_PARAM_TYPE_ACCOUNT_STATUS,
+        'pivot_date' => OCS_PARAM_TYPE_PIVOT_DATE,
+        'days_to_add' => OCS_PARAM_TYPE_DAYS_TO_ADD,
     );
 
     if (isset( $optype[$name])) return $optype[$name];
@@ -147,6 +153,19 @@ function ocs_admin_get_message_group_list()
 
     return $messages;
 }
+
+function ocs_admin_get_account_state_list()
+{
+	$list = &drupal_static( __FUNCTION__, array());
+	if ( empty( $list)) {
+        $items = entity_load( 'node', FALSE, array( 'type' => 'ocs_account_state'));
+        foreach( $items as $item) {
+            $list[$item->nid] = $item->title ;
+        }
+	}
+	return $list;
+}
+
 
 function ocs_admin_get_counter_id_list()
 {
