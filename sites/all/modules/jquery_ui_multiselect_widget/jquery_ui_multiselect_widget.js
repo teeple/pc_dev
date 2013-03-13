@@ -13,7 +13,7 @@
       // Global context!
       var filter = "select";
       
-      if(setting.jquery_ui_multiselect_widget != 'undefined'){
+      if(settings.jquery_ui_multiselect_widget != 'undefined'){
 	      if(settings.jquery_ui_multiselect_widget.multiple){
 	        // Multiple only
 	        filter = filter+'[multiple=multiple]';
