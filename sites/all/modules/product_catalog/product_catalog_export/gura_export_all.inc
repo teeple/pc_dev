@@ -1,7 +1,15 @@
 <?php
 function rating_rules_export_all()
 {
-	$jsonData = rating_rules_export_by_content_type('rating_rule_export',  array());
+	$jsonData = rating_rules_export_by_content_type('rating_rule_export');
+	$jsonData['ifvalues']['resources'] = array();
+	
+	return json_encode($jsonData);
+}
+
+function pcrf_common_data_export()
+{
+	$jsonData = rating_rules_export_by_content_type('pcrf_rule_export');
 	$jsonData['ifvalues']['resources'] = array();
 	
 	return json_encode($jsonData);
@@ -154,10 +162,12 @@ function rating_rule_export($ruleset_template , $export_item,  $nid=NULL, $vars 
 			if($nid!=NULL)
 			{
 				$data['individual_ruleset'] = false;
+				$data['contains_all_rules'] = false;
 			}
 			else
 			{
 				$data['individual_ruleset'] = $individual_ruleset;
+				$data['contains_all_rules'] = true;
 			}
 			if(property_exists($export_item , 'field_export_target') && count($export_item->field_export_target)>0)
 			{
@@ -1327,13 +1337,16 @@ function rating_rules_export_from_view($title, $view_name, $display_name, $nid=N
                         $rule[$factor_name] = view_get_field_value($view , $field_name , $record);
                     }
 
-					if(array_key_exists($factor_name, $factor_meta_map) && array_key_exists('is_delete_key', $factor_meta_map[$factor_name]) && $factor_meta_map[$factor_name]['is_delete_key'] == 'true')
+					if($nid!=NULL)
 					{
-						if(array_key_exists($factor_name , $rule) && $rule[$factor_name]!=NULL)
+						if(array_key_exists($factor_name, $factor_meta_map) && array_key_exists('is_delete_key', $factor_meta_map[$factor_name]) && $factor_meta_map[$factor_name]['is_delete_key'] == 'true')
 						{
-							if(array_search( $rule[$factor_name] , $delete_keys)===FALSE)
+							if(array_key_exists($factor_name , $rule) && $rule[$factor_name]!=NULL)
 							{
-								$delete_keys[] = $rule[$factor_name];
+								if(array_search( $rule[$factor_name] , $delete_keys)===FALSE)
+								{
+									$delete_keys[] = $rule[$factor_name];
+								}
 							}
 						}
 					}
