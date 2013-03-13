@@ -12,6 +12,7 @@
     attach : function(context, settings) {
       // Global context!
       var filter = "select";
+      console.log(settings);
       if(settings.jquery_ui_multiselect_widget.multiple){
         // Multiple only
         filter = filter+'[multiple=multiple]';
