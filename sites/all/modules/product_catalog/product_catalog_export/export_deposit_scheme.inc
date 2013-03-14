@@ -140,7 +140,10 @@ function _json_deposit_scheme($exportItemNids=NULL) {
   $retArray = $jsonData;
   
 	$arr = array();
-	$arr[] = rating_rules_export_by_content_type_and_item_name("rating_rule_export", "rating_deposit_scheme");
+    if(!empty($exportItemNids) && count($exportItemNids) > 1) {
+    	$exportItemNids = join('+', $exportItemNids);
+    }
+	$arr[] = rating_rules_export_by_content_type_and_item_name("rating_rule_export", "rating_deposit_scheme", $exportItemNids);
 	foreach($arr as $a)
 	{
 		foreach($a as $t => $v)

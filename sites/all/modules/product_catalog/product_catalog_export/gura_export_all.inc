@@ -1,7 +1,15 @@
 <?php
 function rating_rules_export_all()
 {
-	$jsonData = rating_rules_export_by_content_type('rating_rule_export',  array());
+	$jsonData = rating_rules_export_by_content_type('rating_rule_export');
+	$jsonData['ifvalues']['resources'] = array();
+	
+	return json_encode($jsonData);
+}
+
+function pcrf_common_data_export()
+{
+	$jsonData = rating_rules_export_by_content_type('pcrf_rule_export');
 	$jsonData['ifvalues']['resources'] = array();
 	
 	return json_encode($jsonData);
@@ -151,7 +159,16 @@ function rating_rule_export($ruleset_template , $export_item,  $nid=NULL, $vars 
                 $display_name = $export_item->field_display_name['und'][0]['value'];
             }
             $data = rating_rules_export_from_view($ruleset_name, $export_item->field_view_name['und'][0]['value'] , $display_name, $nid);
-			$data['individual_ruleset'] = $individual_ruleset;
+			if($nid!=NULL)
+			{
+				$data['individual_ruleset'] = false;
+				$data['contains_all_rules'] = false;
+			}
+			else
+			{
+				$data['individual_ruleset'] = $individual_ruleset;
+				$data['contains_all_rules'] = true;
+			}
 			if(property_exists($export_item , 'field_export_target') && count($export_item->field_export_target)>0)
 			{
 				$data['export_target'] = $export_item->field_export_target['und'][0]['value'];
@@ -1166,6 +1183,12 @@ function rating_rules_export_from_view($title, $view_name, $display_name, $nid=N
 								$value = substr($s , $pos+1 );
 								$factorMeta[trim($key)]=trim($value);
 							}
+							else
+							{
+								$key = 'is_' . $s;
+								$value = 'true';
+								$factorMeta[trim($key)]=trim($value);
+							}
                         }
                     }
                 }
@@ -1277,6 +1300,7 @@ function rating_rules_export_from_view($title, $view_name, $display_name, $nid=N
             }
         }
         $rules = array();
+		$delete_keys = array();
         foreach($view->result as $row_id => $record)
         {
             $rule = array();
@@ -1312,12 +1336,27 @@ function rating_rules_export_from_view($title, $view_name, $display_name, $nid=N
                     {
                         $rule[$factor_name] = view_get_field_value($view , $field_name , $record);
                     }
+
+					if($nid!=NULL)
+					{
+						if(array_key_exists($factor_name, $factor_meta_map) && array_key_exists('is_delete_key', $factor_meta_map[$factor_name]) && $factor_meta_map[$factor_name]['is_delete_key'] == 'true')
+						{
+							if(array_key_exists($factor_name , $rule) && $rule[$factor_name]!=NULL)
+							{
+								if(array_search( $rule[$factor_name] , $delete_keys)===FALSE)
+								{
+									$delete_keys[] = $rule[$factor_name];
+								}
+							}
+						}
+					}
                 }
             }
             $rules[] = $rule;
         }
         $jsonData['field'] = $factor_meta_map;
         $jsonData['data'] = $rules;
+        $jsonData['delete_keys'] = $delete_keys;
         return $jsonData;
 	}
 	else

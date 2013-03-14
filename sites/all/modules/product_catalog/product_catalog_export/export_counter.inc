@@ -62,7 +62,7 @@ function _array_export_counter($exportItemNids=NULL){
 	$jsonData['counters'] = $jsonData_counters;
 
 	$arr = array();
-	$arr[] = rating_rules_export_by_content_type_and_item_name("rating_rule_export", "rating_counter_info");
+	$arr[] = rating_rules_export_by_content_type_and_item_name("rating_rule_export", "rating_counter_info", $exportItemNids);
 	foreach($arr as $a)
 	{
 		foreach($a as $t => $v)

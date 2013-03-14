@@ -82,9 +82,11 @@ function _json_voucher_cardtype($exportItemNids=NULL) {
 	$retArray['rating_rules'] = array();
 
 	$arr = array();
-	$arr[] = rating_rules_export_by_content_type_and_item_name("rating_rule_export", "list_vouchercardtype");
-	$arr[] = rating_rules_export_by_content_type_and_item_name("rating_rule_export", "list_counter_for_vouchercardtype");
-	$arr[] = rating_rules_export_by_content_type_and_item_name("rating_rule_export", "list_loyaltypointfactors");
+	$arr[] = rating_rules_export_by_content_type_and_item_name("rating_rule_export", "list_vouchercardtype", $exportItemNids);
+	$arr[] = rating_rules_export_by_content_type_and_item_name("rating_rule_export", "list_counter_for_vouchercardtype", $exportItemNids);
+	$arr[] = rating_rules_export_by_content_type_and_item_name("rating_rule_export", "list_loyaltypointfactors", $exportItemNids);
+	$arr[] = rating_rules_export_by_content_type_and_item_name("rating_rule_export", "rating_voucher_product", $exportItemNids);
+	$arr[] = rating_rules_export_by_content_type_and_item_name("rating_rule_export", "list_treenodecounterforvoucherprd", $exportItemNids);
 	foreach($arr as $a)
 	{
 		foreach($a as $t => $v)
