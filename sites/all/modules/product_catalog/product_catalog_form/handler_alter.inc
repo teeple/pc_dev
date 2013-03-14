@@ -19,6 +19,7 @@ function _unset_menu_items(&$form, $formId) {
         case 'packetdynamicchargingrule_node_form' :
         case 'packetpredefinedchargingrule_node_form' :
         case 'roaming_country_node_form' :
+        case 'roaming_zone_node_form':
         case 'roaming_carrier_node_form' :
         case 'roaming_plan_node_form' :
         case 'counter_node_form':
@@ -1569,6 +1570,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
         case 'packetpredefinedchargingrule_node_form' :
         case 'roaming_country_node_form' :
         case 'roaming_carrier_node_form' :
+        case 'roaming_zone_node_form':
             _unset_menu_items($form, $form_id);
             break;
         case 'treenodeotheronetimecharge_node_form' :

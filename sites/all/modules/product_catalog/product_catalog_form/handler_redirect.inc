@@ -195,9 +195,13 @@ function product_catalog_form_form_redirect_handler(&$form, &$form_state){
             $redirect_url = 'common/roaming/country/'.$form_state['values']['nid'];
             $urlFragment = 'quickset-roaming=0';
             break;
+        case 'roaming_zone_node_form':
+            $redirect_url = 'common/roaming/zone/'.$form_state['values']['nid'];
+            $urlFragment = 'quickset-roaming=1';
+            break;
         case 'roaming_carrier_node_form':
             $redirect_url = 'common/roaming/carrier/'.$form_state['values']['nid'];
-            $urlFragment = 'quickset-roaming=1';
+            $urlFragment = 'quickset-roaming=2';
             break;
 
     }
