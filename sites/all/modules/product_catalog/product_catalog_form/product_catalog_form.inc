@@ -173,6 +173,7 @@ function _load_node_form($buildType,$nodeType=NULL,$nid=NULL,$params=NULL){
 			}
 			$node = node_load($nid);
             $nodeType = $node->type;
+            dsm($node,'node');
             dsm($nodeType,'node type');
 			break;
 		default:
