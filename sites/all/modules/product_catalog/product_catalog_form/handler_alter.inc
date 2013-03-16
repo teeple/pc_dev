@@ -606,10 +606,21 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
                 unset($form['#group_children']);
 
             } else if ($refTreeTerm -> name == 'Accumulating') {
-
                 $form['field_threshold_on_counter']['#type'] = 'hidden';
                 $productNid = $form['#node'] -> field_ref_product['und'][0]['nid'];
 
+                $tempView = views_get_view('list_treenodecounter');
+                $tempView->set_display('panel_pane_5');
+                $tempView->set_arguments(array('0' => $productNid, '1' => 'Main'));
+                $tempView->execute();
+                
+                $options = array();
+                foreach($tempView->result as $treeNodeCounterItem){
+                    $options[$treeNodeCounterItem->node_field_data_field_ref_counter_nid]
+                        = $treeNodeCounterItem->node_field_data_field_ref_counter_title;
+                }
+                
+                /*
                 $basicCounterList = array();
                 $tempList = _get_default_basic_counters($productNid);
                 foreach ($tempList as $record) {
@@ -631,8 +642,10 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 
                 $options = $mergedCounterList;
                 $element = $form['field_counter']['und'];
-
                 $form['field_counter']['und']['#options'] = $mergedCounterList;
+                */
+                
+                $form['field_counter']['und']['#options'] = $options;
 
             }
 
