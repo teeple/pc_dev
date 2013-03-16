@@ -69,7 +69,7 @@ function _add_ajax_submit_callback($form_id, &$form) {
         case 'conditionwhencompanybirthday_node_form' :
         case 'conditionwhenfirstmonth_node_form' :
         case 'conditionwhenstatechangedate_node_form' :
-        case 'conditionwhenbilldate_node_form' :
+        case 'conditionwhenbillingdate_node_form' :
         case 'conditionwherecountryfactors_node_form' :
         case 'conditionwherecustomfactors_node_form' :
         case 'conditionwhereissamezone_node_form' :
@@ -120,9 +120,11 @@ function _add_ajax_submit_callback($form_id, &$form) {
         case 'actionbonustransfer_node_form' :
         case 'conditionwhatcalltype_node_form' :
         case 'conditionwhatcounter_node_form' :
+        case 'conditionwhatratinggroup_node_form' :
         case 'conditionwhatcounterfortracking_node_form' :
         case 'conditionwhensubscriptionday_node_form' :
         case 'conditionwhatincomingcall_node_form' :
+        case 'conditionwhereserviceid_node_form' :
         // case 'conditionwhatcardtype_node_form':
         case 'conditionwhenactivationday_node_form' :
         case 'numberspecialrate_node_form' :
@@ -211,7 +213,6 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
     
     switch($form_id) {
     		case 'devicemodel_node_form':
-    				dsm($form, 'form');
     				_unset_menu_items($form, $form_id);
     				$form['title']['und']['#disabled'] = TRUE;
     				$form['field_model_code']['und']['#disabled'] = TRUE;
@@ -303,7 +304,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
         case 'conditionwhencustomerbirthday_node_form' :
         case 'conditionwhencompanybirthday_node_form' :
         case 'conditionwhenstatechangedate_node_form' :
-        case 'conditionwhenbilldate_node_form' :
+        case 'conditionwhenbillingdate_node_form' :
             _unset_menu_items($form, $form_id);
             $form['field_weight']['#type'] = 'hidden';
             $form['field_parent_node']['#type'] = 'hidden';
@@ -620,7 +621,6 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
                 }
                 
                 $existingCounterList = _get_existing_counter_list($productNid);
-                dsm($existingCounterList, 'existingCounterList');
                 foreach ($existingCounterList as $key => $value) {
                     $existingCounterNode = node_load($key);
                     $mainOrAccuTerm = taxonomy_term_load($existingCounterNode->field_main_or_accumulated['und'][0]['tid']);
@@ -777,6 +777,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
         case 'conditionwhereissamezone_node_form' :
         case 'conditionwheremacaddress_node_form' :
         case 'conditionwheredevicetype_node_form' :
+        case 'conditionwhereserviceid_node_form' :
         case 'conditionwhocustomfactors_node_form' :
         case 'conditionwhocalledcarrier_node_form' :
         case 'conditionwhomemberfactors_node_form' :
@@ -1177,6 +1178,12 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             $form['field_ref_product']['#type'] = 'hidden';
             break;
 
+				case 'conditionwhatratinggroup_node_form' :
+						unset($form['field_parent_node']);
+						unset($form['field_weight']);
+						_unset_menu_items($form, $form_id);
+						break;
+						
         case 'conditionwhatcounter_node_form' :
             unset($form['field_parent_node']);
             unset($form['field_weight']);
@@ -1309,12 +1316,23 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             if (isset($form['nid']['#value'])) {
                 $product = node_load($form_state['build_info']['args'][0] -> field_ref_product['und'][0]['nid']);
                 $currencyTid = $product -> field_price_units['und'][0]['tid'];
-
+                
+                // $form['field_recurring_charge_id']['und']['#disabled'] = TRUE;
+                
+                
             } else {
                 if (!empty($form_state['root_nid'])) {
                     $product = node_load($form_state['root_nid']);
                     $currencyTid = $product -> field_price_units['und'][0]['tid'];
+                    
+                    $viewResult = views_get_view_result('query_recurringcharge_max_id', 'panel_pane_1');
+                    $max_recurring_charge_id = $viewResult[0]->field_field_recurring_charge_id[0]['raw']['value'];
+                    
+                    $form['field_recurring_charge_id']['und'][0]['value']['#default_value'] = $max_recurring_charge_id + 1;
+                    // $form['field_recurring_charge_id']['und']['#disabled'] = TRUE;
+                    
                 }
+                
             }
 
             if (isset($currencyTid)) {
@@ -1328,9 +1346,10 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             break;
             
         case 'actionsetcounter_node_form' :
+        
             $form['field_ref_source_action']['#type'] = 'hidden';
             $productNid = $form_state['product_nid'];
-
+            
             $basicCounterList = array();
             $tempList = _get_default_basic_counters($productNid);
             foreach ($tempList as $record) {
@@ -1357,9 +1376,47 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
                 'wrapper' => 'actionsetcounter_fields_wrapper'
             );
             break;
+            
+        case 'actionsetbonusonrecurringcharge_node_form' :
+        
+            $form['field_ref_source_action']['#type'] = 'hidden';
+            $productNid = $form_state['product_nid'];
+
+            $product = node_load($productNid);
+            $billingTypeTerm = taxonomy_term_load($product -> field_billing_type['und'][0]['tid']);
+            if ($billingTypeTerm -> name == 'Postpaid') {
+                $tempTerm = taxonomy_get_term_by_name('Prepaid', 'billtypecounter');
+                $existingCounterList = _get_existing_counter_list($productNid,  current($tempTerm) -> tid);
+
+            } else {
+                $basicCounterList = array();
+                $tempList = _get_default_basic_counters($productNid);
+                foreach ($tempList as $record) {
+                    $counterUnitType = $record -> field_field_counter_unit_type[0]['rendered']['#options']['entity'] -> name;
+                    $basicCounterList[$record -> nid] = $record -> node_title . '(' . $counterUnitType . ')';
+                }
+                $existingCounterList = _get_existing_counter_list($productNid);
+
+                foreach ($basicCounterList as $key => $value) {
+                    $mergedCounterList[$key] = $value;
+                }
+            }
+            
+            foreach ($existingCounterList as $key => $value) {
+                $mergedCounterList[$key] = $value;
+            }
+            $form['field_ref_counter']['und']['#options'] = $mergedCounterList;
+            
+            $form['field_ref_counter']['#ajax'] = 
+            	array('callback' => '_ajax_counter_type_validate',
+            				'event' => 'change');
+            
+            _unset_menu_items($form, $form_id);
+            break;
 
         case 'actionsetcounteronbonus_node_form' :
-        
+        		dsm($form, 'form');
+        	
             $form['field_ref_source_action']['#type'] = 'hidden';
             $productNid = $form_state['product_nid'];
 

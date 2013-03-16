@@ -787,6 +787,7 @@ function product_catalog_ajax_add_modal_content($js = NULL, $contentType, $refNo
 			break;
 		case 'actionsetcounter':
 		case 'actionsetcounteronbonus':
+		case 'actionsetbonusonrecurringcharge':
 			$node->title = 'source_'.$refNodeNid;
 			$node->field_ref_source_action['und'][0]['nid'] = $refNodeNid;
 			
@@ -855,6 +856,7 @@ function product_catalog_ajax_add_modal_content($js = NULL, $contentType, $refNo
 				break;
 			case 'actionsetcounter':
 			case 'actionsetcounteronbonus':
+			case 'actionsetbonusonrecurringcharge':
 				$defaultTabIndex = $refTreeTid;
 				$refTreeTid = NULL;
 				$output[] = _add_command_after_dismiss_modal($refNodeNid,$refTreeTid,$defaultTabIndex);
@@ -1850,6 +1852,7 @@ function product_catalog_modal_form_edit_modal_content($js = NULL, $contentType,
 	switch($contentType) {
 		case 'actionsetcounter':
 		case 'actionsetcounteronbonus':
+		case 'actionsetbonusonrecurringcharge':
 			$refNode = node_load($refNodeNid);
 			$form_state['product_nid'] = $refNode->field_ref_product['und'][0]['nid'];
 			break;
@@ -1897,6 +1900,7 @@ function product_catalog_modal_form_edit_modal_content($js = NULL, $contentType,
 				break;
 			case 'actionsetcounter':
 			case 'actionsetcounteronbonus':
+			case 'actionsetbonusonrecurringcharge':
 				$defaultTabIndex = $refTreeTid;
 				$refTreeTid = NULL;
 				$output[] = _add_command_after_dismiss_modal($refNodeNid,$refTreeTid,$defaultTabIndex);
@@ -1941,6 +1945,7 @@ function product_catalog_ajax_delete_from_view($nodeNid, $refNodeNid, $additiona
 			break;
 		case 'actionsetcounter':
 		case 'actionsetcounteronbonus':
+		case 'actionsetbonusonrecurringcharge':
         case 'actionsetnotification':
             //additional param means default tab index
 			$output[] = _add_command_after_dismiss_modal($refNodeNid,NULL,$additionalParam);

@@ -29,7 +29,7 @@ function product_catalog_tree_form($form, &$form_state) {
         '#markup' => '<div id="dialog" title="Basic dialog"></div>',
     );
     $form['tree_node_title'] = array(
-    	'#type' => 'markup',
+    		'#type' => 'markup',
         '#markup' => '<input id="tree_node_op" type="hidden"/><input id="tree_node_title" type="hidden"/>',
     );
     
@@ -93,14 +93,12 @@ function product_catalog_tree_load_tree($rootNid, $treeTemplate) {
 }
 
 function _tree_operation_html(){
-    //expand
-    $opStr = '<input type="button" value="Expand" id="tree_op_expand"/>';
-    //close
-    $opStr .= '<input type="button" value="Close" id="tree_op_close"/>';
+    $opStr = '<button id="tree_op_close" style="border:0;background-color:transparent;"><img src="/sites/default/files/icons/left_arrow.png" alt="expand"/></button>';
+    $opStr .= '<button id="tree_op_expand" style="border:0;background-color:transparent;"><img src="/sites/default/files/icons/right_arrow.png" alt="shrink"/></button>';
     //search
-    $opStr .= '<input type="text" id="tree_op_search_input"/>
-               <input type="button" value="Search" id="tree_op_search_button"/>
-               <input type="button" value="Clear" id="tree_op_search_clear"/>';
+    $opStr .= '<input type="text" id="tree_op_search_input" size=15 maxlength=100 class="form-text" />
+               <button id="tree_op_search_button" style="border:0;background-color:transparent;"><img src="/sites/default/files/icons/search.png"/></button>
+               <button id="tree_op_search_clear" style="border:0;background-color:transparent;"><img src="/sites/default/files/icons/reset.png"/></button>';
     
     $opStr .= '<div>&nbsp;</div>';
     return $opStr;

@@ -984,7 +984,7 @@
 							$.fn.deleteNode(node);
 						};
 						break;
-					case 'conditionwhenbilldate':
+					case 'conditionwhenbillingdate':
 						menus.custom_delete._disabled = false;
 						menus.custom_delete.action = function(node) {
 							$.fn.deleteNode(node);
@@ -1091,6 +1091,14 @@
 											});
 										}
 									},
+									"Service ID" : {
+										"label" : "Service ID",
+										action : function(node) {
+											$.fn.addNode(node, {
+												'childContentType' : 'conditionwhereserviceid'
+											});
+										}
+									},
 								}
 							},
 							"what" : {
@@ -1144,6 +1152,14 @@
 											});
 										}
 									},
+									"Rating Group" : {
+										"label" : "Rating Group",
+										action : function(node) {
+											$.fn.addNode(node, {
+												'childContentType' : 'conditionwhatratinggroup'
+											});
+										}
+									},
 								}
 							},
 							"when" : {
@@ -1177,7 +1193,7 @@
 										"label" : "Bill Date",
 										action : function(node) {
 											$.fn.addNode(node, {
-												'childContentType' : 'conditionwhenbilldate'
+												'childContentType' : 'conditionwhenbillingdate'
 											});
 										}
 									},
@@ -1353,7 +1369,7 @@
 												"label" : "Bill Date",
 												action : function(node) {
 													$.fn.addNode(node, {
-														'childContentType' : 'conditionwhenbilldate'
+														'childContentType' : 'conditionwhenbillingdate'
 													});
 												}
 											},
@@ -1522,7 +1538,7 @@
 												"label" : "Bill Date",
 												action : function(node) {
 													$.fn.addNode(node, {
-														'childContentType' : 'conditionwhenbilldate'
+														'childContentType' : 'conditionwhenbillingdate'
 													});
 												}
 											},
@@ -1699,7 +1715,7 @@
 												"label" : "Bill Date",
 												action : function(node) {
 													$.fn.addNode(node, {
-														'childContentType' : 'conditionwhenbilldate'
+														'childContentType' : 'conditionwhenbillingdate'
 													});
 												}
 											},
@@ -1876,7 +1892,7 @@
 												"label" : "Bill Date",
 												action : function(node) {
 													$.fn.addNode(node, {
-														'childContentType' : 'conditionwhenbilldate'
+														'childContentType' : 'conditionwhenbillingdate'
 													});
 												}
 											},
@@ -2130,7 +2146,7 @@
 												"label" : "Bill Date",
 												action : function(node) {
 													$.fn.addNode(node, {
-														'childContentType' : 'conditionwhenbilldate'
+														'childContentType' : 'conditionwhenbillingdate'
 													});
 												}
 											},
@@ -2300,7 +2316,7 @@
 												"label" : "Bill Date",
 												action : function(node) {
 													$.fn.addNode(node, {
-														'childContentType' : 'conditionwhenbilldate'
+														'childContentType' : 'conditionwhenbillingdate'
 													});
 												}
 											},
@@ -2531,7 +2547,7 @@
 												"label" : "Bill Date",
 												action : function(node) {
 													$.fn.addNode(node, {
-														'childContentType' : 'conditionwhenbilldate'
+														'childContentType' : 'conditionwhenbillingdate'
 													});
 												}
 											},
@@ -2762,7 +2778,7 @@
 												"label" : "Bill Date",
 												action : function(node) {
 													$.fn.addNode(node, {
-														'childContentType' : 'conditionwhenbilldate'
+														'childContentType' : 'conditionwhenbillingdate'
 													});
 												}
 											},
@@ -2921,7 +2937,15 @@
 														'childContentType' : 'conditionwheredevicetype'
 													});
 												}
-											},										
+											},
+											"Service ID" : {
+												"label" : "Service ID",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhereserviceid'
+													});
+												}
+											},
 										}
 									},
 									"what" : {
@@ -2976,7 +3000,7 @@
 												"label" : "Bill Date",
 												action : function(node) {
 													$.fn.addNode(node, {
-														'childContentType' : 'conditionwhenbilldate'
+														'childContentType' : 'conditionwhenbillingdate'
 													});
 												}
 											},
@@ -3169,7 +3193,7 @@
 												"label" : "Bill Date",
 												action : function(node) {
 													$.fn.addNode(node, {
-														'childContentType' : 'conditionwhenbilldate'
+														'childContentType' : 'conditionwhenbillingdate'
 													});
 												}
 											},
@@ -3274,7 +3298,7 @@
 					case "conditionwhenholidayfactors":
 					case "conditionwhendayofmonth":
 					case "conditionwhenstatechangedate":
-					case "conditionwhenbilldate":
+					case "conditionwhenbillingdate":
 					case "conditionwhenactivedays":
 					case "conditionwhentimeslotfactors":
 					case "conditionwhenweekfactors":
@@ -3286,6 +3310,7 @@
 					case "conditionwhereclientip":
 					case "conditionwheremacaddress":
 					case "conditionwheredevicetype":
+					case "conditionwhereserviceid":
 					case "conditionwhomemberfactors":
 					case "conditionwhonumberfactors":
 					case "conditionwhosubscribermdn":

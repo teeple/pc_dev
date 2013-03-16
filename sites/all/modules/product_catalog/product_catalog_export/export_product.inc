@@ -20,6 +20,7 @@ function _product_for_export($exportItemNids=NULL){
     
     foreach($viewResult as $record) {
     */
+    
     if(count($exportItemNids) == 1) {
     	$exportItemNids = array($exportItemNids);
     }
@@ -61,7 +62,7 @@ function _product_for_export($exportItemNids=NULL){
 		
 		$nonUsage['threshold_scheme'] = _get_thresdhold_scheme($node);
 		$nonUsage['deposit_scheme'] = _get_deposit_scheme($node);
-        $nonUsage['recurring_scheme'] = _get_recurring_scheme($node->nid);
+    // $nonUsage['recurring_scheme'] = _get_recurring_scheme($node->nid);
 		$nonUsage['onetime_charge'] = _get_onetime_charge($node->nid);
 		$nonUsage['onetime_charge_discount_on_main'] = _get_onetime_charge_discount($node->nid);
 		
@@ -132,8 +133,29 @@ function _get_thresdhold_scheme($product) {
     }
 	return $scheme;
 }
-		
 
+function _get_recurring_scheme($productNid) {
+	$retArray = array();
+	
+	$view_name = 'list_child_item_for_product';
+	$display = 'panel_pane_1';
+	$args = array(
+		'0' => $productNid,
+		'1' => 'prdnonusagerecurringchargescheme'
+	);
+	$records = _get_nids_from_views($view_name, $display, $args);
+	$chargeScheme = node_load(current($records));
+	
+	$retArray['charge_scheme'] = array(
+			'rcrr_period_type'			 
+					=> !empty($chargeScheme->field_charging_cycle_type)? $chargeScheme->field_charging_cycle_type['und'][0]['value']: NULL,
+	);
+	
+	return $retArray;
+	
+}
+
+/*
 function _get_recurring_scheme($productNid) {
 	$retArray = array();
 	
@@ -186,6 +208,8 @@ function _get_recurring_scheme($productNid) {
 
 	return $retArray;
 }
+*/
+
 
 /*
 function _get_recurring_charge($productNid) {

@@ -222,7 +222,7 @@ class OcsParam
 				$options[$v] = 'Duration of ' . $v;
 			}
 
-			return array_merge( $options, array( 'Voucher.Active' => 'Active Days of the Voucher', 'Voucher.Expire' => 'Expire Days of the Voucher'));
+			return array_merge( $options, array( 'Voucher.ACTIVE' => 'Active Days of the Voucher', 'Voucher.GRACE' => 'Grace Days of the Voucher'));
 		}
 
 		return $options;
