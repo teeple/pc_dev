@@ -696,7 +696,7 @@ function _unittransfer_submit_handler($form,$form_state){
     foreach($viewResult as $item){
         $node = new StdClass();
         $node->uid = $user->uid;
-        $node->type = 'unittransferfactors';
+        $node->type = 'unittransferfactor';
         $node->language = 'und';
         $node->field_counter_group['und'][0]['tid'] = $item->tid;
         node_save($node);
