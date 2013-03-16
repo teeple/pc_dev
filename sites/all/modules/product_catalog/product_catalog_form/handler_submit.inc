@@ -687,47 +687,22 @@ function _link_to_parent($form,$form_state){
 function _unittransfer_submit_handler($form,$form_state){
 	global $user;
 	module_load_include('inc', 'node', 'node.pages');
-	//$viewResult = views_get_view_result('list_counter', 'panel_pane_1',array('0'=>'MAIN','1'=>'BASIC'));
 	
 	$unitTransferNode = node_load($form_state['values']['nid']);
 	
-	$weightStep = 100;
-	$weight = 0;
-	
-	//for additional product
-	$node = new StdClass();
-	$node->uid = $user->uid;
-	$node->type = 'unittransferfactors';
-	$node->language = 'und';
-	$node->field_parent_node['und'][0]['nid'] = $unitTransferNode->nid;
-	$node->field_weight['und'][0]['value'] = $weight;	
-	node_save($node);
-	$unitTransferNode->field_ref_unittransferfactors['und'][] = array('nid' => $node->nid);
-	
-	$term_counter_type = taxonomy_get_term_by_name('Basic', 'countertype');
-	$args = array();
-	$args[0] = current($term_counter_type)->tid;
-	
-	//main basic counter
-	$view = views_get_view('query_list_counter');
-	$view->set_display('panel_pane_1');
-	$view->set_arguments($args);
-	$view->execute();
-	
-	foreach($view->result as $item){
-		$weight += $weightStep;
-		$node = new StdClass();
-		$node->uid = $user->uid;
-		$node->type = 'unittransferfactors';
-		$node->language = 'und';
-		$node->field_ref_counter['und'][0]['nid'] = $item->nid;
-		$node->field_parent_node['und'][0]['nid'] = $unitTransferNode->nid;
-		$node->field_weight['und'][0]['value'] = $weight;
-		node_save($node);
-		
-		$unitTransferNode->field_ref_unittransferfactors['und'][] = array('nid' => $node->nid);
-	}
-	
+    //create unittransferfactors
+    $viewResult = views_get_view_result('list_counter_group_for_unittransfer', 'panel_pane_1');
+    
+    foreach($viewResult as $item){
+        $node = new StdClass();
+        $node->uid = $user->uid;
+        $node->type = 'unittransferfactors';
+        $node->language = 'und';
+        $node->field_counter_group['und'][0]['tid'] = $item->tid;
+        node_save($node);
+        $unitTransferNode->field_ref_unittransferfactors['und'][] = array('nid' => $node->nid);
+    }
+   
 	node_save($unitTransferNode);
 }
 
@@ -748,6 +723,7 @@ function _common_counter_submit_handler($form,$form_state){
 	//카운터를 사용하는 다른 컨텐츠 들에 대한 처리도 해 주어야 할듯..상품같은..
 	if(!isset($form['nid']['#value'])) { //Create
 		//unit transfer		
+		/*
 		if($counterTypeTerm->name == 'BASIC'){		
 			foreach($unitTransferView->result as $item){
 				$unitTransferNode = node_load($item->nid);
@@ -764,11 +740,12 @@ function _common_counter_submit_handler($form,$form_state){
 				node_save($unitTransferNode);				
 			}	
 		}
-		
+		*/
 		//product
 				
 	}else{//Edit
 		//unit transfer
+		/*
 		if($counterTypeTerm->name == 'BASIC'){	
 			foreach($unitTransferView->result as $item){
 				$unitTransferNode = node_load($item->nid);				
@@ -800,8 +777,8 @@ function _common_counter_submit_handler($form,$form_state){
 				}
 				
 			}
-		}else{
-			foreach($unitTransferView->result as $item){
+        }else{
+		    foreach($unitTransferView->result as $item){
 				$unitTransferNode = node_load($item->nid);
 				$unitTransferFactorsCount = count($unitTransferNode->field_ref_unittransferfactors['und']);
 				for($i=0;$i<$unitTransferFactorsCount;$i++){
@@ -814,7 +791,9 @@ function _common_counter_submit_handler($form,$form_state){
 					}
 				}				
 			}
-		}		
+            
+		}	
+       */	
 	}
 }
 

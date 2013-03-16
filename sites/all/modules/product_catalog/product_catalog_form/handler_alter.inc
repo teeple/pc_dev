@@ -30,6 +30,7 @@ function _unset_menu_items(&$form, $formId) {
         case 'timetable_node_form' :
         case 'servicefeaturecode_node_form' :
         case 'servicefeaturecodescheme_node_form':
+        case 'unittransfer_node_form':
             $unsetDeleteButton = FALSE;
             break;
     }
@@ -1558,8 +1559,6 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             _unset_menu_items($form, $form_id);
             break;
         case 'unittransfer_node_form' :
-            unset($form['field_parent_node']);
-            unset($form['field_weight']);
             _unset_menu_items($form, $form_id);
             unset($form['field_ref_unittransferfactors']);
             if (!isset($form['nid']['#value'])) {
@@ -1567,11 +1566,9 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             }
             break;
         case 'unittransferfactors_node_form' :
-            unset($form['field_parent_node']);
-            unset($form['field_weight']);
             _unset_menu_items($form, $form_id);
-            unset($form['field_ref_counter']);
-
+            //unset($form['field_counter_group']);
+            
             break;
         case 'rate_node_form' :
             unset($form['field_ref_tariffplan']);
