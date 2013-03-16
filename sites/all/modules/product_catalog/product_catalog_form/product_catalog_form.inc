@@ -172,6 +172,7 @@ function _load_node_form($buildType,$nodeType=NULL,$nid=NULL,$params=NULL){
 				return;
 			}
 			$node = node_load($nid);
+            $nodeType = $node->type;
 			break;
 		default:
 			//set error message
