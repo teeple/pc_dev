@@ -609,6 +609,10 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
                         = $treeNodeCounterItem->node_field_data_field_ref_counter_title;
                 }
                 
+                if(isset($options[$form['#node']->field_ref_counter['und'][0]['nid']])){
+                    unset($options[$form['#node']->field_ref_counter['und'][0]['nid']]);
+                }
+                
                 /*
                 $basicCounterList = array();
                 $tempList = _get_default_basic_counters($productNid);
