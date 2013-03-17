@@ -260,6 +260,20 @@
 							},
 						};
 						break;
+
+					case "counter_shared":
+						menus.custom_create._disabled = false;
+						menus.custom_create.submenu = {
+							// "mobile_counter_main" : {
+							"counter_shared" : {
+								"label" : "Select Counter",
+								action : function(node) {
+									$.fn.loadSelectForm(node);
+								}
+							},
+						};
+						break;
+
 					case "nonusage_deposit":
 						menus.custom_create._disabled = false;
 						menus.custom_create.submenu = {

@@ -40,6 +40,8 @@ function pc_commoncode_services_update($code) {
     
     $commonCode = _services_arg_value($code, 'code');
     
+    error_log('code raw: '.json_encode($code));
+    
     $code_list = array();
     $code_list[] = (object)$commonCode;
     _commoncode_update_or_create($code_list, $commonCode['codeGroup']);

@@ -112,7 +112,7 @@ function _add_ajax_submit_callback($form_id, &$form) {
         case 'prdnonusagerecurringbonusscheme_node_form' :
         case 'prdnonusagerollover_node_form' :
         case 'prdnonusagerechargeblock_node_form' :
-        case 'unittransferfactors_node_form' :
+        case 'unittransferfactor_node_form' :
         case 'conditionwhatusagetypefactors_node_form' :
         case 'conditionwhatnonusagetypefactors_node_form' :
         case 'prdattributefeaturecode_node_form' :
@@ -1565,7 +1565,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
                 $form['actions']['submit']['#submit'][] = '_unittransfer_submit_handler';
             }
             break;
-        case 'unittransferfactors_node_form' :
+        case 'unittransferfactor_node_form' :
             _unset_menu_items($form, $form_id);
             //unset($form['field_counter_group']);
             

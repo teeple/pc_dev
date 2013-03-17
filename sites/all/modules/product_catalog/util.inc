@@ -601,11 +601,38 @@ function _get_redirect_url_in_view_n_delete($viewOrDel, $node) {
 			$url['path'] = 'product_designer/' . $serviceDomain->name. '/'. $productType->name . '/list';
 		}
 		
-		$fragment = array('Main' => '',
-				'Additional' =>'quickset-products=1',
-				'VAS' =>'quickset-products=2',
-				'Package' =>'quickset-products=3');
-		$url['fragment'] = $fragment[$productType->name];
+		$fragment = array('Mobile' => array( 'Main' => '',
+																				'Additional' =>'quickset-products_with_cug=1',
+																				'VAS' =>'quickset-products_with_cug=2',
+																				'Package' =>'quickset-products_with_cug=3',
+																				'CUG' =>'quickset-products_with_cug=4'),
+											'IPTV' 	=> array( 'Main' => '',
+																				'Additional' =>'quickset-products=1',
+																				'VAS' =>'quickset-products=2',
+																				'Package' =>'quickset-products=3'),
+											'Broadband' => array( 'Main' => '',
+																				'Additional' =>'quickset-products=1',
+																				'VAS' =>'quickset-products=2',
+																				'Package' =>'quickset-products=3'),
+											'VoIP' 	=> array( 'Main' => '',
+																				'Additional' =>'quickset-products_with_cug=1',
+																				'VAS' =>'quickset-products_with_cug=2',
+																				'Package' =>'quickset-products_with_cug=3',
+																				'CUG' =>'quickset-products_with_cug=4'),
+											'Satellite' 	=> array( 'Main' => '',
+																				'Additional' =>'quickset-products=1',
+																				'VAS' =>'quickset-products=2',
+																				'Package' =>'quickset-products=3'),
+											'Dummy' 	=> array( 'Main' => '',
+																				'Additional' =>'quickset-products=1',
+																				'VAS' =>'quickset-products=2',
+																				'Package' =>'quickset-products=3'),
+											'Bundle' 	=> array( 'Main' => '',
+																				'Additional' =>'quickset-products=1',
+																				'VAS' =>'quickset-products=2',
+																				'Package' =>'quickset-products=3'),
+								);
+		$url['fragment'] = $fragment[$serviceDomain->name][$productType->name];
 		
 		break;
 
@@ -752,15 +779,45 @@ function _get_redirect_url_in_create_n_list($addOrList, $content_type, $params) 
 	switch($content_type) {
 	case 'simpleproductoffering':
 		$tempArray = explode('/', $params);
+		
 		$url['path'] = 'product_designer/' . join('/', $tempArray) . '/' . $addOrList;
 		
+		$serviceDomain = $tempArray[0];
 		$productType = $tempArray[1];
 		
-		$fragment = array('Main' => '',
-				'Additional' =>'quickset-products=1',
-				'VAS' =>'quickset-products=2',
-				'Package' =>'quickset-products=3');
-		$url['fragment'] = $fragment[$productType];
+		$fragment = array('Mobile' => array( 'Main' => '',
+																				'Additional' =>'quickset-products_with_cug=1',
+																				'VAS' =>'quickset-products_with_cug=2',
+																				'Package' =>'quickset-products_with_cug=3',
+																				'CUG' =>'quickset-products_with_cug=4'),
+											'IPTV' 	=> array( 'Main' => '',
+																				'Additional' =>'quickset-products=1',
+																				'VAS' =>'quickset-products=2',
+																				'Package' =>'quickset-products=3'),
+											'Broadband' => array( 'Main' => '',
+																				'Additional' =>'quickset-products=1',
+																				'VAS' =>'quickset-products=2',
+																				'Package' =>'quickset-products=3'),
+											'VoIP' 	=> array( 'Main' => '',
+																				'Additional' =>'quickset-products_with_cug=1',
+																				'VAS' =>'quickset-products_with_cug=2',
+																				'Package' =>'quickset-products_with_cug=3',
+																				'CUG' =>'quickset-products_with_cug=4'),
+											'Satellite' 	=> array( 'Main' => '',
+																				'Additional' =>'quickset-products=1',
+																				'VAS' =>'quickset-products=2',
+																				'Package' =>'quickset-products=3'),
+											'Dummy' 	=> array( 'Main' => '',
+																				'Additional' =>'quickset-products=1',
+																				'VAS' =>'quickset-products=2',
+																				'Package' =>'quickset-products=3'),
+											'Bundle' 	=> array( 'Main' => '',
+																				'Additional' =>'quickset-products=1',
+																				'VAS' =>'quickset-products=2',
+																				'Package' =>'quickset-products=3'),
+								);
+									
+		$url['fragment'] = $fragment[$serviceDomain][$productType];
 		break;
 	case 'counter':
 		$url['path'] = 'common/counter/'.$addOrList.'/'.$params;
