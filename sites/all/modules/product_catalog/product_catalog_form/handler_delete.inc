@@ -74,6 +74,7 @@ function product_catalog_form_node_delete($node){
 			
 			//카운터를 사용하는 다른 컨텐츠 들에 대한 처리도 해 주어야 할듯..상품같은..			
 			//unit transfer			
+			/*
 			foreach($unitTransferView->result as $item){
 				$unitTransferNode = node_load($item->nid);
                 if(isset($unitTransferNode->field_ref_unittransferfactors['und'])){
@@ -89,6 +90,7 @@ function product_catalog_form_node_delete($node){
     				}		
 				}		
 			}
+           */
 			break;
         case 'thresholdscheme':
             //thresholdschemefactors..

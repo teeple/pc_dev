@@ -690,7 +690,7 @@ function _unittransfer_submit_handler($form,$form_state){
 	
 	$unitTransferNode = node_load($form_state['values']['nid']);
 	
-    //create unittransferfactors
+    //create unittransferfactor
     $viewResult = views_get_view_result('list_counter_group_for_unittransfer', 'panel_pane_1');
     
     foreach($viewResult as $item){
