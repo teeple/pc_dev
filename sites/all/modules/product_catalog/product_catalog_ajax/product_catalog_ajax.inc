@@ -26,7 +26,7 @@ function _load_tree_item_mixed_with_node_and_term($rootNode,$grandParentNode=NUL
 		case 'number_special':
 			$vocaName = 'tpl_numberspecial';
 			break;
-		default :
+        default :
 			$vocaName = NULL;
 	}
 	
@@ -639,7 +639,7 @@ function load_required_js_css_before_ajax_load(){
 				drupal_add_js($product_catalog_tree_path  . $jsContextMenuSettingsPath);
 				
     	} else {
-    		drupal_add_js($product_catalog_tree_path  . '/js/product_catalog_tree_context_menu_setting_Mobile.js');
+    		drupal_add_js($product_catalog_tree_path  . '/js/product_catalog_tree_context_menu_setting_Common.js');
     	}
     	
     	drupal_add_js($product_catalog_tree_path  . '/js/product_catalog_tree_type_setting.js');
