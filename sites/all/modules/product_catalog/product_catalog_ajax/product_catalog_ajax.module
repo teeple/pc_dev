@@ -959,7 +959,22 @@ function product_catalog_ajax_select_submit() {
       	node_save($child);
       	$js_data['append_to'] = 'last';
       	break;
-      	
+    
+    case 'counter_shared':
+    		$child-Type = 'treenodecounter';
+    		
+    		$term_tree = taxonomy_get_term_by_name('Main', 'countermainoraccu');
+    		$child->field_main_or_accumulated['und'][0]['tid'] = current($term_tree)->tid;
+    		
+    		$child->field_ref_counter['und'][0]['nid'] = $childNid;
+    		$child->field_weight['und'][0]['value'] = $weight;
+    		$child->field_ref_product['und'][0]['nid'] = $tmpProductNid[1];
+    		node_save($child);
+    		$js_data['append_to'] = 'inside';
+    		$js_data['replace_or_append'] = 'replace';
+    		
+    		break;
+    			
 	  case 'counter_accumulated':
         $child->type = 'treenodecounter';
         
