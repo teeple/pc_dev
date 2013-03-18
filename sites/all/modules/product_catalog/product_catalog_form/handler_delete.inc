@@ -66,31 +66,7 @@ function product_catalog_form_node_delete($node){
 			form_set_error("You should remove the items referencing this counter");
 			return;
 			
-			//unittransfer view
-			$unitTransferView = views_get_view('list_unittransfer');
-			$unitTransferView->set_display('panel_pane_1');
-			$unitTransferView->execute();
-			$counterNode = $node;
 			
-			//카운터를 사용하는 다른 컨텐츠 들에 대한 처리도 해 주어야 할듯..상품같은..			
-			//unit transfer			
-			/*
-			foreach($unitTransferView->result as $item){
-				$unitTransferNode = node_load($item->nid);
-                if(isset($unitTransferNode->field_ref_unittransferfactors['und'])){
-    				$unitTransferFactorsCount = count($unitTransferNode->field_ref_unittransferfactors['und']);
-    				for($i=0;$i<$unitTransferFactorsCount;$i++){
-    					$factorNode = node_load($unitTransferNode->field_ref_unittransferfactors['und'][$i]['nid']);
-    					if(isset($factorNode->field_ref_counter['und'][0]['nid'])){
-    						if($factorNode->field_ref_counter['und'][0]['nid'] == $counterNode->nid){
-    							node_delete($factorNode->nid);
-    							unset($unitTransferNode->field_ref_unittransferfactors['und'][$i]);
-    						}
-    					}
-    				}		
-				}		
-			}
-           */
 			break;
         case 'thresholdscheme':
             //thresholdschemefactors..

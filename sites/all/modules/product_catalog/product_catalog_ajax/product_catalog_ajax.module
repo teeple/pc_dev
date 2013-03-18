@@ -914,7 +914,7 @@ function product_catalog_ajax_select_submit() {
       $weight += $weightStep;
       
       switch($rel_type) {
-      case 'nonusage_unittransfer_scheme':
+       case 'nonusage_unittransfer_scheme':
       	_remove_existing_children($tmpProductNid[1], $tmpParentNid[1]);
       	
       	$child->type = 'treenodeunittransferscheme';
@@ -929,7 +929,6 @@ function product_catalog_ajax_select_submit() {
       	$js_data['replace_or_append'] = 'replace';
       	
       	break;
-
 	  case 'attribute_subscriber_lifecycle_scheme':
 				_remove_existing_children($tmpProductNid[1], $tmpParentNid[1]);
       	
@@ -1205,6 +1204,13 @@ function product_catalog_ajax_select_submit() {
         node_save($child);        
         $js_data['append_to'] = 'inside'; 
         break;
+      case 'unittransfer':
+        $child->type = 'unittransferfactor';
+        $child->field_weight['und'][0]['value'] = $weight;
+        $child->field_counter_group['und'][0]['tid'] = $childNid;
+        node_save($child);        
+        $js_data['append_to'] = 'inside'; 
+        break;
       }
       $js_data['children'][] = get_children_stored_procedure($child->nid,$parentNid);
   }
@@ -1327,7 +1333,7 @@ function _replace_arguments($origArgs, $qtabConfig, $args) {
 
 	$newArgString = $origArgs;
 	$qtabConfigArgList = explode('/', $origArgs);
-	$reservedArgList = array('$productNid', '$tariffplanNid','$voucherCardTypeNid','$nid', '$numberSpecialNid','$numberSpecialNidForDetail','[arg]', '[Exclude]', '[Include]', '$refTreeTid');
+	$reservedArgList = array('$productNid', '$tariffplanNid','$voucherCardTypeNid','$nid', '$unitTransferNid', '$numberSpecialNid','$numberSpecialNidForDetail','[arg]', '[Exclude]', '[Include]', '$refTreeTid');
 
 	$matchedArgList = array_intersect($qtabConfigArgList, $reservedArgList);
 	
@@ -1336,6 +1342,7 @@ function _replace_arguments($origArgs, $qtabConfig, $args) {
 			case '$productNid':
 			case '$tariffplanNid' :
 			case '$voucherCardTypeNid' :
+            case '$unitTransferNid':
 				$newArgString = str_replace($matchedArg, $args['rootId'], $newArgString);
 				break;
 			case '$nid':

@@ -1493,9 +1493,9 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
         case 'unittransfer_node_form' :
             _unset_menu_items($form, $form_id);
             unset($form['field_ref_unittransferfactors']);
-            if (!isset($form['nid']['#value'])) {
-                $form['actions']['submit']['#submit'][] = '_unittransfer_submit_handler';
-            }
+            //if (!isset($form['nid']['#value'])) {
+            //    $form['actions']['submit']['#submit'][] = '_unittransfer_submit_handler';
+            //}
             break;
         case 'unittransferfactor_node_form' :
             _unset_menu_items($form, $form_id);
