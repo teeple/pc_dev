@@ -960,7 +960,7 @@ function product_catalog_ajax_select_submit() {
       	break;
     
     case 'counter_shared':
-    		$child-Type = 'treenodecounter';
+    		$child->type = 'treenodecounter'; 
     		
     		$term_tree = taxonomy_get_term_by_name('Main', 'countermainoraccu');
     		$child->field_main_or_accumulated['und'][0]['tid'] = current($term_tree)->tid;
