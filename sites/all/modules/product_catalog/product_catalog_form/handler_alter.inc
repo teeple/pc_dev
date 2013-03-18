@@ -1585,8 +1585,22 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             break;
         case 'unittransferfactor_node_form' :
             _unset_menu_items($form, $form_id);
-            //unset($form['field_counter_group']);
+            $form['field_counter_group']['#type'] = 'hidden';
+            $form['field_counter_group']['#type'] = 'hidden';
+            $form['field_weight']['#type'] = 'hidden';
+            $form['field_parent_node']['#type'] = 'hidden';
             
+            $options = array();
+            $options['_none'] = '- None -';
+            $view = views_get_view('list_counter');
+            $view->set_display('panel_pane_15');
+            $view->set_arguments(array('0' => $form['field_counter_group']['und']['#default_value'][0]));
+            $view->execute(); 
+            foreach($view->result as $item){
+                $options[$item->nid] = $item->node_title;
+            }
+            
+            $form['field_target_counter_for_ut']['und']['#options'] = $options;
             break;
         case 'rate_node_form' :
             unset($form['field_ref_tariffplan']);
