@@ -205,7 +205,6 @@ function edit_pane_callback($form, &$form_state) {
 }
 
 function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
-
     load_required_js_css_before_ajax_load();
 
     if ((isset($form['#attributes']) && isset($form['#attributes']['class'])) && gettype($form['#attributes']['class']) == 'array') {
@@ -213,6 +212,22 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
     }
     
     switch($form_id) {
+            case 'backup_migrate_ui_manual_backup_load_profile_form':
+                $form['profile']['#type'] = 'hidden';
+                break;
+            case 'backup_migrate_ui_manual_backup_form':
+                $form['source']['#type'] = 'hidden';
+                $form['file']['compression']['#type'] = 'hidden';
+                $form['file']['encryption']['#type'] = 'hidden';
+                $form['file']['token_help']['#type'] = 'hidden';
+                $form['destinations']['#type'] = 'hidden';
+                $form['file']['destination']['#type'] = 'hidden';
+                $form['destination']['destination_id']['#type'] = 'hidden';
+                $form['advanced']['#type'] = 'hidden';
+                $form['destination']['#type'] = 'hidden';
+                $form['save_settings']['#type'] = 'hidden';
+                $form['save_options']['#type'] = 'hidden';
+                break;
     		case 'devicemodel_node_form':
     				_unset_menu_items($form, $form_id);
     				$form['title']['und']['#disabled'] = TRUE;
