@@ -205,7 +205,6 @@ function edit_pane_callback($form, &$form_state) {
 }
 
 function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
-
     load_required_js_css_before_ajax_load();
 
     if ((isset($form['#attributes']) && isset($form['#attributes']['class'])) && gettype($form['#attributes']['class']) == 'array') {
@@ -213,6 +212,25 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
     }
     
     switch($form_id) {
+            case 'backup_migrate_ui_manual_backup_load_profile_form':
+                $form['profile']['#type'] = 'hidden';
+                break;
+            case 'backup_migrate_ui_manual_backup_form':
+                $form['source']['#type'] = 'hidden';
+                $form['file']['compression']['#type'] = 'hidden';
+                $form['file']['encryption']['#type'] = 'hidden';
+                $form['file']['token_help']['#type'] = 'hidden';
+                $form['destinations']['#type'] = 'hidden';
+                $form['file']['destination']['#type'] = 'hidden';
+                $form['destination']['destination_id']['#type'] = 'hidden';
+                $form['destination']['#type'] = 'hidden';
+                $form['save_settings']['#type'] = 'hidden';
+                $form['save_options']['#type'] = 'hidden';
+                $form['advanced']['notify_success_enable']['#type'] = 'hidden';
+                $form['advanced']['notify_success_email']['#type'] = 'hidden';
+                $form['advanced']['notify_failure_enable']['#type'] = 'hidden';
+                $form['advanced']['notify_failure_email']['#type'] = 'hidden';
+                break;
     		case 'devicemodel_node_form':
     				_unset_menu_items($form, $form_id);
     				$form['title']['und']['#disabled'] = TRUE;
@@ -1567,8 +1585,22 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             break;
         case 'unittransferfactor_node_form' :
             _unset_menu_items($form, $form_id);
-            //unset($form['field_counter_group']);
+            $form['field_counter_group']['#type'] = 'hidden';
+            $form['field_counter_group']['#type'] = 'hidden';
+            $form['field_weight']['#type'] = 'hidden';
+            $form['field_parent_node']['#type'] = 'hidden';
             
+            $options = array();
+            $options['_none'] = '- None -';
+            $view = views_get_view('list_counter');
+            $view->set_display('panel_pane_15');
+            $view->set_arguments(array('0' => $form['field_counter_group']['und']['#default_value'][0]));
+            $view->execute(); 
+            foreach($view->result as $item){
+                $options[$item->nid] = $item->node_title;
+            }
+            
+            $form['field_target_counter_for_ut']['und']['#options'] = $options;
             break;
         case 'rate_node_form' :
             unset($form['field_ref_tariffplan']);
