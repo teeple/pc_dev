@@ -223,10 +223,13 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
                 $form['destinations']['#type'] = 'hidden';
                 $form['file']['destination']['#type'] = 'hidden';
                 $form['destination']['destination_id']['#type'] = 'hidden';
-                $form['advanced']['#type'] = 'hidden';
                 $form['destination']['#type'] = 'hidden';
                 $form['save_settings']['#type'] = 'hidden';
                 $form['save_options']['#type'] = 'hidden';
+                $form['advanced']['notify_success_enable']['#type'] = 'hidden';
+                $form['advanced']['notify_success_email']['#type'] = 'hidden';
+                $form['advanced']['notify_failure_enable']['#type'] = 'hidden';
+                $form['advanced']['notify_failure_email']['#type'] = 'hidden';
                 break;
     		case 'devicemodel_node_form':
     				_unset_menu_items($form, $form_id);
