@@ -20,8 +20,6 @@
 							"icon" : {
                 		"image" : "/sites/default/files/icons/attribute.png"
                 	},
-              "select_node" : false,
-              "hover_node" : false,
 				},
 				
 				'attribute_featurecode': {
@@ -115,8 +113,6 @@
 					"icon" : {
                 		"image" : "/sites/default/files/icons4use/puzzle.png"
                 	},
-           "select_node" : false,
-           "hover_node" : false,
 				},
 				"packaged_mandatory" : {
 					"valid_children" : ["prdattributepackaged"],
@@ -253,16 +249,12 @@
 					"icon" : {
 							"image" : "/sites/default/files/icons/wheel.png"
 					},
-					"select_node" : false,
-					"hover_node" : false,
 				},
 				"nonusage_subscription" : {
 					"valid_children" : "none",
 					"icon" : {
 					"image" : "/sites/default/files/icons/ui-menu.png"
 					        },
-					"select_node" : false,
-					"hover_node" : false,
 				},
 				"nonusage_subscription_charge" : {
 					"valid_children" : ["actionpricechargeonetime"],
@@ -565,8 +557,6 @@
 					"icon" : {
 						"image" : "/sites/default/files/icons/basic_rate.png"
 					},
-					"select_node" : false,
-					"hover_node" : false,
 				},
 							"voice_tariffplan_domestic" : {
 								"valid_children" : "none",
@@ -605,8 +595,6 @@
 						"icon" : {
 									"image" : "/sites/default/files/icons/custom_rate.png"
 					  },
-					 "select_node" : false,
-					 "hover_node" : false,
 				},
 				"treeNodeCustomCharge" : {
 					"valid_children" : ["actionpricechargefactors"],
@@ -635,7 +623,9 @@
 					        }
 				},
 							"actionpricediscountfactors" : {
-								"valid_children" : ["conditioncommonand_usage_voice",
+								"valid_children" : [
+																		"conditioncommonand",
+																		"conditioncommonand_usage_voice",
 																		"conditioncommonand_usage_sms",
 																		"conditioncommonand_usage_data",
 																		"conditioncommonand_usage_mms",

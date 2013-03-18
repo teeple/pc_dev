@@ -20,6 +20,7 @@ function _product_for_export($exportItemNids=NULL){
     
     foreach($viewResult as $record) {
     */
+    
     if(count($exportItemNids) == 1) {
     	$exportItemNids = array($exportItemNids);
     }
@@ -61,11 +62,11 @@ function _product_for_export($exportItemNids=NULL){
 		
 		$nonUsage['threshold_scheme'] = _get_thresdhold_scheme($node);
 		$nonUsage['deposit_scheme'] = _get_deposit_scheme($node);
-        $nonUsage['recurring_scheme'] = _get_recurring_scheme($node->nid);
+    $nonUsage['recurring_scheme'] = _get_recurring_scheme($node->nid);
 		$nonUsage['onetime_charge'] = _get_onetime_charge($node->nid);
 		$nonUsage['onetime_charge_discount_on_main'] = _get_onetime_charge_discount($node->nid);
 		
-        $product['nonusage'] = $nonUsage;
+    $product['nonusage'] = $nonUsage;
 		$product['usage'] = array();
 
 		// $product['rating_rules'] = rating_rules_export_by_content_type('rating_rule_export_product' ,  $products[$i]->nid);
@@ -132,8 +133,54 @@ function _get_thresdhold_scheme($product) {
     }
 	return $scheme;
 }
-		
 
+function _get_recurring_scheme($productNid) {
+	$retArray = array();
+	
+	$view_name = 'list_child_item_for_product';
+	$display = 'panel_pane_1';
+	$args = array(
+		'0' => $productNid,
+		'1' => 'prdnonusagerecurringchargescheme'
+	);
+	$records = _get_nids_from_views($view_name, $display, $args);
+	$chargeScheme = node_load(current($records));
+	
+	/*
+	$retArray['charge_scheme'] = array(
+			'rcrr_period_type'			 
+					=> !empty($chargeScheme->field_charging_cycle_type)? $chargeScheme->field_charging_cycle_type['und'][0]['value']: NULL,
+	);
+	*/
+	
+	$args[1] = 'prdnonusagerecurringbonusscheme';
+	$records = _get_nids_from_views($view_name, $display, $args);
+	$bonusScheme = node_load(current($records));
+	
+	dsm($bonusScheme, 'bonusScheme');
+	$rcrr_charging_day_arr = array('1' => NULL,
+												'2' => !empty($bonusScheme->field_rcrr_charging_day_week)? $bonusScheme->field_rcrr_charging_day_week['und'][0]['value'] : NULL,
+												'3' => NULL,
+												'4' => !empty($bonusScheme->field_rcrr_charging_day_monthly)? $bonusScheme->field_rcrr_charging_day_monthly['und'][0]['value'] : NULL);
+  
+  $rcrr_charging_day = !empty($bonusScheme->field_bonus_cycle_type)? $rcrr_charging_day_arr[$bonusScheme->field_bonus_cycle_type['und'][0]['value']]: NULL;
+  
+  $retArray['bonus_scheme'] = array(
+		'rcrr_period_type'
+			=> !empty($bonusScheme->field_bonus_cycle_type)? $bonusScheme->field_bonus_cycle_type['und'][0]['value']: NULL,
+		'rcrr_period_value'
+			=> !empty($bonusScheme->field_bonus_cycle_value)? $bonusScheme->field_bonus_cycle_value['und'][0]['value']: NULL,
+		'rcrr_charging_day'
+			=> $rcrr_charging_day,
+		'rcrr_use_charging_day'
+			=> !empty($bonusScheme->field_related_to_invoice_date)? $bonusScheme->field_related_to_invoice_date['und'][0]['value']: NULL,
+	);
+	
+	return $retArray;
+	
+}
+
+/*
 function _get_recurring_scheme($productNid) {
 	$retArray = array();
 	
@@ -186,6 +233,8 @@ function _get_recurring_scheme($productNid) {
 
 	return $retArray;
 }
+*/
+
 
 /*
 function _get_recurring_charge($productNid) {

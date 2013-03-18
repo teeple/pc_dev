@@ -41,7 +41,8 @@ function _array_export_counter($exportItemNids=NULL){
     $counterTypeTerm = $record->field_field_counter_type[0]['raw']['taxonomy_term'];
     
     if($counterTypeTerm->name === 'Rollover'){
-				$jsonCounter['rollover_month'] = $record->field_field_rollover_months[0]['raw']['value'];
+    		dsm($record, 'record');
+    		$jsonCounter['rollover_month'] = $record->field_field_rollover_months[0]['raw']['value'];
     }
     $jsonCounter['description'] = !empty($record->field_field_description) ? $record->field_field_description[0]['rendered']['#markup']: null;
     $jsonCounter['scale'] = !empty($record->field_field_scale) ? $record->field_field_scale[0]['rendered']['#title']: null;

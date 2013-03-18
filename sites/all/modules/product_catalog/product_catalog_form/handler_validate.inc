@@ -135,6 +135,7 @@ function product_catalog_form_node_validate($node, $form, &$form_state){
 		case 'counter_node_form':
 			// In case Delete Confirmation
 			// 
+			/*
 			if($form_state['values']['op'] == 'Delete') {
 				$view = views_get_view('list_reverse_reference_items');
 				$view->set_display('panel_pane_1');
@@ -148,6 +149,7 @@ function product_catalog_form_node_validate($node, $form, &$form_state){
 				}
 				return;
 			}
+			*/
 			
 			// counter id range validataion
 			$counterType = taxonomy_term_load($form_state['values']['field_counter_type']['und'][0]['tid']);
@@ -158,10 +160,12 @@ function product_catalog_form_node_validate($node, $form, &$form_state){
 					form_set_error('rollover counter id should be between 1000000 and 2000000');
 				}
 				$counterGroupTerm = taxonomy_term_load($form_state['values']['field_counter_group']['und'][0]['tid']);
+				/*
 				if($counterGroupTerm->name == 'REMAINS') {
 					drupal_set_message("Rollover Counter cannot be the 'REMAINS' counter group",'error');
 					form_set_error("Rollover Counter cannot be the 'REMAINS' counter group");
 				}
+				*/
 				
 			} else {
 				$counterGroupTerm = taxonomy_term_load($form_state['values']['field_counter_group']['und'][0]['tid']);
@@ -190,6 +194,12 @@ function product_catalog_form_node_validate($node, $form, &$form_state){
 				drupal_set_message("Only letters and underscore is allowed for voucher card type  id",'error');
 				form_set_error("Only letters and underscore is allowed for voucher card type id");
 			}
+			
+			if(!is_numeric($form_state['values']['field_voucher_id']['und'][0]['value'])) {
+				drupal_set_message("Only Number is allowed for ID",'error');
+				form_set_error("Only Number is allowed for ID");
+			}
+			
 			break;
 			
 		case 'simpleproductoffering_node_form':
