@@ -31,6 +31,10 @@ function _get_vocabulary_name($contentType, $productNode, $serviceType = NULL){
 										'Loyalty Point' => 'tpl_tariffplan_mobile_loyalty_point_deduct_additional',
 										'VOD'	=> 'tpl_tariffplan_mobile_vod_additional',
 									),
+						"CUG" => array(
+										'Voice' => 'tpl_tariffplan_mobile_voice_additional',
+										'SMS'   => 'tpl_tariffplan_mobile_sms_additional',
+									),
 					),
 					"Cross" => array(
 								"Main" => array(

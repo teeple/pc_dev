@@ -960,6 +960,8 @@ function product_catalog_ajax_select_submit() {
       	break;
     
     case 'counter_shared':
+    		_remove_existing_children($tmpProductNid[1], $tmpParentNid[1]);
+    
     		$child->type = 'treenodecounter'; 
     		
     		$term_tree = taxonomy_get_term_by_name('Main', 'countermainoraccu');
