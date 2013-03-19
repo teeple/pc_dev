@@ -570,7 +570,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 
         case 'counter_node_form' :
             $counterTypeTerm = current(taxonomy_get_term_by_name($form_state['counter_type'], 'countertype'));
-
+            $form['field_weight_for_unittransfer']['#type'] = 'hidden';
             // Edit
             if (isset($form['nid']['#value'])) {
                 $form['field_counter_id']['und']['#disabled'] = TRUE;

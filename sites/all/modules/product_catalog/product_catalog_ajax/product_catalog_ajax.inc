@@ -20,6 +20,13 @@ function _load_tree_item_mixed_with_node_and_term($rootNode,$grandParentNode=NUL
             $notAllowedCombinationStr = $productTypeTerm->name.'_'.$billTypeTerm->name;
             break;			
 		case 'tariffplan':
+            $filterTerm = TRUE;
+            $productNode = node_load($rootNode->field_ref_product['und'][0]['nid']);
+            $productTypeTerm = taxonomy_term_load($productNode->field_product_type['und'][0]['tid']);
+            $billTypeTerm = taxonomy_term_load($productNode->field_billing_type['und'][0]['tid']);
+            $notAllowedCombinationStr = $productTypeTerm->name.'_'.$billTypeTerm->name;
+            $vocaName = $rootNode->field_tree_child_voca_name['und'][0]['value'];
+            break;
 		case 'vouchercardtype':
 			$vocaName = $rootNode->field_tree_child_voca_name['und'][0]['value'];
             break;
