@@ -164,7 +164,8 @@ function _offering_submit_characteristic_handler(&$form, &$form_state, &$spec_ch
 function _node_save_handler_for_add_js_settings_after_node_save(&$form, &$form_state){
 	$rootNode = node_load($form_state['values']['nid']);
 	
-	if($rootNode->type === 'tariffplan') {
+	/*
+	if($rootNode->type == 'tariffplan') {
 	    $product = node_load($rootNode->field_ref_product['und'][0]['nid']);
 	    $prdTypeTerm = taxonomy_term_load($product->field_product_type['und'][0]['tid']);
 	
@@ -172,6 +173,7 @@ function _node_save_handler_for_add_js_settings_after_node_save(&$form, &$form_s
 	       _create_default_cugdiscountfactors_in_tariffplan($rootNode);
 	    }
 	}
+	*/
 	
 	add_js_settings_after_node_save($rootNode);
 }
