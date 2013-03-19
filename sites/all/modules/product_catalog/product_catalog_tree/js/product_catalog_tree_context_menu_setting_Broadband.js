@@ -869,6 +869,25 @@
 							$.fn.deleteNode(node);
 						};
 						break;
+						
+					case "actionpricecugdiscountfactors":
+						menus.custom_create._disabled = false;
+						menus.custom_create.submenu = {
+							"actionpricecugdiscountfactors" : {
+								"label" : "ConditionSet",
+								action : function(node) {
+									$.fn.addNode(node, {
+										'childContentType' : 'conditioncommonand'
+									});
+								}
+							},
+						};
+						menus.custom_delete._disabled = false;
+						menus.custom_delete.action = function(node) {
+							$.fn.deleteNode(node);
+						};
+						break;
+						
 					case "actionpriceallowancefactors":
 						menus.custom_create._disabled = false;
 						menus.custom_create.submenu = {
