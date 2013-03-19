@@ -175,7 +175,7 @@ function _get_recurring_scheme($productNid) {
 	  
 	  $retArray['bonus_scheme'] = array(
 			'rcrr_period_type'
-				=> $bonusScheme->field_bonus_cycle_type['und'][0]['value']: NULL,
+				=> $bonusScheme->field_bonus_cycle_type['und'][0]['value'],
 			'rcrr_charging_day'
 				=> $rcrr_charging_day,
 		);
