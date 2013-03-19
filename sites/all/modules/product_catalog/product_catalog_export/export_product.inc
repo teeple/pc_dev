@@ -152,7 +152,7 @@ function _get_recurring_scheme($productNid) {
 	} else {
 		$retArray['charge_scheme'] = array(
 				'rcrr_period_type'			 
-						=> $charging_cycle_type;
+						=> $charging_cycle_type,
 		);
 	}
 		
