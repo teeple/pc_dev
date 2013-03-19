@@ -636,6 +636,18 @@
 								"icon" : {
 									"image" : "/sites/default/files/icons/file.png"
 								}
+
+							},
+
+							"actionpricecugdiscountfactors" : {
+								"valid_children" : [
+																		"conditioncommonand",
+																		"conditioncommonand_usage_voice",
+																		"conditioncommonand_usage_sms",
+								],
+								"icon" : {
+									"image" : "/sites/default/files/icons/file.png"
+								}
 							},
 							
 				"treeNodeCustomBlock" : {
