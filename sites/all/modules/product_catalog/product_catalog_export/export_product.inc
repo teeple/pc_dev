@@ -171,6 +171,7 @@ function _get_recurring_scheme($productNid) {
 													'3' => NULL,
 													'4' => !empty($bonusScheme->field_rcrr_charging_day_monthly)? $bonusScheme->field_rcrr_charging_day_monthly['und'][0]['value'] : NULL);
 	  
+	  dsm($rcrr_charging_day_arr, 'rcrr_charging_day_arr');
 	  $rcrr_charging_day = $rcrr_charging_day_arr[$bonus_cycle_type];
 	  
 	  $retArray['bonus_scheme'] = array(
