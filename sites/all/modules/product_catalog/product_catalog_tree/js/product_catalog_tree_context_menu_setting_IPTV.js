@@ -969,7 +969,12 @@
 							$.fn.deleteNode(node);
 						};
 						break;
-						
+					case 'conditionwhatcontentprice':
+						menus.custom_delete._disabled = false;
+						menus.custom_delete.action = function(node) {
+							$.fn.deleteNode(node);
+						};
+						break;
 					case "conditioncommonand":
 						menus.custom_create._disabled = false;
 						menus.custom_create.submenu = {
@@ -1120,6 +1125,14 @@
 										action : function(node) {
 											$.fn.addNode(node, {
 												'childContentType' : 'conditionwhatcounter'
+											});
+										}
+									},
+									"Content Price" : {
+										"label" : "Content Price",
+										action : function(node) {
+											$.fn.addNode(node, {
+												'childContentType' : 'conditionwhatcontentprice'
 											});
 										}
 									},
