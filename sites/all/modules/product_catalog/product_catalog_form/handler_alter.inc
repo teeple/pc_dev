@@ -1823,11 +1823,9 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             $view->set_display('panel_pane_1');
             $view->execute(); 
             foreach($view->result as $item){
-                //$options[$item->tid] = $item->node_title;
+                $options[$item->tid] = $item->taxonomy_term_data_name;
             }
-            dsm($view->result);
-            
-            //$form['field_target_counter_for_ut']['und']['#options'] = $options;
+            $form['field_rating_operation']['und']['#options'] = $options;
             
             break;
         /*
