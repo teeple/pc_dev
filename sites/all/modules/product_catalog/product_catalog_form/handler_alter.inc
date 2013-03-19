@@ -140,6 +140,7 @@ function _add_ajax_submit_callback($form_id, &$form) {
         case 'prdattributerequireddevice_node_form' :
         case 'prdattributenumbersaving_node_form' :
         case 'prdcounterlist_node_form':
+        case 'conditionwhatcontentprice_node_form':
             $change = TRUE;
             break;
 
@@ -1810,6 +1811,22 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
                 $newServiceDomainOptions[$keys[$i]] = $values[$i];
             }
             $form['field_service_domain']['und']['#options'] = $newServiceDomainOptions;
+            break;
+        case 'conditionwhatcontentprice_node_form':
+            _unset_menu_items($form, $form_id);
+            $form['field_parent_node']['#type'] = 'hidden';
+            $form['field_weight']['#type'] = 'hidden';
+            
+            $options = array();
+            $options['_none'] = '- None -';
+            $view = views_get_view('list_rating_operation');
+            $view->set_display('panel_pane_1');
+            $view->execute(); 
+            foreach($view->result as $item){
+                $options[$item->tid] = $item->taxonomy_term_data_name;
+            }
+            $form['field_rating_operation']['und']['#options'] = $options;
+            
             break;
         /*
          case 'views_form_list_numberingplan_domestic_for_product_default':
