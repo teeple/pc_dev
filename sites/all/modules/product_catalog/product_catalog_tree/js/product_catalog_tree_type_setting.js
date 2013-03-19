@@ -622,6 +622,14 @@
 							"image" : "/sites/default/files/icons/discount.png"
 					        }
 				},
+				
+				"treeNodeCugDiscount" : {
+					"valid_children" : ["actionpricecugdiscountfactors"],
+					"icon" : {
+							"image" : "/sites/default/files/icons/discount.png"
+					        }
+				},
+				
 							"actionpricediscountfactors" : {
 								"valid_children" : [
 																		"conditioncommonand",
