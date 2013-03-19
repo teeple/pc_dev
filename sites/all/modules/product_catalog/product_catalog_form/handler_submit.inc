@@ -240,7 +240,7 @@ function _create_default_cugdiscountfactors_in_tariffplan($tariffplan) {
   $node->field_weight = array('und' => array(0 => array('value' => 100)));
   $node->field_ref_product = array('und' => array(0 => array('nid' => $product->nid)));
   $node->field_ref_tree_tid = array('und' => array(0 => array('value' => $cugDiscountTerm)));
-  $node->field_ref_tree_nid = array('und' => array(0 => array('nid' => => $tariffplan->nid )));
+  $node->field_ref_tree_nid = array('und' => array(0 => array('nid' => $tariffplan->nid )));
   
 	node_save($node);
 	dsm($node, 'node');
