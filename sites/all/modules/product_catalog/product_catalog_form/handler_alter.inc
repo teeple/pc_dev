@@ -507,6 +507,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             }
             
             if($productBillingTypeTerm->name == 'Prepaid') {
+            		dsm($form, 'form');
             		$form['field_charging_cycle_type']['und']['#default_value'][0] = 1;
             		$form['field_charging_cycle_type']['und']['#disabled'] = TRUE;
             }

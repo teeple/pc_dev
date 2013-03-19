@@ -224,6 +224,28 @@ function _create_default_items_by_voca($product, $voca_name) {
 	}
 }
 
+function _create_default_cugdiscountfactors_in_tariffplan($tariffplan) {
+	global $user;
+	
+	$voca_name = $tariffplan->field_tree_child_voca_name['und'][0]['value'];
+	$cugDiscountTerm = taxonomy_get_term_by_name('CUG Discount', $voca_name);
+	$refTreeTid = current($cugDiscountTerm)->tid;
+	
+	$product = node_load($tariffplan->field_ref_product['und'][0]['nid']);
+	
+	$node = new StdClass();
+	$node->uid = $user->uid;
+	$node->type = 'actionpricecugdiscountfactors';
+	$node->language = 'und';
+	$node->field_weight['und'][0]['value'] = 100;
+	$node->field_ref_product['und'][0]['nid'] = $product->nid;
+	$node->field_ref_tree_tid['und'][0]['value'] = $cugDiscountTerm;
+	$node->field_ref_tree_nid['und'][0]['nid'] = $tariffplan->nid;
+	
+	node_save($node);
+	
+}
+
 function _create_default_items_in_product($product) {
     //dsm('_create_default_items_in_product');
     //dsm($product->field_is_cloned); 
