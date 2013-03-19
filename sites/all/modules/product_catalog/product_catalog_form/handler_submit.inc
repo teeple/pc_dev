@@ -233,18 +233,19 @@ function _create_default_cugdiscountfactors_in_tariffplan($tariffplan) {
 	
 	$product = node_load($tariffplan->field_ref_product['und'][0]['nid']);
 	
-	/*
 	$node = new StdClass();
 	$node->uid = $user->uid;
 	$node->type = 'actionpricecugdiscountfactors';
 	$node->language = 'und';
+	/*
 	$node->field_weight['und'][0]['value'] = 100;
 	$node->field_ref_product['und'][0]['nid'] = $product->nid;
 	$node->field_ref_tree_tid['und'][0]['value'] = $cugDiscountTerm;
 	$node->field_ref_tree_nid['und'][0]['nid'] = $tariffplan->nid;
+	*/
 	
 	node_save($node);
-	*/
+	dsm($node, 'node');
 	
 }
 
