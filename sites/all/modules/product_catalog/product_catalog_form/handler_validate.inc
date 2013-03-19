@@ -150,6 +150,10 @@ function product_catalog_form_node_validate($node, $form, &$form_state){
 				return;
 			}
 			*/
+			if(!is_machine_name($form_state['values']['field_counter_id']['und'][0]['value'])) {
+					drupal_set_message("Only letters and underscore is allowed for counter id",'error');
+					form_set_error("Only letters and underscore is allowed for counter id");
+			}
 			
 			// counter id range validataion
 			$counterType = taxonomy_term_load($form_state['values']['field_counter_type']['und'][0]['tid']);
@@ -182,13 +186,6 @@ function product_catalog_form_node_validate($node, $form, &$form_state){
 			}
 			break;
 		
-		case 'counter_node_form':
-			if(!is_machine_name($form_state['values']['field_counter_id']['und'][0]['value'])) {
-					drupal_set_message("Only letters and underscore is allowed for counter id",'error');
-					form_set_error("Only letters and underscore is allowed for counter id");
-				}
-			break;
-			
 		case 'vouchercardtype_node_form':
 			if(!is_machine_name($form_state['values']['field_voucher_id']['und'][0]['value'])) {
 				drupal_set_message("Only letters and underscore is allowed for voucher card type  id",'error');
@@ -208,6 +205,42 @@ function product_catalog_form_node_validate($node, $form, &$form_state){
 				form_set_error("Only letters and underscore is allowed for product id");
 			}
 			break;
+	
+	  case 'prdnonusagerecurringbonusscheme_node_form':
+	  	$bonus_cycle_types = array( '0' => 'None',
+	  															'1' => 'Daily',
+	  															'2' => 'Weekly',
+	  															'4'	=> 'Monthly');
+	  															
+			$bonus_cycle_type = $bonus_cycle_types[$form_state['values']['field_bonus_cycle_type']['und'][0]['value']];
+			
+			switch($bonus_cycle_type) {
+			case 'Weekly':
+				$charging_day_week = $form_state['values']['field_rcrr_charging_day_week'];
+				if(empty($charging_day_week)) {
+					drupal_set_message("Day of week should be selected",'error');
+					form_set_error("Day of week should be selected");
+				} else if( empty($charging_day_week['und'][0]['value']) ) {
+					drupal_set_message("Day of week should be selected",'error');
+					form_set_error("Day of week should be selected");
+				}
+				
+				break;
+				
+			case 'Monthly':
+				$charging_day_month = $form_state['values']['field_rcrr_charging_day_monthly'];
+				if(empty($charging_day_month)) {
+					drupal_set_message("Day of Monthl should be selected",'error');
+					form_set_error("Day of Monthl should be selected");
+				} else if( empty($charging_day_month['und'][0]['value']) ) {
+					drupal_set_message("Day of Monthl should be selected",'error');
+					form_set_error("Day of Monthl should be selected");
+				}
+				
+				break;
+		  }
+		break;
+	  
 			
    	case 'depositschemefactors_node_form':
 		  // create
