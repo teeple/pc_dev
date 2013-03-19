@@ -493,15 +493,21 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             break;
 
         case 'prdnonusagerecurringchargescheme_node_form' :
-            $productNode = node_load($form['#node'] -> field_ref_product['und'][0]['nid']);
+        		dsm($form, 'form');
+        		$productNode = node_load($form['#node'] -> field_ref_product['und'][0]['nid']);
             $productTypeTerm = taxonomy_term_load($productNode -> field_product_type['und'][0]['tid']);
+            $productBillingTypeTerm = taxonomy_term_load($productNode->field_billing_type['und'][0]['tid']);
+            
             if ($productTypeTerm -> name !== 'Main') {
                 $form['#fieldgroups']['group_recurring_day'] -> format_type = 'hidden';
-                $form['field_related_to_invoice_date']['#type'] = 'hidden';
                 $form['field_charging_day_type']['#type'] = 'hidden';
                 $form['field_rcrr_charging_day_monthly']['#type'] = 'hidden';
                 $form['field_rcrr_charging_day_week']['#type'] = 'hidden';
             }
+            
+            if($productBillingTypeTerm->name == 'Prepaid') {
+            }
+            
             unset($form['field_ref_product']);
             unset($form['field_weight']);
             _unset_menu_items($form, $form_id);
