@@ -131,6 +131,7 @@ function _add_ajax_submit_callback($form_id, &$form) {
         case 'numberspecialrate_node_form' :
         case 'actionpriceallowanceonetime_node_form' :
         case 'actionpriceallowancerecurring_node_form' :
+        case 'actionpricecugdiscountfactors_node_form':
         case 'treenodeotheronetimecharge_node_form' :
         case 'treenodeotheronetimechargediscou_node_form' :
         case 'treenodepacketdynamic_node_form' :
@@ -1214,7 +1215,18 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
                 $form['field_range_units']['und']['#disabled'] = TRUE;
             }
             break;
-
+       
+        case 'actionpricecugdiscountfactors_node_form':
+        		unset($form['field_parent_node']);
+        		unset($form['field_weight']);
+        		_unset_menu_items($form, $form_id);
+        		
+        		$form['field_ref_product']['#type'] = 'hidden';
+        		$form['field_ref_tree_tid']['#type'] = 'hidden';
+        		$form['field_ref_tree_nid']['#type'] = 'hidden';
+        		
+        		break;
+       		
         case 'actionbonustransfer_node_form' :
             unset($form['field_parent_node']);
             unset($form['field_weight']);
