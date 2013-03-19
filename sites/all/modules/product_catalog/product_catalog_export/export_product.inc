@@ -160,7 +160,7 @@ function _get_recurring_scheme($productNid) {
 	$records = _get_nids_from_views($view_name, $display, $args);
 	$bonusScheme = node_load(current($records));
 	
-	$bonus_cycle_type = !empty($bonusScheme->field_bonus_cycle_type)? $chargeScheme->field_bonus_cycle_type['und'][0]['value']: NULL;
+	$bonus_cycle_type = !empty($bonusScheme->field_bonus_cycle_type)? $bonusScheme->field_bonus_cycle_type['und'][0]['value']: NULL;
 	
 	if(empty($bonus_cycle_type)) {
 		$retArray['bonus_scheme'] = NULL;
