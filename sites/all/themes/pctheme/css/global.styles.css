@@ -2471,6 +2471,7 @@ td.supported_lang ul li.last {
 .jstree-default li[rel*="treenodepacket"] > a:after {content: " >> ";font-weight: bold;}
 
 .jstree-default li[rel*="usage_"] > a:after {content: " >> ";font-weight: bold;}
+.jstree-default li[rel="unittransfer"] > a:after {content: " >> ";font-weight: bold;}
 
 
 /*
