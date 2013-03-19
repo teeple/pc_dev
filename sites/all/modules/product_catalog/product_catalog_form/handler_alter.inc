@@ -1221,9 +1221,9 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
         		unset($form['field_weight']);
         		_unset_menu_items($form, $form_id);
         		
-        		$form['field_ref_product']['#type'] = 'hidden';
-        		$form['field_ref_tree_tid']['#type'] = 'hidden';
-        		$form['field_ref_tree_nid']['#type'] = 'hidden';
+        		//$form['field_ref_product']['#type'] = 'hidden';
+        		//$form['field_ref_tree_tid']['#type'] = 'hidden';
+        		//$form['field_ref_tree_nid']['#type'] = 'hidden';
         		
         		break;
        		
