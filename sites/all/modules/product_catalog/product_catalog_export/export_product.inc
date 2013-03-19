@@ -146,35 +146,40 @@ function _get_recurring_scheme($productNid) {
 	$records = _get_nids_from_views($view_name, $display, $args);
 	$chargeScheme = node_load(current($records));
 	
-	/*
-	$retArray['charge_scheme'] = array(
-			'rcrr_period_type'			 
-					=> !empty($chargeScheme->field_charging_cycle_type)? $chargeScheme->field_charging_cycle_type['und'][0]['value']: NULL,
-	);
-	*/
-	
+	$charging_cycle_type = !empty($chargeScheme->field_charging_cycle_type)? $chargeScheme->field_charging_cycle_type['und'][0]['value']: NULL;
+	if(empty($charging_cycle_type)) {
+		$retArray['charge_scheme'] = NULL;
+	} else {
+		$retArray['charge_scheme'] = array(
+				'rcrr_period_type'			 
+						=> $charging_cycle_type;
+		);
+	}
+		
 	$args[1] = 'prdnonusagerecurringbonusscheme';
 	$records = _get_nids_from_views($view_name, $display, $args);
 	$bonusScheme = node_load(current($records));
 	
-	dsm($bonusScheme, 'bonusScheme');
-	$rcrr_charging_day_arr = array('1' => NULL,
-												'2' => !empty($bonusScheme->field_rcrr_charging_day_week)? $bonusScheme->field_rcrr_charging_day_week['und'][0]['value'] : NULL,
-												'3' => NULL,
-												'4' => !empty($bonusScheme->field_rcrr_charging_day_monthly)? $bonusScheme->field_rcrr_charging_day_monthly['und'][0]['value'] : NULL);
-  
-  $rcrr_charging_day = !empty($bonusScheme->field_bonus_cycle_type)? $rcrr_charging_day_arr[$bonusScheme->field_bonus_cycle_type['und'][0]['value']]: NULL;
-  
-  $retArray['bonus_scheme'] = array(
-		'rcrr_period_type'
-			=> !empty($bonusScheme->field_bonus_cycle_type)? $bonusScheme->field_bonus_cycle_type['und'][0]['value']: NULL,
-		'rcrr_period_value'
-			=> !empty($bonusScheme->field_bonus_cycle_value)? $bonusScheme->field_bonus_cycle_value['und'][0]['value']: NULL,
-		'rcrr_charging_day'
-			=> $rcrr_charging_day,
-		'rcrr_use_charging_day'
-			=> !empty($bonusScheme->field_related_to_invoice_date)? $bonusScheme->field_related_to_invoice_date['und'][0]['value']: NULL,
-	);
+	$bonus_cycle_type = !empty($bonusScheme->field_bonus_cycle_type)? $chargeScheme->field_bonus_cycle_type['und'][0]['value']: NULL;
+	
+	if(empty($bonus_cycle_type)) {
+		$retArray['bonus_scheme'] = NULL;
+	
+	} else {
+		$rcrr_charging_day_arr = array('1' => NULL,
+													'2' => !empty($bonusScheme->field_rcrr_charging_day_week)? $bonusScheme->field_rcrr_charging_day_week['und'][0]['value'] : NULL,
+													'3' => NULL,
+													'4' => !empty($bonusScheme->field_rcrr_charging_day_monthly)? $bonusScheme->field_rcrr_charging_day_monthly['und'][0]['value'] : NULL);
+	  
+	  $rcrr_charging_day = $rcrr_charging_day_arr[$bonus_cycle_type];
+	  
+	  $retArray['bonus_scheme'] = array(
+			'rcrr_period_type'
+				=> $bonusScheme->field_bonus_cycle_type['und'][0]['value']: NULL,
+			'rcrr_charging_day'
+				=> $rcrr_charging_day,
+		);
+	} 
 	
 	return $retArray;
 	

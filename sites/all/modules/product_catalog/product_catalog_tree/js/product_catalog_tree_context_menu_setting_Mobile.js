@@ -439,6 +439,21 @@
 							},
 						};
 						break;
+					
+					case "treeNodeCugDiscount":
+						menus.custom_create._disabled = false;
+						menus.custom_create.submenu = {
+							"treeNodeCugDiscount" : {
+								"label" : "Discount Factors",
+								action : function(node) {
+									$.fn.addNode(node, {
+										'childContentType' : 'actionpricecugdiscountfactors'
+									});
+								}
+							},
+						};
+						break;
+						
 					case "treeNodeCustomBlock":
 						menus.custom_create._disabled = false;
 						menus.custom_create.submenu = {
