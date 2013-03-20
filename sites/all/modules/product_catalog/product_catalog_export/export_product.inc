@@ -130,7 +130,7 @@ function _get_counter_list($product) {
 			$counterNids[] = $item->nid;
 		}
 		
-		$viewResult = views_get_view_result('list_counter_all', 'panel_pane_2', join('+', $counterNids));
+		$viewResult = views_get_view_result('list_counter_all', 'panel_pane_3', join('+', $counterNids));
 		
 		dsm($viewResult, 'viewResult');
 		
