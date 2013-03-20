@@ -207,6 +207,7 @@ function edit_pane_callback($form, &$form_state) {
 }
 
 function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
+    //dsm($form_id,'form_id');    
     load_required_js_css_before_ajax_load();
 
     if ((isset($form['#attributes']) && isset($form['#attributes']['class'])) && gettype($form['#attributes']['class']) == 'array') {
