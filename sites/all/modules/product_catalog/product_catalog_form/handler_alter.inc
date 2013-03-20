@@ -1156,7 +1156,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
                     $form['actions']['submit']['#submit'][] = '_ratinggroup_link_to_numberingplan_domestic';
                 }
             }
-            unset($form['field_ref_numberingplan_domestic']);
+            $form['field_ref_numberingplan_domestic']['#type'] = 'hidden';
             _unset_menu_items($form, $form_id);
             //for selecting all carrier
             $newOptions = array();
