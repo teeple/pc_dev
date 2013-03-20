@@ -496,7 +496,7 @@ function _get_attribute($product) {
 			'field_value_default' => NULL
 		),
 		'cug_member_counter' => array(
-			'through_common_code' => TRUE,
+			'through_common_code' => FALSE,
 				'field' => 'field_cug_member_counter',
 				'field_value' => "field_cug_member_counter['und'][0]['value']",
 				'field_value_default' => NULL,
