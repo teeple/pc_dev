@@ -734,6 +734,9 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             if (isset($form['field_version'])) unset($form['field_version']);
             if (isset($form['field_is_bundle'])) unset($form['field_is_bundle']);
             
+            dsm($form, 'form');
+            dsm($form_state, 'form_state');
+            
             // in case Create
             if (!isset($form['nid']['#value'])) {
                 $paths = explode('/', current_path());
@@ -743,7 +746,8 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
                 $serviceTypeTerm = taxonomy_get_term_by_name($paths[1], 'svcdomain');
                 $form['field_service_type_of_provider']['und']['#default_value'][0] =  current($serviceTypeTerm) -> tid;
                 $form['field_service_type_of_provider']['#type'] = 'hidden';
-                // in case Edit
+                
+            // in case Edit
             } else {
                 $form['field_product_type']['#type'] = 'hidden';
                 $form['field_service_type_of_provider']['#type'] = 'hidden';
@@ -791,6 +795,9 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
                 unset($form['field_treatment_day']);
                 unset($form['field_contract_period']);
                 unset($form['field_roaming_allowed']);
+                unset($form['field_cug_member_counter']);
+                unset($form['field_short_code']);
+                unset($form['field_next_join_product']);
 
             } else {
                 unset($form['field_exclusiveness']);
