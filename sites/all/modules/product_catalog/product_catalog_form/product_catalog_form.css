@@ -100,8 +100,7 @@
 	float: left;
 }
 
-#field-duration-factor-values > .myform .date-no-float.container-inline-date{
-  float: left;
+.myform .date-no-float.container-inline-date.end-date-wrapper{
   clear: none;
   width: 200px;
 }
