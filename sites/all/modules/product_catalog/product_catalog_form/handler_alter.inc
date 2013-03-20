@@ -734,9 +734,6 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             if (isset($form['field_version'])) unset($form['field_version']);
             if (isset($form['field_is_bundle'])) unset($form['field_is_bundle']);
             
-            dsm($form, 'form');
-            dsm($form_state, 'form_state');
-            
             // in case Create
             if (!isset($form['nid']['#value'])) {
                 $paths = explode('/', current_path());

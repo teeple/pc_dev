@@ -124,15 +124,11 @@ function _get_counter_list($product) {
 		$counters = array();
 		$counterNids = array();
 		
-		dsm($view->result, 'view->result');
-		
 		foreach($view->result as $item){
 			$counterNids[] = $item->nid;
 		}
 		
 		$viewResult = views_get_view_result('list_counter_all', 'panel_pane_3', join('+', $counterNids));
-		
-		dsm($viewResult, 'viewResult');
 		
 		foreach($viewResult as $item) {
 			$counters[] = array('counter_id' => $item->field_field_counter_id[0]['raw']['value']);
@@ -153,7 +149,6 @@ function _get_counter_list($product) {
     
     $viewResult = views_get_view_result('list_counter_all', 'panel_pane_2', join('+', $counterNids));
     
-    dsm($viewResult, 'viewResult');
     foreach($viewResult as $item) {
 			$counters[] = array('counter_id' => $item->field_field_counter_id[0]['raw']['value']);
     }
@@ -216,7 +211,6 @@ function _get_recurring_scheme($productNid) {
 													'3' => NULL,
 													'4' => !empty($bonusScheme->field_rcrr_charging_day_monthly)? $bonusScheme->field_rcrr_charging_day_monthly['und'][0]['value'] : NULL);
 	  
-	  dsm($rcrr_charging_day_arr, 'rcrr_charging_day_arr');
 	  $rcrr_charging_day = $rcrr_charging_day_arr[$bonus_cycle_type];
 	  
 	  $retArray['bonus_scheme'] = array(
@@ -500,6 +494,12 @@ function _get_attribute($product) {
 			'field' => 'field_customer_group_type',
 			'field_value' => "field_customer_group_type['und'][0]['tid']",
 			'field_value_default' => NULL
+		),
+		'cug_member_counter' => array(
+			'through_common_code' => TRUE,
+				'field' => 'field_cug_member_counter',
+				'field_value' => "field_cug_member_counter['und'][0]['value']",
+				'field_value_default' => NULL,
 		),
 		'treatment_day' => array(
             'through_common_code' => FALSE,
