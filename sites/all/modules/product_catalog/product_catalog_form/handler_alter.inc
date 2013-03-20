@@ -495,7 +495,6 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             break;
 
         case 'prdnonusagerecurringchargescheme_node_form' :
-        		dsm($form, 'form');
         		$productNode = node_load($form['#node'] -> field_ref_product['und'][0]['nid']);
             $productTypeTerm = taxonomy_term_load($productNode -> field_product_type['und'][0]['tid']);
             $productBillingTypeTerm = taxonomy_term_load($productNode->field_billing_type['und'][0]['tid']);
@@ -508,14 +507,14 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             }
             
             if($productBillingTypeTerm->name == 'Prepaid') {
-            		dsm($form, 'form');
-            		$form['field_charging_cycle_type']['und']['#default_value'][0] = 1;
-            		$form['field_charging_cycle_type']['und']['#disabled'] = TRUE;
+            		unset($form['field_charging_cycle_type']['und']['#options'][3]);
+            		unset($form['field_charging_cycle_type']['und']['#options'][4]);
             }
             
             unset($form['field_ref_product']);
             unset($form['field_weight']);
             _unset_menu_items($form, $form_id);
+            
             break;
         case 'prdnonusagerecurringbonusscheme_node_form' :
             unset($form['field_ref_product']);
@@ -1392,19 +1391,15 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
                 $product = node_load($form_state['build_info']['args'][0] -> field_ref_product['und'][0]['nid']);
                 $currencyTid = $product -> field_price_units['und'][0]['tid'];
                 
-                // $form['field_recurring_charge_id']['und']['#disabled'] = TRUE;
-                
-                
+            // Create
             } else {
                 if (!empty($form_state['root_nid'])) {
                     $product = node_load($form_state['root_nid']);
                     $currencyTid = $product -> field_price_units['und'][0]['tid'];
                     
-                    $viewResult = views_get_view_result('query_recurringcharge_max_id', 'panel_pane_1');
-                    $max_recurring_charge_id = $viewResult[0]->field_field_recurring_charge_id[0]['raw']['value'];
+                    $form['field_recurring_charge_id']['#type'] = 'hidden';
                     
-                    $form['field_recurring_charge_id']['und'][0]['value']['#default_value'] = $max_recurring_charge_id + 1;
-                    // $form['field_recurring_charge_id']['und']['#disabled'] = TRUE;
+                    // $form['field_recurring_charge_id']['und'][0]['value']['#default_value'] = 1;
                     
                 }
                 
