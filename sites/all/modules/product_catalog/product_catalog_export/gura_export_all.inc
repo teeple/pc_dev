@@ -159,7 +159,7 @@ function rating_rule_export($ruleset_template , $export_item,  $nid=NULL, $vars 
                 $display_name = $export_item->field_display_name['und'][0]['value'];
             }
             $data = rating_rules_export_from_view($ruleset_name, $export_item->field_view_name['und'][0]['value'] , $display_name, $nid);
-			if($nid!=NULL)
+			if($nid!=NULL && $ruleset_name == $ruleset_template)
 			{
 				$data['individual_ruleset'] = false;
 				$data['contains_all_rules'] = false;
