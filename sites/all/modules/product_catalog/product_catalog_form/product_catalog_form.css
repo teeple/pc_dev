@@ -100,13 +100,8 @@
 	float: left;
 }
 
-.myform .date-no-float.container-inline-date.start-date-wrapper{
-  clear: none;
-  width: 200px;
-}
-
 .myform .date-no-float.container-inline-date.end-date-wrapper{
-  clear: none;
+  clear: both;
   width: 200px;
 }
 
