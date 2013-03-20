@@ -1396,9 +1396,14 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
                 if (!empty($form_state['root_nid'])) {
                     $product = node_load($form_state['root_nid']);
                     $currencyTid = $product -> field_price_units['und'][0]['tid'];
+
+										/*                    
+                    dsm($form, 'form_actionpricechargerecurring');
                     
+
                     $form['field_recurring_charge_id']['#type'] = 'hidden';
                     $form['field_recurring_charge_id']['und'][0]['value'] = $product->field_product_id['und'][0]['value'];
+                    */
                     
                     // $form['field_recurring_charge_id']['und'][0]['value']['#default_value'] = 1;
                     
