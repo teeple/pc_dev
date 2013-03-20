@@ -518,8 +518,10 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             		unset($form['field_charging_cycle_type']['und']['#options'][3]);
             		unset($form['field_charging_cycle_type']['und']['#options'][4]);
             		
+            		/*
             		$form['field_charging_cycle_type']['und']['#default_value'][0] = 1;
             		$form['field_charging_cycle_type']['und']['#disabled'] = TRUE;
+            		*/
             		
             }
             
