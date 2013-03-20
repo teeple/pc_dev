@@ -743,13 +743,25 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
                 $serviceTypeTerm = taxonomy_get_term_by_name($paths[1], 'svcdomain');
                 $form['field_service_type_of_provider']['und']['#default_value'][0] =  current($serviceTypeTerm) -> tid;
                 $form['field_service_type_of_provider']['#type'] = 'hidden';
-                // in case Edit
+                
+                $productTypeName = $form_state['product_type_name'];
+                if($productTypeName != 'CUG') {
+                	$form['field_cug_member_counter']['#type'] = 'hidden';
+                }
+                
+            // in case Edit
             } else {
                 $form['field_product_type']['#type'] = 'hidden';
                 $form['field_service_type_of_provider']['#type'] = 'hidden';
              		$form['field_billing_type']['und']['#disabled'] = TRUE;
              		$form['field_price_units']['und']['#disabled'] = TRUE;
              		$form['field_product_id']['und']['#disabled'] = TRUE;
+             		
+             		$productTypeTid = $form['field_product_type']['und']['#default_value'][0];
+             		$productTypeName = $form['field_product_type']['und']['#options'][$productTypeTid];
+             		if($productTypeName != 'CUG' ) {
+                	$form['field_cug_member_counter']['#type'] = 'hidden';
+             		}
              		
             }
 
@@ -791,6 +803,9 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
                 unset($form['field_treatment_day']);
                 unset($form['field_contract_period']);
                 unset($form['field_roaming_allowed']);
+                unset($form['field_cug_member_counter']);
+                unset($form['field_short_code']);
+                unset($form['field_next_join_product']);
 
             } else {
                 unset($form['field_exclusiveness']);

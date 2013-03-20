@@ -105,15 +105,55 @@ function _get_deposit_scheme($product) {
 }
 
 function _get_counter_list($product) {
-    $counters = array(); 
+
+	$productType = taxonomy_term_load($product->field_product_type['und'][0]['tid']);
+	$voca_name = _get_vocabulary_name('simpleproductoffering', $product);
+	
+	if($productType->name == 'CUG') {
+		$sharedBalanceTerm = taxonomy_get_term_by_name('Shared Balance', $voca_name);
+		$refTreeTid = current($sharedBalanceTerm)->tid;
+		
+		$counters = array();
+		$view = views_get_view('list_tree_term_child_node_for_product');
+		$view->set_display('panel_pane_1');
+		$view->set_arguments(array('0' => $product->nid,
+															'1' => $refTreeTid
+															)
+												);
+		$view->execute();
+		$counters = array();
+		$counterNids = array();
+		
+		foreach($view->result as $item){
+			$counterNids[] = $item->nid;
+		}
+		
+		$viewResult = views_get_view_result('list_counter_all', 'panel_pane_3', join('+', $counterNids));
+		
+		foreach($viewResult as $item) {
+			$counters[] = array('counter_id' => $item->field_field_counter_id[0]['raw']['value']);
+		}
+		
+		
+	} else {
+	  $counters = array();
     $view = views_get_view('list_prdcounterlist');
     $view->set_display('panel_pane_3');
     $view->set_arguments(array('0' => $product->nid));
     $view->execute();
     $counters = array();
     foreach($view->result as $item){
-    	$counters[] = array('counter_id'=> $item->field_data_field_counter_list_field_counter_list_nid);
+    	// $countersNids[] = array('counter_id'=> $item->field_data_field_counter_list_field_counter_list_nid);
+    	$counterNids[] = $item->field_data_field_counter_list_field_counter_list_nid;
     }
+    
+    $viewResult = views_get_view_result('list_counter_all', 'panel_pane_2', join('+', $counterNids));
+    
+    foreach($viewResult as $item) {
+			$counters[] = array('counter_id' => $item->field_field_counter_id[0]['raw']['value']);
+    }
+  }
+  
 	return $counters;
 }
 
@@ -171,7 +211,6 @@ function _get_recurring_scheme($productNid) {
 													'3' => NULL,
 													'4' => !empty($bonusScheme->field_rcrr_charging_day_monthly)? $bonusScheme->field_rcrr_charging_day_monthly['und'][0]['value'] : NULL);
 	  
-	  dsm($rcrr_charging_day_arr, 'rcrr_charging_day_arr');
 	  $rcrr_charging_day = $rcrr_charging_day_arr[$bonus_cycle_type];
 	  
 	  $retArray['bonus_scheme'] = array(
@@ -455,6 +494,12 @@ function _get_attribute($product) {
 			'field' => 'field_customer_group_type',
 			'field_value' => "field_customer_group_type['und'][0]['tid']",
 			'field_value_default' => NULL
+		),
+		'cug_member_counter' => array(
+			'through_common_code' => FALSE,
+				'field' => 'field_cug_member_counter',
+				'field_value' => "field_cug_member_counter['und'][0]['value']",
+				'field_value_default' => NULL,
 		),
 		'treatment_day' => array(
             'through_common_code' => FALSE,
