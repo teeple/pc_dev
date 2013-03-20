@@ -495,7 +495,6 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             break;
 
         case 'prdnonusagerecurringchargescheme_node_form' :
-        		dsm($form, 'form');
         		$productNode = node_load($form['#node'] -> field_ref_product['und'][0]['nid']);
             $productTypeTerm = taxonomy_term_load($productNode -> field_product_type['und'][0]['tid']);
             $productBillingTypeTerm = taxonomy_term_load($productNode->field_billing_type['und'][0]['tid']);
@@ -508,7 +507,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             }
             
             if($productBillingTypeTerm->name == 'Prepaid') {
-            		dsm($form, 'form');
+            		dsm($form, 'form_billingtype');
             		$form['field_charging_cycle_type']['und']['#default_value'][0] = 1;
             		$form['field_charging_cycle_type']['und']['#disabled'] = TRUE;
             }
