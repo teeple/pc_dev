@@ -20,6 +20,137 @@ function is_machine_name($argStr) {
 function product_catalog_form_node_validate($node, $form, &$form_state) {
 
     switch($form['form_id']['#value']) {
+        case 'numberspecialfactors_node_form':
+            $isDuplicatedPrefix = FALSE;
+            //check duplicated in the form
+            $prefixs = array();
+            foreach($form_state['input']['field_prefix']['und'] as $item){
+                if(strlen($item['value'] > 0)){
+                    $prefixs [] = $item['value'];
+                }
+            }
+            
+            $countPrefixs = array_count_values($prefixs);
+            //dsm($countPrefixs,'countprefixs');
+            foreach($countPrefixs as $item){
+                if($item > 1){
+                    $isDuplicatedPrefix = TRUE;
+                    break;
+                }
+            }
+            
+            //check duplicated in other carrier
+            if(!$isDuplicatedPrefix){
+                $view = views_get_view('list_numberspecial_child_node');
+                $view->set_display('panel_pane_8');
+                $prefixArgs = join('+',$prefixs);
+                $args = array('0' => $form['#node']->field_ref_numberspecial['und'][0]['nid'],
+                              '1' => $prefixArgs
+                );
+                
+                if (isset($form['nid']['#value'])) {
+                    $args['2'] = $form['nid']['#value'];
+                }
+                $view->set_arguments($args);
+                $view->execute();
+                //dsm($view,'view result');
+                if(count($view->result) > 0){
+                    $isDuplicatedPrefix = TRUE;
+                }
+                //dsm($form,'form');
+            }
+            
+            //set error msg to form if duplicated prefix found.
+            if($isDuplicatedPrefix){
+                form_set_error('field_prefix', 'Duplicated Prefix found!');
+            }
+            break;
+        case 'idd_ratinggroup_node_form':
+            $isDuplicatedPrefix = FALSE;
+            //check duplicated in the form
+            $prefixs = array();
+            foreach($form_state['input']['field_prefix']['und'] as $item){
+                if(strlen($item['value'] > 0)){
+                    $prefixs [] = $item['value'];
+                }
+            }
+            
+            $countPrefixs = array_count_values($prefixs);
+            //dsm($countPrefixs,'countprefixs');
+            foreach($countPrefixs as $item){
+                if($item > 1){
+                    $isDuplicatedPrefix = TRUE;
+                    break;
+                }
+            }
+            
+            //check duplicated in other carrier
+            if(!$isDuplicatedPrefix){
+                $view = views_get_view('list_numberingplan_idd_ratinggroup');
+                $view->set_display('panel_pane_4');
+                $prefixArgs = join('+',$prefixs);
+                $args = array('0' => $form['#node']->field_ref_numberingplan_idd['und'][0]['nid'],
+                              '1' => $prefixArgs
+                );
+                
+                if (isset($form['nid']['#value'])) {
+                    $args['2'] = $form['nid']['#value'];
+                }
+                $view->set_arguments($args);
+                $view->execute();
+                //dsm($view,'view result');
+                if(count($view->result) > 0){
+                    $isDuplicatedPrefix = TRUE;
+                }
+                //dsm($form,'form');
+            }
+            
+            //set error msg to form if duplicated prefix found.
+            if($isDuplicatedPrefix){
+                form_set_error('field_prefix', 'Duplicated Prefix found!');
+            }
+            break;
+        case 'carrier_mobile_node_form':
+            $isDuplicated = FALSE;
+            //check duplicated in the form
+            $prefixs = array();
+            foreach($form_state['input']['field_prefix_multiple']['und'] as $item){
+                if(strlen($item['value'] > 0)){
+                    $prefixs [] = $item['value'];
+                }
+            }
+            
+            $countPrefixs = array_count_values($prefixs);
+            //dsm($countPrefixs,'countprefixs');
+            foreach($countPrefixs as $item){
+                if($item > 1){
+                    $isDuplicated = TRUE;
+                    break;
+                }
+            }
+            
+            //check duplicated in other carrier
+            if(!$isDuplicated){
+                $view = views_get_view('list_carrier_mobile');
+                $view->set_display('panel_pane_4');
+                $prefixArgs = join('+',$prefixs);
+                $args = array('0' => $prefixArgs);
+                if (isset($form['nid']['#value'])) {
+                    $args['1'] = $form['nid']['#value'];
+                }
+                $view->set_arguments($args);
+                $view->execute();
+                //dsm($view,'view result');
+                if(count($view->result) > 0){
+                    $isDuplicated = TRUE;
+                }
+            }
+            
+            //set error msg to form if duplicated found.
+            if($isDuplicated){
+                form_set_error('field_prefix_multiple', 'Duplicated Prefix found!');
+            }
+            break;
         case 'packetdynamicl4_node_form' :
             //dsm($node,'$node');
             //check ip address is valid or not.

@@ -208,6 +208,7 @@ function edit_pane_callback($form, &$form_state) {
 }
 
 function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
+    //dsm($form_id,'form_id');    
     load_required_js_css_before_ajax_load();
 
     if ((isset($form['#attributes']) && isset($form['#attributes']['class'])) && gettype($form['#attributes']['class']) == 'array') {
@@ -1037,7 +1038,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
                     $form['actions']['submit']['#submit'][] = '_ratinggroup_link_to_numberingplan_idd';
                 }
             }
-            //unset($form['field_ref_numberingplan_idd']);
+            $form['field_ref_numberingplan_idd']['#type'] = 'hidden';
             _unset_menu_items($form, $form_id);
             //for selecting all carrier
             $newOptions = array();
@@ -1161,7 +1162,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
                     $form['actions']['submit']['#submit'][] = '_ratinggroup_link_to_numberingplan_domestic';
                 }
             }
-            unset($form['field_ref_numberingplan_domestic']);
+            $form['field_ref_numberingplan_domestic']['#type'] = 'hidden';
             _unset_menu_items($form, $form_id);
             //for selecting all carrier
             $newOptions = array();
@@ -1580,6 +1581,19 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             $form['field_ref_tree_tid']['#type'] = 'hidden';
             $form['field_ref_numberspecial']['#type'] = 'hidden';
             _unset_menu_items($form, $form_id);
+            
+            $options = array();
+            $options['_none'] = '- None -';
+            
+            $view = views_get_view('list_number_special_rate');
+            $view->set_display('panel_pane_1');
+            $view->set_arguments(array('0' => $form['#node']->field_ref_numberspecial['und'][0]['nid']));
+            $view->execute(); 
+            foreach($view->result as $item){
+                $options[$item->nid] = $item->node_title;
+            }
+            
+            $form['field_ref_numberspecialrate']['und']['#options'] = $options;
             break;
         case 'numberspecialrate_node_form' :
             unset($form['field_parent_node']);
