@@ -124,6 +124,8 @@ function _get_counter_list($product) {
 		$counters = array();
 		$counterNids = array();
 		
+		dsm($view->result, 'view->result');
+		
 		foreach($view->result as $item){
 			$counterNids[] = $item->nid;
 		}
