@@ -21,6 +21,18 @@ function product_catalog_form_node_submit($node, $form, &$form_state)
 			$node->uid =  $user->uid;
 			break;
 		case 'actionpricechargerecurring_node_form':
+			if(empty($form_state['values']['nid'])) {
+				$product = node_load($form_state['root_nid']);
+
+				/*				
+				$form_state['values']['field_recurring_charge_id']['und'][0]['value'] = '_' . $form_state['values']['field_price_amount_float']['und'][0]['value'];
+				
+				$node->field_recurring_charge_id['und'][0]['value'] = $product->field_product_id['und'][0]['value'] . '_' . $form_state['values']['field_price_amount_float']['und'][0]['value'];
+				node_save($node);
+				*/
+				
+			}
+			
 			break;
 	}
 }
