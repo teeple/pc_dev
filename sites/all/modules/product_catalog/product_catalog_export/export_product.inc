@@ -133,7 +133,7 @@ function _get_counter_list($product) {
 		dsm($viewResult, 'viewResult');
 		
 		foreach($viewResult as $item) {
-			// $counters[] = array('counter_id' => $item->field_field_counter_id['und'][0]['value']);
+			$counters[] = array('counter_id' => $item->field_field_counter_id[0]['raw']['value']);
 		}
 		
 		
@@ -153,7 +153,7 @@ function _get_counter_list($product) {
     
     dsm($viewResult, 'viewResult');
     foreach($viewResult as $item) {
-    // $counters[] = array('counter_id' => $item->field_field_counter_id['und'][0]['value']);
+			$counters[] = array('counter_id' => $item->field_field_counter_id[0]['raw']['value']);
     }
   }
   
