@@ -101,7 +101,7 @@
 }
 
 .myform .date-no-float.container-inline-date.end-date-wrapper{
-  clear: none;
+  clear: both;
   width: 200px;
 }
 
