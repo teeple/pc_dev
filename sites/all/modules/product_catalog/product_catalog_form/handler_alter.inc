@@ -1391,19 +1391,15 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
                 $product = node_load($form_state['build_info']['args'][0] -> field_ref_product['und'][0]['nid']);
                 $currencyTid = $product -> field_price_units['und'][0]['tid'];
                 
-                // $form['field_recurring_charge_id']['und']['#disabled'] = TRUE;
-                
-                
+            // Create
             } else {
                 if (!empty($form_state['root_nid'])) {
                     $product = node_load($form_state['root_nid']);
                     $currencyTid = $product -> field_price_units['und'][0]['tid'];
                     
-                    $viewResult = views_get_view_result('query_recurringcharge_max_id', 'panel_pane_1');
-                    $max_recurring_charge_id = $viewResult[0]->field_field_recurring_charge_id[0]['raw']['value'];
+                    $form['field_recurring_charge_id']['und']['#type'] = 'hidden';
                     
-                    $form['field_recurring_charge_id']['und'][0]['value']['#default_value'] = $max_recurring_charge_id + 1;
-                    // $form['field_recurring_charge_id']['und']['#disabled'] = TRUE;
+                    // $form['field_recurring_charge_id']['und'][0]['value']['#default_value'] = 1;
                     
                 }
                 

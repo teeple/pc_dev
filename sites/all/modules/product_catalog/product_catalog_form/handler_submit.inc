@@ -20,6 +20,11 @@ function product_catalog_form_node_submit($node, $form, &$form_state)
 		case 'actionpricefactors_node_form':
 			$node->uid =  $user->uid;
 			break;
+		case 'actionpricechargerecurring_node_form':
+			dsm($node, 'node');
+			dsm($form, 'form');
+			dsm($form_state, 'form_state');
+			break;
 	}
 }
 
