@@ -508,13 +508,22 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             
             if($productBillingTypeTerm->name == 'Prepaid') {
             		dsm($form, 'form_billingtype');
+            		dsm($form_state, 'form_state_billingtype');
+            		
+            		$tempOptions = array_pop($form['field_charging_cycle_type']['und']['#options']);
+            		$tempOptions = array_pop($tempOptions);
+            		$form['field_charging_cycle_type']['und']['#options'] = $tempOptions;
+            		
+            		/*
             		$form['field_charging_cycle_type']['und']['#default_value'][0] = 1;
             		$form['field_charging_cycle_type']['und']['#disabled'] = TRUE;
+            		*/
             }
             
             unset($form['field_ref_product']);
             unset($form['field_weight']);
             _unset_menu_items($form, $form_id);
+            
             break;
         case 'prdnonusagerecurringbonusscheme_node_form' :
             unset($form['field_ref_product']);
