@@ -747,6 +747,11 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
                 $form['field_service_type_of_provider']['und']['#default_value'][0] =  current($serviceTypeTerm) -> tid;
                 $form['field_service_type_of_provider']['#type'] = 'hidden';
                 
+                $productTypeName = $form_state['product_type_name'];
+                if($productTypeName != 'CUG') {
+                	$form['field_cug_member_counter']['#type'] = 'hidden';
+                }
+                
             // in case Edit
             } else {
                 $form['field_product_type']['#type'] = 'hidden';
@@ -754,6 +759,12 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
              		$form['field_billing_type']['und']['#disabled'] = TRUE;
              		$form['field_price_units']['und']['#disabled'] = TRUE;
              		$form['field_product_id']['und']['#disabled'] = TRUE;
+             		
+             		$productTypeTid = $form['field_product_type']['und']['#default_value'][0];
+             		$productTypeName = $form['field_product_type']['und']['#options'][$productTypeTid];
+             		if($productTypeName != 'CUG' ) {
+                	$form['field_cug_member_counter']['#type'] = 'hidden';
+             		}
              		
             }
 
