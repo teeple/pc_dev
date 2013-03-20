@@ -1388,11 +1388,11 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
         case 'actionpricediscount_node_form' :
         case 'actionpricechargeonetime_node_form' :
         case 'actionpricechargerecurring_node_form' :
-            unset($form['field_parent_node']);
-            unset($form['field_weight']);
-            unset($form['field_ref_product']);
-            unset($form['field_ref_tree_tid']);
-
+            $form['field_parent_node']['#type'] = 'hidden';
+            $form['field_weight']['#type'] = 'hidden';
+            $form['field_ref_product']['#type'] = 'hidden';
+            $form['field_ref_tree_tid']['#type'] = 'hidden';
+            
             // in case EDIT
             if (isset($form['nid']['#value'])) {
                 $product = node_load($form_state['build_info']['args'][0] -> field_ref_product['und'][0]['nid']);
