@@ -125,7 +125,7 @@ function _get_counter_list($product) {
 		$counterNids = array();
 		
 		foreach($view->result as $item){
-			$counters[] = $item->nid;
+			$counterNids[] = $item->nid;
 		}
 		
 		$viewResult = views_get_view_result('list_counter_all', 'panel_pane_2', join('+', $counterNids));
@@ -146,7 +146,7 @@ function _get_counter_list($product) {
     $counters = array();
     foreach($view->result as $item){
     	// $countersNids[] = array('counter_id'=> $item->field_data_field_counter_list_field_counter_list_nid);
-    	$countersNids[] = $item->field_data_field_counter_list_field_counter_list_nid;
+    	$counterNids[] = $item->field_data_field_counter_list_field_counter_list_nid;
     }
     
     $viewResult = views_get_view_result('list_counter_all', 'panel_pane_2', join('+', $counterNids));
