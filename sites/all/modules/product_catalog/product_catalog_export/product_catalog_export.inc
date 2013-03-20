@@ -92,18 +92,18 @@ function export_deploy($export_type,$export_item_list = NULL, $target){
 	
 	// Create History Record
 	$historyNode = new StdClass();
-  $historyNode->uid = $user->uid;
-  $historyNode->type = 'export_history';
-  $historyNode->language = 'und';
+    $historyNode->uid = $user->uid;
+    $historyNode->type = 'export_history';
+    $historyNode->language = 'und';
 
-	$index=0;
-	foreach($exportItemNids as $nid) {
-		$historyNode->field_reference_node['und'][$index++]['nid'] = $nid;
+    $index=0;
+    foreach($exportItemNids as $nid) {
+	   $historyNode->field_reference_node['und'][$index++]['nid'] = $nid;
 	}
 	
-  $historyNode->field_export_data['und'][0]['safe_value'] = $jsonString;
-  $historyNode->field_export_data['und'][0]['value'] = $jsonString;
-  $historyNode->field_export_type['und'][0]['tid'] = $exportTypeTerm->tid;
+    $historyNode->field_export_data['und'][0]['safe_value'] = $jsonString;
+    $historyNode->field_export_data['und'][0]['value'] = $jsonString;
+    $historyNode->field_export_type['und'][0]['tid'] = $exportTypeTerm->tid;
 
 	//send deploy request
 	$options = array();
@@ -111,7 +111,7 @@ function export_deploy($export_type,$export_item_list = NULL, $target){
 	$options['headers']['content-type']= 'application/json';
 	$options['headers']['User-Agent'] = 'Product Catalog';
 	$options['data'] = $jsonString;
-	$options['timeout'] = 60;
+	$options['timeout'] = 120;
 	
 	if(empty($export_item_list)) {
 		if($target == 'testbed'){
@@ -129,25 +129,35 @@ function export_deploy($export_type,$export_item_list = NULL, $target){
 	}
 	
 	$historyNode->field_export_target['und'][0]['value'] = $target;
-  $historyNode->field_export_target['und'][0]['safe_value'] = $target;
+    $historyNode->field_export_target['und'][0]['safe_value'] = $target;
   
 	foreach($targetItem as $item){
 		$url = $item['safe_value'];
 		$result = drupal_http_request($url, $options);
-dsm($url,'url');		 
-dsm($result,'deploy result');
+        
+        dsm($url,'url');		 
+        dsm($result,'deploy result');
 
 		if($result->code === '200'){
+		    $resultData = json_decode($result->data);
+            //dsm($resultData,'result data');
 			//$historyNode = node_load($historyNodeNid);
-			//if(strpos($result->request,'/cs/') !== FALSE) $historyNode->field_deployed_cs['und'][0]['value'] = TRUE;
-			//if(strpos($result->request,'/ocs/') !== FALSE) $historyNode->field_deployed_ocs['und'][0]['value'] = TRUE;
-			//if(strpos($result->request,'/crm/') !== FALSE) $historyNode->field_deployed_crm['und'][0]['value'] = TRUE;
+			$historyNode->field_ocs_result_code['und'][0]['value'] = $resultData->OCS->result_code;
+            $historyNode->field_ocs_result_reason['und'][0]['value'] = $resultData->OCS->result_reason;
+            $historyNode->field_cs_result_code['und'][0]['value'] = $resultData->CS->result_code;
+            $historyNode->field_cs_result_reason['und'][0]['value'] = $resultData->CS->result_reason;
+            $historyNode->field_crm_result_code['und'][0]['value'] = $resultData->CRM->result_code;
+            $historyNode->field_crm_result_reason['und'][0]['value'] = $resultData->CRM->result_reason;
 			//node_save($historyNode);
-		}
+		}else{
+		    $historyNode->field_ocs_result_reason['und'][0]['value'] = 'Fail';
+            $historyNode->field_cs_result_reason['und'][0]['value'] = 'Fail';
+            $historyNode->field_crm_result_reason['und'][0]['value'] = 'Fail';
+        }
         
 		unset($result->request);
-    $resultString = json_encode($result);
-    $historyNode->field_export_result['und'][] = array('value' => $resultString,'safe_value' => $resultString);
+        $resultString = json_encode($result);
+        $historyNode->field_export_result['und'][] = array('value' => $resultString,'safe_value' => $resultString);
 	}
 	node_save($historyNode);
 	
