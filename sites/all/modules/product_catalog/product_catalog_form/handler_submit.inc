@@ -24,6 +24,7 @@ function product_catalog_form_node_submit($node, $form, &$form_state)
 			dsm($node, 'node');
 			dsm($form, 'form');
 			dsm($form_state, 'form_state');
+			$form['field_recurring_charge_id']['und'][0]['value'] = '11111';
 			break;
 	}
 }
