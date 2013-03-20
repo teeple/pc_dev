@@ -106,7 +106,12 @@
 	width: 200px;
 }
 
-.myform .date-no-float.container-inline-date.end-date-wrapper {
+.myform .date-no-float.container-inline-date .start-date-wrapper {
+  clear: none;
+  width: 200px;
+}
+
+.myform .date-no-float.container-inline-date .end-date-wrapper {
   clear: none;
   width: 200px;
 }
