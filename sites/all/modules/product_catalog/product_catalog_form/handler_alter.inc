@@ -1583,6 +1583,19 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             $form['field_ref_tree_tid']['#type'] = 'hidden';
             $form['field_ref_numberspecial']['#type'] = 'hidden';
             _unset_menu_items($form, $form_id);
+            
+            $options = array();
+            $options['_none'] = '- None -';
+            
+            $view = views_get_view('list_number_special_rate');
+            $view->set_display('panel_pane_1');
+            $view->set_arguments(array('0' => $form['#node']->field_ref_numberspecial['und'][0]['nid']));
+            $view->execute(); 
+            foreach($view->result as $item){
+                $options[$item->nid] = $item->node_title;
+            }
+            
+            $form['field_ref_numberspecialrate']['und']['#options'] = $options;
             break;
         case 'numberspecialrate_node_form' :
             unset($form['field_parent_node']);
