@@ -100,6 +100,12 @@
 	float: left;
 }
 
+#field-duration-factor-values > .myform .date-no-float.container-inline-date{
+  float: left;
+  clear: none;
+  width: 200px;
+}
+
 .myform .date-no-float.container-inline-date {
 	float: left;
 	clear: none;
