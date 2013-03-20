@@ -163,7 +163,7 @@ function ocs_migrate_fce_rate_submit($form, &$form_state)
         list( $a, $b) = explode( ':', $form['#call_type']);
 		$nids = array_keys( taxonomy_get_term_by_name( 
             ($a == 'intl') ? 'International' : 'Domestic',
-            ($b == 'voice') ? 'tpl_tariffplan_mobile_voice' : 'tpl_tariffplan_mobile_sms'));
+            ($b == 'voice') ? 'tpl_tariffplan_voice' : 'tpl_tariffplan_sms'));
 
 		// tid list
 		$tid = array( 'tree_tid' => $nids[0]);

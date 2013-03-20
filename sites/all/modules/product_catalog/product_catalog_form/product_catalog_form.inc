@@ -12,60 +12,13 @@ function _get_vocabulary_name($contentType, $productNode, $serviceType = NULL){
 					'Dummy' => 'tpl_default_tree_dummy',
 				);
 			$reserved_voca_name['tariffplan'] = array(
-					"Mobile" => array(
-						"Main" => array(
-									'Voice' => 'tpl_tariffplan_mobile_voice',
-									'SMS'   => 'tpl_tariffplan_mobile_sms',
-									'Data'  => 'tpl_tariffplan_mobile_data',
-									'MMS'	=> 'tpl_tariffplan_mobile_mms',
-									'CRBT'	=> 'tpl_tariffplan_mobile_crbt',
-									'Loyalty Point' => 'tpl_tariffplan_mobile_loyalty_point_deduct',
-									'VOD'	=> 'tpl_tariffplan_mobile_vod',
-								),
-						"Additional" => array(
-										'Voice' => 'tpl_tariffplan_mobile_voice_additional',
-										'SMS'   => 'tpl_tariffplan_mobile_sms_additional',
-										'Data'  => 'tpl_tariffplan_mobile_data_additional',
-										'MMS'	=> 'tpl_tariffplan_mobile_mms_additional',
-										'CRBT'	=> 'tpl_tariffplan_mobile_crbt_additional',
-										'Loyalty Point' => 'tpl_tariffplan_mobile_loyalty_point_deduct_additional',
-										'VOD'	=> 'tpl_tariffplan_mobile_vod_additional',
-									),
-						"CUG" => array(
-										'Voice' => 'tpl_tariffplan_mobile_voice_additional',
-										'SMS'   => 'tpl_tariffplan_mobile_sms_additional',
-									),
-					),
-					"Cross" => array(
-								"Main" => array(
-										'Mobile_Voice' => 'tpl_tariffplan_mobile_voice_additional',
-										'Mobile_SMS'   => 'tpl_tariffplan_mobile_sms_additional',
-										'Mobile_Data'  => 'tpl_tariffplan_mobile_data_additional',
-										'Mobile_MMS'	=> 'tpl_tariffplan_mobile_mms_additional',
-										'Mobile_CRBT'	=> 'tpl_tariffplan_mobile_crbt_additional',
-										'Mobile_Loyalty Point' => 'tpl_tariffplan_mobile_loyalty_point_deduct_additional',
-										'Mobile_VOD'	=> 'tpl_tariffplan_mobile_vod_additional',
-										'VoIP_Voice' => 'tpl_tariffplan_mobile_voice_additional',
-										'VoIP_SMS'   => 'tpl_tariffplan_mobile_sms_additional',
-										'VoIP_Loyalty Point'  => 'tpl_tariffplan_mobile_loyalty_point_deduct_additional',
-										
-										'IPTV_VOD'  => 'tpl_tariffplan_mobile_vod_additional',
-										
-										// 'VoIP_Voice' => 'tpl_tariffplan_voip_voice_additional',
-										// 'VoIP_SMS'   => 'tpl_tariffplan_voip_sms_additional',
-										// 'VoIP_Loyalty Point'  => 'tpl_tariffplan_voip_loyalty_point_deduct_additional',
-										
-										// 'IPTV_VOD'  => 'tpl_tariffplan_cross_iptv_vod',
-								),
-					),
-					"IPTV" => array(
-								"Main" => array(
-										'VOD' => 'tpl_tariffplan_mobile_vod',
-										),
-								"Additional" => array(
-										'VOD' => 'tpl_tariffplan_mobile_vod',
-										),
-					),
+					'Voice' => 'tpl_tariffplan_voice',
+					'SMS'   => 'tpl_tariffplan_sms',
+					'Data'  => 'tpl_tariffplan_data',
+					'MMS'	=> 'tpl_tariffplan_mms',
+					'CRBT'	=> 'tpl_tariffplan_crbt',
+					'Loyalty Point' => 'tpl_tariffplan_loyalty_point_deduct',
+					'VOD'	=> 'tpl_tariffplan_vod',
 				);
 	
 	//load taxonomy
@@ -83,8 +36,7 @@ function _get_vocabulary_name($contentType, $productNode, $serviceType = NULL){
 			$voca_name = $reserved_voca_name[$contentType][$serviceDomain];
 			break;
 		case 'tariffplan':
-			//$voca_name = $reserved_voca_name[$contentType][$serviceDomain][$serviceType];
-			$voca_name = $reserved_voca_name[$contentType][$serviceDomain][$productType][$serviceType];
+			$voca_name = $reserved_voca_name[$contentType][$serviceType];
 			break;
 	}
 	return $voca_name;
