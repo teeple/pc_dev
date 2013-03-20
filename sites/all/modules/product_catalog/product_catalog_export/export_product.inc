@@ -124,11 +124,9 @@ function _get_counter_list($product) {
 		$counters = array();
 		dsm($view->result, 'result');
 		
-		/*
 		foreach($view->result as $item){
-			$counters[] = array('counter_id'=> $item->field_data_field_counter_list_field_counter_list_nid);
+			$counters[] = array('counter_id'=> $item->nid);
 		}
-		*/
 		
 	} else {
 	  $counters = array();
