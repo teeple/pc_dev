@@ -1405,7 +1405,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
                     $currencyTid = $product -> field_price_units['und'][0]['tid'];
 
 										$form['field_recurring_charge_id']['#type'] = 'hidden';
-                    // $form['field_recurring_charge_id']['und'][0]['value']['#default_value'] = $product->field_product_id['und'][0]['value'] . '_' . time();
+                    $form['field_recurring_charge_id']['und'][0]['value']['#default_value'] = $product->field_product_id['und'][0]['value'] . '_' . time();
                 }
                 
             }
