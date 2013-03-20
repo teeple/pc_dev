@@ -105,7 +105,33 @@ function _get_deposit_scheme($product) {
 }
 
 function _get_counter_list($product) {
-    $counters = array(); 
+
+	$productType = taxonomy_term_load($product->field_product_type['und'][0]['tid']);
+	$voca_name = _get_vocabulary_name('simpleproductoffering', $product);
+	
+	if($productType->name == 'CUG') {
+		$sharedBalanceTerm = taxonomy_get_term_by_name('Shared Balance', $voca_name);
+		$refTreeTid = current($sharedBalanceTerm)->tid;
+		
+		$counters = array();
+		$view = views_get_view('list_tree_term_child_node_for_product');
+		$view->set_display('panel_pane_1');
+		$view->set_arguments(array('0' => $product->nid,
+															'1' => $refTreeTid
+															)
+												);
+		$view->execute();
+		$counters = array();
+		dsm($view->result, 'result');
+		
+		/*
+		foreach($view->result as $item){
+			$counters[] = array('counter_id'=> $item->field_data_field_counter_list_field_counter_list_nid);
+		}
+		*/
+		
+	} else {
+	  $counters = array();
     $view = views_get_view('list_prdcounterlist');
     $view->set_display('panel_pane_3');
     $view->set_arguments(array('0' => $product->nid));
@@ -114,6 +140,8 @@ function _get_counter_list($product) {
     foreach($view->result as $item){
     	$counters[] = array('counter_id'=> $item->field_data_field_counter_list_field_counter_list_nid);
     }
+  }
+  
 	return $counters;
 }
 
