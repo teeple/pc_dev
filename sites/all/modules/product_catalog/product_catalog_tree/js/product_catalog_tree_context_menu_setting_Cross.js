@@ -177,10 +177,12 @@
 						
 					case "tree_node_counter_main_basic_prepaid":
 					case "tree_node_counter_main_basic_postpaid":
+						/*
 						menus.custom_delete._disabled = false;
 						menus.custom_delete.action = function(node) {
 							$.fn.deleteNode(node);
 						};
+						*/				
 						menus.custom_create._disabled = false;
 						menus.custom_create.submenu = {
 							"treenode_counter_main_basic" : {
@@ -1109,6 +1111,14 @@
 											});
 										}
 									},
+									"Service Domain" : {
+										"label" : "Service Domain",
+										action : function(node) {
+											$.fn.addNode(node, {
+												'childContentType' : 'conditionwhatservicedomain'
+											});
+										}
+									},
 								}
 							},
 							"when" : {
@@ -1186,7 +1196,7 @@
 											});
 										}
 									},
-									"duration" : {
+									"duration" : {	
 										"label" : "Duration",
 										action : function(node) {
 											$.fn.addNode(node, {
@@ -1282,6 +1292,14 @@
 												action : function(node) {
 													$.fn.addNode(node, {
 														'childContentType' : 'conditionwhatcounter'
+													});
+												}
+											},
+											"Service Domain" : {
+												"label" : "Service Domain",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhatservicedomain'
 													});
 												}
 											},
@@ -1451,6 +1469,14 @@
 												action : function(node) {
 													$.fn.addNode(node, {
 														'childContentType' : 'conditionwhatcounter'
+													});
+												}
+											},
+											"Service Domain" : {
+												"label" : "Service Domain",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhatservicedomain'
 													});
 												}
 											},
@@ -1631,6 +1657,14 @@
 													});
 												}
 											},
+											"Service Domain" : {
+												"label" : "Service Domain",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhatservicedomain'
+													});
+												}
+											},
 										}
 									},
 									"when" : {
@@ -1805,6 +1839,14 @@
 												action : function(node) {
 													$.fn.addNode(node, {
 														'childContentType' : 'conditionwhatcounter'
+													});
+												}
+											},
+											"Service Domain" : {
+												"label" : "Service Domain",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhatservicedomain'
 													});
 												}
 											},
@@ -2062,6 +2104,14 @@
 													});
 												}
 											},
+											"Service Domain" : {
+												"label" : "Service Domain",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhatservicedomain'
+													});
+												}
+											},
 										}
 									},
 									"when" : {
@@ -2229,6 +2279,14 @@
 												action : function(node) {
 													$.fn.addNode(node, {
 														'childContentType' : 'conditionwhatcounter'
+													});
+												}
+											},
+											"Service Domain" : {
+												"label" : "Service Domain",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhatservicedomain'
 													});
 												}
 											},
@@ -2463,6 +2521,14 @@
 													});
 												}
 											},
+											"Service Domain" : {
+												"label" : "Service Domain",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhatservicedomain'
+													});
+												}
+											},
 										}
 									},
 									"when" : {
@@ -2694,6 +2760,14 @@
 													});
 												}
 											},
+											"Service Domain" : {
+												"label" : "Service Domain",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhatservicedomain'
+													});
+												}
+											},
 										}
 									},
 									"when" : {
@@ -2908,6 +2982,14 @@
 													});
 												}
 											},
+											"Service Domain" : {
+												"label" : "Service Domain",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhatservicedomain'
+													});
+												}
+											},
 										}
 									},
 									"when" : {
@@ -3098,6 +3180,14 @@
 												action : function(node) {
 													$.fn.addNode(node, {
 														'childContentType' : 'conditionwhatcounter'
+													});
+												}
+											},
+											"Service Domain" : {
+												"label" : "Service Domain",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhatservicedomain'
 													});
 												}
 											},

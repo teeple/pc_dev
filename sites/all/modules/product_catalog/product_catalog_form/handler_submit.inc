@@ -6,6 +6,16 @@ function node_save_handler_to_touch_product($node){
     }
 };
 
+/*
+function product_catalog_form_node_presave($node) {
+	dsm($node, 'node_presave');
+	
+	$product = node_load($node->field_ref_product['und'][0]['nid']);
+	$node->field_recurring_charge_id['und'][0]['value'] = $product->field_product_id['und'][0]['value'] . '_' . $node->field_price_amount_float['und'][0]['value'];
+	
+}
+*/
+
 function product_catalog_form_node_submit($node, $form, &$form_state)
 {
 	global $user;
@@ -21,6 +31,18 @@ function product_catalog_form_node_submit($node, $form, &$form_state)
 			$node->uid =  $user->uid;
 			break;
 		case 'actionpricechargerecurring_node_form':
+			if(empty($form_state['values']['nid'])) {
+				$product = node_load($form_state['root_nid']);
+
+				/*				
+				$form_state['values']['field_recurring_charge_id']['und'][0]['value'] = '_' . $form_state['values']['field_price_amount_float']['und'][0]['value'];
+				
+				$node->field_recurring_charge_id['und'][0]['value'] = $product->field_product_id['und'][0]['value'] . '_' . $form_state['values']['field_price_amount_float']['und'][0]['value'];
+				node_save($node);
+				*/
+				
+			}
+			
 			break;
 	}
 }

@@ -120,6 +120,7 @@ function _add_ajax_submit_callback($form_id, &$form) {
         case 'loyaltypoint_node_form' :
         case 'actionbonustransfer_node_form' :
         case 'conditionwhatcalltype_node_form' :
+        case 'conditionwhatservicedomain_node_form' :
         case 'conditionwhatcounter_node_form' :
         case 'conditionwhatratinggroup_node_form' :
         case 'conditionwhatcounterfortracking_node_form' :
@@ -330,6 +331,11 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             $form['field_weight']['#type'] = 'hidden';
             $form['field_parent_node']['#type'] = 'hidden';
             break;
+        case 'conditionwhatservicedomain_node_form':
+		        $form['field_weight']['#type'] = 'hidden';
+		        $form['field_parent_node']['#type'] = 'hidden';
+		        _unset_menu_items($form, $form_id);
+		        break;
         case 'conditionwhatcardtype_node_form' :
             $form['field_weight']['#type'] = 'hidden';
             $form['field_parent_node']['#type'] = 'hidden';
@@ -1397,16 +1403,8 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
                     $product = node_load($form_state['root_nid']);
                     $currencyTid = $product -> field_price_units['und'][0]['tid'];
 
-										/*                    
-                    dsm($form, 'form_actionpricechargerecurring');
-                    
-
-                    $form['field_recurring_charge_id']['#type'] = 'hidden';
-                    $form['field_recurring_charge_id']['und'][0]['value'] = $product->field_product_id['und'][0]['value'];
-                    */
-                    
-                    // $form['field_recurring_charge_id']['und'][0]['value']['#default_value'] = 1;
-                    
+										$form['field_recurring_charge_id']['#type'] = 'hidden';
+                    $form['field_recurring_charge_id']['und'][0]['value']['#default_value'] = $product->field_product_id['und'][0]['value'] . '_' . time();
                 }
                 
             }
