@@ -122,11 +122,20 @@ function _get_counter_list($product) {
 												);
 		$view->execute();
 		$counters = array();
-		dsm($view->result, 'result');
+		$counterNids = array();
 		
 		foreach($view->result as $item){
-			$counters[] = array('counter_id'=> $item->nid);
+			$counters[] = $item->nid;
 		}
+		
+		$viewResult = views_get_view_result('list_counter_all', 'panel_pane_2', join('+', $counterNids));
+		
+		dsm($viewResult, 'viewResult');
+		
+		foreach($viewResult as $item) {
+			// $counters[] = array('counter_id' => $item->field_field_counter_id['und'][0]['value']);
+		}
+		
 		
 	} else {
 	  $counters = array();
@@ -136,7 +145,15 @@ function _get_counter_list($product) {
     $view->execute();
     $counters = array();
     foreach($view->result as $item){
-    	$counters[] = array('counter_id'=> $item->field_data_field_counter_list_field_counter_list_nid);
+    	// $countersNids[] = array('counter_id'=> $item->field_data_field_counter_list_field_counter_list_nid);
+    	$countersNids[] = $item->field_data_field_counter_list_field_counter_list_nid;
+    }
+    
+    $viewResult = views_get_view_result('list_counter_all', 'panel_pane_2', join('+', $counterNids));
+    
+    dsm($viewResult, 'viewResult');
+    foreach($viewResult as $item) {
+    // $counters[] = array('counter_id' => $item->field_field_counter_id['und'][0]['value']);
     }
   }
   
