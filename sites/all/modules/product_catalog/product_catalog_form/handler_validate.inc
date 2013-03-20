@@ -267,7 +267,7 @@ function product_catalog_form_node_validate($node, $form, &$form_state) {
         
         		// Create일 경우,  time_t로 unique를 체크.
         		// Edit일 경우, 기존에 존재하는 것이 있는지를 확인하여 unique체크 
-        		if(isset($form['nid']['#value']) {
+        		if(isset($form['nid']['#value'])) {
         			$nodeNid = $form['nid']['#value'];
         			$recurringId = $form_state['values']['field_recurring_charge_id']['und'][0]['value'];
         			
