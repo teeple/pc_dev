@@ -6,7 +6,6 @@ function node_save_handler_to_touch_product($node){
     }
 };
 
-/*
 function product_catalog_form_node_presave($node) {
 	dsm($node, 'node_presave');
 	
@@ -14,7 +13,6 @@ function product_catalog_form_node_presave($node) {
 	$node->field_recurring_charge_id['und'][0]['value'] = $product->field_product_id['und'][0]['value'] . '_' . $node->field_price_amount_float['und'][0]['value'];
 	
 }
-*/
 
 function product_catalog_form_node_submit($node, $form, &$form_state)
 {
