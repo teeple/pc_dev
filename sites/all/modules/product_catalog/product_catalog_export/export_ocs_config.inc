@@ -14,7 +14,12 @@ function _array_ocs_config($nid=NULL){
 		$jsonData['ROAMING_BOTH_MONEY'] = $record->field_field_roaming_both_money[0]['raw']['value'];
 		$jsonData['PPS_SHORT_CALL_TIME'] = $record->field_field_pps_short_call_time[0]['raw']['value'];
 		$jsonData['MAX_POST_LASTCALL_OVERPRICE'] = $record->field_field_maxpost_lastcall_overprice[0]['raw']['value'];
-		
+		$jsonData['DEFAULT_PACKET_RATING_GROUP'] = $record->field_default_packet_rating_grou[0]['raw']['value'];
+        $jsonData['DEFAULT_PACKET_VOLUME'] = $record->field_default_packet_volume[0]['raw']['value'];
+        $jsonData['DEFAULT_PACKET_CHARGING_VOLUME'] = $record->field_default_packet_charging_vo[0]['raw']['value'];
+        $jsonData['DEFAULT_PACKET_TIME'] = $record->field_default_packet_time[0]['raw']['value'];
+        $jsonData['DEFAULT_PACKET_CHARGING_TIME'] = $record->field_default_packet_charging_ti[0]['raw']['value'];
+        
 		break;
 	}
 	$retData['ifvalues']['resources'] = array();
