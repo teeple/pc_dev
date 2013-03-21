@@ -8,6 +8,7 @@ function _array_ocs_config($nid=NULL){
 	//dpm( $viewResult, 'ocs global config');
 	
 	foreach( $viewResult as $record) {
+	    dsm($record,'record');
 		$jsonData['MAX_AMOUNT_OF_REMAINS'] = $record->field_field_max_amount_of_remains[0]['raw']['value'];
 		$jsonData['MAX_AMOUNT_OF_SMS'] = $record->field_field_max_amount_of_sms[0]['raw']['value'];
 		$jsonData['ROAMING_SMS_MONEY'] = $record->field_field_roaming_sms_money[0]['raw']['value'];
