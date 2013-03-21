@@ -557,6 +557,7 @@ function _get_result($reqArray, $product) {
 			//$command = '$field = $product->'.$item['field'].';';
       $command = '$field = isset($product->'.$item['field'].')?$product->'.$item['field'].':0'.';';
       dsm($command, 'command');
+      dsm($product->field_contract_period, 'field_contract_period');
       eval($command);
       dsm($field, 'field');
       
