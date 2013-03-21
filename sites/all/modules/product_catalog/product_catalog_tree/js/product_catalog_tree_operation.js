@@ -518,7 +518,7 @@
 		var parentNode;
 		var returnData;
 		var tree = $.jstree._reference(".product_catalog_tree");
-		//console.log(product_catalog_ajax_result);
+		console.log(product_catalog_ajax_result);
 		parentNode = $('#'+product_catalog_ajax_result.parent_nid);
 		returnData = tree._parse_json(product_catalog_ajax_result.data);
 		

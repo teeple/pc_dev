@@ -177,10 +177,12 @@
 						
 					case "tree_node_counter_main_basic_prepaid":
 					case "tree_node_counter_main_basic_postpaid":
+						/*
 						menus.custom_delete._disabled = false;
 						menus.custom_delete.action = function(node) {
 							$.fn.deleteNode(node);
 						};
+						*/
 						menus.custom_create._disabled = false;
 						menus.custom_create.submenu = {
 							"treenode_counter_main_basic" : {
@@ -439,6 +441,21 @@
 							},
 						};
 						break;
+					
+					case "treeNodeCugDiscount":
+						menus.custom_create._disabled = false;
+						menus.custom_create.submenu = {
+							"treeNodeCugDiscount" : {
+								"label" : "Discount Factors",
+								action : function(node) {
+									$.fn.addNode(node, {
+										'childContentType' : 'actionpricecugdiscountfactors'
+									});
+								}
+							},
+						};
+						break;
+						
 					case "treeNodeCustomBlock":
 						menus.custom_create._disabled = false;
 						menus.custom_create.submenu = {
@@ -886,6 +903,23 @@
 							$.fn.deleteNode(node);
 						};
 						break;
+					case "actionpricecugdiscountfactors":
+						menus.custom_create._disabled = false;
+						menus.custom_create.submenu = {
+							"actionpricecugdiscountfactors" : {
+								"label" : "ConditionSet",
+								action : function(node) {
+									$.fn.addNode(node, {
+										'childContentType' : 'conditioncommonand'
+									});
+								}
+							},
+						};
+						menus.custom_delete._disabled = false;
+						menus.custom_delete.action = function(node) {
+							$.fn.deleteNode(node);
+						};
+						break;
 					case "actionpriceallowancefactors":
 						menus.custom_create._disabled = false;
 						menus.custom_create.submenu = {
@@ -1194,7 +1228,8 @@
 												'childContentType' : 'conditionwhendayofmonth'
 											});
 										}
-									},
+									}, 
+									/*
 									"statechangedate" : {
 										"label" : "State Change Date",
 										action : function(node) {
@@ -1203,6 +1238,7 @@
 											});
 										}
 									},
+									*/
 									"billdate" : {
 										"label" : "Bill Date",
 										action : function(node) {
@@ -1371,6 +1407,7 @@
 													});
 												}
 											},
+											/*
 											"statechangedate" : {
 												"label" : "State Change Date",
 												action : function(node) {
@@ -1379,6 +1416,7 @@
 													});
 												}
 											},
+											*/
 											"billdate" : {
 												"label" : "Bill Date",
 												action : function(node) {
@@ -1540,6 +1578,7 @@
 													});
 												}
 											},
+											/*
 											"statechangedate" : {
 												"label" : "State Change Date",
 												action : function(node) {
@@ -1548,6 +1587,7 @@
 													});
 												}
 											},
+											*/
 											"billdate" : {
 												"label" : "Bill Date",
 												action : function(node) {
@@ -1717,6 +1757,7 @@
 													});
 												}
 											},
+											/*
 											"statechangedate" : {
 												"label" : "State Change Date",
 												action : function(node) {
@@ -1725,6 +1766,7 @@
 													});
 												}
 											},
+											*/
 											"billdate" : {
 												"label" : "Bill Date",
 												action : function(node) {
@@ -1894,6 +1936,7 @@
 													});
 												}
 											},
+											/*
 											"statechangedate" : {
 												"label" : "State Change Date",
 												action : function(node) {
@@ -1902,6 +1945,7 @@
 													});
 												}
 											},
+											*/
 											"billdate" : {
 												"label" : "Bill Date",
 												action : function(node) {
@@ -2148,6 +2192,7 @@
 													});
 												}
 											},
+											/*
 											"statechangedate" : {
 												"label" : "State Change Date",
 												action : function(node) {
@@ -2156,6 +2201,7 @@
 													});
 												}
 											},
+											*/
 											"billdate" : {
 												"label" : "Bill Date",
 												action : function(node) {
@@ -2318,6 +2364,7 @@
 													});
 												}
 											},
+											/*
 											"statechangedate" : {
 												"label" : "State Change Date",
 												action : function(node) {
@@ -2326,6 +2373,7 @@
 													});
 												}
 											},
+											*/
 											"billdate" : {
 												"label" : "Bill Date",
 												action : function(node) {
@@ -2549,6 +2597,7 @@
 													});
 												}
 											},
+											/*
 											"statechangedate" : {
 												"label" : "State Change Date",
 												action : function(node) {
@@ -2557,6 +2606,7 @@
 													});
 												}
 											},
+											*/
 											"billdate" : {
 												"label" : "Bill Date",
 												action : function(node) {
@@ -2780,6 +2830,7 @@
 													});
 												}
 											},
+											/*
 											"statechangedate" : {
 												"label" : "State Change Date",
 												action : function(node) {
@@ -2788,6 +2839,7 @@
 													});
 												}
 											},
+											*/
 											"billdate" : {
 												"label" : "Bill Date",
 												action : function(node) {
@@ -3002,6 +3054,7 @@
 													});
 												}
 											},
+											/*
 											"statechangedate" : {
 												"label" : "State Change Date",
 												action : function(node) {
@@ -3010,6 +3063,7 @@
 													});
 												}
 											},
+											*/
 											"billdate" : {
 												"label" : "Bill Date",
 												action : function(node) {
@@ -3195,6 +3249,7 @@
 													});
 												}
 											},
+											/*
 											"statechangedate" : {
 												"label" : "State Change Date",
 												action : function(node) {
@@ -3203,6 +3258,7 @@
 													});
 												}
 											},
+											*/
 											"billdate" : {
 												"label" : "Bill Date",
 												action : function(node) {

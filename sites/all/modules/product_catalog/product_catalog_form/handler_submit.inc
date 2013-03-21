@@ -20,6 +20,20 @@ function product_catalog_form_node_submit($node, $form, &$form_state)
 		case 'actionpricefactors_node_form':
 			$node->uid =  $user->uid;
 			break;
+		case 'actionpricechargerecurring_node_form':
+			if(empty($form_state['values']['nid'])) {
+				$product = node_load($form_state['root_nid']);
+
+				/*				
+				$form_state['values']['field_recurring_charge_id']['und'][0]['value'] = '_' . $form_state['values']['field_price_amount_float']['und'][0]['value'];
+				
+				$node->field_recurring_charge_id['und'][0]['value'] = $product->field_product_id['und'][0]['value'] . '_' . $form_state['values']['field_price_amount_float']['und'][0]['value'];
+				node_save($node);
+				*/
+				
+			}
+			
+			break;
 	}
 }
 
@@ -163,6 +177,16 @@ function _offering_submit_characteristic_handler(&$form, &$form_state, &$spec_ch
 
 function _node_save_handler_for_add_js_settings_after_node_save(&$form, &$form_state){
 	$rootNode = node_load($form_state['values']['nid']);
+	
+	if($rootNode->type == 'tariffplan') {
+	    $product = node_load($rootNode->field_ref_product['und'][0]['nid']);
+	    $prdTypeTerm = taxonomy_term_load($product->field_product_type['und'][0]['tid']);
+	
+	    if($prdTypeTerm->name === 'CUG') {
+	       _create_default_cugdiscountfactors_in_tariffplan($rootNode);
+	    }
+	}
+	
 	add_js_settings_after_node_save($rootNode);
 }
 
@@ -222,6 +246,31 @@ function _create_default_items_by_voca($product, $voca_name) {
 				} //if 
 		}
 	}
+}
+
+function _create_default_cugdiscountfactors_in_tariffplan($tariffplan) {
+	global $user;
+	
+	$voca_name = $tariffplan->field_tree_child_voca_name['und'][0]['value'];
+	$cugDiscountTerm = taxonomy_get_term_by_name('CUG Discount', $voca_name);
+	$refTreeTid = current($cugDiscountTerm)->tid;
+	
+	$product = node_load($tariffplan->field_ref_product['und'][0]['nid']);
+	
+	$node = new StdClass();
+	$node->uid = $user->uid;
+	$node->type = 'actionpricecugdiscountfactors';
+	$node->language = 'und';
+	
+	$node->field_weight = array('und' => array(0 => array('value' => 100)));
+  $node->field_ref_product = array('und' => array(0 => array('nid' => $product->nid)));
+  $node->field_ref_tree_tid = array('und' => array(0 => array('value' => $refTreeTid)));
+  $node->field_ref_tree_nid = array('und' => array(0 => array('nid' => $tariffplan->nid )));
+  
+  node_save($node);
+	
+	dsm($node, 'node');
+	
 }
 
 function _create_default_items_in_product($product) {

@@ -105,15 +105,55 @@ function _get_deposit_scheme($product) {
 }
 
 function _get_counter_list($product) {
-    $counters = array(); 
+
+	$productType = taxonomy_term_load($product->field_product_type['und'][0]['tid']);
+	$voca_name = _get_vocabulary_name('simpleproductoffering', $product);
+	
+	if($productType->name == 'CUG') {
+		$sharedBalanceTerm = taxonomy_get_term_by_name('Shared Balance', $voca_name);
+		$refTreeTid = current($sharedBalanceTerm)->tid;
+		
+		$counters = array();
+		$view = views_get_view('list_tree_term_child_node_for_product');
+		$view->set_display('panel_pane_1');
+		$view->set_arguments(array('0' => $product->nid,
+															'1' => $refTreeTid
+															)
+												);
+		$view->execute();
+		$counters = array();
+		$counterNids = array();
+		
+		foreach($view->result as $item){
+			$counterNids[] = $item->nid;
+		}
+		
+		$viewResult = views_get_view_result('list_counter_all', 'panel_pane_3', join('+', $counterNids));
+		
+		foreach($viewResult as $item) {
+			$counters[] = array('counter_id' => $item->field_field_counter_id[0]['raw']['value']);
+		}
+		
+		
+	} else {
+	  $counters = array();
     $view = views_get_view('list_prdcounterlist');
     $view->set_display('panel_pane_3');
     $view->set_arguments(array('0' => $product->nid));
     $view->execute();
     $counters = array();
     foreach($view->result as $item){
-    	$counters[] = array('counter_id'=> $item->field_data_field_counter_list_field_counter_list_nid);
+    	// $countersNids[] = array('counter_id'=> $item->field_data_field_counter_list_field_counter_list_nid);
+    	$counterNids[] = $item->field_data_field_counter_list_field_counter_list_nid;
     }
+    
+    $viewResult = views_get_view_result('list_counter_all', 'panel_pane_2', join('+', $counterNids));
+    
+    foreach($viewResult as $item) {
+			$counters[] = array('counter_id' => $item->field_field_counter_id[0]['raw']['value']);
+    }
+  }
+  
 	return $counters;
 }
 
@@ -146,35 +186,40 @@ function _get_recurring_scheme($productNid) {
 	$records = _get_nids_from_views($view_name, $display, $args);
 	$chargeScheme = node_load(current($records));
 	
-	/*
-	$retArray['charge_scheme'] = array(
-			'rcrr_period_type'			 
-					=> !empty($chargeScheme->field_charging_cycle_type)? $chargeScheme->field_charging_cycle_type['und'][0]['value']: NULL,
-	);
-	*/
-	
+	$charging_cycle_type = !empty($chargeScheme->field_charging_cycle_type)? $chargeScheme->field_charging_cycle_type['und'][0]['value']: NULL;
+	if(empty($charging_cycle_type)) {
+		$retArray['charge_scheme'] = NULL;
+	} else {
+		$retArray['charge_scheme'] = array(
+				'rcrr_period_type'			 
+						=> $charging_cycle_type,
+		);
+	}
+		
 	$args[1] = 'prdnonusagerecurringbonusscheme';
 	$records = _get_nids_from_views($view_name, $display, $args);
 	$bonusScheme = node_load(current($records));
 	
-	dsm($bonusScheme, 'bonusScheme');
-	$rcrr_charging_day_arr = array('1' => NULL,
-												'2' => !empty($bonusScheme->field_rcrr_charging_day_week)? $bonusScheme->field_rcrr_charging_day_week['und'][0]['value'] : NULL,
-												'3' => NULL,
-												'4' => !empty($bonusScheme->field_rcrr_charging_day_monthly)? $bonusScheme->field_rcrr_charging_day_monthly['und'][0]['value'] : NULL);
-  
-  $rcrr_charging_day = !empty($bonusScheme->field_bonus_cycle_type)? $rcrr_charging_day_arr[$bonusScheme->field_bonus_cycle_type['und'][0]['value']]: NULL;
-  
-  $retArray['bonus_scheme'] = array(
-		'rcrr_period_type'
-			=> !empty($bonusScheme->field_bonus_cycle_type)? $bonusScheme->field_bonus_cycle_type['und'][0]['value']: NULL,
-		'rcrr_period_value'
-			=> !empty($bonusScheme->field_bonus_cycle_value)? $bonusScheme->field_bonus_cycle_value['und'][0]['value']: NULL,
-		'rcrr_charging_day'
-			=> $rcrr_charging_day,
-		'rcrr_use_charging_day'
-			=> !empty($bonusScheme->field_related_to_invoice_date)? $bonusScheme->field_related_to_invoice_date['und'][0]['value']: NULL,
-	);
+	$bonus_cycle_type = !empty($bonusScheme->field_bonus_cycle_type)? $bonusScheme->field_bonus_cycle_type['und'][0]['value']: NULL;
+	
+	if(empty($bonus_cycle_type)) {
+		$retArray['bonus_scheme'] = NULL;
+	
+	} else {
+		$rcrr_charging_day_arr = array('1' => NULL,
+													'2' => !empty($bonusScheme->field_rcrr_charging_day_week)? $bonusScheme->field_rcrr_charging_day_week['und'][0]['value'] : NULL,
+													'3' => NULL,
+													'4' => !empty($bonusScheme->field_rcrr_charging_day_monthly)? $bonusScheme->field_rcrr_charging_day_monthly['und'][0]['value'] : NULL);
+	  
+	  $rcrr_charging_day = $rcrr_charging_day_arr[$bonus_cycle_type];
+	  
+	  $retArray['bonus_scheme'] = array(
+			'rcrr_period_type'
+				=> $bonusScheme->field_bonus_cycle_type['und'][0]['value'],
+			'rcrr_charging_day'
+				=> $rcrr_charging_day,
+		);
+	} 
 	
 	return $retArray;
 	
@@ -450,6 +495,12 @@ function _get_attribute($product) {
 			'field_value' => "field_customer_group_type['und'][0]['tid']",
 			'field_value_default' => NULL
 		),
+		'cug_member_counter' => array(
+			'through_common_code' => FALSE,
+				'field' => 'field_cug_member_counter',
+				'field_value' => "field_cug_member_counter['und'][0]['value']",
+				'field_value_default' => NULL,
+		),
 		'treatment_day' => array(
             'through_common_code' => FALSE,
             'field' => 'field_treatment_day',
@@ -489,6 +540,7 @@ function _get_attribute($product) {
 
 function _get_result($reqArray, $product) {
 	$retArray = array();
+	dsm($product, 'product');
 	foreach($reqArray as $key => $item) {
 		if($item['through_common_code']) {
 			$command = '$field = isset($product->'.$item['field'].')?$product->'.$item['field'].':0'.';';
@@ -505,15 +557,27 @@ function _get_result($reqArray, $product) {
 		} else {
 			//$command = '$field = $product->'.$item['field'].';';
       $command = '$field = isset($product->'.$item['field'].')?$product->'.$item['field'].':0'.';';
-			eval($command);
-			
+      eval($command);
+      
+      if($key == 'contract_period') {
+      		dsm($product, 'product');
+      		dsm($product->field_contract_period['und'][0]['value'], 'contract period value');
+      		
+      		$retItem = $product->field_contract_period['und'][0]['value'];
+      		dsm($retItem, 'contract_period');
+      		
+      }
+      
 			if(!empty($field)) {
 				$command = '$retItem = $product->'.$item['field_value'].';';
 				eval($command);
+				dsm($command, 'command');
+				dsm($retItem, 'retItem');
 				
 			} else {
 				$retItem = $item['field_value_default'];
 			}
+			
 		}
 		$retArray[$key] = $retItem;
 	}

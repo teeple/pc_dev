@@ -622,6 +622,14 @@
 							"image" : "/sites/default/files/icons/discount.png"
 					        }
 				},
+				
+				"treeNodeCugDiscount" : {
+					"valid_children" : ["actionpricecugdiscountfactors"],
+					"icon" : {
+							"image" : "/sites/default/files/icons/discount.png"
+					        }
+				},
+				
 							"actionpricediscountfactors" : {
 								"valid_children" : [
 																		"conditioncommonand",
@@ -632,6 +640,18 @@
 																		"conditioncommonand_usage_crbt",
 																		"conditioncommonand_usage_vod",
 																		"conditioncommonand_usage_loyalty_point_deduct",
+								],
+								"icon" : {
+									"image" : "/sites/default/files/icons/file.png"
+								}
+
+							},
+
+							"actionpricecugdiscountfactors" : {
+								"valid_children" : [
+																		"conditioncommonand",
+																		"conditioncommonand_usage_voice",
+																		"conditioncommonand_usage_sms",
 								],
 								"icon" : {
 									"image" : "/sites/default/files/icons/file.png"

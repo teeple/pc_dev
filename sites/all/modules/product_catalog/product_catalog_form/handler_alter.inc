@@ -120,6 +120,7 @@ function _add_ajax_submit_callback($form_id, &$form) {
         case 'loyaltypoint_node_form' :
         case 'actionbonustransfer_node_form' :
         case 'conditionwhatcalltype_node_form' :
+        case 'conditionwhatservicedomain_node_form' :
         case 'conditionwhatcounter_node_form' :
         case 'conditionwhatratinggroup_node_form' :
         case 'conditionwhatcounterfortracking_node_form' :
@@ -131,6 +132,7 @@ function _add_ajax_submit_callback($form_id, &$form) {
         case 'numberspecialrate_node_form' :
         case 'actionpriceallowanceonetime_node_form' :
         case 'actionpriceallowancerecurring_node_form' :
+        case 'actionpricecugdiscountfactors_node_form':
         case 'treenodeotheronetimecharge_node_form' :
         case 'treenodeotheronetimechargediscou_node_form' :
         case 'treenodepacketdynamic_node_form' :
@@ -139,6 +141,7 @@ function _add_ajax_submit_callback($form_id, &$form) {
         case 'prdattributerequireddevice_node_form' :
         case 'prdattributenumbersaving_node_form' :
         case 'prdcounterlist_node_form':
+        case 'conditionwhatcontentprice_node_form':
             $change = TRUE;
             break;
 
@@ -205,6 +208,7 @@ function edit_pane_callback($form, &$form_state) {
 }
 
 function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
+    //dsm($form_id,'form_id');    
     load_required_js_css_before_ajax_load();
 
     if ((isset($form['#attributes']) && isset($form['#attributes']['class'])) && gettype($form['#attributes']['class']) == 'array') {
@@ -328,6 +332,11 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             $form['field_weight']['#type'] = 'hidden';
             $form['field_parent_node']['#type'] = 'hidden';
             break;
+        case 'conditionwhatservicedomain_node_form':
+		        $form['field_weight']['#type'] = 'hidden';
+		        $form['field_parent_node']['#type'] = 'hidden';
+		        _unset_menu_items($form, $form_id);
+		        break;
         case 'conditionwhatcardtype_node_form' :
             $form['field_weight']['#type'] = 'hidden';
             $form['field_parent_node']['#type'] = 'hidden';
@@ -493,18 +502,26 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             break;
 
         case 'prdnonusagerecurringchargescheme_node_form' :
-            $productNode = node_load($form['#node'] -> field_ref_product['und'][0]['nid']);
+        		$productNode = node_load($form['#node'] -> field_ref_product['und'][0]['nid']);
             $productTypeTerm = taxonomy_term_load($productNode -> field_product_type['und'][0]['tid']);
+            $productBillingTypeTerm = taxonomy_term_load($productNode->field_billing_type['und'][0]['tid']);
+            
             if ($productTypeTerm -> name !== 'Main') {
                 $form['#fieldgroups']['group_recurring_day'] -> format_type = 'hidden';
-                $form['field_related_to_invoice_date']['#type'] = 'hidden';
                 $form['field_charging_day_type']['#type'] = 'hidden';
                 $form['field_rcrr_charging_day_monthly']['#type'] = 'hidden';
                 $form['field_rcrr_charging_day_week']['#type'] = 'hidden';
             }
+            
+            if($productBillingTypeTerm->name == 'Prepaid') {
+            		unset($form['field_charging_cycle_type']['und']['#options'][3]);
+            		unset($form['field_charging_cycle_type']['und']['#options'][4]);
+            }
+            
             unset($form['field_ref_product']);
             unset($form['field_weight']);
             _unset_menu_items($form, $form_id);
+            
             break;
         case 'prdnonusagerecurringbonusscheme_node_form' :
             unset($form['field_ref_product']);
@@ -570,7 +587,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 
         case 'counter_node_form' :
             $counterTypeTerm = current(taxonomy_get_term_by_name($form_state['counter_type'], 'countertype'));
-
+            $form['field_weight_for_unittransfer']['#type'] = 'hidden';
             // Edit
             if (isset($form['nid']['#value'])) {
                 $form['field_counter_id']['und']['#disabled'] = TRUE;
@@ -732,13 +749,25 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
                 $serviceTypeTerm = taxonomy_get_term_by_name($paths[1], 'svcdomain');
                 $form['field_service_type_of_provider']['und']['#default_value'][0] =  current($serviceTypeTerm) -> tid;
                 $form['field_service_type_of_provider']['#type'] = 'hidden';
-                // in case Edit
+                
+                $productTypeName = $form_state['product_type_name'];
+                if($productTypeName != 'CUG') {
+                	$form['field_cug_member_counter']['#type'] = 'hidden';
+                }
+                
+            // in case Edit
             } else {
                 $form['field_product_type']['#type'] = 'hidden';
                 $form['field_service_type_of_provider']['#type'] = 'hidden';
              		$form['field_billing_type']['und']['#disabled'] = TRUE;
              		$form['field_price_units']['und']['#disabled'] = TRUE;
              		$form['field_product_id']['und']['#disabled'] = TRUE;
+             		
+             		$productTypeTid = $form['field_product_type']['und']['#default_value'][0];
+             		$productTypeName = $form['field_product_type']['und']['#options'][$productTypeTid];
+             		if($productTypeName != 'CUG' ) {
+                	$form['field_cug_member_counter']['#type'] = 'hidden';
+             		}
              		
             }
 
@@ -780,6 +809,9 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
                 unset($form['field_treatment_day']);
                 unset($form['field_contract_period']);
                 unset($form['field_roaming_allowed']);
+                unset($form['field_cug_member_counter']);
+                unset($form['field_short_code']);
+                unset($form['field_next_join_product']);
 
             } else {
                 unset($form['field_exclusiveness']);
@@ -1006,7 +1038,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
                     $form['actions']['submit']['#submit'][] = '_ratinggroup_link_to_numberingplan_idd';
                 }
             }
-            //unset($form['field_ref_numberingplan_idd']);
+            $form['field_ref_numberingplan_idd']['#type'] = 'hidden';
             _unset_menu_items($form, $form_id);
             //for selecting all carrier
             $newOptions = array();
@@ -1130,7 +1162,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
                     $form['actions']['submit']['#submit'][] = '_ratinggroup_link_to_numberingplan_domestic';
                 }
             }
-            unset($form['field_ref_numberingplan_domestic']);
+            $form['field_ref_numberingplan_domestic']['#type'] = 'hidden';
             _unset_menu_items($form, $form_id);
             //for selecting all carrier
             $newOptions = array();
@@ -1194,7 +1226,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             $form['field_ref_tree_nid']['#type'] = 'hidden';
 
             $parentTerm = taxonomy_term_load($form_state['build_info']['args'][0] -> field_ref_tree_tid['und'][0]['value']);
-            if ($parentTerm -> vocabulary_machine_name != 'tpl_tariffplan_mobile_voice' && $parentTerm -> vocabulary_machine_name != 'tpl_tariffplan_mobile_voice_additional') {//for single price such as sms
+            if ($parentTerm -> vocabulary_machine_name != 'tpl_tariffplan_voice') {//for single price such as sms
                 unset($form['field_range_units']);
                 unset($form['field_uom_units']);
                 unset($form['field_discount_collection']);
@@ -1206,7 +1238,20 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
                 $form['field_range_units']['und']['#disabled'] = TRUE;
             }
             break;
-
+       
+        case 'actionpricecugdiscountfactors_node_form':
+        		unset($form['field_parent_node']);
+        		unset($form['field_weight']);
+        		_unset_menu_items($form, $form_id);
+        		//unset($form['field_ref_product']);
+                //unset($form['field_ref_tree_tid']);
+                //unset($form['field_ref_tree_nid']);
+        		$form['field_ref_product']['#type'] = 'hidden';
+        		$form['field_ref_tree_tid']['#type'] = 'hidden';
+        		$form['field_ref_tree_nid']['#type'] = 'hidden';
+        		
+        		break;
+       		
         case 'actionbonustransfer_node_form' :
             unset($form['field_parent_node']);
             unset($form['field_weight']);
@@ -1343,30 +1388,24 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
         case 'actionpricediscount_node_form' :
         case 'actionpricechargeonetime_node_form' :
         case 'actionpricechargerecurring_node_form' :
-            unset($form['field_parent_node']);
-            unset($form['field_weight']);
-            unset($form['field_ref_product']);
-            unset($form['field_ref_tree_tid']);
-
+            $form['field_parent_node']['#type'] = 'hidden';
+            $form['field_weight']['#type'] = 'hidden';
+            $form['field_ref_product']['#type'] = 'hidden';
+            $form['field_ref_tree_tid']['#type'] = 'hidden';
+            
             // in case EDIT
             if (isset($form['nid']['#value'])) {
                 $product = node_load($form_state['build_info']['args'][0] -> field_ref_product['und'][0]['nid']);
                 $currencyTid = $product -> field_price_units['und'][0]['tid'];
                 
-                // $form['field_recurring_charge_id']['und']['#disabled'] = TRUE;
-                
-                
+            // Create
             } else {
                 if (!empty($form_state['root_nid'])) {
                     $product = node_load($form_state['root_nid']);
                     $currencyTid = $product -> field_price_units['und'][0]['tid'];
-                    
-                    $viewResult = views_get_view_result('query_recurringcharge_max_id', 'panel_pane_1');
-                    $max_recurring_charge_id = $viewResult[0]->field_field_recurring_charge_id[0]['raw']['value'];
-                    
-                    $form['field_recurring_charge_id']['und'][0]['value']['#default_value'] = $max_recurring_charge_id + 1;
-                    // $form['field_recurring_charge_id']['und']['#disabled'] = TRUE;
-                    
+
+										$form['field_recurring_charge_id']['#type'] = 'hidden';
+                    $form['field_recurring_charge_id']['und'][0]['value']['#default_value'] = $product->field_product_id['und'][0]['value'] . '_' . time();
                 }
                 
             }
@@ -1542,6 +1581,19 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             $form['field_ref_tree_tid']['#type'] = 'hidden';
             $form['field_ref_numberspecial']['#type'] = 'hidden';
             _unset_menu_items($form, $form_id);
+            
+            $options = array();
+            $options['_none'] = '- None -';
+            
+            $view = views_get_view('list_number_special_rate');
+            $view->set_display('panel_pane_1');
+            $view->set_arguments(array('0' => $form['#node']->field_ref_numberspecial['und'][0]['nid']));
+            $view->execute(); 
+            foreach($view->result as $item){
+                $options[$item->nid] = $item->node_title;
+            }
+            
+            $form['field_ref_numberspecialrate']['und']['#options'] = $options;
             break;
         case 'numberspecialrate_node_form' :
             unset($form['field_parent_node']);
@@ -1787,6 +1839,22 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
                 $newServiceDomainOptions[$keys[$i]] = $values[$i];
             }
             $form['field_service_domain']['und']['#options'] = $newServiceDomainOptions;
+            break;
+        case 'conditionwhatcontentprice_node_form':
+            _unset_menu_items($form, $form_id);
+            $form['field_parent_node']['#type'] = 'hidden';
+            $form['field_weight']['#type'] = 'hidden';
+            
+            $options = array();
+            $options['_none'] = '- None -';
+            $view = views_get_view('list_rating_operation');
+            $view->set_display('panel_pane_1');
+            $view->execute(); 
+            foreach($view->result as $item){
+                $options[$item->tid] = $item->taxonomy_term_data_name;
+            }
+            $form['field_rating_operation']['und']['#options'] = $options;
+            
             break;
         /*
          case 'views_form_list_numberingplan_domestic_for_product_default':
