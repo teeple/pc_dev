@@ -546,6 +546,9 @@ function _get_result($reqArray, $product) {
 			$command = '$field = isset($product->'.$item['field'].')?$product->'.$item['field'].':0'.';';
 			eval($command);
 			
+			dsm($field, 'field');
+			dsm($product->field_contract_period, 'field_contract_period');
+			
 			if(!empty($field)) {
 				$command = '$tempTerm = taxonomy_term_load($product->'.$item['field_value'].');';
 				eval($command);
