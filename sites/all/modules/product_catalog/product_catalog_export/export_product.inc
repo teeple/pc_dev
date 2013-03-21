@@ -560,7 +560,7 @@ function _get_result($reqArray, $product) {
       eval($command);
       
       if($key == 'contract_period') {
-					$retItem = $product->field_contract_period‎['und'][0]['value'];
+					$retItem = $product->field_contract_period['und'][0]['value'];
       }
       
 			if(!empty($field)) {
