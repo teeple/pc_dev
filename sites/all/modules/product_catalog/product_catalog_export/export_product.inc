@@ -556,7 +556,8 @@ function _get_result($reqArray, $product) {
 		} else {
 			//$command = '$field = $product->'.$item['field'].';';
       $command = '$field = isset($product->'.$item['field'].')?$product->'.$item['field'].':0'.';';
-			eval($command);
+      dsm($command, 'command');
+      eval($command);
 			
 			if(!empty($field)) {
 				$command = '$retItem = $product->'.$item['field_value'].';';
