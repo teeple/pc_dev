@@ -562,7 +562,7 @@ function _get_result($reqArray, $product) {
       dsm($field, 'field');
       
       if($key == 'contract_period') {
-	      $command = '$retItem = $product->'.$item['field_value'].';';
+	      $command = '$retItem = $product->field_contract_period‎["und"][0]["value"];';
 	      eval($command);
       }
       
