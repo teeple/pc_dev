@@ -540,6 +540,7 @@ function _get_attribute($product) {
 
 function _get_result($reqArray, $product) {
 	$retArray = array();
+	dsm($product, 'product');
 	foreach($reqArray as $key => $item) {
 		if($item['through_common_code']) {
 			$command = '$field = isset($product->'.$item['field'].')?$product->'.$item['field'].':0'.';';
