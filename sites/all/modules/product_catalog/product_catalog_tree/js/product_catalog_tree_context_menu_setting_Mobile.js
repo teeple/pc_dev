@@ -1228,7 +1228,8 @@
 												'childContentType' : 'conditionwhendayofmonth'
 											});
 										}
-									},
+									}, 
+									/*
 									"statechangedate" : {
 										"label" : "State Change Date",
 										action : function(node) {
@@ -1237,6 +1238,7 @@
 											});
 										}
 									},
+									*/
 									"billdate" : {
 										"label" : "Bill Date",
 										action : function(node) {
@@ -1405,6 +1407,7 @@
 													});
 												}
 											},
+											/*
 											"statechangedate" : {
 												"label" : "State Change Date",
 												action : function(node) {
@@ -1413,6 +1416,7 @@
 													});
 												}
 											},
+											*/
 											"billdate" : {
 												"label" : "Bill Date",
 												action : function(node) {
@@ -1574,6 +1578,7 @@
 													});
 												}
 											},
+											/*
 											"statechangedate" : {
 												"label" : "State Change Date",
 												action : function(node) {
@@ -1582,6 +1587,7 @@
 													});
 												}
 											},
+											*/
 											"billdate" : {
 												"label" : "Bill Date",
 												action : function(node) {
@@ -1751,6 +1757,7 @@
 													});
 												}
 											},
+											/*
 											"statechangedate" : {
 												"label" : "State Change Date",
 												action : function(node) {
@@ -1759,6 +1766,7 @@
 													});
 												}
 											},
+											*/
 											"billdate" : {
 												"label" : "Bill Date",
 												action : function(node) {
@@ -1928,6 +1936,7 @@
 													});
 												}
 											},
+											/*
 											"statechangedate" : {
 												"label" : "State Change Date",
 												action : function(node) {
@@ -1936,6 +1945,7 @@
 													});
 												}
 											},
+											*/
 											"billdate" : {
 												"label" : "Bill Date",
 												action : function(node) {
@@ -2182,6 +2192,7 @@
 													});
 												}
 											},
+											/*
 											"statechangedate" : {
 												"label" : "State Change Date",
 												action : function(node) {
@@ -2190,6 +2201,7 @@
 													});
 												}
 											},
+											*/
 											"billdate" : {
 												"label" : "Bill Date",
 												action : function(node) {
@@ -2352,6 +2364,7 @@
 													});
 												}
 											},
+											/*
 											"statechangedate" : {
 												"label" : "State Change Date",
 												action : function(node) {
@@ -2360,6 +2373,7 @@
 													});
 												}
 											},
+											*/
 											"billdate" : {
 												"label" : "Bill Date",
 												action : function(node) {
@@ -2583,6 +2597,7 @@
 													});
 												}
 											},
+											/*
 											"statechangedate" : {
 												"label" : "State Change Date",
 												action : function(node) {
@@ -2591,6 +2606,7 @@
 													});
 												}
 											},
+											*/
 											"billdate" : {
 												"label" : "Bill Date",
 												action : function(node) {
@@ -2814,6 +2830,7 @@
 													});
 												}
 											},
+											/*
 											"statechangedate" : {
 												"label" : "State Change Date",
 												action : function(node) {
@@ -2822,6 +2839,7 @@
 													});
 												}
 											},
+											*/
 											"billdate" : {
 												"label" : "Bill Date",
 												action : function(node) {
@@ -3036,6 +3054,7 @@
 													});
 												}
 											},
+											/*
 											"statechangedate" : {
 												"label" : "State Change Date",
 												action : function(node) {
@@ -3044,6 +3063,7 @@
 													});
 												}
 											},
+											*/
 											"billdate" : {
 												"label" : "Bill Date",
 												action : function(node) {
@@ -3229,6 +3249,7 @@
 													});
 												}
 											},
+											/*
 											"statechangedate" : {
 												"label" : "State Change Date",
 												action : function(node) {
@@ -3237,6 +3258,7 @@
 													});
 												}
 											},
+											*/
 											"billdate" : {
 												"label" : "Bill Date",
 												action : function(node) {
