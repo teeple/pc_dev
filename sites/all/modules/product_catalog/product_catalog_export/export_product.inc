@@ -561,6 +561,11 @@ function _get_result($reqArray, $product) {
       eval($command);
       dsm($field, 'field');
       
+      if($key == 'contract_period') {
+	      $command = '$retItem = $product->'.$item['field_value'].';';
+	      eval($command);
+      }
+      
 			if(!empty($field)) {
 				$command = '$retItem = $product->'.$item['field_value'].';';
 				eval($command);
@@ -570,6 +575,7 @@ function _get_result($reqArray, $product) {
 			} else {
 				$retItem = $item['field_value_default'];
 			}
+			
 		}
 		$retArray[$key] = $retItem;
 	}
