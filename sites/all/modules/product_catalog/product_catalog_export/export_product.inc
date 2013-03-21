@@ -556,7 +556,7 @@ function _get_result($reqArray, $product) {
 		} else {
 			//$command = '$field = $product->'.$item['field'].';';
       $command = '$field = isset($product->'.$item['field'].')?$product->'.$item['field'].':0'.';';
-
+      dsm($command, 'command');
       eval($command);
       dsm($field, 'field');
       
