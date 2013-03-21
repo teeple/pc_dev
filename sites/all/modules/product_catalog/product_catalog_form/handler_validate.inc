@@ -278,6 +278,10 @@ function product_catalog_form_node_validate($node, $form, &$form_state) {
         				drupal_set_message("Recurring ID should be unique", "error");
         				form_set_error('Recurring ID should be unique');
         			}
+	            if (!is_machine_name($recurringId)) {
+	                drupal_set_message("Only letters and underscore is allowed for recurring id", 'error');
+	                form_set_error("Only letters and underscore is allowed for recurring id");
+	            }
         		}
         		
         		break;

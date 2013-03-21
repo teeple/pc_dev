@@ -1162,14 +1162,14 @@
 											});
 										}
 									},
-									"statechangedate" : {
-										"label" : "State Change Date",
-										action : function(node) {
-											$.fn.addNode(node, {
-												'childContentType' : 'conditionwhenstatechangedate'
-											});
-										}
-									},
+//									"statechangedate" : {
+//										"label" : "State Change Date",
+//										action : function(node) {
+//											$.fn.addNode(node, {
+//												'childContentType' : 'conditionwhenstatechangedate'
+//											});
+//										}
+//									},
 									"billdate" : {
 										"label" : "Bill Date",
 										action : function(node) {
@@ -1338,14 +1338,14 @@
 													});
 												}
 											},
-											"statechangedate" : {
-												"label" : "State Change Date",
-												action : function(node) {
-													$.fn.addNode(node, {
-														'childContentType' : 'conditionwhenstatechangedate'
-													});
-												}
-											},
+//											"statechangedate" : {
+//												"label" : "State Change Date",
+//												action : function(node) {
+//													$.fn.addNode(node, {
+//														'childContentType' : 'conditionwhenstatechangedate'
+//													});
+//												}
+//											},
 											"billdate" : {
 												"label" : "Bill Date",
 												action : function(node) {
@@ -1507,14 +1507,14 @@
 													});
 												}
 											},
-											"statechangedate" : {
-												"label" : "State Change Date",
-												action : function(node) {
-													$.fn.addNode(node, {
-														'childContentType' : 'conditionwhenstatechangedate'
-													});
-												}
-											},
+//											"statechangedate" : {
+//												"label" : "State Change Date",
+//												action : function(node) {
+//													$.fn.addNode(node, {
+//														'childContentType' : 'conditionwhenstatechangedate'
+//													});
+//												}
+//											},
 											"billdate" : {
 												"label" : "Bill Date",
 												action : function(node) {
@@ -1684,14 +1684,14 @@
 													});
 												}
 											},
-											"statechangedate" : {
-												"label" : "State Change Date",
-												action : function(node) {
-													$.fn.addNode(node, {
-														'childContentType' : 'conditionwhenstatechangedate'
-													});
-												}
-											},
+//											"statechangedate" : {
+//												"label" : "State Change Date",
+//												action : function(node) {
+//													$.fn.addNode(node, {
+//														'childContentType' : 'conditionwhenstatechangedate'
+//													});
+//												}
+//											},
 											"billdate" : {
 												"label" : "Bill Date",
 												action : function(node) {
@@ -1861,14 +1861,14 @@
 													});
 												}
 											},
-											"statechangedate" : {
-												"label" : "State Change Date",
-												action : function(node) {
-													$.fn.addNode(node, {
-														'childContentType' : 'conditionwhenstatechangedate'
-													});
-												}
-											},
+//											"statechangedate" : {
+//												"label" : "State Change Date",
+//												action : function(node) {
+//													$.fn.addNode(node, {
+//														'childContentType' : 'conditionwhenstatechangedate'
+//													});
+//												}
+//											},
 											"billdate" : {
 												"label" : "Bill Date",
 												action : function(node) {
@@ -2115,14 +2115,14 @@
 													});
 												}
 											},
-											"statechangedate" : {
-												"label" : "State Change Date",
-												action : function(node) {
-													$.fn.addNode(node, {
-														'childContentType' : 'conditionwhenstatechangedate'
-													});
-												}
-											},
+//											"statechangedate" : {
+//												"label" : "State Change Date",
+//												action : function(node) {
+//													$.fn.addNode(node, {
+//														'childContentType' : 'conditionwhenstatechangedate'
+//													});
+//												}
+//											},
 											"billdate" : {
 												"label" : "Bill Date",
 												action : function(node) {
@@ -2285,14 +2285,14 @@
 													});
 												}
 											},
-											"statechangedate" : {
-												"label" : "State Change Date",
-												action : function(node) {
-													$.fn.addNode(node, {
-														'childContentType' : 'conditionwhenstatechangedate'
-													});
-												}
-											},
+//											"statechangedate" : {
+//												"label" : "State Change Date",
+//												action : function(node) {
+//													$.fn.addNode(node, {
+//														'childContentType' : 'conditionwhenstatechangedate'
+//													});
+//												}
+//											},
 											"billdate" : {
 												"label" : "Bill Date",
 												action : function(node) {
@@ -2516,14 +2516,14 @@
 													});
 												}
 											},
-											"statechangedate" : {
-												"label" : "State Change Date",
-												action : function(node) {
-													$.fn.addNode(node, {
-														'childContentType' : 'conditionwhenstatechangedate'
-													});
-												}
-											},
+//											"statechangedate" : {
+//												"label" : "State Change Date",
+//												action : function(node) {
+//													$.fn.addNode(node, {
+//														'childContentType' : 'conditionwhenstatechangedate'
+//													});
+//												}
+//											},
 											"billdate" : {
 												"label" : "Bill Date",
 												action : function(node) {
@@ -2747,14 +2747,14 @@
 													});
 												}
 											},
-											"statechangedate" : {
-												"label" : "State Change Date",
-												action : function(node) {
-													$.fn.addNode(node, {
-														'childContentType' : 'conditionwhenstatechangedate'
-													});
-												}
-											},
+//											"statechangedate" : {
+//												"label" : "State Change Date",
+//												action : function(node) {
+//													$.fn.addNode(node, {
+//														'childContentType' : 'conditionwhenstatechangedate'
+//													});
+//												}
+//											},
 											"billdate" : {
 												"label" : "Bill Date",
 												action : function(node) {
@@ -2961,14 +2961,14 @@
 													});
 												}
 											},
-											"statechangedate" : {
-												"label" : "State Change Date",
-												action : function(node) {
-													$.fn.addNode(node, {
-														'childContentType' : 'conditionwhenstatechangedate'
-													});
-												}
-											},
+//											"statechangedate" : {
+//												"label" : "State Change Date",
+//												action : function(node) {
+//													$.fn.addNode(node, {
+//														'childContentType' : 'conditionwhenstatechangedate'
+//													});
+//												}
+//											},
 											"billdate" : {
 												"label" : "Bill Date",
 												action : function(node) {
@@ -3154,14 +3154,14 @@
 													});
 												}
 											},
-											"statechangedate" : {
-												"label" : "State Change Date",
-												action : function(node) {
-													$.fn.addNode(node, {
-														'childContentType' : 'conditionwhenstatechangedate'
-													});
-												}
-											},
+//											"statechangedate" : {
+//												"label" : "State Change Date",
+//												action : function(node) {
+//													$.fn.addNode(node, {
+//														'childContentType' : 'conditionwhenstatechangedate'
+//													});
+//												}
+//											},
 											"billdate" : {
 												"label" : "Bill Date",
 												action : function(node) {

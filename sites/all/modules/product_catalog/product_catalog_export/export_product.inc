@@ -556,15 +556,22 @@ function _get_result($reqArray, $product) {
 		} else {
 			//$command = '$field = $product->'.$item['field'].';';
       $command = '$field = isset($product->'.$item['field'].')?$product->'.$item['field'].':0'.';';
-			eval($command);
-			
+      eval($command);
+      
+      if($key == 'contract_period') {
+					$retItem = $product->field_contract_period‎['und'][0]['value'];
+      }
+      
 			if(!empty($field)) {
 				$command = '$retItem = $product->'.$item['field_value'].';';
 				eval($command);
+				dsm($command, 'command');
+				dsm($retItem, 'retItem');
 				
 			} else {
 				$retItem = $item['field_value_default'];
 			}
+			
 		}
 		$retArray[$key] = $retItem;
 	}
