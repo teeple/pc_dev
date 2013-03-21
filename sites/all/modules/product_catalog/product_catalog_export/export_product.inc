@@ -556,12 +556,15 @@ function _get_result($reqArray, $product) {
 		} else {
 			//$command = '$field = $product->'.$item['field'].';';
       $command = '$field = isset($product->'.$item['field'].')?$product->'.$item['field'].':0'.';';
-      dsm($command, 'command');
+
       eval($command);
-			
+      dsm($field, 'field');
+      
 			if(!empty($field)) {
 				$command = '$retItem = $product->'.$item['field_value'].';';
 				eval($command);
+				dsm($command, 'command');
+				dsm($retItem, 'retItem');
 				
 			} else {
 				$retItem = $item['field_value_default'];
