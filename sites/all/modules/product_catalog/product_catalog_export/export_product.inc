@@ -560,7 +560,12 @@ function _get_result($reqArray, $product) {
       eval($command);
       
       if($key == 'contract_period') {
-					$retItem = $product->field_contract_period‎['und'][0]['value'];
+      		dsm($product, 'product');
+      		dsm($product->field_contract_period['und'][0]['value'], 'contract period value');
+      		
+      		$retItem = $product->field_contract_period['und'][0]['value'];
+      		dsm($retItem, 'contract_period');
+      		
       }
       
 			if(!empty($field)) {
