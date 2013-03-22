@@ -647,20 +647,12 @@ function _get_attribute_exceptions($product) {
     $view->set_arguments(array('0' => $product->nid, '1' => 'prdattributefeaturecode'));
     $view->execute();
     if(count($view->result) > 0){
-        $prdFeatureCodeNode = node_load(current($view->result)->nid);
-        foreach($prdFeatureCodeNode->field_ref_service_feature_code['und'] as $item){
-            $serviceFeatureCodeNode = node_load($item['nid']);
-            $serviceFeatureCodes[] = $serviceFeatureCodeNode->title;
-        }
-        /*
-        $serviceFeatureCodeNode = node_load(current($view->result)->nid);
         $serviceFeatureCodes = array();
-        foreach($serviceFeatureCodeNode->field_ref_featurecode['und'] as $item){
-            $codeTerm = taxonomy_term_load($item['tid']);   
-            $serviceFeatureCodes[] = _get_common_code($codeTerm);
+        foreach($view->result as $item){
+            $prdFeatureCodeNode = node_load($item->nid);
+            $featureTerm = taxonomy_term_load($prdFeatureCodeNode->field_ref_service_feature_code['und'][0]['tid']);
+            $serviceFeatureCodes[] = _get_common_code($featureTerm);
         }
-         * 
-         */
         $retArray['service_feature_code'] = $serviceFeatureCodes;
     }
     $view = views_get_view('list_product_child_node');
