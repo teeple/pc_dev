@@ -8,40 +8,28 @@ module_load_include('inc', 'product_catalog_ajax');
  *  Implementation of hook_menu()
  */
 function pc_code_menu() {
-  $items['pc/code/%/updated'] = array(
-      'title' => 'Update Code',
-      'page callback' => 'pc_code_update',
-      'page arguments' => array(2),
-      'access callback' => TRUE,
-      'type' => MENU_CALLBACK,
-  );
+    $items['pc/code/%/updated'] = array('title' => 'Update Code', 'page callback' => 'pc_code_update', 'page arguments' => array(2), 'access callback' => TRUE, 'type' => MENU_CALLBACK, );
 
-  $items['common/commoncode/update/%'] = array(
-      'title' => 'Update Code From Views ',
-      'page callback' => 'pc_code_update_in_views',
-      'page arguments' => array(3),
-      'access callback' => TRUE,
-      'type' => MENU_CALLBACK,
-  );
+    $items['common/commoncode/update/%'] = array('title' => 'Update Code From Views ', 'page callback' => 'pc_code_update_in_views', 'page arguments' => array(3), 'access callback' => TRUE, 'type' => MENU_CALLBACK, );
 
-
-  return $items;
+    return $items;
 }
 
 function pc_code_update_in_views($code_group) {
 
-    $url = 'http://202.70.46.180:8001/openapi/code/'.$code_group;
+    $url = 'http://202.70.46.180:8001/openapi/code/' . $code_group;
     $result = drupal_http_request($url);
-    $codes_list = json_decode($result->data);
+    //dsm($result,'result');
+    $codes_list = json_decode($result -> data);
 
-    if($code_group == 'all') {
+    if ($code_group == 'all') {
 
         $code_groups = array();
-        foreach($codes_list as $code) {
-            $code_groups[$code->codeGroup][] = $code;
+        foreach ($codes_list as $code) {
+            $code_groups[$code -> codeGroup][] = $code;
         }
 
-        foreach($code_groups as $key => $value) {
+        foreach ($code_groups as $key => $value) {
 
             $ret = _commoncode_update_or_create($value, $key);
         }
@@ -52,95 +40,118 @@ function pc_code_update_in_views($code_group) {
     }
 
     drupal_goto('/common/commoncode/update');
-    return ;
+    return;
 }
 
 function pc_code_update($code_group) {
-	global $user;
+    global $user;
 
     $retArray = array();
     $retArray['data'] = 'TEST';
     $retArray['result'] = 'TRUE';
 
-    print  json_encode($retArray);
-    exit;
+    print json_encode($retArray);
+    exit ;
 }
 
 function _commoncode_update_or_create($code_list, $code_group) {
 
     // $voca_machine_name = str_replace(' ', '_', strtolower($code_group));
-	  $voca_machine_name = strtolower($code_group);
+    $voca_machine_name = strtolower($code_group);
     $vocabulary = taxonomy_vocabulary_machine_name_load($voca_machine_name);
 
-    if($vocabulary == NULL) {
-    		
-    		// PCatalog에서 사용하지 않는 taxonomy는 만들지 않음.
-    		$codeGroupVoca = taxonomy_vocabulary_machine_name_load('COMMON_CODE_GROUP_LIST');
-    		$requiredCodeGroupList = taxonomy_get_tree($codeGroupVoca->vid);
-    		$requiredCodeGroupNames = array();
-    		foreach($requiredCodeGroupList as $record) {
-					$requiredCodeGroupNames[] = $record->name;
-    		}
-    		if(!in_array($code_group, $requiredCodeGroupNames)) return;
-    		
-    		$vocabulary = new stdClass();
-        $vocabulary->name = $code_group;
-        $vocabulary->machine_name = strtolower($code_group);
+    if ($vocabulary == NULL) {
+
+        // PCatalog에서 사용하지 않는 taxonomy는 만들지 않음.
+        $codeGroupVoca = taxonomy_vocabulary_machine_name_load('COMMON_CODE_GROUP_LIST');
+        $requiredCodeGroupList = taxonomy_get_tree($codeGroupVoca -> vid);
+        $requiredCodeGroupNames = array();
+        foreach ($requiredCodeGroupList as $record) {
+            $requiredCodeGroupNames[] = $record -> name;
+        }
+        if (!in_array($code_group, $requiredCodeGroupNames))
+            return;
+
+        $vocabulary = new stdClass();
+        $vocabulary -> name = $code_group;
+        $vocabulary -> machine_name = strtolower($code_group);
         taxonomy_vocabulary_save($vocabulary);
 
-        $field_instance = array(
-            'field_name' => 'field_common_code',
-            'entity_type' => 'taxonomy_term',
-            'bundle' => $vocabulary->machine_name,
-            'label' => t('Common Code'),
-            'description' => t('common code from CS code management.'),
-            'widget' => array(
-                'type' => 'text_textfield',
-            ),
-        );
+        $field_instance = array('field_name' => 'field_common_code', 
+                                'entity_type' => 'taxonomy_term', 
+                                'bundle' => $vocabulary -> machine_name, 
+                                'label' => t('Common Code'), 'description' => t('common code from CS code management.'),
+                                'widget' => array('type' => 'text_textfield'), 
+                         );
         field_create_instance($field_instance);
     }
 
-    $terms = taxonomy_get_tree($vocabulary->vid);
+    $terms = taxonomy_get_tree($vocabulary -> vid);
     $tids = array();
-    foreach($terms as $term) {
-        $tids[] = $term->tid;
+    foreach ($terms as $term) {
+        $tids[] = $term -> tid;
     }
     $local_terms = taxonomy_term_load_multiple($tids);
 
-    foreach($code_list as $code) {
+    //get svcDomain common code
+    $svcDomainVoca = taxonomy_vocabulary_machine_name_load('svcDomain');
+    $svcDomainTermTree = taxonomy_get_tree($svcDomainVoca -> vid);
+    $svcDomainTermsCommonCode = array();
+    
+    foreach($svcDomainTermTree as $item){
+      $tempTerm = taxonomy_term_load($item->tid);
+      $svcDomainTermsCommonCode[$tempTerm->field_common_code['und'][0]['safe_value']] = $tempTerm->tid;
+    }
+    
+    foreach ($code_list as $code) {
         $foundFlag = FALSE;
 
-        if ($code->language != 'en') continue;
+        if ($code -> language != 'en')
+            continue;
 
-        foreach($local_terms as $term) {
+        foreach ($local_terms as $term) {
 
-			// dsm($term, 'term');
-			// dsm($code, 'code');
-						error_log('code before: '. $code->code);
-						error_log('term common code before: '.json_encode($term));
-						
-            // Update existing field if Found 
+            // dsm($term, 'term');
+            //dsm($code, 'code');
+            error_log('code before: ' . $code -> code);
+            error_log('term common code before: ' . json_encode($term));
+
+            // Update existing field if Found
             //
-            if(!empty($term->field_common_code)
-                && ($term->field_common_code['und'][0]['value'] === $code->code)) {
-                
+            if (!empty($term -> field_common_code) && ($term -> field_common_code['und'][0]['value'] === $code -> code)) {
                 error_log('code is same');
-                error_log('code : '.$code->code);
-                error_log('term common code : '.$term->field_common_code['und'][0]['value']);
+                error_log('code : ' . $code -> code);
+                error_log('term common code : ' . $term -> field_common_code['und'][0]['value']);
+
+                $term -> name = $code -> meaning;
+                $svcDomainTidIndex = intval($code->svcDomain); 
+                if($svcDomainTidIndex > 0){
+                    $term -> field_service_domain['und'][0]['tid'] = $svcDomainTermsCommonCode[$svcDomainTidIndex];
+                }
+                $term -> field_sub_group1['und'][0]['value'] = $code->subGrp1;
+                $term -> field_sub_group1['und'][0]['safe_value'] = $code->subGrp1;
+                $term -> field_sub_group2['und'][0]['value'] = $code->subGrp2;
+                $term -> field_sub_group2['und'][0]['safe_value'] = $code->subGrp2;
                 
-                $term->name = $code->meaning;
                 taxonomy_term_save($term);
                 $foundFlag = TRUE;
                 break;
 
-            // Update existing field code if Found 
-            } else if($term->name === $code->meaning) {
-            		error_log('Matched');
-            		$term->field_common_code = array('und' => array( '0' => array('value' => $code->code)));
+                // Update existing field code if Found
+            } else if ($term -> name === $code -> meaning) {
+                error_log('Matched');
+                $term -> field_common_code = array('und' => array('0' => array('value' => $code -> code)));
+                $svcDomainTidIndex = intval($code->svcDomain);
+                if($svcDomainTidIndex > 0){
+                    $term -> field_service_domain['und'][0]['tid'] = $svcDomainTermsCommonCode[$svcDomainTidIndex];
+                }
+                $term -> field_sub_group1['und'][0]['value'] = $code->subGrp1;
+                $term -> field_sub_group1['und'][0]['safe_value'] = $code->subGrp1;
+                $term -> field_sub_group2['und'][0]['value'] = $code->subGrp2;
+                $term -> field_sub_group2['und'][0]['safe_value'] = $code->subGrp2;
                 
                 error_log('meaning is same');
-                
+
                 taxonomy_term_save($term);
                 $foundFlag = TRUE;
                 break;
@@ -148,14 +159,20 @@ function _commoncode_update_or_create($code_list, $code_group) {
         }
 
         // create new item
-        if($foundFlag == FALSE) {
+        if ($foundFlag == FALSE) {
             $term = new stdClass();
-            $term->name = $code->meaning;
-            $term->vid = $vocabulary->vid;
-            $term->field_common_code['und'][0]['value'] = $code->code;
-
+            $term -> name = $code -> meaning;
+            $term -> vid = $vocabulary -> vid;
+            $term -> field_common_code['und'][0]['value'] = $code -> code;
+            $svcDomainTidIndex = intval($code->svcDomain);
+            if($svcDomainTidIndex > 0){
+                $term -> field_service_domain['und'][0]['tid'] = $svcDomainTermsCommonCode[$svcDomainTidIndex];
+            }
+            $term -> field_sub_group1['und'][0]['value'] = $code->subGrp1;
+            $term -> field_sub_group1['und'][0]['safe_value'] = $code->subGrp1;
+            $term -> field_sub_group2['und'][0]['value'] = $code->subGrp2;
+            $term -> field_sub_group2['und'][0]['safe_value'] = $code->subGrp2;
             taxonomy_term_save($term);
         }
     }
 }
-
