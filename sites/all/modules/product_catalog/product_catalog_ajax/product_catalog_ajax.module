@@ -1233,6 +1233,7 @@ function product_catalog_ajax_select_submit() {
       case 'attribute_featurecode':
         $child->type = 'prdattributefeaturecode';
         $child->field_weight['und'][0]['value'] = $weight;
+        $child->field_ref_product['und'][0]['nid'] = $tmpProductNid[1];
         $child->field_ref_service_feature_code['und'][0]['tid'] = $childNid;
         node_save($child);        
         $js_data['append_to'] = 'inside'; 
