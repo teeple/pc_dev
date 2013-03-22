@@ -134,7 +134,6 @@ function _get_counter_list($product) {
 			$counters[] = array('counter_id' => $item->field_field_counter_id[0]['raw']['value']);
 		}
 		
-		
 	} else {
 	  $counters = array();
     $view = views_get_view('list_prdcounterlist');
@@ -471,6 +470,12 @@ function _get_attribute($product) {
 			'field_value' => "field_product_type['und'][0]['tid']",
 			'field_value_default' => NULL
 		),
+		'product_sub_type' => array(
+			'through_common_code' => TRUE,
+			'field' => 'field_product_sub_type',
+			'field_value' => "field_product_sub_type['und'][0]['tid']",
+			'field_value_default' => NULL
+		),
 		'service_domain' => array(
 			'through_common_code' => TRUE,
 			'field' => 'field_service_type_of_provider',
@@ -540,7 +545,6 @@ function _get_attribute($product) {
 
 function _get_result($reqArray, $product) {
 	$retArray = array();
-	dsm($product, 'product');
 	foreach($reqArray as $key => $item) {
 		if($item['through_common_code']) {
 			$command = '$field = isset($product->'.$item['field'].')?$product->'.$item['field'].':0'.';';
@@ -556,28 +560,29 @@ function _get_result($reqArray, $product) {
 			
 		} else {
 			//$command = '$field = $product->'.$item['field'].';';
-      $command = '$field = isset($product->'.$item['field'].')?$product->'.$item['field'].':0'.';';
+      $command = '$field = isset($product->'.$item['field'].')? $product->'.$item['field'].' :0'.';';
       eval($command);
       
+      // Exception for Contract Period
       if($key == 'contract_period') {
-      		dsm($product, 'product');
-      		dsm($product->field_contract_period['und'][0]['value'], 'contract period value');
-      		
+      	$field = isset($product->field_contract_period)? $product->field_contract_period : 0;
+      	
+      	if(!empty($field)) {
       		$retItem = $product->field_contract_period['und'][0]['value'];
-      		dsm($retItem, 'contract_period');
-      		
-      }
-      
-			if(!empty($field)) {
-				$command = '$retItem = $product->'.$item['field_value'].';';
-				eval($command);
-				dsm($command, 'command');
-				dsm($retItem, 'retItem');
+      	} else {
+      		$retItem = $item['field_value_default'];
+      	}
+      	
+      } else {
+	      if(!empty($field)) {
 				
-			} else {
-				$retItem = $item['field_value_default'];
+					$command = '$retItem = $product->'.$item['field_value'].';';
+					eval($command);
+					
+				} else {
+					$retItem = $item['field_value_default'];
+				}
 			}
-			
 		}
 		$retArray[$key] = $retItem;
 	}
