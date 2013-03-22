@@ -3346,6 +3346,7 @@
 					case "conditionwhatcustomfactors":
 					case "conditionwhatusagetypefactors":
 					case "conditionwhatnonusagetypefactors":
+					case "conditionwhatservicedomain":
 					case "conditionwhendayfactors":
 					case "conditionwhendurationfactors":
 					case "conditionwhenholidayfactors":
