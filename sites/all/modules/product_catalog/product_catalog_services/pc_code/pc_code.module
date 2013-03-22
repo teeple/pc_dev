@@ -19,6 +19,7 @@ function pc_code_update_in_views($code_group) {
 
     $url = 'http://202.70.46.180:8001/openapi/code/' . $code_group;
     $result = drupal_http_request($url);
+    //dsm($result,'result');
     $codes_list = json_decode($result -> data);
 
     if ($code_group == 'all') {
