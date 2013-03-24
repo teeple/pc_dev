@@ -231,7 +231,7 @@ function unique_field_node_validate($node, $form) {
         }
         if (user_access('unique_field_perm_bypass')) {
           $form_id = str_replace('_', '-', $form['#id']);
-          $msg .= '<p>' . t('Click !here to bypass this check and resubmit.', array('!here' => "<a href=\"#\" onclick=\"jQuery('form#" . $form_id . " input[name=\'unique_field_override\']').val(1);jQuery('form#" . $form_id . "').submit();return false;\">" . t('here') . '</a>')) . '</p>';
+          // $msg .= '<p>' . t('Click !here to bypass this check and resubmit.', array('!here' => "<a href=\"#\" onclick=\"jQuery('form#" . $form_id . " input[name=\'unique_field_override\']').val(1);jQuery('form#" . $form_id . "').submit();return false;\">" . t('here') . '</a>')) . '</p>';
         }
         form_set_error($field, $msg);
         // if checking the fields in combination, then one error message

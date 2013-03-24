@@ -11,7 +11,8 @@ function _is_condition_duplicated($args) {
 };
 
 function is_machine_name($argStr) {
-    if (preg_match('/[^0-9a-zA-Z_]/', $argStr)) {
+    // if (preg_match('/[^0-9a-zA-Z_]/', $argStr)) {
+    if (preg_match('/[^0-9a-z_]/', $argStr)) {
         return FALSE;
     }
     return TRUE;
@@ -355,9 +356,22 @@ function product_catalog_form_node_validate($node, $form, &$form_state) {
 
         case 'simpleproductoffering_node_form' :
             if (!is_machine_name($form_state['values']['field_product_id']['und'][0]['value'])) {
-                drupal_set_message("Only letters and underscore is allowed for product id", 'error');
-                form_set_error("Only letters and underscore is allowed for product id");
+                drupal_set_message("Only lowercase letter, number and underscore are allowed for  product id", 'error');
+                form_set_error("Only lowercase letter, number and underscore are allowed for product id");
             }
+            
+            if (!is_machine_name($form_state['values']['field_short_code']['und'][0]['value'])) {
+                drupal_set_message("Only lowercase letter, number and underscore are allowed for short code", 'error');
+                form_set_error("Only lowercase letter, number and underscore are allowed for short code");
+            }
+            
+            if(!empty($form_state['values']['field_next_join_product'])) {
+            	if(!empty($form_state['values']['field_next_join_product']['und']) && (count($form_state['values']['field_next_join_product']['und']) >= 2) ) {
+            		drupal_set_message("Only one product should be selected for Next Join Product", 'error');
+            		form_set_error("Only one product should be selected for Next Join Product");
+            	};
+            }
+            
             break;
 
         case 'prdnonusagerecurringbonusscheme_node_form' :
