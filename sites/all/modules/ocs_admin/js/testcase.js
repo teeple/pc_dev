@@ -69,7 +69,7 @@
 				var result = $.parseJSON( output.response.data);
 				var test_data = $.parseJSON( output.test_data);
 				var test_result = $.parseJSON( output.test_result);
-				var voice_cdr = [];
+				var counter = [];
 
 				$('#run-test-ocs-result').
 					append( '<br>{0}:{1}:{2}<hr style="background-color:darkblue;"><h3>{3}</h3>'.
@@ -102,7 +102,7 @@
 						result.cdr = cdr;
 						console.log( 'cdr', cdr[0][0]);
 						var decoded_cdr = $.fn.decodeCDR( cdr[0][0]);
-						voice_cdr = decoded_cdr.counters; 
+						counter = decoded_cdr.charging_counters; 
 						//console.log( 'voice cdr', voice_cdr);
 					}
 
@@ -136,7 +136,7 @@
 						eval_result['result'] = eval(condition) ? "SUCCESS" : "FAIL";
 
 					console.log( 'check', condition, eval_result);
-					console.log( 'voice_cdr', voice_cdr);
+					console.log( 'counter', counter);
 					$('.testcase_check_result[node=' + nid + ']').
 						append( '<h4> TC-{0} <a href="#test_result_{1}_{0}">{2}</a></h4>'.
 							format( tc_idx, nid, eval_result['result'] ));
@@ -222,23 +222,29 @@
 	$.fn.decodeCDR = function( fields) {
 
 		// decode used counter
-		var counter = {};
+		var cdr = {
+			header: fields.slice(0,12),
+			scription: fields.slice(12,25),
+			charging: fields.slice(25,28),
+			service:fields.slice(28),
+		}, counter= {}
 
-		if ( fields[24].length > 0) {
-			var used_counter = fields[24].split('/');
-			//console.log( 'used counter', used_counter);
-			for( var i=0; i< used_counter.length; i++){
-				var usage = used_counter[i].split(':');
-				counter[ usage[0]] = { usage : parseInt( usage[2]) - parseInt( usage[1])};
+		console.log( 'cdr', cdr);
+
+		for( var j=0; j< cdr.charging.length; j++){
+			if ( cdr.charging[j].length > 0) {
+				var used_counter = cdr.charging[j].split('/');
+				for( var i=0; i< used_counter.length; i++){
+					var usage = used_counter[i].split(':');
+					counter[usage[0]] = { usage: parseInt( usage[2]) - parseInt( usage[1])};
+				}
 			}
 		}
 
-		var cdr =  {
-			subscription_key: fields[2],
-			counters: counter,
-		};
+		cdr.subscription_key = fields[2];
+		cdr.charging_counters = counter;
 
-		//console.log( 'decoded cdr', cdr);
+		console.log( 'decoded cdr', cdr);
 		return cdr;
 	}
 
