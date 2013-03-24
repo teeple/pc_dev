@@ -290,6 +290,7 @@
             case 'treenodepacketpredefined': 
             case 'prdattributeallowedmodel':
             case 'prdattributeavailablechannel':
+            case 'prdattributefeaturecode':
             	needToLoadEdit = false;
             	needToLoadDetail = false;
             	break; 

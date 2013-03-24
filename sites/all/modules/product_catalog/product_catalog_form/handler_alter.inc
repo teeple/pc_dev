@@ -768,9 +768,13 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
              		if($productTypeName != 'CUG' ) {
                 	$form['field_cug_member_counter']['#type'] = 'hidden';
              		}
-             		
             }
-
+            
+            $productTypeTid = $form['field_product_type']['und']['#default_value'][0];
+            if($form['field_product_type']['und']['#options'][$productTypeTid] == 'Main') {
+            	$form['field_product_sub_type']['#type'] = 'hidden';
+            }
+            
             unset($form['field_roaming_allowed']);
             unset($form['field_offering_status']);
             unset($form['field_parent_node_for_rp']);

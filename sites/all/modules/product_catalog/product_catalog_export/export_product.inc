@@ -134,7 +134,6 @@ function _get_counter_list($product) {
 			$counters[] = array('counter_id' => $item->field_field_counter_id[0]['raw']['value']);
 		}
 		
-		
 	} else {
 	  $counters = array();
     $view = views_get_view('list_prdcounterlist');
@@ -471,6 +470,12 @@ function _get_attribute($product) {
 			'field_value' => "field_product_type['und'][0]['tid']",
 			'field_value_default' => NULL
 		),
+		'product_sub_type' => array(
+			'through_common_code' => TRUE,
+			'field' => 'field_product_sub_type',
+			'field_value' => "field_product_sub_type['und'][0]['tid']",
+			'field_value_default' => NULL
+		),
 		'service_domain' => array(
 			'through_common_code' => TRUE,
 			'field' => 'field_service_type_of_provider',
@@ -540,7 +545,6 @@ function _get_attribute($product) {
 
 function _get_result($reqArray, $product) {
 	$retArray = array();
-	dsm($product, 'product');
 	foreach($reqArray as $key => $item) {
 		if($item['through_common_code']) {
 			$command = '$field = isset($product->'.$item['field'].')?$product->'.$item['field'].':0'.';';
@@ -556,28 +560,29 @@ function _get_result($reqArray, $product) {
 			
 		} else {
 			//$command = '$field = $product->'.$item['field'].';';
-      $command = '$field = isset($product->'.$item['field'].')?$product->'.$item['field'].':0'.';';
+      $command = '$field = isset($product->'.$item['field'].')? $product->'.$item['field'].' :0'.';';
       eval($command);
       
+      // Exception for Contract Period
       if($key == 'contract_period') {
-      		dsm($product, 'product');
-      		dsm($product->field_contract_period['und'][0]['value'], 'contract period value');
-      		
+      	$field = isset($product->field_contract_period)? $product->field_contract_period : 0;
+      	
+      	if(!empty($field)) {
       		$retItem = $product->field_contract_period['und'][0]['value'];
-      		dsm($retItem, 'contract_period');
-      		
-      }
-      
-			if(!empty($field)) {
-				$command = '$retItem = $product->'.$item['field_value'].';';
-				eval($command);
-				dsm($command, 'command');
-				dsm($retItem, 'retItem');
+      	} else {
+      		$retItem = $item['field_value_default'];
+      	}
+      	
+      } else {
+	      if(!empty($field)) {
 				
-			} else {
-				$retItem = $item['field_value_default'];
+					$command = '$retItem = $product->'.$item['field_value'].';';
+					eval($command);
+					
+				} else {
+					$retItem = $item['field_value_default'];
+				}
 			}
-			
 		}
 		$retArray[$key] = $retItem;
 	}
@@ -642,20 +647,12 @@ function _get_attribute_exceptions($product) {
     $view->set_arguments(array('0' => $product->nid, '1' => 'prdattributefeaturecode'));
     $view->execute();
     if(count($view->result) > 0){
-        $prdFeatureCodeNode = node_load(current($view->result)->nid);
-        foreach($prdFeatureCodeNode->field_ref_service_feature_code['und'] as $item){
-            $serviceFeatureCodeNode = node_load($item['nid']);
-            $serviceFeatureCodes[] = $serviceFeatureCodeNode->title;
-        }
-        /*
-        $serviceFeatureCodeNode = node_load(current($view->result)->nid);
         $serviceFeatureCodes = array();
-        foreach($serviceFeatureCodeNode->field_ref_featurecode['und'] as $item){
-            $codeTerm = taxonomy_term_load($item['tid']);   
-            $serviceFeatureCodes[] = _get_common_code($codeTerm);
+        foreach($view->result as $item){
+            $prdFeatureCodeNode = node_load($item->nid);
+            $featureTerm = taxonomy_term_load($prdFeatureCodeNode->field_ref_service_feature_code['und'][0]['tid']);
+            $serviceFeatureCodes[] = _get_common_code($featureTerm);
         }
-         * 
-         */
         $retArray['service_feature_code'] = $serviceFeatureCodes;
     }
     $view = views_get_view('list_product_child_node');
@@ -676,6 +673,7 @@ function _get_attribute_exceptions($product) {
 	    }else{
 	        $benefit['bonus'] = NULL;
 	    }
+	  /*
 		$benefit['cug_flag'] = $benefitNode->field_cug_flag['und'][0]['value'];
 		$benefit['cug_discount'] = array();
 		if(!empty($benefitNode->field_discount_for_cug)) {
@@ -683,6 +681,7 @@ function _get_attribute_exceptions($product) {
 				$benefit['cug_discount'][] = $discount_value['value'];
 			}
 		}
+		*/
 		$retArray['benefit'] = $benefit;
 	}
 		
