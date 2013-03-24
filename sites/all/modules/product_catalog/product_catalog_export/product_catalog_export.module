@@ -21,6 +21,7 @@ module_load_include('inc', 'product_catalog_export', 'export_message');
 module_load_include('inc', 'product_catalog_export', 'export_tvchannel');
 module_load_include('inc', 'product_catalog_export', 'export_exclusiveness');
 module_load_include('inc', 'product_catalog_export', 'export_unittransfer_scheme');
+module_load_include('inc', 'product_catalog_export', 'export_lifecycle_status');
 
 
 function export_product($export_item_nids=NULL){
@@ -86,6 +87,10 @@ function export_ocs_config(){
 
 function export_message($export_item_nids=NULL){
 	return _json_message($export_item_nids);
+}
+
+function export_lifecycle_status($export_item_nids=NULL){
+	return _json_lifecycle_status($export_item_nids);
 }
 
 function export_tvchannel($export_item_nids=NULL){
