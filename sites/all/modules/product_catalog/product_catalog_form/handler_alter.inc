@@ -360,7 +360,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			$tempView->execute();
             
             $options = array();
-    	    dsm($temprView,'view');
+    	    dsm($tempView,'view');
     	    //dsm($form, 'form');
     	    //dsm($form_state, 'form-state');
 	    
