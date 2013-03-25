@@ -2,12 +2,17 @@
 
 function node_update_handler_to_touch_product($newNode,$oldNode){
     //TODO: find real values for the node, and determine wether the real data has been changed or not.
-    touch_product($newNode);
+    //touch_product($newNode);
+    $productNode = find_parent_product($newNode);
+    if($productNode != NULL){
+        _touch_product($productNode->nid);
+    }
 }
 
-function touch_product($childNode){
+function find_parent_product($childNode){
     if(isset($childNode->field_ref_product['und'][0]['nid'])){
-        _touch_product($childNode->field_ref_product['und'][0]['nid']);
+        return node_load($childNode->field_ref_product['und'][0]['nid']);
+        //_touch_product($childNode->field_ref_product['und'][0]['nid']);
     }else{
         if($childNode->type != 'simpleproductoffering'){
             $parentNode = NULL;
@@ -23,10 +28,12 @@ function touch_product($childNode){
             }
             
             if($parentNode != NULL){
-                touch_product($parentNode);
+                return find_parent_product($parentNode);
             }
         }
     }
+    
+    return NULL;
 }
 
 function _touch_product($productNid){

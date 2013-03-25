@@ -1,7 +1,11 @@
 <?php
 
 function node_delete_handler_to_touch_product($node){
-    touch_product($node);
+    $productNode = find_parent_product($node);
+    if($productNode != NULL){
+        _touch_product($productNode->nid);
+    }
+    //touch_product($node);
 };
 
 function product_catalog_form_node_delete($node){
