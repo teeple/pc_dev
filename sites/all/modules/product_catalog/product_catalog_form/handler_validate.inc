@@ -6,17 +6,19 @@ function validate_product($productNid){
     );
     $productNode = node_load($productNid);
     
-    /*
-    $lifecycleSchemeNid = _get_lifecyclescheme($productNid);
-    if(!isset($lifecycleSchemeNid)){
-        $result['is_valid'] = FALSE;    
-        
-        $result['base_type'] = 'PRODUCT';
-        $result['id'] = $productNode->nid;
-        $result['title'] = $productNode->title;
-        $result['reason'] = 'Lifecycle Scheme is not defined yet';
+    //main 상품일 경우에만 lifecycle scheme check
+    $productTypeTerm = taxonomy_term_load($productNode->field_product_type['und'][0]['tid']);
+    if($productTypeTerm->name == 'Main'){
+        $lifecycleSchemeNid = _get_lifecyclescheme($productNid);
+        if(!isset($lifecycleSchemeNid)){
+            $result['is_valid'] = FALSE;    
+            
+            $result['base_type'] = 'PRODUCT';
+            $result['id'] = $productNode->nid;
+            $result['title'] = $productNode->title;
+            $result['reason'] = 'Lifecycle Scheme is not defined yet';
+        }
     }
-    */
     return $result;
     
 }
