@@ -658,7 +658,6 @@ function load_required_js_css_before_ajax_load(){
     	drupal_add_js($product_catalog_tree_path  . '/js/product_catalog_tree_type_setting.js');
     	drupal_add_js($product_catalog_tree_path  . '/js/product_catalog_tree_operation.js');
     	drupal_add_js($product_catalog_tree_path  . '/js/product_catalog_tree_flot.js');
-    	drupal_add_js($product_catalog_tree_path  . '/js/product_catalog_tree.js');
     	
     	//ctools collapsible div
     	$ctoolsPath = drupal_get_path('module', 'ctools');
@@ -682,6 +681,9 @@ function load_required_js_css_before_ajax_load(){
         drupal_add_css($jQuery_ui_multiselect_path. '/jquery_ui_multiselect_widget.css');
         drupal_add_css($jQuery_ui_multiselect_path. '/jquery-ui-multiselect-widget/jquery.multiselect.css');
         drupal_add_css($jQuery_ui_multiselect_path. '/jquery-ui-multiselect-widget/jquery.multiselect.filter.css');
+        
+        drupal_add_js($product_catalog_tree_path  . '/js/product_catalog_tree.js');
+        
     }
 }
 
