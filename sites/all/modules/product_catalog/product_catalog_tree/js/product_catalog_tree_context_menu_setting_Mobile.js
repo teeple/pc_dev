@@ -1,5 +1,6 @@
 (function($) {
 	$.fn.getTreeContextMenuSetting = function(treeType, obj) {
+		console.log('getTreeContextMenuSetting');
 		var menus = {
 			"rename" : false,
 			"remove" : false,
