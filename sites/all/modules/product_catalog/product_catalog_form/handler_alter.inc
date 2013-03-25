@@ -794,7 +794,8 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             
             $productTypeTid = $form['field_product_type']['und']['#default_value'][0];
             if($form['field_product_type']['und']['#options'][$productTypeTid] == 'Main') {
-            	$form['field_product_sub_type']['#type'] = 'hidden';
+            	//$form['field_product_sub_type']['#type'] = 'hidden';
+                unset($form['field_product_sub_type']);
             }
             
             unset($form['field_roaming_allowed']);
