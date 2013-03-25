@@ -988,14 +988,20 @@
 							$.fn.deleteNode(node);
 						};
 					  break;
-					
-						break;
 					case 'conditionwhatincomingcall':
 						menus.custom_delete._disabled = false;
 						menus.custom_delete.action = function(node) {
 							$.fn.deleteNode(node);
 						};
 						break;
+						
+					case 'conditionwhatmainproduct':
+						menus.custom_delete._disabled = false;
+						menus.custom_delete.action = function(node) {
+							$.fn.deleteNode(node);
+						};
+						break;
+						
 					case 'conditionwhensubscriptionday':
 						menus.custom_delete._disabled = false;
 						menus.custom_delete.action = function(node) {
@@ -1208,6 +1214,14 @@
 											});
 										}
 									},
+									"Main Product" : {
+										"label" : "Main Product",
+										action : function(node) {
+											$.fn.addNode(node, {
+												'childContentType' : 'conditionwhatmainproduct'
+											});
+										}
+									},
 								}
 							},
 							"when" : {
@@ -1386,6 +1400,14 @@
 													});
 												}
 											},
+											"Main Product" : {
+												"label" : "Main Product",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhatmainproduct'
+													});
+												}
+											},
 										}
 									},
 									"when" : {
@@ -1554,6 +1576,14 @@
 												action : function(node) {
 													$.fn.addNode(node, {
 														'childContentType' : 'conditionwhatcounter'
+													});
+												}
+											},
+											"Main Product" : {
+												"label" : "Main Product",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhatmainproduct'
 													});
 												}
 											},
@@ -1736,6 +1766,14 @@
 													});
 												}
 											},
+											"Main Product" : {
+												"label" : "Main Product",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhatmainproduct'
+													});
+												}
+											},
 										}
 									},
 									"when" : {
@@ -1912,6 +1950,14 @@
 												action : function(node) {
 													$.fn.addNode(node, {
 														'childContentType' : 'conditionwhatcounter'
+													});
+												}
+											},
+											"Main Product" : {
+												"label" : "Main Product",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhatmainproduct'
 													});
 												}
 											},
@@ -2168,6 +2214,14 @@
 												action : function(node) {
 													$.fn.addNode(node, {
 														'childContentType' : 'conditionwhatcounter'
+													});
+												}
+											},
+											"Main Product" : {
+												"label" : "Main Product",
+												action : function(node) {
+													$.fn.addNode(node, {
+														'childContentType' : 'conditionwhatmainproduct'
 													});
 												}
 											},

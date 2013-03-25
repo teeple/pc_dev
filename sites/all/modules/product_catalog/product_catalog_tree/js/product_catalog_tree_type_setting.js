@@ -819,6 +819,12 @@
 						"image" : "/sites/default/files/file.png"
 					}
 				},
+				"conditionwhatmainproduct" : {
+					"valid_children" : "none",
+					"icon" : {
+						"image" : "/sites/default/files/file.png"
+					}
+				},
 				"conditionwhendurationfactors" : {
 					"valid_children" : "none",
 					"icon" : {
