@@ -1,8 +1,8 @@
 <?php
 
 function node_save_handler_to_touch_product($node){
-    if(session_get('TOUCH_PRODUCT', 'TRUE') === TRUE){
-        touch_product($newNode);
+    if(session_get('TOUCH_PRODUCT', 'TRUE') == TRUE){
+        touch_product($node);
     }
 };
 
