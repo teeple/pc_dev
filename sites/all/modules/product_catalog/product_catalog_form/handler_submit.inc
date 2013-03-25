@@ -1,8 +1,12 @@
 <?php
 
 function node_save_handler_to_touch_product($node){
-    if(session_get('TOUCH_PRODUCT', 'TRUE') === TRUE){
-        touch_product($newNode);
+    if(session_get('TOUCH_PRODUCT', 'TRUE') == TRUE){
+        //touch_product($node);
+        $productNode = find_parent_product($node);
+        if($productNode != NULL){
+            _touch_product($productNode->nid);
+        }
     }
 };
 
@@ -12,8 +16,6 @@ function product_catalog_form_node_submit($node, $form, &$form_state)
 	global $base_url;
 
 	$form_id = $form['form_id']['#value'];
-	
-	//node_save_handler_to_touch_product($node);
 	
 	switch($form_id){
 		case 'prodoffernonusagesubitem_node_form':

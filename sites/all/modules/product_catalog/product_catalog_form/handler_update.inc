@@ -2,30 +2,10 @@
 
 function node_update_handler_to_touch_product($newNode,$oldNode){
     //TODO: find real values for the node, and determine wether the real data has been changed or not.
-    touch_product($newNode);
-}
-
-function touch_product($childNode){
-    if(isset($childNode->field_ref_product['und'][0]['nid'])){
-        _touch_product($childNode->field_ref_product['und'][0]['nid']);
-    }else{
-        if($childNode->type != 'simpleproductoffering'){
-            $parentNode = NULL;
-            
-            if(isset($childNode->field_ref_tariffplan['und'][0]['nid'])){
-                $parentNode = node_load($childNode->field_ref_tariffplan['und'][0]['nid']);
-            }else if(isset($childNode->field_parent_node['und'][0]['nid'])){
-                $parentNode = node_load($childNode->field_parent_node['und'][0]['nid']);
-            }else if(isset($childNode->field_ref_source_action['und'][0]['nid'])){
-                $parentNode = node_load($childNode->field_ref_source_action['und'][0]['nid']);
-            }else if(isset($childNode->field_ref_nonusagerollover['und'][0]['nid'])){
-                $parentNode = node_load($childNode->field_ref_nonusagerollover['und'][0]['nid']);
-            }
-            
-            if($parentNode != NULL){
-                touch_product($parentNode);
-            }
-        }
+    //touch_product($newNode);
+    $productNode = find_parent_product($newNode);
+    if($productNode != NULL){
+        _touch_product($productNode->nid);
     }
 }
 

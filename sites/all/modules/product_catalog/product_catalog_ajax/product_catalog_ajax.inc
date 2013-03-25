@@ -638,7 +638,8 @@ function load_required_js_css_before_ajax_load(){
     	
     	//product catalog tree
     	$product_catalog_tree_path = drupal_get_path('module', 'product_catalog_tree');
-    	
+    	drupal_add_js($product_catalog_tree_path  . '/js/product_catalog_tree_context_sub_menu.js');
+        
     	$paths = explode('/', current_path());
     	$serviceDomains = array('Mobile', 'IPTV', 'VoIP', 'Broadband', 'Satellite', 'Dummy', 'Cross');
     	

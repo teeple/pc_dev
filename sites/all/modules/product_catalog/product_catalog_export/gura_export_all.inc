@@ -1199,7 +1199,7 @@ function rating_rules_export_from_view($title, $view_name, $display_name, $nid=N
                         if($field['field'] == 'title')
                         {
                             $factorMeta['type'] = 'string';
-                            $factorMeta['size'] = '64';
+                            $factorMeta['size'] = '128';
                         }
                         else if($field_handler->handler_type == 'field')
                         {

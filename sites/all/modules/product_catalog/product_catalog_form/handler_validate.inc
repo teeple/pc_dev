@@ -1,4 +1,28 @@
 <?php
+
+function validate_product($productNid){
+    $result = array(
+        'is_valid' => TRUE,
+    );
+    $productNode = node_load($productNid);
+    
+    //main 상품일 경우에만 lifecycle scheme check
+    $productTypeTerm = taxonomy_term_load($productNode->field_product_type['und'][0]['tid']);
+    if($productTypeTerm->name == 'Main'){
+        $lifecycleSchemeNid = _get_lifecyclescheme($productNid);
+        if(!isset($lifecycleSchemeNid)){
+            $result['is_valid'] = FALSE;    
+            
+            $result['base_type'] = 'PRODUCT';
+            $result['id'] = $productNode->nid;
+            $result['title'] = $productNode->title;
+            $result['reason'] = 'Lifecycle Scheme is not defined yet';
+        }
+    }
+    return $result;
+    
+}
+
 function _is_condition_duplicated($args) {
     $view = views_get_view('list_conditions_for_duplicate_check');
     $view -> set_display('panel_pane_1');
