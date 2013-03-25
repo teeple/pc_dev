@@ -92,6 +92,7 @@ function _add_ajax_submit_callback($form_id, &$form) {
         case 'conditionwhatqos_node_form' :
         case 'conditioncommoncarrieridd_node_form' :
         case 'conditionwhatcardtype_node_form' :
+        case 'conditionwhatmainproduct_node_form' :
         case 'conditioncommoncarrierdomestic_node_form' :
         case 'conditioncommonratinggroup_node_form' :
         case 'conditioncommontimetablefactors_node_form' :
@@ -208,7 +209,6 @@ function edit_pane_callback($form, &$form_state) {
 }
 
 function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
-    //dsm($form_id,'form_id');    
     load_required_js_css_before_ajax_load();
 
     if ((isset($form['#attributes']) && isset($form['#attributes']['class'])) && gettype($form['#attributes']['class']) == 'array') {
@@ -332,11 +332,33 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             $form['field_weight']['#type'] = 'hidden';
             $form['field_parent_node']['#type'] = 'hidden';
             break;
+            
         case 'conditionwhatservicedomain_node_form':
 		        $form['field_weight']['#type'] = 'hidden';
 		        $form['field_parent_node']['#type'] = 'hidden';
 		        _unset_menu_items($form, $form_id);
 		        break;
+
+				case 'conditionwhatmainproduct_node_form':
+				    // $form['field_weight']['#type'] = 'hidden';
+				    // $form['field_parent_node']['#type'] = 'hidden';
+				    
+						$tempView = views_get_view('list_treenodecounter');
+						$tempView->set_display('panel_pane_5');
+						$tempView->set_arguments(array('0' => $productNid, '1' => 'Main'));
+						$tempView->execute();
+
+				    _unset_menu_items($form, $form_id);
+				    
+				    dsm($form, 'form');
+				    dsm($form_state, 'form-state');
+				    
+				    // $form['field_main_product']['und']['#options']
+				    
+				    // $viewResult = views_get_view_result('
+				    
+				    break;
+		        
         case 'conditionwhatcardtype_node_form' :
             $form['field_weight']['#type'] = 'hidden';
             $form['field_parent_node']['#type'] = 'hidden';
@@ -356,7 +378,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
              );
              */
             break;
-
+            
         case 'holidaylist_specific_node_form' :
         case 'holidaylist_repeatable_node_form' :
             _unset_menu_items($form, $form_id);
