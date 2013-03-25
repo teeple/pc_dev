@@ -6,6 +6,7 @@ function validate_product($productNid){
     );
     $productNode = node_load($productNid);
     
+    /*
     $lifecycleSchemeNid = _get_lifecyclescheme($productNid);
     if(!isset($lifecycleSchemeNid)){
         $result['is_valid'] = FALSE;    
@@ -15,7 +16,7 @@ function validate_product($productNid){
         $result['title'] = $productNode->title;
         $result['reason'] = 'Lifecycle Scheme is not defined yet';
     }
-    
+    */
     return $result;
     
 }
