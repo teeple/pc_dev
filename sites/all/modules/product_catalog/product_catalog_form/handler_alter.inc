@@ -358,16 +358,14 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			$tempView->set_display('panel_pane_1');
 			$tempView->set_arguments($args);
 			$tempView->execute();
-            
+            //dsm($tempView,'view');
+             
             $options = array();
-    	    dsm($tempView,'view');
-    	    //dsm($form, 'form');
-    	    //dsm($form_state, 'form-state');
+    	    foreach($tempView->result as $item){
+    	        $options[$item->nid] = $item->node_title;
+    	    }
 	    
-	    // $form['field_main_product']['und']['#options']
-	    
-	    // $viewResult = views_get_view_result('
-	    
+	       $form['field_main_product']['und']['#options'] = $options;
 	    break;
 		        
         case 'conditionwhatcardtype_node_form' :
