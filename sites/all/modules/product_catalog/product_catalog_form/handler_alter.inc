@@ -361,7 +361,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             //dsm($tempView,'view');
              
             $options = array();
-    	    foreach($tempView as $item){
+    	    foreach($tempView->result as $item){
     	        $options[$item->nid] = $item->node_title;
     	    }
 	    
