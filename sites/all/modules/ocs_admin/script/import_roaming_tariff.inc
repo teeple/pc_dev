@@ -1,4 +1,24 @@
 <?php
+define( 'INVENTORY_ITEM_ID', '0');
+define( 'VALD_STRT_DT', '1');
+define( 'PROD_CD', '2');
+define( 'FTR_CD', '3');
+define( 'RATE_DV_CD', '4');
+define( 'IOCLL_DV_CD', '5');
+define( 'RATE_APLY_LVL_CD', '6');
+define( 'RATE_APLY_DV_CD', '7');
+define( 'UAGE_APPLY_DV_CD', '8');
+define( 'RATE_APLY_TIMEBAND_CD', '9');
+define( 'RATE_APLY_INTERVAL_CD', '10');
+define( 'RATE_APLY_CYCL_DV_CD', '11');
+define( 'RATE_APLY_UNIT_CD', '12');
+define( 'RATE_APLY_UNIT	', '13');
+define( 'RATE', '14');
+define( 'INIT_RATE_CYCLE_DURATION', '15');
+define( 'INIT_RATE_APLY_UNIT_CD', '16');
+define( 'INIT_RATE_APLY_UNIT', '17');
+define( 'INIT_RATE', '18');
+define( 'VALD_END_DT', '19');
 
 $tariff = array(
 array(114933,"2013/03/19 00:00:00","KORSK_Customer",1031,33,1,2,2,NULL,NULL,NULL,4,303,60,5,0,303,10,1,"9999/12/31 23:59:59"),
