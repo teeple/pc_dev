@@ -342,7 +342,8 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 	   case 'conditionwhatmainproduct_node_form':
 	        $form['field_weight']['#type'] = 'hidden';
 	        $form['field_parent_node']['#type'] = 'hidden';
-	        $productNode = find_parent_product($form['#node']->field_parent_node['und'][0]['nid']);
+            $parentNode = node_load($form['#node']->field_parent_node['und'][0]['nid']);
+	        $productNode = find_parent_product($parentNode);
             dsm($productNode,'product');
             /*
 			$tempView = views_get_view('list_product_for_cond_main_product');
