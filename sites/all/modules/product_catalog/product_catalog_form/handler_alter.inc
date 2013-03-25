@@ -342,19 +342,27 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 	   case 'conditionwhatmainproduct_node_form':
 	        $form['field_weight']['#type'] = 'hidden';
 	        $form['field_parent_node']['#type'] = 'hidden';
+            _unset_menu_items($form, $form_id);
+            
             $parentNode = node_load($form['#node']->field_parent_node['und'][0]['nid']);
 	        $productNode = find_parent_product($parentNode);
-            dsm($productNode,'product');
-            /*
+            //dsm($productNode,'product');
+            $args = array(
+                '0' => $productNode->field_service_type_of_provider['und'][0]['tid'],
+                '1' => $productNode->field_service_operator['und'][0]['tid'],
+                '2' => $productNode->field_billing_type['und'][0]['tid'],
+                '3' => $productNode->field_customer_type['und'][0]['tid']
+            );
+            
 			$tempView = views_get_view('list_product_for_cond_main_product');
 			$tempView->set_display('panel_pane_1');
-			$tempView->set_arguments(array('0' => $productNid, '1' => 'Main'));
+			$tempView->set_arguments($args);
 			$tempView->execute();
-            */
-    	    _unset_menu_items($form, $form_id);
-    	    
-    	    dsm($form, 'form');
-    	    dsm($form_state, 'form-state');
+            
+            $options = array();
+    	    dsm($temprView,'view');
+    	    //dsm($form, 'form');
+    	    //dsm($form_state, 'form-state');
 	    
 	    // $form['field_main_product']['und']['#options']
 	    
