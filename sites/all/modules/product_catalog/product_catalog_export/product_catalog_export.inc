@@ -89,84 +89,101 @@ function export_deploy($export_type,$export_item_list = NULL, $target){
 	
 	$exportItemNids = !empty($export_item_list)? array_keys($export_item_list): array();
 	
-	$jsonString = _make_json_string($export_type,$exportItemNids);
-	
-	$exportTypeTerm = current(taxonomy_get_term_by_name($export_type));
-	
-	// Create History Record
-	$historyNode = new StdClass();
-    $historyNode->uid = $user->uid;
-    $historyNode->type = 'export_history';
-    $historyNode->language = 'und';
-
-    $index=0;
-    foreach($exportItemNids as $nid) {
-	   $historyNode->field_reference_node['und'][$index++]['nid'] = $nid;
-	}
-	
-    $historyNode->field_export_data['und'][0]['safe_value'] = $jsonString;
-    $historyNode->field_export_data['und'][0]['value'] = $jsonString;
-    $historyNode->field_export_type['und'][0]['tid'] = $exportTypeTerm->tid;
-
-	//send deploy request
-	$options = array();
-	$options['method'] = 'POST';
-	$options['headers']['content-type']= 'application/json';
-	$options['headers']['User-Agent'] = 'Product Catalog';
-	$options['data'] = $jsonString;
-	$options['timeout'] = 120;
-	
-	if(empty($export_item_list)) {
-		if($target == 'testbed'){
-	      $targetItem = $exportTypeTerm->field_export_url_testbed['und'];
-	  } else if($target == 'commercial'){
-	      $targetItem = $exportTypeTerm->field_export_url_commercial['und'];
-	  }
-	  
-	} else {
-		if($target == 'testbed'){
-		      $targetItem = $exportTypeTerm->field_export_url_testbed_by_id['und'];
-		} else if($target == 'commercial'){
-		      $targetItem = $exportTypeTerm->field_export_url_commercial_by_i['und'];
-		}
-	}
-	
-	$historyNode->field_export_target['und'][0]['value'] = $target;
-    $historyNode->field_export_target['und'][0]['safe_value'] = $target;
-  
-	foreach($targetItem as $item){
-		$url = $item['safe_value'];
-		$result = drupal_http_request($url, $options);
-        
-        dsm($url,'url');		 
-        dsm($result,'deploy result');
-
-		if($result->code === '200'){
-		    $resultData = json_decode($result->data);
-            //dsm($resultData,'result data');
-			//$historyNode = node_load($historyNodeNid);
-			$historyNode->field_ocs_result_code['und'][0]['value'] = $resultData->OCS->result_code;
-            $historyNode->field_ocs_result_reason['und'][0]['value'] = $resultData->OCS->result_reason;
-            $historyNode->field_cs_result_code['und'][0]['value'] = $resultData->CS->result_code;
-            $historyNode->field_cs_result_reason['und'][0]['value'] = $resultData->CS->result_reason;
-            $historyNode->field_crm_result_code['und'][0]['value'] = $resultData->CRM->result_code;
-            $historyNode->field_crm_result_reason['und'][0]['value'] = $resultData->CRM->result_reason;
-			//node_save($historyNode);
-		}else{
-		    $historyNode->field_ocs_result_reason['und'][0]['value'] = 'Fail';
-            $historyNode->field_cs_result_reason['und'][0]['value'] = 'Fail';
-            $historyNode->field_crm_result_reason['und'][0]['value'] = 'Fail';
-        }
-        
-		unset($result->request);
-        $resultString = json_encode($result);
-        $historyNode->field_export_result['und'][] = array('value' => $resultString,'safe_value' => $resultString);
-	}
-	node_save($historyNode);
-	
-	// $redirect_url = 'lifecycles/history/'.$exportTypeTerm->tid;
-	$redirect_url = 'lifecycles/history/'.$export_type;
-	drupal_goto($redirect_url);
+	$failedValidation = FALSE;
+    switch($export_type){
+        case 'PRODUCT':
+            foreach($exportItemNids as $exportItemNid){
+                $checkValid = validate_product($exportItemNid);
+                if($checkValid['is_valid'] == FALSE){
+                    $failedValidation = TRUE;
+                    break;
+                }
+            }
+            break;
+    }
+    
+    if($failedValidation == TRUE){
+        $message = $checkValid['base_type'] . ' '. $checkValid['title'] . ':' . $checkValid['reason'];
+        drupal_set_message($message, 'error');
+    }else{
+        $exportTypeTerm = current(taxonomy_get_term_by_name($export_type));
+        $jsonString = _make_json_string($export_type,$exportItemNids);
+    	
+    	// Create History Record
+    	$historyNode = new StdClass();
+        $historyNode->uid = $user->uid;
+        $historyNode->type = 'export_history';
+        $historyNode->language = 'und';
+    
+        $index=0;
+        foreach($exportItemNids as $nid) {
+    	   $historyNode->field_reference_node['und'][$index++]['nid'] = $nid;
+    	}
+    	
+        $historyNode->field_export_data['und'][0]['safe_value'] = $jsonString;
+        $historyNode->field_export_data['und'][0]['value'] = $jsonString;
+        $historyNode->field_export_type['und'][0]['tid'] = $exportTypeTerm->tid;
+    
+    	//send deploy request
+    	$options = array();
+    	$options['method'] = 'POST';
+    	$options['headers']['content-type']= 'application/json';
+    	$options['headers']['User-Agent'] = 'Product Catalog';
+    	$options['data'] = $jsonString;
+    	$options['timeout'] = 120;
+    	
+    	if(empty($export_item_list)) {
+    		if($target == 'testbed'){
+    	      $targetItem = $exportTypeTerm->field_export_url_testbed['und'];
+    	  } else if($target == 'commercial'){
+    	      $targetItem = $exportTypeTerm->field_export_url_commercial['und'];
+    	  }
+    	  
+    	} else {
+    		if($target == 'testbed'){
+    		      $targetItem = $exportTypeTerm->field_export_url_testbed_by_id['und'];
+    		} else if($target == 'commercial'){
+    		      $targetItem = $exportTypeTerm->field_export_url_commercial_by_i['und'];
+    		}
+    	}
+    	
+    	$historyNode->field_export_target['und'][0]['value'] = $target;
+        $historyNode->field_export_target['und'][0]['safe_value'] = $target;
+      
+    	foreach($targetItem as $item){
+    		$url = $item['safe_value'];
+    		$result = drupal_http_request($url, $options);
+            
+            dsm($url,'url');		 
+            dsm($result,'deploy result');
+    
+    		if($result->code === '200'){
+    		    $resultData = json_decode($result->data);
+                //dsm($resultData,'result data');
+    			//$historyNode = node_load($historyNodeNid);
+    			$historyNode->field_ocs_result_code['und'][0]['value'] = $resultData->OCS->result_code;
+                $historyNode->field_ocs_result_reason['und'][0]['value'] = $resultData->OCS->result_reason;
+                $historyNode->field_cs_result_code['und'][0]['value'] = $resultData->CS->result_code;
+                $historyNode->field_cs_result_reason['und'][0]['value'] = $resultData->CS->result_reason;
+                $historyNode->field_crm_result_code['und'][0]['value'] = $resultData->CRM->result_code;
+                $historyNode->field_crm_result_reason['und'][0]['value'] = $resultData->CRM->result_reason;
+    			//node_save($historyNode);
+    		}else{
+    		    $historyNode->field_ocs_result_reason['und'][0]['value'] = 'Fail';
+                $historyNode->field_cs_result_reason['und'][0]['value'] = 'Fail';
+                $historyNode->field_crm_result_reason['und'][0]['value'] = 'Fail';
+            }
+            
+    		unset($result->request);
+            $resultString = json_encode($result);
+            $historyNode->field_export_result['und'][] = array('value' => $resultString,'safe_value' => $resultString);
+    	}
+    	node_save($historyNode);
+    	
+    	// $redirect_url = 'lifecycles/history/'.$exportTypeTerm->tid;
+    	$redirect_url = 'lifecycles/history/'.$export_type;
+    	drupal_goto($redirect_url);
+   }
 }
 
 function _get_export_type_by_content_type($content_type) {
