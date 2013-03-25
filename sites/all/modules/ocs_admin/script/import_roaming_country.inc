@@ -1,53 +1,58 @@
 <?php
 
-$country_list = _get_country_list();
+$reset_prefix = FALSE;
 
-$roam_list = _get_roaming_country();
-//print_r( $roam_list);
+while ($arg = drush_shift()) {
+	if ( $arg == 'reset') $reset_prefix = TRUE;
+}
+
+$country_list = _get_country_list();
+print_r( $country_list);
+
 $nl = '
 ';
 
-// get special number plan
-foreach( $roam_list as $rm) {
+foreach( $country_list as $key => $country) {
 	// get special number plan for this category
-	$country = $country_list[ $rm['roaming_country']]['country_name'];
-	$splan = _get_node_by_title( 'roaming_country', $country);
-	if ( empty( $splan)) {
-		$splan = ocs_admin_get_new_node( 'roaming_country');
-		$splan->title = $country;
+	$rm = _get_roaming_country( $key);
+	if ( empty( $rm)) {
+		$rm = ocs_admin_get_new_node( 'roaming_country');
+		$rm->title = $country['COUNTRY_NAME'];
 
-		print 'New roaming country : ' . $splan->title . $nl;
+		print 'New roaming country : ' . $rm->title . $nl;
 
-		$splan->field_prefix_multiple['und'][0]['value'] = $rm['called'];
-		$splan->field_exit_code['und'][0]['value'] = $rm['ruleName'];
+		$rm->field_prefix_multiple['und'][0]['value'] = $country['INTL_PREFIX'];
+		$rm->field_exit_code['und'][0]['value'] = '';
 	}
 	else {
-		print 'Existing roaming country : ' . $splan->title . $nl;
+		print 'Existing roaming country : ' . $rm->title . $nl;
 
-		/*
-		unset( $splan->field_prefix_multiple['und']);
-		unset( $splan->field_exit_code['und']);
-		*/
+		if ( $reset_prefix) {
+			unset( $rm->field_prefix_multiple['und']);
+			unset( $rm->field_exit_code['und']);
+		}
+
 		//print_r( array_get_value( $splan->field_prefix_multiple, FALSE));
-		if ( ! array_search( $rm['called'], array_get_value( $splan->field_prefix_multiple, FALSE))) {
-			$splan->field_prefix_multiple['und'][] = array( 'value' => $rm['called']);
-			$splan->field_exit_code['und'][] = array( 'value' => $rm['ruleName']);
-			print 'Add additional prefix : ' . $rm['called'] . $nl;
+		if ( ! array_search( $country['INTL_PREFIX'], array_get_value( $rm->field_prefix_multiple, FALSE))) {
+			$rm->field_prefix_multiple['und'][] = array( 'value' => implode( '', explode(' ',$country['INTL_PREFIX'])));
+//			$rm->field_exit_code['und'][] = array( 'value' => $rm['ruleName']);
+			print 'Add additional prefix : ' . $country['INTL_PREFIX'] . $nl;
 		}
 	}
-	$splan->field_country_code['und'][0]['value'] = $rm['roaming_country'];
+	$rm->field_country_code['und'][0]['value'] = $country['ISO_COUNTRY_CD'];
+	$rm->field_country_code_3['und'][0]['value'] = $country['COUNTRY_CD'];
 
-	node_save( $splan);
+	node_save( $rm);
 }
 
 function _get_country_list()
 {
-	db_set_active('fce');
+	db_set_active('csdb');
 
 	$fields = array(
-		'ruleName', 'country_prefix', 'country_name', 'time_zone'
+			'COUNTRY_CD', 'ISO_COUNTRY_CD', 'COUNTRY_NAME', 'INTL_PREFIX',
 	);
-	$table = 'intl_country_code';
+	$table = 'roaming_country';
 
 	$query = db_select( $table, 'v');
 	$result = $query->fields( 'v', $fields)
@@ -55,30 +60,7 @@ function _get_country_list()
 
 	$records = array();
 	while( $record = $result->fetchAssoc()) {
-		$records[$record['ruleName']] = $record;
-	}
-
-	db_set_active('default');
-
-	return $records;
-}
-
-function _get_roaming_country()
-{
-	db_set_active('fce');
-
-	$fields = array(
-		'ruleName', 'called', 'roaming_country'
-	);
-	$table = 'roaming_exit_code';
-
-	$query = db_select( $table, 'v');
-	$result = $query->fields( 'v', $fields)
-		->execute();
-
-	$records = array();
-	while( $record = $result->fetchAssoc()) {
-		$records[] = $record;
+		$records[$record['ISO_COUNTRY_CD']] = $record;
 	}
 
 	db_set_active('default');
@@ -87,12 +69,12 @@ function _get_roaming_country()
 }
 
 // return array of nodes
-function _get_node_by_title( $bundle, $title)
+function _get_roaming_country( $country_code)
 {
 	$query = new EntityFieldQuery();
 	$result = $query->entityCondition('entity_type', 'node')
-		->entityCondition('bundle', $bundle)
-		->propertyCondition('title', $title)
+		->entityCondition('bundle', 'roaming_country')
+		->fieldCondition('field_country_code', 'value', $country_code)
 		->execute();
 
 	if ( count( $result) > 0) {

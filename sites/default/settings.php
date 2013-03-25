@@ -242,6 +242,20 @@ $databases = array (
         ),
     ),
 
+    'csdb' =>
+        array (
+        'default' =>
+        array (
+            'database' => 'csdb',
+            'username' => 'root',
+            'password' => 'root.123',
+      		'host' => 'pcatalog',
+            'port' => '',
+            'driver' => 'mysql',
+            'prefix' => '',
+        ),
+    ),
+
 );
 
 /**
