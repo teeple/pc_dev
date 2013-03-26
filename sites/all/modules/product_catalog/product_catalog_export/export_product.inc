@@ -498,13 +498,15 @@ function _get_attribute_exceptions($product) {
                 $allowedPrefix[] = $index;
             }
         }
-        //dsm($allowedPrefix,'prefix1');
         $allowedPrefix = array_unique($allowedPrefix);
-        //dsm($allowedPrefix,'prefix2');
         asort($allowedPrefix);
-        //dsm($allowedPrefix,'prefix3');
+        $newAllowedPrefix = array();
+        foreach($allowedPrefix as $item){
+            $newAllowedPrefix[] = strval($item);
+        }
+        //dsm($newAllowedPrefix,'prefix3');
         
-        $retArray['prefix_allowed'] = $allowedPrefix;
+        $retArray['prefix_allowed'] = $newAllowedPrefix;
     }
 
     $operator = array();
