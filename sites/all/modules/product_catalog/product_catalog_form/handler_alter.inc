@@ -1395,28 +1395,36 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             _unset_menu_items($form, $form_id);
 
             $parentTerm = taxonomy_term_load($form_state['build_info']['args'][0] -> field_ref_tree_tid['und'][0]['value']);
-            if ($parentTerm -> vocabulary_machine_name == 'tpl_tariffplan_sms' || $parentTerm -> vocabulary_machine_name == 'tpl_tariffplan_data'){
-                unset($form['field_charge_collection']);
-            } else {
-                $termTid = array_search('Seconds', $form['field_range_units']['und']['#options']);
-                $form_state['build_info']['args'][0] -> field_range_units['und'][0]['tid'] = $termTid;
-                $form['field_range_units']['und']['#default_value'] = $termTid;
-                $form['field_range_units']['und']['#disabled'] = TRUE;
-
-                $termTid = array_search('Seconds', $form['field_uom_units']['und']['#options']);
-                $form_state['build_info']['args'][0] -> field_uom_units['und'][0]['tid'] = $termTid;
-                $form['field_uom_units']['und']['#default_value'] = $termTid;
-                $form['field_uom_units']['und']['#disabled'] = TRUE;
-
-                unset($form['field_price']);
-                /*
-                $form['chart_button'] = array('#type' => 'markup', '#markup' => '<input id="chart_show" type="button" value="Refresh Chart"/>', '#weight' => 199);
-
-                $form['chart_fieldset'] = array('#type' => 'fieldset', '#title' => 'Chart', '#weight' => 200, );
-                $form['chart_fieldset']['chart'] = array('#type' => 'markup',
-                //'#markup' => '<div id="flot_div" class="hidden" style="height:500px;width:90%;" ></div>',
-                '#markup' => '<div id="flot_div" style="height:500px;width:90%;" ></div>', '#weight' => 0);
-                */
+            switch($parentTerm->vocabulary_machine_name){
+                case 'tpl_tariffplan_sms':
+                    $termTid = array_search('Counts', $form['field_uom_units']['und']['#options']);
+                    $form_state['build_info']['args'][0] -> field_uom_units['und'][0]['tid'] = $termTid;
+                    $form['field_uom_units']['und']['#default_value'] = $termTid;
+                    $form['field_uom_units']['und']['#disabled'] = TRUE;
+                    unset($form['field_charge_collection']);
+                    unset($form['field_range_units']);
+                    break;
+                case 'tpl_tariffplan_data':
+                    $termTid = array_search('Bytes', $form['field_uom_units']['und']['#options']);
+                    $form_state['build_info']['args'][0] -> field_uom_units['und'][0]['tid'] = $termTid;
+                    $form['field_uom_units']['und']['#default_value'] = $termTid;
+                    $form['field_uom_units']['und']['#disabled'] = TRUE;
+                    unset($form['field_charge_collection']);
+                    unset($form['field_range_units']);
+                    break;
+                default:
+                    $termTid = array_search('Seconds', $form['field_range_units']['und']['#options']);
+                    $form_state['build_info']['args'][0] -> field_range_units['und'][0]['tid'] = $termTid;
+                    $form['field_range_units']['und']['#default_value'] = $termTid;
+                    $form['field_range_units']['und']['#disabled'] = TRUE;
+    
+                    $termTid = array_search('Seconds', $form['field_uom_units']['und']['#options']);
+                    $form_state['build_info']['args'][0] -> field_uom_units['und'][0]['tid'] = $termTid;
+                    $form['field_uom_units']['und']['#default_value'] = $termTid;
+                    $form['field_uom_units']['und']['#disabled'] = TRUE;
+    
+                    unset($form['field_price']);
+                    break;
             }
             break;
         case 'actionpricediscount_node_form' :
