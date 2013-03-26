@@ -180,6 +180,7 @@ function ocs_admin_get_counter_id_list()
         */
 
         /* get vocabulary name */
+		/*
         $vid = taxonomy_vocabulary_machine_name_load( 'countergroup');
         $query = new EntityFieldQuery;
         $result = $query->entityCondition('entity_type', 'taxonomy_term')
@@ -187,6 +188,8 @@ function ocs_admin_get_counter_id_list()
             ->execute();
 
         $terms = taxonomy_term_load_multiple( array_keys( $result['taxonomy_term']));
+		*/
+        $terms = ocs_get_terms( 'countergroup');
 //        dpm( $terms, 'term');
 
         $items = entity_load( 'node', FALSE, array( 'type' => 'counter'));
@@ -208,6 +211,7 @@ function ocs_admin_get_counter_group_list()
     if ( empty( $counter_group)) {
 
         /* get vocabulary name */
+		/*
         $vid = taxonomy_vocabulary_machine_name_load( 'countergroup');
         $query = new EntityFieldQuery;
         $result = $query->entityCondition('entity_type', 'taxonomy_term')
@@ -215,6 +219,8 @@ function ocs_admin_get_counter_group_list()
             ->execute();
 
         $terms = taxonomy_term_load_multiple( array_keys( $result['taxonomy_term']));
+		*/
+        $terms = ocs_get_terms( 'countergroup');
        	foreach( $terms as $term) {
        		if ( !empty( $term->field_common_code))
        			$counter_group[$term->field_common_code['und'][0]['value']] = $term->name;
@@ -321,4 +327,30 @@ function ocs_get_nodes_by_node_ref( $type, $field, $key)
 		->execute();
 	
 	return ( count($result) > 0) ? array_keys( $result['node']) : array();
+}
+
+// return array of nodes
+function ocs_get_nodes_by_title( $type, $title)
+{
+	$query = new EntityFieldQuery();
+	$result = $query->entityCondition('entity_type', 'node')
+		->entityCondition('bundle', $type)
+		->propertyCondition('title', $title)
+		->execute();
+	
+	return ( count($result) > 0) ? array_keys( $result['node']) : array();
+}
+
+function ocs_get_terms( $voca)
+{
+	/* get vocabulary name */
+	$vid = taxonomy_vocabulary_machine_name_load( $voca);
+	$query = new EntityFieldQuery;
+	$result = $query->entityCondition('entity_type', 'taxonomy_term')
+		->propertyCondition('vid', $vid->vid)
+		->execute();
+
+	$terms = taxonomy_term_load_multiple( array_keys( $result['taxonomy_term']));
+//        dpm( $terms, 'term');
+	return $terms;
 }
