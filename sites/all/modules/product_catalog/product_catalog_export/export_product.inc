@@ -480,12 +480,30 @@ function _get_attribute_exceptions($product) {
     $view -> execute();
     if (count($view -> result) > 0) {
         $allowedPrefixNode = node_load(current($view -> result) -> nid);
+        
         $allowedPrefix = array();
         if (!empty($allowedPrefixNode -> field_prefix_single['und'])) {
             foreach ($allowedPrefixNode->field_prefix_single['und'] as $item) {
                 $allowedPrefix[] = $item['value'];
             }
         }
+
+        foreach($allowedPrefixNode->field_prefix_range['und'] as $item){
+            $rangeCollection = field_collection_item_load($item['value']);
+            
+            $start = $rangeCollection->field_prefix_start['und'][0]['value'];
+            $end = $rangeCollection->field_prefix_end['und'][0]['value'];
+            
+            for($index = $start; $index <= $end;$index++){
+                $allowedPrefix[] = $index;
+            }
+        }
+        //dsm($allowedPrefix,'prefix1');
+        $allowedPrefix = array_unique($allowedPrefix);
+        //dsm($allowedPrefix,'prefix2');
+        asort($allowedPrefix);
+        //dsm($allowedPrefix,'prefix3');
+        
         $retArray['prefix_allowed'] = $allowedPrefix;
     }
 
