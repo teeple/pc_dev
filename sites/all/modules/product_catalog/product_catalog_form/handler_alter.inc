@@ -1395,9 +1395,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             _unset_menu_items($form, $form_id);
 
             $parentTerm = taxonomy_term_load($form_state['build_info']['args'][0] -> field_ref_tree_tid['und'][0]['value']);
-            if ($parentTerm -> vocabulary_machine_name == 'tpl_tariffplan_mobile_sms' || $parentTerm -> vocabulary_machine_name == 'tpl_tariffplan_mobile_data' || $parentTerm -> vocabulary_machine_name == 'tpl_tariffplan_mobile_sms_additional' || $parentTerm -> vocabulary_machine_name == 'tpl_tariffplan_mobile_data_additional') {//for single price such as sms
-                unset($form['field_range_units']);
-                unset($form['field_uom_units']);
+            if ($parentTerm -> vocabulary_machine_name == 'tpl_tariffplan_sms' || $parentTerm -> vocabulary_machine_name == 'tpl_tariffplan_data'){
                 unset($form['field_charge_collection']);
             } else {
                 $termTid = array_search('Seconds', $form['field_range_units']['und']['#options']);
@@ -1706,14 +1704,12 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             $parentTerm = taxonomy_term_load($form_state['build_info']['args'][0] -> field_ref_tree_tid['und'][0]['value']);
 
             switch($parentTerm->vocabulary_machine_name){
-                case 'tpl_tariffplan_mobile_sms':
-                case 'tpl_tariffplan_mobile_sms_additional':
+                case 'tpl_tariffplan_sms':
                     unset($form['field_range_units']);
                     unset($form['field_uom_units']);
                     unset($form['field_charge_collection']);
                     break;
-                case 'tpl_tariffplan_mobile_data':
-                case 'tpl_tariffplan_mobile_data_additional':
+                case 'tpl_tariffplan_data':
                     unset($form['field_range_units']);
                     unset($form['field_uom_units']);
                     unset($form['field_charge_collection']);
