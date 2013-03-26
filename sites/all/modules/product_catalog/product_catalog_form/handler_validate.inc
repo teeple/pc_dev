@@ -45,6 +45,32 @@ function is_machine_name($argStr) {
 function product_catalog_form_node_validate($node, $form, &$form_state) {
 
     switch($form['form_id']['#value']) {
+        case 'prdattributeprefixrangeallowed_node_form':
+            $isValid = TRUE;
+            $failReason = 'Prefix Field is Required';
+            $targetElement = 'field_prefix_range][und][';
+            
+            $totalRow = count($form_state['input']['field_prefix_range']['und']);
+            for($i=0;i<$totalRow;$i++){
+                $start = $form_state['input']['field_prefix_range']['und'][$i]['field_prefix_start']['und'][0]['value'];
+                $end = $form_state['input']['field_prefix_range']['und'][$i]['field_prefix_end']['und'][0]['value'];
+                
+                if(!$start){
+                    $targetElement .= $i.'][field_prefix_start';
+                    break;
+                }
+                if(!$end){
+                    $targetElement .= $i.'][field_prefix_end';
+                    break;
+                }
+                if($start >= $end){
+                    $targetElement .= $i.'][field_prefix_end';
+                    $failReason = 'End prefix should be bigger than Start prefix';
+                    break;
+                }
+            }
+            form_set_error($targetElement, $failReason);
+            break;
         case 'numberspecialfactors_node_form':
             $isDuplicatedPrefix = FALSE;
             //check duplicated in the form
