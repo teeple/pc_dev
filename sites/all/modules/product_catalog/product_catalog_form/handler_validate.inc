@@ -46,30 +46,44 @@ function product_catalog_form_node_validate($node, $form, &$form_state) {
 
     switch($form['form_id']['#value']) {
         case 'prdattributeprefixrangeallowed_node_form':
+            //dsm($form,'form');
+            //dsm($form_state,'form_state');
+           
             $isValid = TRUE;
-            $failReason = 'Prefix Field is Required';
             $targetElement = 'field_prefix_range][und][';
-            
+            $failReason = 'Only Number value is allowed for prefix';
             $totalRow = count($form_state['input']['field_prefix_range']['und']);
             for($i=0;i<$totalRow;$i++){
-                $start = $form_state['input']['field_prefix_range']['und'][$i]['field_prefix_start']['und'][0]['value'];
-                $end = $form_state['input']['field_prefix_range']['und'][$i]['field_prefix_end']['und'][0]['value'];
+                $base = $form_state['input']['field_prefix_range']['und'][$i]['field_allowed_prefix_base']['und'][0]['value'];
+                $start = $form_state['input']['field_prefix_range']['und'][$i]['field_allowed_prefix_start']['und'][0]['value'];
+                $end = $form_state['input']['field_prefix_range']['und'][$i]['field_allowed_prefix_end']['und'][0]['value'];
                 
-                if(!$start){
-                    $targetElement .= $i.'][field_prefix_start';
-                    $isValid = FALSE;
-                    break;
-                }
-                if(!$end){
-                    $targetElement .= $i.'][field_prefix_end';
-                    $isValid = FALSE;
-                    break;
-                }
-                if($start >= $end){
-                    $targetElement .= $i.'][field_prefix_end';
-                    $failReason = 'End prefix should be bigger than Start prefix';
-                    $isValid = FALSE;
-                    break;
+                if(!$base && !$start && !$end){
+                    continue;
+                }else{
+                    if(!is_numeric($base)){
+                        $targetElement .= $i.'][field_allowed_prefix_base';
+                        $isValid = FALSE;
+                        break;
+                    }
+                    if(!is_numeric($start)){
+                        $targetElement .= $i.'][field_allowed_prefix_start';
+                        $isValid = FALSE;
+                        break;
+                    }
+                    if(!$end){
+                        $targetElement .= $i.'][field_allowed_prefix_end';
+                        $isValid = FALSE;
+                        break;
+                    }
+                    $start = intval($start);
+                    $end = intval($end);
+                    if($start >= $end){
+                        $targetElement .= $i.'][field_allowed_prefix_end';
+                        $failReason = 'End prefix should be bigger than Start prefix';
+                        $isValid = FALSE;
+                        break;
+                    }
                 }
             }
             if(!$isValid ){
