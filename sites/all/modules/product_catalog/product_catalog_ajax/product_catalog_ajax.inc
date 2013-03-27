@@ -639,7 +639,7 @@ function load_required_js_css_before_ajax_load(){
     	//product catalog tree
     	$product_catalog_tree_path = drupal_get_path('module', 'product_catalog_tree');
     	drupal_add_js($product_catalog_tree_path  . '/js/product_catalog_tree_context_sub_menu.js',
-            array('type'=>'file','scope'=>'header','group'=>JS_DEFAULT,'everypage'=>TRUE,'weight'=>1)
+            array('type'=>'file','scope'=>'header','group'=>JS_DEFAULT,'everypage'=>TRUE,'weight'=>100)
         );
         
     	$paths = explode('/', current_path());
@@ -653,24 +653,24 @@ function load_required_js_css_before_ajax_load(){
 	    	
 				$jsContextMenuSettingsPath = '/js/product_catalog_tree_context_menu_setting_'.$serviceDomain.'.js';
 				drupal_add_js($product_catalog_tree_path  . $jsContextMenuSettingsPath,
-                    array('type'=>'file','scope'=>'header','group'=>JS_DEFAULT,'everypage'=>TRUE,'weight' => 3)
+                    array('type'=>'file','scope'=>'header','group'=>JS_DEFAULT,'everypage'=>TRUE,'weight' => 300)
                 );
 				
     	} else {
     		drupal_add_js($product_catalog_tree_path  . '/js/product_catalog_tree_context_menu_setting_Common.js',
-                array('type'=>'file','scope'=>'header','group'=>JS_DEFAULT,'everypage'=>TRUE,'weight'=>3)
+                array('type'=>'file','scope'=>'header','group'=>JS_DEFAULT,'everypage'=>TRUE,'weight'=>300)
             );
     	}
     	
     	drupal_add_js($product_catalog_tree_path  . '/js/product_catalog_tree_type_setting.js',
-            array('type'=>'file','scope'=>'header','group'=>JS_DEFAULT,'everypage'=>TRUE,'weight'=>2)
+            array('type'=>'file','scope'=>'header','group'=>JS_DEFAULT,'everypage'=>TRUE,'weight'=>200)
         );
     	drupal_add_js($product_catalog_tree_path  . '/js/product_catalog_tree_operation.js',
-            array('type'=>'file','scope'=>'header','group'=>JS_DEFAULT,'everypage'=>TRUE,'weight'=>4)
+            array('type'=>'file','scope'=>'header','group'=>JS_DEFAULT,'everypage'=>TRUE,'weight'=>400)
         );
     	drupal_add_js($product_catalog_tree_path  . '/js/product_catalog_tree_flot.js');
     	drupal_add_js($product_catalog_tree_path  . '/js/product_catalog_tree.js',
-            array('type'=>'file','scope'=>'header','group'=>JS_DEFAULT,'everypage'=>TRUE,'weight'=>5)
+            array('type'=>'file','scope'=>'header','group'=>JS_DEFAULT,'everypage'=>TRUE,'weight'=>500)
         );
         
     	//ctools collapsible div
