@@ -57,19 +57,24 @@ function product_catalog_form_node_validate($node, $form, &$form_state) {
                 
                 if(!$start){
                     $targetElement .= $i.'][field_prefix_start';
+                    $isValid = FALSE;
                     break;
                 }
                 if(!$end){
                     $targetElement .= $i.'][field_prefix_end';
+                    $isValid = FALSE;
                     break;
                 }
                 if($start >= $end){
                     $targetElement .= $i.'][field_prefix_end';
                     $failReason = 'End prefix should be bigger than Start prefix';
+                    $isValid = FALSE;
                     break;
                 }
             }
-            form_set_error($targetElement, $failReason);
+            if(!$isValid ){
+                form_set_error($targetElement, $failReason);
+            }
             break;
         case 'numberspecialfactors_node_form':
             $isDuplicatedPrefix = FALSE;
