@@ -649,6 +649,13 @@ function generate_condition_string_by_condition_node($nid, &$factor_list )
 					$temp = get_drupal_field_values($tid_node , 'field_rating_operation_code');
 					$op = $temp[0];
 				}
+				else if(property_exists($node, 'field_rating_operation_number '))
+				{
+					$temp = get_drupal_field_tids($node , 'field_rating_operation_number ');
+					$tid_node = $temp[0];
+					$temp = get_drupal_field_values($tid_node , 'field_rating_operation_code');
+					$op = $temp[0];
+				}
 				else
 				{
 					$op = $type->field_rating_factor_op['und'][0]['value'];
