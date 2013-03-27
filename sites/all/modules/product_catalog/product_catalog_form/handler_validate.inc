@@ -47,7 +47,7 @@ function product_catalog_form_node_validate($node, $form, &$form_state) {
     switch($form['form_id']['#value']) {
         case 'prdattributeprefixrangeallowed_node_form':
             //dsm($form,'form');
-            dsm($form_state,'form_state');
+            //dsm($form_state,'form_state');
            
             $isValid = TRUE;
             $targetElement = 'field_prefix_range][und][';

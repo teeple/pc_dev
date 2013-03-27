@@ -482,31 +482,21 @@ function _get_attribute_exceptions($product) {
         $allowedPrefixNode = node_load(current($view -> result) -> nid);
         
         $allowedPrefix = array();
-        if (!empty($allowedPrefixNode -> field_prefix_single['und'])) {
-            foreach ($allowedPrefixNode->field_prefix_single['und'] as $item) {
-                $allowedPrefix[] = $item['value'];
-            }
-        }
-
         foreach($allowedPrefixNode->field_prefix_range['und'] as $item){
             $rangeCollection = field_collection_item_load($item['value']);
             
-            $start = $rangeCollection->field_prefix_start['und'][0]['value'];
-            $end = $rangeCollection->field_prefix_end['und'][0]['value'];
+            $base = $rangeCollection->field_allowed_prefix_base['und'][0]['value'];
+            $start = $rangeCollection->field_allowed_prefix_start['und'][0]['value'];
+            $end = $rangeCollection->field_allowed_prefix_end['und'][0]['value'];
             
-            for($index = $start; $index <= $end;$index++){
-                $allowedPrefix[] = $index;
-            }
+            $allowedPrefix[] = array(
+                'base_prefix' => $base,
+                'range_start' => $start,
+                'range_end' => $end
+            );
         }
-        $allowedPrefix = array_unique($allowedPrefix);
-        asort($allowedPrefix);
-        $newAllowedPrefix = array();
-        foreach($allowedPrefix as $item){
-            $newAllowedPrefix[] = strval($item);
-        }
-        //dsm($newAllowedPrefix,'prefix3');
         
-        $retArray['prefix_allowed'] = $newAllowedPrefix;
+        $retArray['prefix_allowed'] = $allowedPrefix;
     }
 
     $operator = array();
