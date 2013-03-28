@@ -45,6 +45,50 @@ function is_machine_name($argStr) {
 function product_catalog_form_node_validate($node, $form, &$form_state) {
 
     switch($form['form_id']['#value']) {
+        case 'prdattributeprefixrangeallowed_node_form':
+            //dsm($form,'form');
+            //dsm($form_state,'form_state');
+           
+            $isValid = TRUE;
+            $targetElement = 'field_prefix_range][und][';
+            $failReason = 'Only Number value is allowed for prefix';
+            $totalRow = count($form_state['input']['field_prefix_range']['und']);
+            for($i=0;$i<$totalRow;$i++){
+                $base = $form_state['input']['field_prefix_range']['und'][$i]['field_allowed_prefix_base']['und'][0]['value'];
+                $start = $form_state['input']['field_prefix_range']['und'][$i]['field_allowed_prefix_start']['und'][0]['value'];
+                $end = $form_state['input']['field_prefix_range']['und'][$i]['field_allowed_prefix_end']['und'][0]['value'];
+                
+                if(strlen($base) == 0 && strlen($start) == 0 && strlen($end) == 0){
+                    continue;
+                }
+                if(!is_numeric($base)){
+                    $targetElement .= $i.'][field_allowed_prefix_base';
+                    $isValid = FALSE;
+                    break;
+                }
+                if(!is_numeric($start)){
+                    $targetElement .= $i.'][field_allowed_prefix_start';
+                    $isValid = FALSE;
+                    break;
+                }
+                if(!is_numeric($end)){
+                    $targetElement .= $i.'][field_allowed_prefix_end';
+                    $isValid = FALSE;
+                    break;
+                }
+                $start = intval($start);
+                $end = intval($end);
+                if($start > $end){
+                    $targetElement .= $i.'][field_allowed_prefix_end';
+                    $failReason = 'End should be bigger than Start';
+                    $isValid = FALSE;
+                    break;
+                }
+            }
+            if(!$isValid ){
+                form_set_error($targetElement, $failReason);
+            }
+            break;
         case 'numberspecialfactors_node_form':
             $isDuplicatedPrefix = FALSE;
             //check duplicated in the form

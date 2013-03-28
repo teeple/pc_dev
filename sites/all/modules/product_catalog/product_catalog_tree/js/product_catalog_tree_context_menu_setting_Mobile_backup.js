@@ -441,10 +441,6 @@
 					case "prdattributeavailablechannel":
 					case "prdattributeallowedmodel":
 					case 'basicrate_data':
-					case 'conditionwhoroamingcarrier':
-       	  case 'conditionwhereroamingcountry':
-          case 'conditionwhereroamingzone':
-          case 'conditionwhatroamingtype':
 						menus.custom_delete._disabled = false;	
 						menus.custom_delete.action = function(node) {
 							$.fn.deleteNode(node);
@@ -530,7 +526,6 @@
 				menus.custom_paste = null;
 				menus.custom_delete = null;
 		};// switch
-		console.log(menus);
 		return menus;
 	};
 })(jQuery);

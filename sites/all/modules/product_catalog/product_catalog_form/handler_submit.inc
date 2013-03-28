@@ -1,11 +1,10 @@
 <?php
 
 function node_save_handler_to_touch_product($node){
-    if(session_get('TOUCH_PRODUCT', 'TRUE') == TRUE){
-        //touch_product($node);
+    if(session_get('TOUCH_PRODUCT', TRUE)){
         $productNode = find_parent_product($node);
         if($productNode != NULL){
-            _touch_product($productNode->nid);
+           _touch_product($productNode->nid);
         }
     }
 };
@@ -278,13 +277,14 @@ function _create_default_cugdiscountfactors_in_tariffplan($tariffplan) {
 function _create_default_items_in_product($product) {
     //dsm('_create_default_items_in_product');
     //dsm($product->field_is_cloned); 
-    session_set('TOUCH_PRODUCT', 'FALSE');
+    session_set('TOUCH_PRODUCT', FALSE);
+    dsm(session_get('TOUCH_PRODUCT'));
 	if(!empty($product->field_is_cloned) && $product->field_is_cloned['und'][0]['value'] == 0){
 			
 		$voca_name = _get_vocabulary_name('simpleproductoffering', $product);
 		_create_default_items_by_voca($product, $voca_name);
 	}
-    session_set('TOUCH_PRODUCT', 'TRUE');
+    session_set('TOUCH_PRODUCT', TRUE);
 }
 
 function _create_default_items_in_product_old($product) {

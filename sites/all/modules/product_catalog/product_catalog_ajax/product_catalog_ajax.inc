@@ -638,7 +638,9 @@ function load_required_js_css_before_ajax_load(){
     	
     	//product catalog tree
     	$product_catalog_tree_path = drupal_get_path('module', 'product_catalog_tree');
-    	drupal_add_js($product_catalog_tree_path  . '/js/product_catalog_tree_context_sub_menu.js');
+    	drupal_add_js($product_catalog_tree_path  . '/js/product_catalog_tree_context_sub_menu.js',
+            array('type'=>'file','scope'=>'header','group'=>JS_DEFAULT,'everypage'=>TRUE,'weight'=>100)
+        );
         
     	$paths = explode('/', current_path());
     	$serviceDomains = array('Mobile', 'IPTV', 'VoIP', 'Broadband', 'Satellite', 'Dummy', 'Cross');
@@ -650,16 +652,27 @@ function load_required_js_css_before_ajax_load(){
 	    	} 
 	    	
 				$jsContextMenuSettingsPath = '/js/product_catalog_tree_context_menu_setting_'.$serviceDomain.'.js';
-				drupal_add_js($product_catalog_tree_path  . $jsContextMenuSettingsPath);
+				drupal_add_js($product_catalog_tree_path  . $jsContextMenuSettingsPath,
+                    array('type'=>'file','scope'=>'header','group'=>JS_DEFAULT,'everypage'=>TRUE,'weight' => 300)
+                );
 				
     	} else {
-    		drupal_add_js($product_catalog_tree_path  . '/js/product_catalog_tree_context_menu_setting_Common.js');
+    		drupal_add_js($product_catalog_tree_path  . '/js/product_catalog_tree_context_menu_setting_Common.js',
+                array('type'=>'file','scope'=>'header','group'=>JS_DEFAULT,'everypage'=>TRUE,'weight'=>300)
+            );
     	}
     	
-    	drupal_add_js($product_catalog_tree_path  . '/js/product_catalog_tree_type_setting.js');
-    	drupal_add_js($product_catalog_tree_path  . '/js/product_catalog_tree_operation.js');
+    	drupal_add_js($product_catalog_tree_path  . '/js/product_catalog_tree_type_setting.js',
+            array('type'=>'file','scope'=>'header','group'=>JS_DEFAULT,'everypage'=>TRUE,'weight'=>200)
+        );
+    	drupal_add_js($product_catalog_tree_path  . '/js/product_catalog_tree_operation.js',
+            array('type'=>'file','scope'=>'header','group'=>JS_DEFAULT,'everypage'=>TRUE,'weight'=>400)
+        );
     	drupal_add_js($product_catalog_tree_path  . '/js/product_catalog_tree_flot.js');
-    	
+    	drupal_add_js($product_catalog_tree_path  . '/js/product_catalog_tree.js',
+            array('type'=>'file','scope'=>'header','group'=>JS_DEFAULT,'everypage'=>TRUE,'weight'=>500)
+        );
+        
     	//ctools collapsible div
     	$ctoolsPath = drupal_get_path('module', 'ctools');
     	drupal_add_js($ctoolsPath. '/js/collapsible-div.js');
@@ -682,9 +695,6 @@ function load_required_js_css_before_ajax_load(){
         drupal_add_css($jQuery_ui_multiselect_path. '/jquery_ui_multiselect_widget.css');
         drupal_add_css($jQuery_ui_multiselect_path. '/jquery-ui-multiselect-widget/jquery.multiselect.css');
         drupal_add_css($jQuery_ui_multiselect_path. '/jquery-ui-multiselect-widget/jquery.multiselect.filter.css');
-        
-        drupal_add_js($product_catalog_tree_path  . '/js/product_catalog_tree.js');
-        
     }
 }
 

@@ -264,11 +264,13 @@ function to_rating_rule_string($value)
 function format_rating_factor_value($field_name, $und, $value)
 {
 	$field_type = get_field_type_string($field_name);
+	/*
 	if($field_type == "list_integer" || $field_type == "list_text")
 	{
 		dsm(field_info_field($field_name));
 	}
-	else if($field_type == 'list_boolean')
+	 */
+	if($field_type == 'list_boolean')
 	{
 		if($value == '1')
 			$value = 'true';
@@ -278,7 +280,28 @@ function format_rating_factor_value($field_name, $und, $value)
 
 	if(array_key_exists('date_type', $und) && $und['date_type'] =='datetime' )
 	{
-		$value = dash_date_to_nondash_date_string($value);
+		$finfo = field_info_field($field_name);
+		$granularity = $finfo['settings']['granularity'];
+		$format_str = '%Y%m%d';
+		/*
+		if($granularity['second'] !== 0)
+		{
+			$format_str = '%Y-%m-%dT%H:%M:%S';
+			//$value = '\''. strftime($format_str, strtotime($value)) . '\'';
+			return strftime($format_str, strtotime($value));
+		}
+		else 
+		 */
+			if($granularity['minute'] !== 0)
+		{
+			$format_str = '%Y-%m-%dT%H:%M';
+			//$value = '\''. strftime($format_str, strtotime($value)) . '\'';
+			return strftime($format_str, strtotime($value));
+		}
+		else
+		{
+			$value = dash_date_to_nondash_date_string($value);
+		}
 	}
 	return $value;
 }
@@ -433,9 +456,12 @@ function get_drupal_field_values($obj , $field_name)
 {
 	$ret = array();
 	$temp = $obj->$field_name;
-	foreach($temp['und'] as $und)
+	if(array_key_exists('und' , $temp))
 	{
-		$ret[] = $und['value'];
+		foreach($temp['und'] as $und)
+		{
+			$ret[] = $und['value'];
+		}
 	}
 	return $ret;
 }
@@ -645,6 +671,13 @@ function generate_condition_string_by_condition_node($nid, &$factor_list )
 				else if(property_exists($node, 'field_rating_operation_for_date'))
 				{
 					$temp = get_drupal_field_tids($node , 'field_rating_operation_for_date');
+					$tid_node = $temp[0];
+					$temp = get_drupal_field_values($tid_node , 'field_rating_operation_code');
+					$op = $temp[0];
+				}
+				else if(property_exists($node, 'field_rating_operation_number '))
+				{
+					$temp = get_drupal_field_tids($node , 'field_rating_operation_number ');
 					$tid_node = $temp[0];
 					$temp = get_drupal_field_values($tid_node , 'field_rating_operation_code');
 					$op = $temp[0];

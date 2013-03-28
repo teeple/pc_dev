@@ -56,22 +56,7 @@ function product_catalog_ajax_custom_submit() {
                 _create_roaming_basicrate_node($tariffplanNode);
             }
             break;
-        /* Not used
-		case 'select_timetable_idd':
-			$tariffplanNode = node_load($tariffplanNid);
-			$oldTimetableNid = isset($tariffplanNode->field_ref_timetable_idd['und'][0]['nid'])
-								? $tariffplanNode->field_ref_timetable_idd['und'][0]['nid'] : NULL;
-			$newTimetableNid = current($selected_nid);
-			$tariffplanNode->field_ref_timetable_idd['und'][0]['nid'] = $newTimetableNid;				
-			node_save($tariffplanNode);
-			
-			if($oldTimetableNid == NULL || $oldTimetableNid != $newTimetableNid){
-				_create_basicrate_node($type,$tariffplanNode);
-			}
-			
-			break;  
-         */        
-	}
+    }
 	
 	$renderOutput = '';
 	$output[] = $renderOutput;
@@ -98,6 +83,20 @@ function _create_roaming_basicrate_node($tariffplanNode){
     $query->join('field_data_field_ref_roaming_plan','plan','n.nid = plan.field_ref_roaming_plan_nid');
     $query->condition('plan.bundle','roaming_ratinggroup','=');
     $query->join('field_data_field_rating_group','rg','plan.entity_id = rg.entity_id');
+    $query->join('field_data_field_ref_roaming_type','roamingtype','plan.entity_id = roamingtype.entity_id');
+    $query->join('taxonomy_term_data','term','roamingtype.field_ref_roaming_type_tid = term.tid');
+    
+    //filter ratinggroup based on usage type
+    $vocaName = $tariffplanNode->field_tree_child_voca_name['und'][0]['value'];
+    switch($vocaName){
+        case 'tpl_tariffplan_voice':
+            $allowedRoamingType = array('HPLMN','VPLMN','Other PLMN','Incoming');
+            break;
+        case 'tpl_tariffplan_sms':
+            $allowedRoamingType = array('Incoming SMS','Outgoing SMS');
+            break;
+    }
+    $query->condition('term.name',$allowedRoamingType,'in');
     $query->fields('rg',array('field_rating_group_value'));
     $query->distinct();
     $query->orderBy('rg.field_rating_group_value', 'ASC');
@@ -107,10 +106,11 @@ function _create_roaming_basicrate_node($tariffplanNode){
     
     $ratingGroups = array();
     while($record = $result->fetchAssoc()) {
-            $ratingGroups[] = current($record);
+        $ratingGroups[] = current($record);
     } 
     
     //2. create nodes 
+    //find rating groups which is not used for the tariffplan
     foreach($ratingGroups as $ratingGroup){ 
         $node = new StdClass();
         $node->uid = $user->uid;

@@ -388,7 +388,26 @@ function _get_attribute($product) {
     $result_attribute_general = array();
     $result_attrbitue_exception = array();
 
-    $reqArray = array('product_id' => array('through_common_code' => FALSE, 'field' => 'field_product_id', 'field_value' => "field_product_id['und'][0]['value']", 'field_default' => NULL), 'product_name' => array('through_common_code' => FALSE, 'field' => 'title', 'field_value' => 'title', 'field_value_default' => '', ), 'is_bundle' => array('through_common_code' => FALSE, 'field' => 'field_is_bundle', 'field_value' => "field_is_bundle['und'][0]['value']", 'field_value_default' => '0'), 'deferred_change' => array('through_common_code' => FALSE, 'field' => 'field_deferred_subscription_flag', 'field_value' => "field_deferred_subscription_flag['und'][0]['value']", 'field_value_default' => '0'), 'description' => array('through_common_code' => FALSE, 'field' => 'field_description', 'field_value' => "field_description['und'][0]['safe_value']", 'field_value_default' => ''), 'version' => array('through_common_code' => FALSE, 'field' => 'field_version', 'field_value' => "field_version['und'][0]['value']", 'field_value_default' => '1.0'), 'billing_cycle' => array('through_common_code' => FALSE, 'field' => 'field_billing_cycle', 'field_value' => "field_billing_cycle['und'][0]['value']", 'field_value_default' => '1.0'), 'bill_type' => array('through_common_code' => TRUE, 'field' => 'field_billing_type', 'field_value' => "field_billing_type['und'][0]['tid']", 'field_value_default' => NULL), 'product_type' => array('through_common_code' => TRUE, 'field' => 'field_product_type', 'field_value' => "field_product_type['und'][0]['tid']", 'field_value_default' => NULL), 'product_sub_type' => array('through_common_code' => TRUE, 'field' => 'field_product_sub_type', 'field_value' => "field_product_sub_type['und'][0]['tid']", 'field_value_default' => NULL), 'service_domain' => array('through_common_code' => TRUE, 'field' => 'field_service_type_of_provider', 'field_value' => "field_service_type_of_provider['und'][0]['tid']", 'field_value_default' => NULL), 'status' => array('through_common_code' => TRUE, 'field' => 'field_offering_status', 'field_value' => "field_offering_status['und'][0]['tid']", 'field_value_default' => NULL), 'customer_type' => array('through_common_code' => TRUE, 'field' => 'field_customer_type', 'field_value' => "field_customer_type['und'][0]['tid']", 'field_value_default' => NULL), 'customer_group_type' => array('through_common_code' => TRUE, 'field' => 'field_customer_group_type', 'field_value' => "field_customer_group_type['und'][0]['tid']", 'field_value_default' => NULL), 'cug_member_counter' => array('through_common_code' => FALSE, 'field' => 'field_cug_member_counter', 'field_value' => "field_cug_member_counter['und'][0]['value']", 'field_value_default' => NULL, ), 'treatment_day' => array('through_common_code' => FALSE, 'field' => 'field_treatment_day', 'field_value' => "field_treatment_day['und'][0]['value']", 'field_value_default' => NULL), 'treatment_price' => array('through_common_code' => FALSE, 'field' => 'field_treatment_price_amount', 'field_value' => "field_treatment_price_amount['und'][0]['value']", 'field_value_default' => 0), 'contract_period' => array('through_common_code' => FALSE, 'field' => 'field_contract_period‎', 'field_value' => "field_contract_period‎['und'][0]['value']", 'field_value_default' => 0), 'roaming_allowed' => array('through_common_code' => TRUE, 'field' => 'field_roaming_allowed', 'field_value' => "field_roaming_allowed['und'][0]['tid']", 'field_value_default' => array('codeGroup' => 'RoamingAllwoed', 'code' => '0', 'meaning' => 'Not Allowed')), );
+    $reqArray = array(
+                      "product_id" => array("through_common_code" => FALSE, "field" => "field_product_id", "field_value" => "field_product_id['und'][0]['value']", "field_default" => NULL), 
+                      "product_name" => array("through_common_code" => FALSE, "field" => "title", "field_value" => "title", "field_value_default" => ""), 
+                      'is_bundle' => array('through_common_code' => FALSE, 'field' => 'field_is_bundle', 'field_value' => "field_is_bundle['und'][0]['value']", 'field_value_default' => '0'), 
+                      'deferred_changing' => array('through_common_code' => FALSE, 'field' => 'field_field_deferred_subscriptio', 'field_value' => "field_field_deferred_subscriptio['und'][0]['value']", 'field_value_default' => '0'), 
+                      'description' => array('through_common_code' => FALSE, 'field' => 'field_description', 'field_value' => "field_description['und'][0]['safe_value']", 'field_value_default' => ''), 
+                      'version' => array('through_common_code' => FALSE, 'field' => 'field_version', 'field_value' => "field_version['und'][0]['value']", 'field_value_default' => '1.0'), 
+                      'billing_cycle' => array('through_common_code' => FALSE, 'field' => 'field_billing_cycle', 'field_value' => "field_billing_cycle['und'][0]['value']", 'field_value_default' => '1.0'), 
+                      'bill_type' => array('through_common_code' => TRUE, 'field' => 'field_billing_type', 'field_value' => "field_billing_type['und'][0]['tid']", 'field_value_default' => NULL), 
+                      'product_type' => array('through_common_code' => TRUE, 'field' => 'field_product_type', 'field_value' => "field_product_type['und'][0]['tid']", 'field_value_default' => NULL), 
+                      'product_sub_type' => array('through_common_code' => TRUE, 'field' => 'field_product_sub_type', 'field_value' => "field_product_sub_type['und'][0]['tid']", 'field_value_default' => NULL), 
+                      'service_domain' => array('through_common_code' => TRUE, 'field' => 'field_service_type_of_provider', 'field_value' => "field_service_type_of_provider['und'][0]['tid']", 'field_value_default' => NULL), 
+                      'status' => array('through_common_code' => TRUE, 'field' => 'field_offering_status', 'field_value' => "field_offering_status['und'][0]['tid']", 'field_value_default' => NULL), 
+                      'customer_type' => array('through_common_code' => TRUE, 'field' => 'field_customer_type', 'field_value' => "field_customer_type['und'][0]['tid']", 'field_value_default' => NULL), 
+                      'customer_group_type' => array('through_common_code' => TRUE, 'field' => 'field_customer_group_type', 'field_value' => "field_customer_group_type['und'][0]['tid']", 'field_value_default' => NULL), 
+                      'cug_member_counter' => array('through_common_code' => FALSE, 'field' => 'field_cug_member_counter', 'field_value' => "field_cug_member_counter['und'][0]['value']", 'field_value_default' => NULL, ), 
+                      'treatment_day' => array('through_common_code' => FALSE, 'field' => 'field_treatment_day', 'field_value' => "field_treatment_day['und'][0]['value']", 'field_value_default' => NULL), 
+                      'treatment_price' => array('through_common_code' => FALSE, 'field' => 'field_treatment_price_amount', 'field_value' => "field_treatment_price_amount['und'][0]['value']", 'field_value_default' => 0), 
+                      'contract_period' => array('through_common_code' => FALSE, 'field' => 'field_contract_period‎', 'field_value' => "field_contract_period‎['und'][0]['value']", 'field_value_default' => 0), 
+                );
 
     $result_attribute_general = _get_result($reqArray, $product);
     $result_attrbitue_exception = _get_attribute_exceptions($product);
@@ -480,13 +499,25 @@ function _get_attribute_exceptions($product) {
     $view -> execute();
     if (count($view -> result) > 0) {
         $allowedPrefixNode = node_load(current($view -> result) -> nid);
+        
         $allowedPrefix = array();
-        if (!empty($allowedPrefixNode -> field_prefix_single['und'])) {
-            foreach ($allowedPrefixNode->field_prefix_single['und'] as $item) {
-                $allowedPrefix[] = $item['value'];
-            }
+        if(isset($allowedPrefixNode->field_prefix_range['und'])){
+            foreach($allowedPrefixNode->field_prefix_range['und'] as $item){
+            $rangeCollection = field_collection_item_load($item['value']);
+            
+            $base = $rangeCollection->field_allowed_prefix_base['und'][0]['value'];
+            $start = $rangeCollection->field_allowed_prefix_start['und'][0]['value'];
+            $end = $rangeCollection->field_allowed_prefix_end['und'][0]['value'];
+            
+            $allowedPrefix[] = array(
+                'base_prefix' => $base,
+                'range_start' => $start,
+                'range_end' => $end
+            );
         }
+        
         $retArray['prefix_allowed'] = $allowedPrefix;
+        }
     }
 
     $operator = array();

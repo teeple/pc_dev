@@ -34,123 +34,143 @@
 	};
 	
 	$.fn.getConditionWhoType1 = function(){
-		var obj = new Object;
-		obj[0] = $.fn.getSubMenuAddNodeWithoutWrapper("Subscriber MDN","conditionwhosubscribermdn");
-		obj[1] = $.fn.getSubMenuAddNodeWithoutWrapper("Subscriber Status","conditionwhosubscriberstatus");
-		obj[2] = $.fn.getSubMenuAddNodeWithoutWrapper("Called Number","conditionwhoprefixfactors");
-		obj[3] = $.fn.getSubMenuAddNodeWithoutWrapper("Carrier (Called)","conditionwhocalledcarrier");
-		obj[4] = $.fn.getSubMenuAddNodeWithoutWrapper("Customer Level","conditionwhocustomerlevel");
+		var obj = {
+			"Subscriber MDN" : $.fn.getSubMenuAddNodeWithoutWrapper("Subscriber MDN","conditionwhosubscribermdn"),
+			"Subscriber Status" : $.fn.getSubMenuAddNodeWithoutWrapper("Subscriber Status","conditionwhosubscriberstatus"),
+			"Called Number" : $.fn.getSubMenuAddNodeWithoutWrapper("Called Number","conditionwhoprefixfactors"),
+			"Carrier (Called)" : $.fn.getSubMenuAddNodeWithoutWrapper("Carrier (Called)","conditionwhocalledcarrier"),
+			"Customer Level" : $.fn.getSubMenuAddNodeWithoutWrapper("Customer Level","conditionwhocustomerlevel"),
+			"Roaming Carrier": $.fn.getSubMenuAddNodeWithoutWrapper("Roaming Carrier","conditionwhoroamingcarrier"),
+		};
 		return obj;
 	};
 	
 	$.fn.getConditionWhoType2 = function(){
-		var obj = new Object;
-		obj[0] = $.fn.getSubMenuAddNodeWithoutWrapper("Customer level","conditionwhocustomerlevel");
-		obj[1] = $.fn.getSubMenuAddNodeWithoutWrapper("Subscriber MDN","conditionwhosubscribermdn");
-		obj[2] = $.fn.getSubMenuAddNodeWithoutWrapper("Subscriber Status","conditionwhosubscriberstatus");
+		var obj = {
+			"Customer Level" : $.fn.getSubMenuAddNodeWithoutWrapper("Customer Level","conditionwhocustomerlevel"),
+			"Subscriber MDN" : $.fn.getSubMenuAddNodeWithoutWrapper("Subscriber MDN","conditionwhosubscribermdn"),
+			"Subscriber Status" : $.fn.getSubMenuAddNodeWithoutWrapper("Subscriber Status","conditionwhosubscriberstatus")
+		};
 		return obj;
 	};
 
 	$.fn.getConditionWhereType1 = function(){
-		var obj = new Object;
-		obj[0] = $.fn.getSubMenuAddNodeWithoutWrapper("Caller Zone","conditionwherecallerzone");
-		obj[1] = $.fn.getSubMenuAddNodeWithoutWrapper("Callee Zone","conditionwherecalleezone");
-		obj[2] = $.fn.getSubMenuAddNodeWithoutWrapper("Caller/Callee in SameZone","conditionwhereissamezone");
-		obj[3] = $.fn.getSubMenuAddNodeWithoutWrapper("Client IP","conditionwhereclientip");
-		obj[4] = $.fn.getSubMenuAddNodeWithoutWrapper("Client MAC Address","conditionwheremacaddress");
-		obj[5] = $.fn.getSubMenuAddNodeWithoutWrapper("Client Device Type","conditionwheredevicetype");
-		obj[6] = $.fn.getSubMenuAddNodeWithoutWrapper("Service ID","conditionwhereserviceid");
+		var obj = {
+			"Caller Zone" : $.fn.getSubMenuAddNodeWithoutWrapper("Caller Zone","conditionwherecallerzone"),
+			"Callee Zone" : $.fn.getSubMenuAddNodeWithoutWrapper("Callee Zone","conditionwherecalleezone"),
+			"Caller/Callee in SameZone" : $.fn.getSubMenuAddNodeWithoutWrapper("Caller/Callee in SameZone","conditionwhereissamezone"),
+			"Client IP" : $.fn.getSubMenuAddNodeWithoutWrapper("Client IP","conditionwhereclientip"),
+			"Client MAC Address" : $.fn.getSubMenuAddNodeWithoutWrapper("Client MAC Address","conditionwheremacaddress"),
+			"Client Device Type" : $.fn.getSubMenuAddNodeWithoutWrapper("Client Device Type","conditionwheredevicetype"),
+			"Service ID" : $.fn.getSubMenuAddNodeWithoutWrapper("Service ID","conditionwhereserviceid"),
+			"Roaming Zone" : $.fn.getSubMenuAddNodeWithoutWrapper("Roaming Zone","conditionwhereroamingzone"),
+			"Roaming Country" : $.fn.getSubMenuAddNodeWithoutWrapper("Roaming Country","conditionwhereroamingcountry"),
+		};
 		return obj;
 	};
 	
 	$.fn.getConditionWhereType2 = function(){
-		var obj = new Object;
-		obj[0] = $.fn.getSubMenuAddNodeWithoutWrapper("Caller Zone","conditionwherecallerzone");
-		obj[1] = $.fn.getSubMenuAddNodeWithoutWrapper("Callee Zone","conditionwherecalleezone");
-		obj[2] = $.fn.getSubMenuAddNodeWithoutWrapper("Caller/Callee in SameZone","conditionwhereissamezone");
+		var obj = {
+			"Caller Zone" : $.fn.getSubMenuAddNodeWithoutWrapper("Caller Zone","conditionwherecallerzone"),
+			"Callee Zone" : $.fn.getSubMenuAddNodeWithoutWrapper("Callee Zone","conditionwherecalleezone"),
+			"Caller/Callee in SameZone" : $.fn.getSubMenuAddNodeWithoutWrapper("Caller/Callee in SameZone","conditionwhereissamezone"),
+			"Roaming Zone" : $.fn.getSubMenuAddNodeWithoutWrapper("Roaming Zone","conditionwhereroamingzone"),
+			"Roaming Country" : $.fn.getSubMenuAddNodeWithoutWrapper("Roaming Country","conditionwhereroamingcountry"),
+		}
 		return obj;
 	};
 	
 	$.fn.getConditionWhereType3 = function(){
-		var obj = new Object;
-		obj[0] = $.fn.getSubMenuAddNodeWithoutWrapper("Caller Zone","conditionwherecallerzone");
-		obj[1] = $.fn.getSubMenuAddNodeWithoutWrapper("Client IP","conditionwhereclientip");
-		obj[2] = $.fn.getSubMenuAddNodeWithoutWrapper("Client MAC Address","conditionwheremacaddress");
-		obj[3] = $.fn.getSubMenuAddNodeWithoutWrapper("Client Device Type","conditionwheredevicetype");
-		obj[4] = $.fn.getSubMenuAddNodeWithoutWrapper("Service ID","conditionwhereserviceid");
+		var obj = {
+			"Caller Zone" : $.fn.getSubMenuAddNodeWithoutWrapper("Caller Zone","conditionwherecallerzone"),
+			"Client IP" : $.fn.getSubMenuAddNodeWithoutWrapper("Client IP","conditionwhereclientip"),
+			"Client MAC Address" : $.fn.getSubMenuAddNodeWithoutWrapper("Client MAC Address","conditionwheremacaddress"),
+			"Client Device Type" : $.fn.getSubMenuAddNodeWithoutWrapper("Client Device Type","conditionwheredevicetype"),
+			"Service ID" : $.fn.getSubMenuAddNodeWithoutWrapper("Service ID","conditionwhereserviceid")
+		};
 		return obj;
 	};
 	
 	$.fn.getConditionWhereType4 = function(){
-		var obj = new Object;
-		obj[0] = $.fn.getSubMenuAddNodeWithoutWrapper("Caller Zone","conditionwherecallerzone");
+		var obj = {
+			"Caller Zone" : $.fn.getSubMenuAddNodeWithoutWrapper("Caller Zone","conditionwherecallerzone")
+		};
 		return obj;
 	};
 	
 	$.fn.getConditionWhatType1 = function(){
-		var obj = new Object;
-		obj[0] = $.fn.getSubMenuAddNodeWithoutWrapper("UsageType","conditionwhatusagetypefactors");
-		obj[1] = $.fn.getSubMenuAddNodeWithoutWrapper("NonUsageType","conditionwhatnonusagetypefactors");
-		obj[2] = $.fn.getSubMenuAddNodeWithoutWrapper("Card Types","conditionwhatcardtype");
-		obj[3] = $.fn.getSubMenuAddNodeWithoutWrapper("Incoming Call","conditionwhatincomingcall");
-		obj[4] = $.fn.getSubMenuAddNodeWithoutWrapper("Call Type","conditionwhatcalltype");
-		obj[5] = $.fn.getSubMenuAddNodeWithoutWrapper("Counter","conditionwhatcounter");
-		obj[6] = $.fn.getSubMenuAddNodeWithoutWrapper("Rating Group","conditionwhatratinggroup");
-		obj[7] = $.fn.getSubMenuAddNodeWithoutWrapper("Main Product","conditionwhatmainproduct");
+		var obj = {
+			"UsageType" : $.fn.getSubMenuAddNodeWithoutWrapper("UsageType","conditionwhatusagetypefactors"),
+			"NonUsageType" : $.fn.getSubMenuAddNodeWithoutWrapper("NonUsageType","conditionwhatnonusagetypefactors"),
+			"RoamingType" : $.fn.getSubMenuAddNodeWithoutWrapper("RoamingType","conditionwhatroamingtype"),
+			"Card Types" : $.fn.getSubMenuAddNodeWithoutWrapper("Card Types","conditionwhatcardtype"),
+			"Incoming Call" : $.fn.getSubMenuAddNodeWithoutWrapper("Incoming Call","conditionwhatincomingcall"),
+			"Call Type" : $.fn.getSubMenuAddNodeWithoutWrapper("Call Type","conditionwhatcalltype"),
+			"Counter" : $.fn.getSubMenuAddNodeWithoutWrapper("Counter","conditionwhatcounter"),
+			"Rating Group" : $.fn.getSubMenuAddNodeWithoutWrapper("Rating Group","conditionwhatratinggroup"),
+			"Main Product" : $.fn.getSubMenuAddNodeWithoutWrapper("Main Product","conditionwhatmainproduct")
+		};
 		return obj;
 	};
 	
 	$.fn.getConditionWhatType2 = function(){
-		var obj = new Object;
-		obj[0] = $.fn.getSubMenuAddNodeWithoutWrapper("Card Types","conditionwhatcardtype");
-		obj[1] = $.fn.getSubMenuAddNodeWithoutWrapper("Counter","conditionwhatcounter");
-		obj[2] = $.fn.getSubMenuAddNodeWithoutWrapper("Main Product","conditionwhatmainproduct");
+		var obj = {
+			"Card Types" : $.fn.getSubMenuAddNodeWithoutWrapper("Card Types","conditionwhatcardtype"),
+			"Counter" : $.fn.getSubMenuAddNodeWithoutWrapper("Counter","conditionwhatcounter"),
+			"Main Product" : $.fn.getSubMenuAddNodeWithoutWrapper("Main Product","conditionwhatmainproduct")
+		};
 		return obj;
 	};
 	
 	$.fn.getConditionWhatType3 = function(){
-		var obj = new Object;
-		obj[0] = $.fn.getSubMenuAddNodeWithoutWrapper("Counter","conditionwhatcounter");
-		obj[1] = $.fn.getSubMenuAddNodeWithoutWrapper("Call Type","conditionwhatcalltype");
-		obj[2] = $.fn.getSubMenuAddNodeWithoutWrapper("Main Product","conditionwhatmainproduct");
+		var obj = {
+			"Counter" : $.fn.getSubMenuAddNodeWithoutWrapper("Counter","conditionwhatcounter"),
+			"Call Type" : $.fn.getSubMenuAddNodeWithoutWrapper("Call Type","conditionwhatcalltype"),
+			"Main Product" : $.fn.getSubMenuAddNodeWithoutWrapper("Main Product","conditionwhatmainproduct")
+		};
 		return obj;
 	};
 	
 	$.fn.getConditionWhatType4 = function(){
-		var obj = new Object;
-		obj[0] = $.fn.getSubMenuAddNodeWithoutWrapper("UsageType","conditionwhatusagetypefactors");
-		obj[1] = $.fn.getSubMenuAddNodeWithoutWrapper("Card Types","conditionwhatcardtype");
-		obj[2] = $.fn.getSubMenuAddNodeWithoutWrapper("Incoming Call","conditionwhatincomingcall");
-		obj[3] = $.fn.getSubMenuAddNodeWithoutWrapper("Call Type","conditionwhatcalltype");
-		obj[4] = $.fn.getSubMenuAddNodeWithoutWrapper("Counter","conditionwhatcounter");
-		obj[5] = $.fn.getSubMenuAddNodeWithoutWrapper("Main Product","conditionwhatmainproduct");
+		var obj = {
+			"UsageType" : $.fn.getSubMenuAddNodeWithoutWrapper("UsageType","conditionwhatusagetypefactors"),
+			"Card Types" : $.fn.getSubMenuAddNodeWithoutWrapper("Card Types","conditionwhatcardtype"),
+			"RoamingType" : $.fn.getSubMenuAddNodeWithoutWrapper("RoamingType","conditionwhatroamingtype"),
+			"Incoming Call" : $.fn.getSubMenuAddNodeWithoutWrapper("Incoming Call","conditionwhatincomingcall"),
+			"Call Type" : $.fn.getSubMenuAddNodeWithoutWrapper("Call Type","conditionwhatcalltype"),
+			"Counter" : $.fn.getSubMenuAddNodeWithoutWrapper("Counter","conditionwhatcounter"),
+			"Main Product" : $.fn.getSubMenuAddNodeWithoutWrapper("Main Product","conditionwhatmainproduct")
+		};
 		return obj;
 	};
 	
 	$.fn.getConditionWhatType5 = function(){
-		var obj = new Object;
-		obj[0] = $.fn.getSubMenuAddNodeWithoutWrapper("Incoming Call","conditionwhatincomingcall");
-		obj[1] = $.fn.getSubMenuAddNodeWithoutWrapper("Call Type","conditionwhatcalltype");
-		obj[2] = $.fn.getSubMenuAddNodeWithoutWrapper("Counter","conditionwhatcounter");
-		obj[3] = $.fn.getSubMenuAddNodeWithoutWrapper("Main Product","conditionwhatmainproduct");
+		var obj = {
+			"Incoming Call" : $.fn.getSubMenuAddNodeWithoutWrapper("Incoming Call","conditionwhatincomingcall"),
+			"Call Type" : $.fn.getSubMenuAddNodeWithoutWrapper("Call Type","conditionwhatcalltype"),
+			"RoamingType" : $.fn.getSubMenuAddNodeWithoutWrapper("RoamingType","conditionwhatroamingtype"),
+			"Counter" : $.fn.getSubMenuAddNodeWithoutWrapper("Counter","conditionwhatcounter"),
+			"Main Product" : $.fn.getSubMenuAddNodeWithoutWrapper("Main Product","conditionwhatmainproduct")
+		};
 		return obj;
 	};
 	
 	$.fn.getConditionWhenType1 = function(){
-		var obj = new Object;
-		obj[0] = $.fn.getSubMenuAddNodeWithoutWrapper("Day","conditionwhendayfactors");
-		obj[1] = $.fn.getSubMenuAddNodeWithoutWrapper("Day of Month","conditionwhendayofmonth");
-		obj[2] = $.fn.getSubMenuAddNodeWithoutWrapper("Bill Date","conditionwhenbillingdate");
-		obj[3] = $.fn.getSubMenuAddNodeWithoutWrapper("Subscription Date","conditionwhensubscriptionday");
-		obj[4] = $.fn.getSubMenuAddNodeWithoutWrapper("Activation Date","conditionwhenactivationday");
-		obj[5] = $.fn.getSubMenuAddNodeWithoutWrapper("Active Days","conditionwhenactivedays");
-		obj[6] = $.fn.getSubMenuAddNodeWithoutWrapper("Customer Birthday","conditionwhencustomerbirthday");
-		obj[7] = $.fn.getSubMenuAddNodeWithoutWrapper("Company Anniversary","conditionwhencompanybirthday");
-		obj[8] = $.fn.getSubMenuAddNodeWithoutWrapper("Duration","conditionwhendurationfactors");
-		obj[9] = $.fn.getSubMenuAddNodeWithoutWrapper("Holiday","conditionwhenholidayfactors");
-		obj[10] = $.fn.getSubMenuAddNodeWithoutWrapper("Timeslot","conditionwhentimeslotfactors");
-		obj[11] = $.fn.getSubMenuAddNodeWithoutWrapper("Week","conditionwhenweekfactors");
-		obj[12] = $.fn.getSubMenuAddNodeWithoutWrapper("First Month","conditionwhenfirstmonth");
+		var obj = {
+			"Day" : $.fn.getSubMenuAddNodeWithoutWrapper("Day","conditionwhendayfactors"),
+			"Day of Month" : $.fn.getSubMenuAddNodeWithoutWrapper("Day of Month","conditionwhendayofmonth"),
+			"Bill Date" : $.fn.getSubMenuAddNodeWithoutWrapper("Bill Date","conditionwhenbillingdate"),
+			"Subscription Date" : $.fn.getSubMenuAddNodeWithoutWrapper("Subscription Date","conditionwhensubscriptionday"),
+			"Activation Date" : $.fn.getSubMenuAddNodeWithoutWrapper("Activation Date","conditionwhenactivationday"),
+			"Active Days" : $.fn.getSubMenuAddNodeWithoutWrapper("Active Days","conditionwhenactivedays"),
+			"Customer Birthday" : $.fn.getSubMenuAddNodeWithoutWrapper("Customer Birthday","conditionwhencustomerbirthday"),
+			"Company Anniversary" : $.fn.getSubMenuAddNodeWithoutWrapper("Company Anniversary","conditionwhencompanybirthday"),
+			"Duration" : $.fn.getSubMenuAddNodeWithoutWrapper("Duration","conditionwhendurationfactors"),
+			"Holiday" : $.fn.getSubMenuAddNodeWithoutWrapper("Holiday","conditionwhenholidayfactors"),
+			"Timeslot" : $.fn.getSubMenuAddNodeWithoutWrapper("Timeslot","conditionwhentimeslotfactors"),
+			"Week" : $.fn.getSubMenuAddNodeWithoutWrapper("Week","conditionwhenweekfactors"),
+			"First Month" : $.fn.getSubMenuAddNodeWithoutWrapper("First Month","conditionwhenfirstmonth")
+		};
 		return obj;
 	};
 })(jQuery);
