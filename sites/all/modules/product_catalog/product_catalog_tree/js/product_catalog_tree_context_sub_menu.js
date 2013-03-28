@@ -97,6 +97,7 @@
 		var obj = {
 			"UsageType" : $.fn.getSubMenuAddNodeWithoutWrapper("UsageType","conditionwhatusagetypefactors"),
 			"NonUsageType" : $.fn.getSubMenuAddNodeWithoutWrapper("NonUsageType","conditionwhatnonusagetypefactors"),
+			"RoamingType" : $.fn.getSubMenuAddNodeWithoutWrapper("RoamingType","conditionwhatroamingtype"),
 			"Card Types" : $.fn.getSubMenuAddNodeWithoutWrapper("Card Types","conditionwhatcardtype"),
 			"Incoming Call" : $.fn.getSubMenuAddNodeWithoutWrapper("Incoming Call","conditionwhatincomingcall"),
 			"Call Type" : $.fn.getSubMenuAddNodeWithoutWrapper("Call Type","conditionwhatcalltype"),
@@ -129,6 +130,7 @@
 		var obj = {
 			"UsageType" : $.fn.getSubMenuAddNodeWithoutWrapper("UsageType","conditionwhatusagetypefactors"),
 			"Card Types" : $.fn.getSubMenuAddNodeWithoutWrapper("Card Types","conditionwhatcardtype"),
+			"RoamingType" : $.fn.getSubMenuAddNodeWithoutWrapper("RoamingType","conditionwhatroamingtype"),
 			"Incoming Call" : $.fn.getSubMenuAddNodeWithoutWrapper("Incoming Call","conditionwhatincomingcall"),
 			"Call Type" : $.fn.getSubMenuAddNodeWithoutWrapper("Call Type","conditionwhatcalltype"),
 			"Counter" : $.fn.getSubMenuAddNodeWithoutWrapper("Counter","conditionwhatcounter"),
@@ -141,6 +143,7 @@
 		var obj = {
 			"Incoming Call" : $.fn.getSubMenuAddNodeWithoutWrapper("Incoming Call","conditionwhatincomingcall"),
 			"Call Type" : $.fn.getSubMenuAddNodeWithoutWrapper("Call Type","conditionwhatcalltype"),
+			"RoamingType" : $.fn.getSubMenuAddNodeWithoutWrapper("RoamingType","conditionwhatroamingtype"),
 			"Counter" : $.fn.getSubMenuAddNodeWithoutWrapper("Counter","conditionwhatcounter"),
 			"Main Product" : $.fn.getSubMenuAddNodeWithoutWrapper("Main Product","conditionwhatmainproduct")
 		};
