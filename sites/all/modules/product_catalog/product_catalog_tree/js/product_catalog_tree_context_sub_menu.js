@@ -39,7 +39,8 @@
 			"Subscriber Status" : $.fn.getSubMenuAddNodeWithoutWrapper("Subscriber Status","conditionwhosubscriberstatus"),
 			"Called Number" : $.fn.getSubMenuAddNodeWithoutWrapper("Called Number","conditionwhoprefixfactors"),
 			"Carrier (Called)" : $.fn.getSubMenuAddNodeWithoutWrapper("Carrier (Called)","conditionwhocalledcarrier"),
-			"Customer Level" : $.fn.getSubMenuAddNodeWithoutWrapper("Customer Level","conditionwhocustomerlevel")
+			"Customer Level" : $.fn.getSubMenuAddNodeWithoutWrapper("Customer Level","conditionwhocustomerlevel"),
+			"Roaming Carrier": $.fn.getSubMenuAddNodeWithoutWrapper("Customer Level","conditionwhoroamingcarrier"),
 		};
 		return obj;
 	};
@@ -61,7 +62,9 @@
 			"Client IP" : $.fn.getSubMenuAddNodeWithoutWrapper("Client IP","conditionwhereclientip"),
 			"Client MAC Address" : $.fn.getSubMenuAddNodeWithoutWrapper("Client MAC Address","conditionwheremacaddress"),
 			"Client Device Type" : $.fn.getSubMenuAddNodeWithoutWrapper("Client Device Type","conditionwheredevicetype"),
-			"Service ID" : $.fn.getSubMenuAddNodeWithoutWrapper("Service ID","conditionwhereserviceid")
+			"Service ID" : $.fn.getSubMenuAddNodeWithoutWrapper("Service ID","conditionwhereserviceid"),
+			"Roaming Zone" : $.fn.getSubMenuAddNodeWithoutWrapper("Service ID","conditionwhenroamingzone"),
+			"Roaming Country" : $.fn.getSubMenuAddNodeWithoutWrapper("Service ID","conditionwhenroamingcountry"),
 		};
 		return obj;
 	};
@@ -70,7 +73,9 @@
 		var obj = {
 			"Caller Zone" : $.fn.getSubMenuAddNodeWithoutWrapper("Caller Zone","conditionwherecallerzone"),
 			"Callee Zone" : $.fn.getSubMenuAddNodeWithoutWrapper("Callee Zone","conditionwherecalleezone"),
-			"Caller/Callee in SameZone" : $.fn.getSubMenuAddNodeWithoutWrapper("Caller/Callee in SameZone","conditionwhereissamezone")
+			"Caller/Callee in SameZone" : $.fn.getSubMenuAddNodeWithoutWrapper("Caller/Callee in SameZone","conditionwhereissamezone"),
+			"Roaming Zone" : $.fn.getSubMenuAddNodeWithoutWrapper("Service ID","conditionwhenroamingzone"),
+			"Roaming Country" : $.fn.getSubMenuAddNodeWithoutWrapper("Service ID","conditionwhenroamingcountry"),
 		}
 		return obj;
 	};
