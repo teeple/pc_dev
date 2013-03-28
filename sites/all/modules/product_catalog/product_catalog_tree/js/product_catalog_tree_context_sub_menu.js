@@ -64,7 +64,7 @@
 			"Client Device Type" : $.fn.getSubMenuAddNodeWithoutWrapper("Client Device Type","conditionwheredevicetype"),
 			"Service ID" : $.fn.getSubMenuAddNodeWithoutWrapper("Service ID","conditionwhereserviceid"),
 			"Roaming Zone" : $.fn.getSubMenuAddNodeWithoutWrapper("Roaming Zone","conditionwhereroamingzone"),
-			"Roaming Country" : $.fn.getSubMenuAddNodeWithoutWrapper("Roaming Country","conditionwheheroamingcountry"),
+			"Roaming Country" : $.fn.getSubMenuAddNodeWithoutWrapper("Roaming Country","conditionwhereroamingcountry"),
 		};
 		return obj;
 	};
@@ -75,7 +75,7 @@
 			"Callee Zone" : $.fn.getSubMenuAddNodeWithoutWrapper("Callee Zone","conditionwherecalleezone"),
 			"Caller/Callee in SameZone" : $.fn.getSubMenuAddNodeWithoutWrapper("Caller/Callee in SameZone","conditionwhereissamezone"),
 			"Roaming Zone" : $.fn.getSubMenuAddNodeWithoutWrapper("Roaming Zone","conditionwhereroamingzone"),
-			"Roaming Country" : $.fn.getSubMenuAddNodeWithoutWrapper("Roaming Country","conditionwheheroamingcountry"),
+			"Roaming Country" : $.fn.getSubMenuAddNodeWithoutWrapper("Roaming Country","conditionwhereroamingcountry"),
 		}
 		return obj;
 	};
