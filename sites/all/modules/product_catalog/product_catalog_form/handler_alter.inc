@@ -1523,6 +1523,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             $form['field_ref_roaming_plan']['#type'] = 'hidden';
             _unset_menu_items($form, $form_id);
             
+            /*
             $form['field_ref_roaming_type']['und']['#ajax'] = array(
                 'callback' => 'roaming_options_callback',
                 'wrapper' => 'custom-roaming-ratinggroup'
@@ -1544,6 +1545,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             $form['field_ref_type_of_call']['#id'] = 'field_ref_type_of_call';
             $form['field_roaming_zone']['#id'] = 'field_roaming_zone';
             $form['#id'] = 'roaming_ratinggroup_node_form';
+            */
             //dsm($form,'form');
             //dsm($form_state,'form state');
             break;    
