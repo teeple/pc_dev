@@ -50,6 +50,14 @@ function ocs_admin_menu() {
 
     // for ajax handling
 
+    $items['ajax/test/delete/%/%'] = array(
+        'title' => 'AJAX handler for deleting node',
+        'page callback' => 'ocs_test_ajax_delete',
+        'page arguments' => array(3,4),
+        'access arguments' => array('access content'),
+        'type' => MENU_CALLBACK,
+    );
+
     $items['ajax/test/%/%/%/%'] = array(
         'title' => 'AJAX handler for testing',
         'page callback' => 'ocs_admin_run_testcase',

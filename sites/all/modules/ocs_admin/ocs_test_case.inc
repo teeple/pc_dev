@@ -307,3 +307,29 @@ function json_format($json)
 
     return $new_json; 
 } 
+
+
+function ocs_test_ajax_delete( $ts_nid, $tc_nid)
+{
+	ctools_include('node.pages', 'node', '');
+	ctools_include('ajax');
+
+	// remove call test case from test suite
+	$node = node_load( $ts_nid);
+	foreach( $node->field_ts_test_cases['und'] as $idx => $nid) {
+		if ( $tc_nid == $nid['nid']) {
+			unset( $node->field_ts_test_cases['und'][$idx]);
+			node_save( $node);
+			break;
+		}
+	}
+
+	$output = array();
+
+	$output[] = ctools_ajax_command_reload();
+	print ajax_render($output);
+	    //print json_encode($output);
+	exit;
+}
+
+

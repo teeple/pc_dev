@@ -354,3 +354,17 @@ function ocs_get_terms( $voca)
 //        dpm( $terms, 'term');
 	return $terms;
 }
+
+function ocs_ctools_link($title, $url, $opt)
+{
+	ctools_include('ajax');
+	ctools_include('modal');
+	ctools_modal_add_js();
+
+	$link_class = 'ctools-use-modal ctools-modal-add-item-modal-style';
+	$delete_output = l($title, $url, array_merge( $opt, array('attributes' => array('class' => array('use-ajax')))));
+
+	$link_string = '<div>'.$delete_output.'</div>';
+	echo $link_string;
+}
+
