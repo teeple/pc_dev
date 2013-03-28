@@ -39,7 +39,8 @@
 			"Subscriber Status" : $.fn.getSubMenuAddNodeWithoutWrapper("Subscriber Status","conditionwhosubscriberstatus"),
 			"Called Number" : $.fn.getSubMenuAddNodeWithoutWrapper("Called Number","conditionwhoprefixfactors"),
 			"Carrier (Called)" : $.fn.getSubMenuAddNodeWithoutWrapper("Carrier (Called)","conditionwhocalledcarrier"),
-			"Customer Level" : $.fn.getSubMenuAddNodeWithoutWrapper("Customer Level","conditionwhocustomerlevel")
+			"Customer Level" : $.fn.getSubMenuAddNodeWithoutWrapper("Customer Level","conditionwhocustomerlevel"),
+			"Roaming Carrier": $.fn.getSubMenuAddNodeWithoutWrapper("Roaming Carrier","conditionwhoroamingcarrier"),
 		};
 		return obj;
 	};
@@ -61,7 +62,9 @@
 			"Client IP" : $.fn.getSubMenuAddNodeWithoutWrapper("Client IP","conditionwhereclientip"),
 			"Client MAC Address" : $.fn.getSubMenuAddNodeWithoutWrapper("Client MAC Address","conditionwheremacaddress"),
 			"Client Device Type" : $.fn.getSubMenuAddNodeWithoutWrapper("Client Device Type","conditionwheredevicetype"),
-			"Service ID" : $.fn.getSubMenuAddNodeWithoutWrapper("Service ID","conditionwhereserviceid")
+			"Service ID" : $.fn.getSubMenuAddNodeWithoutWrapper("Service ID","conditionwhereserviceid"),
+			"Roaming Zone" : $.fn.getSubMenuAddNodeWithoutWrapper("Roaming Zone","conditionwhereroamingzone"),
+			"Roaming Country" : $.fn.getSubMenuAddNodeWithoutWrapper("Roaming Country","conditionwhereroamingcountry"),
 		};
 		return obj;
 	};
@@ -70,7 +73,9 @@
 		var obj = {
 			"Caller Zone" : $.fn.getSubMenuAddNodeWithoutWrapper("Caller Zone","conditionwherecallerzone"),
 			"Callee Zone" : $.fn.getSubMenuAddNodeWithoutWrapper("Callee Zone","conditionwherecalleezone"),
-			"Caller/Callee in SameZone" : $.fn.getSubMenuAddNodeWithoutWrapper("Caller/Callee in SameZone","conditionwhereissamezone")
+			"Caller/Callee in SameZone" : $.fn.getSubMenuAddNodeWithoutWrapper("Caller/Callee in SameZone","conditionwhereissamezone"),
+			"Roaming Zone" : $.fn.getSubMenuAddNodeWithoutWrapper("Roaming Zone","conditionwhereroamingzone"),
+			"Roaming Country" : $.fn.getSubMenuAddNodeWithoutWrapper("Roaming Country","conditionwhereroamingcountry"),
 		}
 		return obj;
 	};
@@ -97,6 +102,7 @@
 		var obj = {
 			"UsageType" : $.fn.getSubMenuAddNodeWithoutWrapper("UsageType","conditionwhatusagetypefactors"),
 			"NonUsageType" : $.fn.getSubMenuAddNodeWithoutWrapper("NonUsageType","conditionwhatnonusagetypefactors"),
+			"RoamingType" : $.fn.getSubMenuAddNodeWithoutWrapper("RoamingType","conditionwhatroamingtype"),
 			"Card Types" : $.fn.getSubMenuAddNodeWithoutWrapper("Card Types","conditionwhatcardtype"),
 			"Incoming Call" : $.fn.getSubMenuAddNodeWithoutWrapper("Incoming Call","conditionwhatincomingcall"),
 			"Call Type" : $.fn.getSubMenuAddNodeWithoutWrapper("Call Type","conditionwhatcalltype"),
@@ -129,6 +135,7 @@
 		var obj = {
 			"UsageType" : $.fn.getSubMenuAddNodeWithoutWrapper("UsageType","conditionwhatusagetypefactors"),
 			"Card Types" : $.fn.getSubMenuAddNodeWithoutWrapper("Card Types","conditionwhatcardtype"),
+			"RoamingType" : $.fn.getSubMenuAddNodeWithoutWrapper("RoamingType","conditionwhatroamingtype"),
 			"Incoming Call" : $.fn.getSubMenuAddNodeWithoutWrapper("Incoming Call","conditionwhatincomingcall"),
 			"Call Type" : $.fn.getSubMenuAddNodeWithoutWrapper("Call Type","conditionwhatcalltype"),
 			"Counter" : $.fn.getSubMenuAddNodeWithoutWrapper("Counter","conditionwhatcounter"),
@@ -141,6 +148,7 @@
 		var obj = {
 			"Incoming Call" : $.fn.getSubMenuAddNodeWithoutWrapper("Incoming Call","conditionwhatincomingcall"),
 			"Call Type" : $.fn.getSubMenuAddNodeWithoutWrapper("Call Type","conditionwhatcalltype"),
+			"RoamingType" : $.fn.getSubMenuAddNodeWithoutWrapper("RoamingType","conditionwhatroamingtype"),
 			"Counter" : $.fn.getSubMenuAddNodeWithoutWrapper("Counter","conditionwhatcounter"),
 			"Main Product" : $.fn.getSubMenuAddNodeWithoutWrapper("Main Product","conditionwhatmainproduct")
 		};

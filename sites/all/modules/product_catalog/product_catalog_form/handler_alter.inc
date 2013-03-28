@@ -143,6 +143,10 @@ function _add_ajax_submit_callback($form_id, &$form) {
         case 'prdattributenumbersaving_node_form' :
         case 'prdcounterlist_node_form':
         case 'conditionwhatcontentprice_node_form':
+        case 'conditionwhoroamingcarrier_node_form':
+        case 'conditionwhereroamingcountry_node_form':
+        case 'conditionwhereroamingzone_node_form':
+        case 'conditionwhatroamingtype_node_form':
             $change = TRUE;
             break;
 
@@ -157,13 +161,12 @@ function _add_ajax_submit_callback($form_id, &$form) {
             }
             break;
         case 'simpleproductoffering_node_form':
-        		unset($form['field_is_cloned']);
+        	unset($form['field_is_cloned']);
             if (isset($form['nid']['#value'])) {// edit
                 $change = TRUE;
             }
             $paths = explode('/', current_path());
             if($paths[0] == 'relation') $change = FALSE;
-            
             break;
     }
     
@@ -328,6 +331,10 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
         case 'conditionwhencompanybirthday_node_form' :
         case 'conditionwhenstatechangedate_node_form' :
         case 'conditionwhenbillingdate_node_form' :
+        case 'conditionwhoroamingcarrier_node_form':
+        case 'conditionwhereroamingcountry_node_form':
+        case 'conditionwhereroamingzone_node_form':
+        case 'conditionwhatroamingtype_node_form':
             _unset_menu_items($form, $form_id);
             $form['field_weight']['#type'] = 'hidden';
             $form['field_parent_node']['#type'] = 'hidden';
@@ -853,6 +860,13 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
                 unset($form['field_exclusiveness']);
             }
 
+            switch($productTypeName){
+                case 'Main':
+                    $form['field_next_join_product']['#type'] = 'hidden';
+                    break;
+                default :
+                    break;
+            }
             break;
         case 'balance_node_form' :
         case 'context_admin_node_form_wrapper' :
@@ -1118,18 +1132,6 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             break;
         case 'roaming_plan_node_form' :
             unset($form['field_ref_roaming_ratinggroup']);
-            _unset_menu_items($form, $form_id);
-            break;
-        case 'roaming_ratinggroup_node_form' :
-            // only for create
-            //
-            if (!isset($form['nid']['#value'])) {
-                if (isset($form_state['roamingplan_nid'])) {
-                    $form['actions']['submit']['#submit'][] = '_ratinggroup_link_to_roaming_plan';
-                }
-            }
-            // unset($form['field_ref_roaming_plan']);
-            $form['field_ref_roaming_plan']['#type'] = 'hidden';
             _unset_menu_items($form, $form_id);
             break;
         case 'depositschemefactors_node_form' :
@@ -1493,7 +1495,68 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
                 'wrapper' => 'actionsetcounter_fields_wrapper'
             );
             break;
+        case 'roaming_ratinggroup_node_form' :
+            // only for create
+            //
+            if (!isset($form['nid']['#value'])) {
+                if (isset($form_state['roamingplan_nid'])) {
+                    $form['actions']['submit']['#submit'][] = '_ratinggroup_link_to_roaming_plan';
+                }
+            }else{
+                /*
+               $roamingCarrierNid = $form['#node']->field_ref_roaming_carrier['und'][0]['nid'];
+               $roamingTypeTid = $form['#node']->field_ref_roaming_type['und'][0]['tid'];
+               
+               $roamingTypeTerm = taxonomy_term_load($roamingTypeTid);
+               switch($roamingTypeTerm->name){
+                   case 'Other PLMN':
+                       $options = array();
+                       $options['_none'] = '- None -';
+                       $view = views_get_view('list_roaming_zone');
+                       $view->set_display('panel_pane_3');
+                       $view->set_arguments(array('0' => $roamingCarrierNid));
+                       $view->execute(); 
+                       foreach($view->result as $item){
+                           $options[$item->nid] = $item->node_title;
+                       }
+                       $form['field_roaming_zone']['und']['#options'] = $options;
+                       break;
+                   default:
+                       unset($form['field_roaming_zone']);
+                       break;
+               }
+               */
+            }
+            // unset($form['field_ref_roaming_plan']);
+            $form['field_ref_roaming_plan']['#type'] = 'hidden';
+            _unset_menu_items($form, $form_id);
             
+            /*
+            $form['field_ref_roaming_type']['und']['#ajax'] = array(
+                'callback' => 'roaming_options_callback',
+                'wrapper' => 'custom-roaming-ratinggroup'
+            );
+            
+            $form['field_ref_roaming_carrier']['und']['#ajax'] = array(
+                'callback' => 'roaming_options_callback',
+                'wrapper' => 'custom-roaming-ratinggroup'
+            );
+            
+            //$form['#id'] = 'custom-roaming-ratinggroup';
+            $form['#prefix'] = '<div id="custom-roaming-ratinggroup">';
+            $form['#postfix'] = '</div>';
+            $form['field_ref_roaming_country']['#id'] = 'field_ref_roaming_country';
+            $form['field_ref_roaming_carrier']['#id'] = 'field_ref_roaming_carrier';
+            $form['field_ref_roaming_type']['#id'] = 'field_ref_roaming_type';
+            $form['field_rating_group']['#id'] = 'field_rating_group';
+            $form['field_ref_roaming_plan']['#id'] = 'field_ref_roaming_plan';
+            $form['field_ref_type_of_call']['#id'] = 'field_ref_type_of_call';
+            $form['field_roaming_zone']['#id'] = 'field_roaming_zone';
+            $form['#id'] = 'roaming_ratinggroup_node_form';
+            */
+            //dsm($form,'form');
+            //dsm($form_state,'form state');
+            break;    
         case 'actionsetbonusonrecurringcharge_node_form' :
         
             $form['field_ref_source_action']['#type'] = 'hidden';
@@ -1931,6 +1994,53 @@ function actionsetcounter_ajax_callback($form, $form_state){
         $returnStr .= '</div>';
     }
     return $returnStr;
+}
+
+function roaming_options_callback($form,$form_state){
+    $roamingCarrierNid = $form_state['values']['field_ref_roaming_carrier']['und'][0]['nid'];
+    $roamingTypeTid = $form_state['values']['field_ref_roaming_type']['und'][0]['tid'];
+    $roamingTypeTerm = taxonomy_term_load($roamingTypeTid);
+    switch($roamingTypeTerm->name){
+       case 'Other PLMN':
+           $options = array();
+           $options['_none'] = '- None -';
+            
+           $view = views_get_view('list_roaming_zone');
+           $view->set_display('panel_pane_3');
+           $view->set_arguments(array('0' => $roamingCarrierNid));
+           $view->execute(); 
+           foreach($view->result as $item){
+               $options[$item->nid] = $item->node_title;
+           } 
+           $form['field_roaming_zone']['und']['#options'] = $options;
+           break;
+       default:
+           unset($form['field_roaming_zone']);
+           break;
+    }
+
+    $form['#prefix'] = '<div id="custom-roaming-ratinggroup">';
+    $form['#postfix'] = '</div>';
+    
+    /*
+    unset($form['actions']['submit']['#submit']);
+    unset($form['#validate']);
+    unset($form['#action']);
+    $form['actions']['submit']['#id'] = 'submit-in-ajax-callback';
+    $form['#prefix'] = '<div id="form_content">';
+    $form['#suffix'] = '</div>';
+    
+    $form['actions']['submit']['#ajax'] = array('wrapper' => 'form_content', 'callback' => 'edit_pane_callback', 'method' => 'replace', 'effect' => 'fade',
+    );
+    */
+        
+    return $form;
+    $renderStr = drupal_render($form);
+    
+    $commands[] = ajax_command_replace("#custom-roaming-ratinggroup", $renderStr);
+    return array('#type' => 'ajax', '#commands' => $commands);
+    //error_log($renderStr);
+    //return $renderStr;
 }
 
 function _get_existing_counter_list($productNid) {
