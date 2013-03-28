@@ -88,18 +88,31 @@ function ocs_run_all_testcase_for_ocs( $ts_nid, $tc_nid, $tc_idx)
         if ( $field == NULL) $field = field_info_instances( 'node', $ts_data->type);
 
 		$cdata = entity_load_single( 'field_collection_item', $tc->field_ts_call_test['und'][$tc_idx]['value']);
-		$test_result = ocs_build_ts_json( $cdata, field_info_instances('field_collection_item', 'field_ts_call_test'));
+		if ( empty( $cdata)) {
+			$output = array( 'error' => 'TC-'. $tc_idx . ' test data Not found');
+		}
+		else {
+			$test_result = ocs_build_ts_json( $cdata, field_info_instances('field_collection_item', 'field_ts_call_test'));
 
-		// refine call_data
-		$test_result['destId'] = $test_result['dialed'];	// add another key : destId as same as dialed
-		// recalculate end time
-		$stime = new DateTime( $test_result['startTime']);
-		$etime = $stime->add( new DateInterval('PT'. $test_result['duration'] .'S'));
-		$test_result['endTime'] = $etime->format('YmdHis');
+			/*
+			dpm( $test_result, 'test result');
+			dpm( $tc, 'tc result');
+			dpm( $ts_data, 'ts result');
+			dpm( $cdata, 'cdata result');
+			dpm( $tc_idx, 'tc idx');
+			*/
 
-        $output = ocs_run_testcase_http( $url, $ts_data, $field, $tc->field_ts_method['und'][0]['value'],
-				$tc->field_ts_json_prefix['und'][0]['value'], $tc->field_ts_json_suffix['und'][0]['value'], 
-				array_merge( $json_data, $test_result));
+			// refine call_data
+			$test_result['destId'] = $test_result['dialed'];	// add another key : destId as same as dialed
+			// recalculate end time
+			$stime = new DateTime( $test_result['startTime']);
+			$etime = $stime->add( new DateInterval('PT'. $test_result['duration'] .'S'));
+			$test_result['endTime'] = $etime->format('YmdHis');
+
+			$output = ocs_run_testcase_http( $url, $ts_data, $field, $tc->field_ts_method['und'][0]['value'],
+					$tc->field_ts_json_prefix['und'][0]['value'], $tc->field_ts_json_suffix['und'][0]['value'], 
+					array_merge( $json_data, $test_result));
+		}
 	}
 	else {
 		$output = array( 'error' => 'TC-'. $tc_idx . ' Not found');
@@ -294,3 +307,29 @@ function json_format($json)
 
     return $new_json; 
 } 
+
+
+function ocs_test_ajax_delete( $ts_nid, $tc_nid)
+{
+	ctools_include('node.pages', 'node', '');
+	ctools_include('ajax');
+
+	// remove call test case from test suite
+	$node = node_load( $ts_nid);
+	foreach( $node->field_ts_test_cases['und'] as $idx => $nid) {
+		if ( $tc_nid == $nid['nid']) {
+			unset( $node->field_ts_test_cases['und'][$idx]);
+			node_save( $node);
+			break;
+		}
+	}
+
+	$output = array();
+
+	$output[] = ctools_ajax_command_reload();
+	print ajax_render($output);
+	    //print json_encode($output);
+	exit;
+}
+
+
