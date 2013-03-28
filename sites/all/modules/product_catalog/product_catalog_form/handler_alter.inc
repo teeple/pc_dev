@@ -851,9 +851,8 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             } else {
                 unset($form['field_exclusiveness']);
             }
-            
-            $productTypeTerm = taxonomy_term_load($form['#node']->field_product_type['und'][0]['tid']);
-            switch($productTypeTerm->name){
+
+            switch($productTypeName){
                 case 'Main':
                     $form['field_next_join_product']['#type'] = 'hidden';
                     break;
@@ -1125,18 +1124,6 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             break;
         case 'roaming_plan_node_form' :
             unset($form['field_ref_roaming_ratinggroup']);
-            _unset_menu_items($form, $form_id);
-            break;
-        case 'roaming_ratinggroup_node_form' :
-            // only for create
-            //
-            if (!isset($form['nid']['#value'])) {
-                if (isset($form_state['roamingplan_nid'])) {
-                    $form['actions']['submit']['#submit'][] = '_ratinggroup_link_to_roaming_plan';
-                }
-            }
-            // unset($form['field_ref_roaming_plan']);
-            $form['field_ref_roaming_plan']['#type'] = 'hidden';
             _unset_menu_items($form, $form_id);
             break;
         case 'depositschemefactors_node_form' :
@@ -1500,7 +1487,23 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
                 'wrapper' => 'actionsetcounter_fields_wrapper'
             );
             break;
-            
+        case 'roaming_ratinggroup_node_form' :
+            // only for create
+            //
+            if (!isset($form['nid']['#value'])) {
+                if (isset($form_state['roamingplan_nid'])) {
+                    $form['actions']['submit']['#submit'][] = '_ratinggroup_link_to_roaming_plan';
+                }
+            }
+            // unset($form['field_ref_roaming_plan']);
+            $form['field_ref_roaming_plan']['#type'] = 'hidden';
+            _unset_menu_items($form, $form_id);
+            $form['field_ref_roaming_type']['und']['#ajax'] = array(
+                'callback' => 'roaming_type_ajax_callback',
+                'wrapper' => 'edit-field-roaming-zone'
+            );
+            //dsm($form,'form');
+            break;    
         case 'actionsetbonusonrecurringcharge_node_form' :
         
             $form['field_ref_source_action']['#type'] = 'hidden';
@@ -1938,6 +1941,12 @@ function actionsetcounter_ajax_callback($form, $form_state){
         $returnStr .= '</div>';
     }
     return $returnStr;
+}
+
+function roaming_type_ajax_callback($form,$form_state){
+    dsm($form,'form from callback');
+    dsm($form_state,'form state');
+    return 'haha';
 }
 
 function _get_existing_counter_list($productNid) {
