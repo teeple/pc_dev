@@ -157,13 +157,12 @@ function _add_ajax_submit_callback($form_id, &$form) {
             }
             break;
         case 'simpleproductoffering_node_form':
-        		unset($form['field_is_cloned']);
+        	unset($form['field_is_cloned']);
             if (isset($form['nid']['#value'])) {// edit
                 $change = TRUE;
             }
             $paths = explode('/', current_path());
             if($paths[0] == 'relation') $change = FALSE;
-            
             break;
     }
     
@@ -852,7 +851,15 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             } else {
                 unset($form['field_exclusiveness']);
             }
-
+            
+            $productTypeTerm = taxonomy_term_load($form['#node']->field_product_type['und'][0]['tid']);
+            switch($productTypeTerm->name){
+                case 'Main':
+                    $form['field_next_join_product']['#type'] = 'hidden';
+                    break;
+                default :
+                    break;
+            }
             break;
         case 'balance_node_form' :
         case 'context_admin_node_form_wrapper' :
