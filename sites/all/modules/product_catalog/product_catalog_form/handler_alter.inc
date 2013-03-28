@@ -1523,17 +1523,27 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             $form['field_ref_roaming_plan']['#type'] = 'hidden';
             _unset_menu_items($form, $form_id);
             
-            /*
             $form['field_ref_roaming_type']['und']['#ajax'] = array(
                 'callback' => 'roaming_options_callback',
-                'wrapper' => 'roaming-ratinggroup-node-form'
+                'wrapper' => 'custom-roaming-ratinggroup'
             );
             
             $form['field_ref_roaming_carrier']['und']['#ajax'] = array(
                 'callback' => 'roaming_options_callback',
-                //'wrapper' => 'roaming-ratinggroup-node-form'
+                'wrapper' => 'custom-roaming-ratinggroup'
             );
-            */
+            
+            //$form['#id'] = 'custom-roaming-ratinggroup';
+            $form['#prefix'] = '<div id="custom-roaming-ratinggroup">';
+            $form['#postfix'] = '</div>';
+            $form['field_ref_roaming_country']['#id'] = 'field_ref_roaming_country';
+            $form['field_ref_roaming_carrier']['#id'] = 'field_ref_roaming_carrier';
+            $form['field_ref_roaming_type']['#id'] = 'field_ref_roaming_type';
+            $form['field_rating_group']['#id'] = 'field_rating_group';
+            $form['field_ref_roaming_plan']['#id'] = 'field_ref_roaming_plan';
+            $form['field_ref_type_of_call']['#id'] = 'field_ref_type_of_call';
+            $form['field_roaming_zone']['#id'] = 'field_roaming_zone';
+            $form['#id'] = 'roaming_ratinggroup_node_form';
             //dsm($form,'form');
             //dsm($form_state,'form state');
             break;    
@@ -1998,12 +2008,27 @@ function roaming_options_callback($form,$form_state){
            unset($form['field_roaming_zone']);
            break;
     }
+
+    $form['#prefix'] = '<div id="custom-roaming-ratinggroup">';
+    $form['#postfix'] = '</div>';
     
+    /*
+    unset($form['actions']['submit']['#submit']);
+    unset($form['#validate']);
+    unset($form['#action']);
+    $form['actions']['submit']['#id'] = 'submit-in-ajax-callback';
+    $form['#prefix'] = '<div id="form_content">';
+    $form['#suffix'] = '</div>';
+    
+    $form['actions']['submit']['#ajax'] = array('wrapper' => 'form_content', 'callback' => 'edit_pane_callback', 'method' => 'replace', 'effect' => 'fade',
+    );
+    */
+        
     return $form;
-    //$renderStr = drupal_render($form);
+    $renderStr = drupal_render($form);
     
-    //$commands[] = ajax_command_replace("#roaming-ratinggroup-node-form", $renderStr);
-    //return array('#type' => 'ajax', '#commands' => $commands);
+    $commands[] = ajax_command_replace("#custom-roaming-ratinggroup", $renderStr);
+    return array('#type' => 'ajax', '#commands' => $commands);
     //error_log($renderStr);
     //return $renderStr;
 }
