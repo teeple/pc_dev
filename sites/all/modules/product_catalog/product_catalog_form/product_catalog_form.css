@@ -129,3 +129,8 @@
 #views-form-list-messages-panel-pane-1 > div > fieldset{
   display:none;
 }
+
+/* field collection charge item width */
+#field-charge-collection-values > tbody > tr > td > div> div>div>input{
+  width:100px;
+}
