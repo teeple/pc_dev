@@ -333,15 +333,13 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
         case 'conditionwhenbillingdate_node_form' :
         case 'conditionwhoroamingcarrier_node_form':
         case 'conditionwhereroamingcountry_node_form':
-        
+        case 'conditionwhereroamingzone_node_form':
         case 'conditionwhatroamingtype_node_form':
             _unset_menu_items($form, $form_id);
             $form['field_weight']['#type'] = 'hidden';
             $form['field_parent_node']['#type'] = 'hidden';
             break;
-        case 'conditionwhereroamingzone_node_form':
-            dsm($form,'form');
-            break;
+            
         case 'conditionwhatservicedomain_node_form':
 		        $form['field_weight']['#type'] = 'hidden';
 		        $form['field_parent_node']['#type'] = 'hidden';
