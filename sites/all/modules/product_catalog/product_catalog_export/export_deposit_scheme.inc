@@ -89,12 +89,22 @@ function _array_deposit_scheme($exportItemNids=NULL){
                     $factor['counter_limit'] = NULL;
                 }
                 
+                // ref threshold scheme
+                if(isset($factorNode->field_ref_thresholdscheme['und'][0]['nid'])){
+                    $thresholdscheme = node_load($factorNode->field_ref_thresholdscheme['und'][0]['nid']);
+                    if(!empty($thresholdscheme)){
+                      $factor['thresholdscheme_id'] = $factorNode->field_ref_thresholdscheme['und'][0]['nid'];
+                    }
+                }else{
+                    $factor['thresholdscheme_id'] = NULL;
+                }
+                
                 $factorArray[] = $factor;
             }
             $depositScheme['factors'] = $factorArray;
             
-            
-             //adjustment
+            //adjustment
+            /*
             $adjustmentList = views_get_view_result('list_depositschemeadjustment', 'panel_pane_4', $record->nid);
             
             $adjustmentArray = array();
@@ -114,8 +124,8 @@ function _array_deposit_scheme($exportItemNids=NULL){
                 }
                 $adjustmentArray[] = $adjustment;                
             }
-            
             $depositScheme['adjustment'] = $adjustmentArray;
+            */
         }
         $jsonData_schemes[] = $depositScheme;
         $depositSchemeIds[] = $depositScheme['id'];
