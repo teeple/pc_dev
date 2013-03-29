@@ -648,6 +648,12 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
                 } else {
                     $viewResult = views_get_view_result('query_counter_max_id', 'panel_pane_1');
                     $maxCounterId = $viewResult[0] -> field_field_counter_id[0]['raw']['value'] + 1;
+                    
+                    if($counterTypeTerm->name == 'Optional'){
+                        $billTypeTerm = current(taxonomy_get_term_by_name('Prepaid','billtypecounter'));
+                        $form['field_billing_type_counter']['und']['#default_value'] = $billTypeTerm->tid;
+                        $form['field_billing_type_counter']['und']['#disabled'] = TRUE;
+                    }
                 }
                 $form['field_counter_id']['und'][0]['value']['#default_value'] = $maxCounterId;
                 $form['field_counter_id']['und']['#disabled'] = TRUE;
