@@ -87,7 +87,7 @@ function _load_tree_item_mixed_with_node_and_term($rootNode,$grandParentNode=NUL
 		$itemArray = array(
 				'attr' => array('id' => 'term_'.$item->tid.'_'.$rootNode->nid,
 						'node_type' => 'term',
-						'rel' => $term->field_rel_type['und'][0]['safe_value'],
+						'rel' => isset($term->field_rel_type['und'][0]['safe_value'])?$term->field_rel_type['und'][0]['safe_value']:"",
 						'weight' => $item->weight,
 				),
 				'data' => $item->name
