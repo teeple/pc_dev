@@ -251,6 +251,7 @@
 						break;
 						
 					case "counter_main":
+					case "counter_shared":
 						menus.custom_create._disabled = false;
 						menus.custom_create.submenu = {
 							// "mobile_counter_main" : {
