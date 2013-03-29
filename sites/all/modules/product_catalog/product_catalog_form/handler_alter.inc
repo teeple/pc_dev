@@ -200,11 +200,12 @@ function edit_pane_callback($form, &$form_state) {
 		
     if (!form_get_errors()) {
         node_form_submit($form, $form_state);
-        error_log('node_form_submit');
-
-        foreach ($form_state['ajax_actions'] as $functionName) {
-            $evalString = $functionName . '($form, $form_state);';
-            eval($evalString);
+        //error_log('node_form_submit');
+        if(isset($form_state['ajax_actions'])){
+            foreach ($form_state['ajax_actions'] as $functionName) {
+                $evalString = $functionName . '($form, $form_state);';
+                eval($evalString);
+            }
         }
     }
     $form_state['rebuild'] = TRUE;
