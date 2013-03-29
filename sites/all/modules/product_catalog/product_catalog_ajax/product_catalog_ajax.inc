@@ -93,15 +93,17 @@ function _load_tree_item_mixed_with_node_and_term($rootNode,$grandParentNode=NUL
 				'data' => $item->name
 		);
 		
-    	 switch($term->field_rel_type['und'][0]['safe_value']) {
-    		 case 'attribute':
-    		 case 'attribute_packaged':
-    		 case 'counter':
-    		 case 'nonusage':
-    		 case 'usage':
-    		 		$itemArray['state'] = 'open';
-    		 		break;
-    	 }
+        if(isset($term->field_rel_type['und'][0]['safe_value'])){
+        	 switch($term->field_rel_type['und'][0]['safe_value']) {
+        		 case 'attribute':
+        		 case 'attribute_packaged':
+        		 case 'counter':
+        		 case 'nonusage':
+        		 case 'usage':
+        		 		$itemArray['state'] = 'open';
+        		 		break;
+        	 }
+        }
 	 		
 		if(isset($term->field_qtabs_loading['und'][0]['value'])){
 			$loadingInfo = field_collection_item_load($term->field_qtabs_loading['und'][0]['value']);
