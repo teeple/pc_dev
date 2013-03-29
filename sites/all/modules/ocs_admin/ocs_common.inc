@@ -368,3 +368,50 @@ function ocs_ctools_link($title, $url, $opt)
 	echo $link_string;
 }
 
+
+function ocs_log_changes( $before, $after)
+{
+	$field = field_info_instances( 'node', $before->type);
+
+	$diff = array();
+	foreach( $field as $key => $value) {
+		$v1 = $before->$key;
+		$v2 = $after->$key;
+		$label = $value['label'];
+
+		if ( is_array( $v1)) {
+
+			for( $i=0; $i< max( count($v1), count( $v2)); $i++) {
+				if ( isset( $v1['und'][$i])) {
+					if ( isset( $v2['und'][$i])) {
+						$vv1 = $v1['und'][$i];
+						$vv2 = $v2['und'][$i];
+						if ( isset( $vv1['nid']) && ($vv1['nid'] !== $vv2['nid'])) {
+							$diff[$label.'['.$i.']'] = array( $vv1['nid'], $vv2['nid']);
+						}
+						else if ( isset( $vv1['value']) && ( $vv1['value'] !== $vv2['value'])) {
+							$diff[$label.'['.$i.']'] = array( $vv1['value'], $vv2['value']);
+						}
+					}
+					else {	// v2 not exist
+						$diff[$label.'['.$i.']'] = array( $v1['und'][$i], null);
+					}
+				}
+				else {
+					if ( isset( $v2['und'][$i])) {
+						$diff[$label.'['.$i.']'] = array( null, $v2['und'][$i]);
+					}
+				}
+			}
+		}
+		else {
+			if ( $v1 !== $v2) {
+				$diff[$label] = array( $v1, $v2);
+			}
+		}
+	}
+
+	dpm( $diff, 'diff');
+	watchdog( 'ocs_admin', 'Content %type changed %data', 
+			array( '%type' => $before->type, '%data' => json_encode( $diff)), WATCHDOG_NOTICE); 
+}
