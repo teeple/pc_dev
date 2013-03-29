@@ -161,12 +161,12 @@ function export_deploy($export_type,$export_item_list = NULL, $target){
     		    $resultData = json_decode($result->data);
                 //dsm($resultData,'result data');
     			//$historyNode = node_load($historyNodeNid);
-    			$historyNode->field_ocs_result_code['und'][0]['value'] = $resultData->OCS->result_code;
-                $historyNode->field_ocs_result_reason['und'][0]['value'] = $resultData->OCS->result_reason;
-                $historyNode->field_cs_result_code['und'][0]['value'] = $resultData->CS->result_code;
-                $historyNode->field_cs_result_reason['und'][0]['value'] = $resultData->CS->result_reason;
-                $historyNode->field_crm_result_code['und'][0]['value'] = $resultData->CRM->result_code;
-                $historyNode->field_crm_result_reason['und'][0]['value'] = $resultData->CRM->result_reason;
+    			$historyNode->field_ocs_result_code['und'][0]['value'] = isset($resultData->OCS->result_code)?$resultData->OCS->result_code:"";
+                $historyNode->field_ocs_result_reason['und'][0]['value'] = isset($resultData->OCS->result_reason)?$resultData->OCS->result_reason:"";
+                $historyNode->field_cs_result_code['und'][0]['value'] = isset($resultData->CS->result_code)?$resultData->CS->result_code:"";
+                $historyNode->field_cs_result_reason['und'][0]['value'] = isset($resultData->CS->result_reason)?$resultData->CS->result_reason:"";
+                $historyNode->field_crm_result_code['und'][0]['value'] = isset($resultData->CRM->result_code)?$resultData->CRM->result_code:"";
+                $historyNode->field_crm_result_reason['und'][0]['value'] = isset($resultData->CRM->result_reason)?$resultData->CRM->result_reason:"";
     			//node_save($historyNode);
     		}else{
     		    $historyNode->field_ocs_result_reason['und'][0]['value'] = 'Fail';
