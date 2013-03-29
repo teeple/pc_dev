@@ -2005,14 +2005,10 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 }
 
 function counter_bill_type_change_callback($form,$form_state){
-    error_log('here!!');
     $billTypeTid = $form_state['values']['field_billing_type_counter']['und'][0]['tid'];
     $postPaidBillTypeTerm = current(taxonomy_get_term_by_name('Postpaid','billtypecounter'));
-    error_log($billTypeTid);
-    error_log($postPaidBillTypeTerm->tid);
     
     if($billTypeTid == $postPaidBillTypeTerm->tid){
-        error_log('hey!!');
         $remainsGroupTerm = current(taxonomy_get_term_by_name('REMAINS','countergroup'));
         $form['field_counter_group']['und']['#options'] = array(
             $remainsGroupTerm->tid => $remainsGroupTerm->name
