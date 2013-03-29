@@ -64,9 +64,11 @@ function _load_tree_item_mixed_with_node_and_term($rootNode,$grandParentNode=NUL
         
         if($filterTerm){//filter tree item based on product type and billing type
             //check parent is already removed from tree
-            if(in_array($term->parents[0],$skipParents)){
-                $skipParents[] = $term->tid;
-                continue;
+            if(isset($term->parents[0])){
+                if(in_array($term->parents[0],$skipParents)){
+                    $skipParents[] = $term->tid;
+                    continue;
+                }
             }
             
             //check combination is not allowed
