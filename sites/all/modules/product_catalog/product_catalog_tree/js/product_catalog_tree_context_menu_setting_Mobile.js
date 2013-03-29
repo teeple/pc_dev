@@ -487,6 +487,11 @@
 						menus.custom_create._disabled = false;
 						menus.custom_create.submenu = $.fn.getSubMenuLoadSelectForm("Select Available Channel");
 						break;	
+					case "voice_tariffplan_specialnumber":
+					case "sms_tariffplan_specialnumber":
+						menus.custom_create._disabled = false;
+						menus.custom_create.submenu = $.fn.getSubMenuLoadSelectForm("Select SpecialNumberScheme");
+						break;
 					case "attribute_allowed_device":
 						menus.custom_create._disabled = false;
 						menus.custom_create.submenu = $.fn.getSubMenuLoadSelectForm("Select Allowed Device");
