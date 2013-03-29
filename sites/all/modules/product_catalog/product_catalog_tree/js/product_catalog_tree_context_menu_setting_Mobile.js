@@ -52,7 +52,6 @@
 					case "cross_available_product":
 						menus.custom_create._disabled = false;
 						menus.custom_create.submenu = $.fn.getSubMenuLoadSelectForm("Select Product");
-						console.log(menus.custom_create);
 						break;
 					case "attribute_featurecode":
 						menus.custom_create._disabled = false;
@@ -62,6 +61,10 @@
 					case "tree_node_counter_main_basic_postpaid":
 						menus.custom_create._disabled = false;
 						menus.custom_create.submenu = $.fn.getSubMenuAddNode("Condition Set","conditioncommonand");
+						menus.custom_delete._disabled = false;
+						menus.custom_delete.action = function(node) {
+							$.fn.deleteNode(node);
+						};
 						break;
 					case 'tree_node_counter_main_rollover_prepaid':
 					case 'tree_node_counter_main_rollover_postpaid':
