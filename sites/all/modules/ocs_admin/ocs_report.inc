@@ -130,13 +130,19 @@ function _ocs_report_tariff_mapping( $nid)
 			$rate_items = array();
 			foreach( $rate_list as $time => $rate) {
 				if ( ! empty( $rate))  {
-					$rate_items[] = array( 'data' => t( '<div class="myform report"><label>%label</label><div class="myform report value">%value</div></div>',
-								array( '%label' => $time, '%value' => _ocs_report_rate($rate))));
+//					$rate_items[] = array( 'data' => t( '<div class="myform report"><label>%label</label><div class="myform report value">%value</div></div>',
+//								array( '%label' => $time, '%value' => _ocs_report_rate($rate))));
+					$node = node_load( $rate);
+					$field = field_info_instances( 'node', $node->type);
+					$rate_items[] = array( 'data' => t( '<h4>%label</h4>', array( '%label' => $time)));
+					$rate_items[] = array( 'data' =>  _ocs_report_get_fields( $field, $node));
 				}
 			}
-			$items[] = array(
-				'data' => theme( 'item_list', array( 'items' => $rate_items, 'title' => $rating_group)),
-			);
+			if ( ! empty( $rate_items)) {
+				$items[] = array(
+					'data' => theme( 'item_list', array( 'items' => $rate_items, 'title' => $rating_group)),
+				);
+			}
 		}
 		$output .= theme( 'item_list', array( 'items' => $items));
 	}
@@ -145,11 +151,6 @@ function _ocs_report_tariff_mapping( $nid)
 
 }
 
-function _ocs_report_rate( $nid)
-{
-	$node = node_load( $nid);
-	return $node->title;
-}
 
 
 function _ocs_report_timetable( $nid)
