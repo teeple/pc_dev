@@ -2482,3 +2482,17 @@ td.supported_lang ul li.last {
 	resize: both;
 }
 */
+
+/* for report */
+.myform.report label {
+	display: inline-block;
+	width: 120px;
+	margin-right: 12px;
+	margin-top: 3px;
+	font-size: 11px;
+    text-shadow: 0 1px 0 #fff;
+    float: left;
+}
+.myform.report.value {
+	float:none;
+}

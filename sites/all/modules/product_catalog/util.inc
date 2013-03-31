@@ -654,7 +654,7 @@ function _get_redirect_url_in_view_n_delete($viewOrDel, $node) {
 																				'Additional' =>'quickset-products=1',
 																				'VAS' =>'quickset-products=2',
 																				'Package' =>'quickset-products=3'),
-											'Bundle' 	=> array( 'Main' => '',
+											'Cross' 	=> array( 'Main' => '',
 																				'Additional' =>'quickset-products=1',
 																				'VAS' =>'quickset-products=2',
 																				'Package' =>'quickset-products=3'),
