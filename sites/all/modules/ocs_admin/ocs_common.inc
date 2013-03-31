@@ -371,36 +371,50 @@ function ocs_ctools_link($title, $url, $opt)
 
 function ocs_log_changes( $before, $after)
 {
-	$field = field_info_instances( 'node', $before->type);
+	// dpm( $before, 'before');
 
+	if ( get_class( $before) == 'FieldCollectionItemEntity') {
+		// field_collection 
+		$field = field_info_instances('field_collection_item', $before->field_name);
+		$type = 'FieldCollectionItemEntity:' . $before->field_name;
+		$id = 'item_id=' . $before->item_id;
+	}
+	else {
+		$field = field_info_instances( 'node', $before->type);
+		$type = $before->type;
+		$id = 'nid=' . $before->nid;
+	}
+
+	$diff = _compare_content( $field, $before, $after);
+	if ( ! empty( $diff)) {
+		dpm( $diff, 'diff');
+		watchdog( 'change log', 'Content %type (%id) changed %data', array( '%type' => $type, '%id' => $id, '%data' => json_encode( $diff)), WATCHDOG_NOTICE); 
+	}
+}
+
+function _compare_content( $field, $before, $after)
+{
 	$diff = array();
 	foreach( $field as $key => $value) {
 		$v1 = $before->$key;
 		$v2 = $after->$key;
 		$label = $value['label'];
 
-		if ( is_array( $v1)) {
+		/*
+		dpm( $key, 'key');
+		dpm( $v1, 'v1');
+		dpm( $value, 'value');
+		*/
 
+		if ( is_array( $v1)) {
+			// field type
+			$v1 = isset($v1['und']) ? $v1['und'] : NULL;
+			$v2 = isset($v2['und']) ? $v2['und'] : NULL;
 			for( $i=0; $i< max( count($v1), count( $v2)); $i++) {
-				if ( isset( $v1['und'][$i])) {
-					if ( isset( $v2['und'][$i])) {
-						$vv1 = $v1['und'][$i];
-						$vv2 = $v2['und'][$i];
-						if ( isset( $vv1['nid']) && ($vv1['nid'] !== $vv2['nid'])) {
-							$diff[$label.'['.$i.']'] = array( $vv1['nid'], $vv2['nid']);
-						}
-						else if ( isset( $vv1['value']) && ( $vv1['value'] !== $vv2['value'])) {
-							$diff[$label.'['.$i.']'] = array( $vv1['value'], $vv2['value']);
-						}
-					}
-					else {	// v2 not exist
-						$diff[$label.'['.$i.']'] = array( $v1['und'][$i], null);
-					}
-				}
-				else {
-					if ( isset( $v2['und'][$i])) {
-						$diff[$label.'['.$i.']'] = array( null, $v2['und'][$i]);
-					}
+				$vv1 = _get_field_value( $v1, $i);
+				$vv2 = _get_field_value( $v2, $i);
+				if ( $vv1 !== $vv2) {
+					$diff[$label] = array( $vv1, $vv2);
 				}
 			}
 		}
@@ -411,7 +425,20 @@ function ocs_log_changes( $before, $after)
 		}
 	}
 
-	dpm( $diff, 'diff');
-	watchdog( 'ocs_admin', 'Content %type changed %data', 
-			array( '%type' => $before->type, '%data' => json_encode( $diff)), WATCHDOG_NOTICE); 
+	return $diff;
+}
+
+function _get_field_value( $v, $idx)
+{
+	if ( isset($v[$idx])) {
+		$vv = $v[$idx];
+		if ( isset( $vv['nid'])) return $vv['nid'];
+		if ( isset( $vv['value'])) return $vv['value'];
+		if ( isset( $vv['tid'])) {
+			$term = taxonomy_term_load( $vv['tid']);
+			return $term->name;
+		}
+		return $vv;
+	}
+	return NULL;
 }
