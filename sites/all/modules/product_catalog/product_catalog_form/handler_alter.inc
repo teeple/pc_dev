@@ -1786,6 +1786,12 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             }
             
             $form['field_target_counter_for_ut']['und']['#options'] = $options;
+            
+            $form['field_enddate_option1']['#type'] = 'hidden';
+            $form['field_startdate_option1']['#type'] = 'hidden';
+            $form['field_enddate_option4']['#type'] = 'hidden';
+            $form['field_enddate_option2']['#type'] = 'hidden';
+            
             break;
         case 'rate_node_form' :
             unset($form['field_ref_tariffplan']);

@@ -79,7 +79,26 @@ function _ocs_report_children( $node, $depth=0)
 		}
 	}
 
+	return $output;
+}
 
+function _ocs_report_time_rate( $rate_list)
+{
+	$output = '';
+	$rate_items = array();
+	foreach( $rate_list as $time => $rate) {
+		if ( ! empty( $rate))  {
+//					$rate_items[] = array( 'data' => t( '<div class="myform report"><label>%label</label><div class="myform report value">%value</div></div>',
+//								array( '%label' => $time, '%value' => _ocs_report_rate($rate))));
+			$node = node_load( $rate);
+			$field = field_info_instances( 'node', $node->type);
+			$rate_items[] = array( 'data' => t( '<h4>%label</h4>', array( '%label' => $time)));
+			$rate_items[] = array( 'data' =>  _ocs_report_get_fields( $field, $node));
+		}
+	}
+	if ( ! empty( $rate_items)) {
+		$output .= theme( 'item_list', array( 'items' => $rate_items));
+	}
 	return $output;
 }
 
@@ -95,14 +114,14 @@ function _ocs_report_tariffplan( $tariffplanNid)
 		// list tariff plan
 		$view = views_get_view('list_numberingplan_domestic_ratinggroup');
 		$view->set_display('panel_displayall');
-		$view->set_arguments(array( $node->field_ref_numberingplan_domestic['und'][0]['nid'], $tariffplanNid));
+		$view->set_arguments(array('0' => $node->field_ref_numberingplan_domestic['und'][0]['nid']));
 		$output .= $view->render();
 
 		// list time table
 		$output .= _ocs_report_timetable( $node->field_ref_timetable_domestic['und'][0]['nid']);
 
 		// list tariff
-		//$output .= _ocs_report_tariff_mapping( $tariffplanNid);
+		$output .= _ocs_report_tariff_mapping( $tariffplanNid);
 	}
 	return $output;
 }
@@ -127,8 +146,22 @@ function _ocs_report_tariff_mapping( $nid)
 
 		$items = array();
 		foreach( $map as $rating_group => $rate_list) {
-			$items[] = array( 'data' => $rating_group);
-			$items[] = array( 'data' => _ocs_report_time_rate( $rate_list));
+			$rate_items = array();
+			foreach( $rate_list as $time => $rate) {
+				if ( ! empty( $rate))  {
+//					$rate_items[] = array( 'data' => t( '<div class="myform report"><label>%label</label><div class="myform report value">%value</div></div>',
+//								array( '%label' => $time, '%value' => _ocs_report_rate($rate))));
+					$node = node_load( $rate);
+					$field = field_info_instances( 'node', $node->type);
+					$rate_items[] = array( 'data' => t( '<h4>%label</h4>', array( '%label' => $time)));
+					$rate_items[] = array( 'data' =>  _ocs_report_get_fields( $field, $node));
+				}
+			}
+			if ( ! empty( $rate_items)) {
+				$items[] = array(
+					'data' => theme( 'item_list', array( 'items' => $rate_items, 'title' => $rating_group)),
+				);
+			}
 		}
 		$output .= theme( 'item_list', array( 'items' => $items));
 	}
@@ -137,58 +170,7 @@ function _ocs_report_tariff_mapping( $nid)
 
 }
 
-function ocs_report_time_rate( $type, $rating_group, $tariffplan_nid)
-{
-	$output = '';
 
-	$node = node_load( $rating_group);
-	//dpm( $node, 'rating group');
-
-	$query = new EntityFieldQuery();
-	$result = $query->entityCondition('entity_type', 'node')
-		->entityCondition('bundle', 'basicrate_domestic')
-		->fieldCondition( 'field_ref_tariffplan', 'nid', $tariffplan_nid)
-		->fieldCondition( 'field_rating_group', 'value', $node->field_rating_group['und'][0]['value'])
-		->execute();
-
-	//dpm( $rating_group_nid, 'rating group');
-
-	if ( count( $result) > 0) {
-		$map = array();
-		foreach( array_keys( $result['node']) as $rate_nid) {
-			$rate = node_load( $rate_nid);
-			$timefactor = node_load( $rate->field_ref_timetablefactors['und'][0]['nid']);
-			$map[ $timefactor->title] = $rate->field_ref_rate['und'][0]['nid'];
-		}
-
-		if ( ! empty( $map)) {
-			$output .= _ocs_report_time_rate( $map);
-			//dpm( $map, 'map');
-		}
-	}
-
-	return $output;
-}
-
-function _ocs_report_time_rate( $rate_list)
-{
-	$output = '';
-	$rate_items = array();
-	foreach( $rate_list as $time => $rate) {
-		if ( ! empty( $rate))  {
-//					$rate_items[] = array( 'data' => t( '<div class="myform report"><label>%label</label><div class="myform report value">%value</div></div>',
-//								array( '%label' => $time, '%value' => _ocs_report_rate($rate))));
-			$node = node_load( $rate);
-			$field = field_info_instances( 'node', $node->type);
-			$rate_items[] = array( 'data' => t( '<h4>%label</h4>', array( '%label' => $time)));
-			$rate_items[] = array( 'data' =>  _ocs_report_get_fields( $field, $node));
-		}
-	}
-	if ( ! empty( $rate_items)) {
-		$output .= theme( 'item_list', array( 'items' => $rate_items));
-	}
-	return $output;
-}
 
 function _ocs_report_timetable( $nid)
 {
