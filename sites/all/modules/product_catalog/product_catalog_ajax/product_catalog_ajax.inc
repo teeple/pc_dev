@@ -64,9 +64,11 @@ function _load_tree_item_mixed_with_node_and_term($rootNode,$grandParentNode=NUL
         
         if($filterTerm){//filter tree item based on product type and billing type
             //check parent is already removed from tree
-            if(in_array($term->parents[0],$skipParents)){
-                $skipParents[] = $term->tid;
-                continue;
+            if(isset($term->parents[0])){
+                if(in_array($term->parents[0],$skipParents)){
+                    $skipParents[] = $term->tid;
+                    continue;
+                }
             }
             
             //check combination is not allowed
@@ -85,28 +87,30 @@ function _load_tree_item_mixed_with_node_and_term($rootNode,$grandParentNode=NUL
 		$itemArray = array(
 				'attr' => array('id' => 'term_'.$item->tid.'_'.$rootNode->nid,
 						'node_type' => 'term',
-						'rel' => $term->field_rel_type['und'][0]['safe_value'],
+						'rel' => isset($term->field_rel_type['und'][0]['value'])?$term->field_rel_type['und'][0]['value']:"",
 						'weight' => $item->weight,
 				),
 				'data' => $item->name
 		);
 		
-    	 switch($term->field_rel_type['und'][0]['safe_value']) {
-    		 case 'attribute':
-    		 case 'attribute_packaged':
-    		 case 'counter':
-    		 case 'nonusage':
-    		 case 'usage':
-    		 		$itemArray['state'] = 'open';
-    		 		break;
-    	 }
+        if(isset($term->field_rel_type['und'][0]['value'])){
+        	 switch($term->field_rel_type['und'][0]['value']) {
+        		 case 'attribute':
+        		 case 'attribute_packaged':
+        		 case 'counter':
+        		 case 'nonusage':
+        		 case 'usage':
+        		 		$itemArray['state'] = 'open';
+        		 		break;
+        	 }
+        }
 	 		
 		if(isset($term->field_qtabs_loading['und'][0]['value'])){
 			$loadingInfo = field_collection_item_load($term->field_qtabs_loading['und'][0]['value']);
 			//$qtabType = $loadingInfo->field_tab_type['und'][0]['value'];
-			$viewName = $loadingInfo->field_tab_content['und'][0]['safe_value'];
-			$displayName = $loadingInfo->field_view_display['und'][0]['safe_value'];
-			$argsInfo = $loadingInfo->field_view_arguments['und'][0]['safe_value'];
+			$viewName = $loadingInfo->field_tab_content['und'][0]['value'];
+			$displayName = $loadingInfo->field_view_display['und'][0]['value'];
+			$argsInfo = $loadingInfo->field_view_arguments['und'][0]['value'];
 
 			$param = array();
 			$argsInfo = explode('/',$argsInfo);
@@ -130,11 +134,11 @@ function _load_tree_item_mixed_with_node_and_term($rootNode,$grandParentNode=NUL
 				else{
 					$param[] = $argument;
 				}
-			};
+			}
 			
 			//load attached child node
 			$view = views_get_view($viewName);
-			$view->set_display($displayName);
+            $view->set_display($displayName);
 			$view->set_arguments($param);
 			$view->execute();
 			
