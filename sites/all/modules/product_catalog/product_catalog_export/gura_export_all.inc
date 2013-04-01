@@ -52,16 +52,19 @@ function rating_rules_export_by_content_type_loaded($export_list, $nid=NULL, $va
                 $ruleset_name = $export_item->field_result_ruleset_name['und'][0]['value'];
             }
             $d = rating_rule_export($ruleset_name, $export_item, $nid, $vars, $export_item_cache);
-            if(array_key_exists('object_name', $d))
-            {
-                $obj_name = $d["object_name"];
-                unset($d["object_name"]);
-                $jsonData[$obj_name] = $d;
-            }
-            else
-            {
-                $jsonData[] = $d;
-            }
+			if($d['contains_all_rules'] == true || count($d['data'])>0 || count($d['delete_keys'])>0)
+			{
+				if(array_key_exists('object_name', $d))
+				{
+					$obj_name = $d["object_name"];
+					unset($d["object_name"]);
+					$jsonData[$obj_name] = $d;
+				}
+				else
+				{
+					$jsonData[] = $d;
+				}
+			}
         }
     }
 
@@ -213,8 +216,11 @@ function rating_rules_export_from_view_has_nid_reference($title , $export_item ,
             $sub_vars[$field_name_map[$field_name]] = $value;
         }
 
-        $data = rating_rule_export($ruleset_template , $export_item , $nid, $sub_vars, $export_item_cache);
-        $ret[] = $data;
+		$data = rating_rule_export($ruleset_template , $export_item , $nid, $sub_vars, $export_item_cache);
+		if($data['contains_all_rules'] == true || count($data['data'])>0 || count($data['delete_keys'])>0)
+		{
+			$ret[] = $data;
+		}
     }
     return $ret;
 }
@@ -675,9 +681,9 @@ function generate_condition_string_by_condition_node($nid, &$factor_list )
 					$temp = get_drupal_field_values($tid_node , 'field_rating_operation_code');
 					$op = $temp[0];
 				}
-				else if(property_exists($node, 'field_rating_operation_number '))
+				else if(property_exists($node, 'field_rating_operation_number'))
 				{
-					$temp = get_drupal_field_tids($node , 'field_rating_operation_number ');
+					$temp = get_drupal_field_tids($node , 'field_rating_operation_number');
 					$tid_node = $temp[0];
 					$temp = get_drupal_field_values($tid_node , 'field_rating_operation_code');
 					$op = $temp[0];

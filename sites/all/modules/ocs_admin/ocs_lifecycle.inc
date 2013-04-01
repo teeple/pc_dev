@@ -402,9 +402,11 @@ function ocs_lifecycle_transition_form_validate($form, &$form_state)
 	$values = $form_state['values'];
 
 	if ($values['op'] != 'Cancel') {
+	    /*
 		if ($values['from_state'] == $values['to_state']) {
 			form_set_error('to_state', t('Invalid state : same as "from state"'));
 		}
+        */
 
 		// from, to state�� �̹� �����ϸ� ����
 		$scheme_nid = $form['#scheme_nid'];
