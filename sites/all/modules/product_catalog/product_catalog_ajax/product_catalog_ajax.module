@@ -1049,19 +1049,47 @@ function product_catalog_ajax_select_submit() {
         break;
 		
       case 'available_product':
-  		$child->type = 'prdattributepackaged';
-  		$child->field_weight['und'][0]['value'] = $weight;
-  		$child->field_ref_product['und'][0]['nid'] = $tmpProductNid[1];
-  		$child->field_ref_connected_product['und'][0]['nid'] = $childNid;
-		
-  		// $term = taxonomy_term_load($tmpParentNid[1]);
-  		$term = taxonomy_get_term_by_name('Mandatory_MarketOpen','prdrelationtype');
-  		$child->field_ref_prdrelationtype['und'][0]['tid'] = current($term)->tid;
-  	
-  		node_save($child);
-  		$js_data['append_to'] = 'inside';
-  	  	break;
+	  		$child->type = 'prdattributepackaged';
+	  		$child->field_weight['und'][0]['value'] = $weight;
+	  		$child->field_ref_product['und'][0]['nid'] = $tmpProductNid[1];
+	  		$child->field_ref_connected_product['und'][0]['nid'] = $childNid;
 			
+	  		// $term = taxonomy_term_load($tmpParentNid[1]);
+	  		$term = taxonomy_get_term_by_name('Mandatory_MarketOpen','prdrelationtype');
+	  		$child->field_ref_prdrelationtype['und'][0]['tid'] = current($term)->tid;
+	  	
+	  		node_save($child);
+	  		$js_data['append_to'] = 'inside';
+  	  	break;
+  	  
+  	  case 'discount_voucher_product_specific':
+      	$voucharcardtype = node_load($tmpProductNid[1]);
+
+      	$child->type = 'treenodeproductfordisvoucher';
+      	$child->field_weight['und'][0]['value'] = $weight;
+      	$child->field_ref_vouchercardtype['und'][0]['nid'] = $tmpProductNid[1];
+      	$child->field_ref_product['und'][0]['nid'] = $childNid;
+      	node_save($child);
+      	
+      	// _create_treenodecounterforvoucherprd($child, $childNid);
+      	
+      	$js_data['append_to'] = 'inside';
+      	
+				$js_data['replace_or_append'] = 'replace';
+				
+				// delete existing .. 
+				$view = views_get_view('list_treenodeproductforvoucher');
+				$view->set_display('panel_pane_1');
+				$view->set_arguments(array('0' => $tmpProductNid[1]));
+				$view->execute();
+				
+				foreach($view->result as $record) {
+					if($child->nid != $record->nid) {
+						node_delete($record->nid);
+					}
+				}
+      	break;
+  	  
       case 'voucher_product_specific':
       	$voucharcardtype = node_load($tmpProductNid[1]);
       	$voucherTypeTerm = taxonomy_term_load($voucharcardtype->field_ref_voucher_type['und'][0]['tid']);

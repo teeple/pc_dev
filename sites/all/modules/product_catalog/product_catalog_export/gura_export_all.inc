@@ -51,20 +51,24 @@ function rating_rules_export_by_content_type_loaded($export_list, $nid=NULL, $va
             {
                 $ruleset_name = $export_item->field_result_ruleset_name['und'][0]['value'];
             }
-            $d = rating_rule_export($ruleset_name, $export_item, $nid, $vars, $export_item_cache);
+			$d = rating_rule_export($ruleset_name, $export_item, $nid, $vars, $export_item_cache);
+			/*
 			if($d['contains_all_rules'] == true || count($d['data'])>0 || count($d['delete_keys'])>0)
 			{
-				if(array_key_exists('object_name', $d))
-				{
-					$obj_name = $d["object_name"];
-					unset($d["object_name"]);
-					$jsonData[$obj_name] = $d;
-				}
-				else
-				{
-					$jsonData[] = $d;
-				}
+			 */
+			if(array_key_exists('object_name', $d))
+			{
+				$obj_name = $d["object_name"];
+				unset($d["object_name"]);
+				$jsonData[$obj_name] = $d;
 			}
+			else
+			{
+				$jsonData[] = $d;
+			}
+			/*
+			}
+			 */
         }
     }
 
@@ -217,10 +221,14 @@ function rating_rules_export_from_view_has_nid_reference($title , $export_item ,
         }
 
 		$data = rating_rule_export($ruleset_template , $export_item , $nid, $sub_vars, $export_item_cache);
+		/*
 		if($data['contains_all_rules'] == true || count($data['data'])>0 || count($data['delete_keys'])>0)
 		{
-			$ret[] = $data;
+		 */
+		$ret[] = $data;
+		/*
 		}
+		 */
     }
     return $ret;
 }

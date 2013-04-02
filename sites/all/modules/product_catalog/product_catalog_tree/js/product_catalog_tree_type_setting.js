@@ -943,6 +943,12 @@
 						"image" : "/sites/default/files/folder.png"
 					},
 				},
+				"discount_voucher_product_specific": {
+					"valid_children" : ["treenodeproductfordisvoucher"],
+					"icon" : {
+						"image" : "/sites/default/files/folder.png"
+					},
+				},
 				"voucher_loyalty_point": {
 					"valid_children" : ["none"],
 					"icon" : {
