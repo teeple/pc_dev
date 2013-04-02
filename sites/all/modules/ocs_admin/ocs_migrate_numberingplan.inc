@@ -184,6 +184,11 @@ function ocs_migrate_fce_numberingplan_submit($form, &$form_state)
                     node_delete( $nid);
                     dpm( 'idd_ratinggroup instance is deleted. nid='. $nid);
                 }
+
+				// load numbering plan
+				$np = node_load( $values['target']);
+				unset($np->field_ref_idd_ratinggroup['und']);
+				node_save( $np);
             }
              _update_numberingplan_for_intl_voice( $carrier_info, $values['target'], $form['#rule'], $values['check'] == '1');
         }
@@ -641,7 +646,7 @@ function _update_numberingplan_for_intl_voice( $carrier_info, $target_nid, $reco
             if ( isset( $rating_group_list[$prefix])) {
                 dpm( 'Rating group exist already: prefix=' . $prefix);
             }
-            $rating_group_list[$node->field_prefix['und'][0]['value']] = $nid;
+            $rating_group_list[$prefix] = $nid;
 		}
 	}
 	dpm( $rating_group_list, 'rating group list');	

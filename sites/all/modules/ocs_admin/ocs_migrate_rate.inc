@@ -1,5 +1,9 @@
 <?php
 
+global $unit_range;
+global $unit_measure;
+global $tree_tid;
+
 function _load_all_price()
 {
 	$rate = &drupal_static(__FUNCTION__, NULL);
@@ -152,8 +156,50 @@ function _get_rate_list($rate, $name)
 	return $list;
 }
 
+function _get_terms()
+{
+	global $unit_measure;
+	global $unit_range;
+	global $tree_tid;
+
+	// get terms : unit_of_measure 
+	$terms = ocs_get_terms('unit_of_measure');
+	$unit_measure = array(); 
+	foreach( $terms as $tid => $term) {
+		$unit_measure[$term->name] = $tid;
+	}       
+	    
+	// get terms : unif_of_range
+	$terms = ocs_get_terms('unit_of_range');
+	$unit_range = array();
+	foreach( $terms as $tid => $term) {
+		$unit_range[$term->name] = $tid;
+	}
+
+	$tree_tid = array();
+	foreach( array( 'voice', 'sms') as $type) {
+		$vid = taxonomy_vocabulary_machine_name_load('tpl_tariffplan_' . $type);
+		$tree = taxonomy_get_tree( $vid->vid, 0, 1);
+		foreach( $tree as $node) {
+			$children = taxonomy_get_tree( $vid->vid, $node->tid, 1);
+			foreach( $children as $child) {
+				//dpm( $child, $node->name);
+				if ( $child->name == 'Basic Rate') {
+					$tree_tid[$type][$node->name] = $child->tid;
+				}
+			}
+		}
+	}
+	//dpm( $tree_tid, 'tree tid');
+}
+
 function ocs_migrate_fce_rate_submit($form, &$form_state)
 {
+	// tid list
+	global $tree_tid;
+
+	_get_terms();
+
 	$values = $form_state['values'];
 	if ($values['op'] == 'Save') {
 		dpm($values, 'values');
@@ -161,12 +207,17 @@ function ocs_migrate_fce_rate_submit($form, &$form_state)
 		// get tree tid 
         // $a:intl or domestic, $b:voice or sms
         list( $a, $b) = explode( ':', $form['#call_type']);
+		/*
 		$nids = array_keys( taxonomy_get_term_by_name( 
             ($a == 'intl') ? 'International' : 'Domestic',
             ($b == 'voice') ? 'tpl_tariffplan_voice' : 'tpl_tariffplan_sms'));
 
-		// tid list
-		$tid = array( 'tree_tid' => $nids[0]);
+		//dpm( $nids, 'taxonomy_get_term_by_name');
+		*/
+
+		$tid = $tree_tid[$b][($a == 'intl') ? 'International' : 'Domestic'];
+		dpm( $tree_tid, 'tree_tid');
+		dpm( $tid, 'tree_tid');
 
 		$processed_rate_list = array();
 
@@ -254,11 +305,13 @@ function _set_price($plan_nid, $name, $price, $tid, $check_only = TRUE)
 		}
 	}
 
+	global $unit_measure;
+
 	$new_rate->title = $name;
     // count
-	$new_rate->field_uom_units['und'][0]['tid'] = 1551;     
+	$new_rate->field_uom_units['und'][0]['tid'] = $unit_measure['Seconds'];     
 	$new_rate->field_ref_tariffplan['und'][0]['nid'] = $plan_nid;
-	$new_rate->field_ref_tree_tid['und'][0]['value'] = $tid['tree_tid'];
+	$new_rate->field_ref_tree_tid['und'][0]['value'] = $tid;
 	$new_rate->field_price['und'][0]['value'] = $price;
 
 	if ( ! $check_only) {
@@ -346,15 +399,15 @@ function _set_rate($plan_nid, $name, $rate_list, $tid, $check_only = TRUE)
 		}
 	}
 
+	global $unit_range, $unit_measure;
+
 	$new_rate->title = $name;
 	// seconds
-	$new_rate->field_range_units['und'][0]['tid'] = 390;
-	// MNT
-	$new_rate->field_price_units['und'][0]['tid'] = 450;
+	$new_rate->field_range_units['und'][0]['tid'] = $unit_range['Seconds'];
 	// seconds
-	$new_rate->field_uom_units['und'][0]['tid'] = 451;
+	$new_rate->field_uom_units['und'][0]['tid'] = $unit_measure['Seconds'];
 	$new_rate->field_ref_tariffplan['und'][0]['nid'] = $plan_nid;
-	$new_rate->field_ref_tree_tid['und'][0]['value'] = $tid['tree_tid'];
+	$new_rate->field_ref_tree_tid['und'][0]['value'] = $tid;
 
 	if ( ! $check_only) {
 		node_save($new_rate);
