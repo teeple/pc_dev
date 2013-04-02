@@ -767,9 +767,9 @@ function product_catalog_ajax_add_modal_content($js = NULL, $contentType, $refNo
 		case 'idd_ratinggroup':
 			$node->field_ref_numberingplan_idd['und'][0]['nid'] = $refNodeNid;
 			break;
-    case 'roaming_ratinggroup':
-    	$node->field_ref_roaming_plan['und'][0]['nid'] = $refNodeNid;
-      break;
+        case 'roaming_ratinggroup':
+        	$node->field_ref_roaming_plan['und'][0]['nid'] = $refNodeNid;
+          break;
 		case 'depositschemefactors':
 		case 'depositschemeadjustment':
 			$node->field_ref_depositscheme['und'][0]['nid'] = $refNodeNid;
@@ -802,6 +802,9 @@ function product_catalog_ajax_add_modal_content($js = NULL, $contentType, $refNo
 		case 'numberspecialfactors':
 			$node->field_ref_numberspecial['und'][0]['nid'] = $refNodeNid;
 			break;
+        case 'roaming_zone':
+            $node->field_roaming_carrier['und'][0]['nid'] = $refNodeNid;
+            break;
 	}
 	
 	if (!$js) {
@@ -852,6 +855,7 @@ function product_catalog_ajax_add_modal_content($js = NULL, $contentType, $refNo
 			case 'holidaylist_specific':
 			case 'locationfactor':
 			case 'homezonefactor':
+            case 'roaming_zone':
 				$output[] = ctools_ajax_command_reload();
 				break;
 			case 'actionsetcounter':
@@ -1928,6 +1932,7 @@ function product_catalog_modal_form_edit_modal_content($js = NULL, $contentType,
         	case 'article':
 			case 'locationfactor':
 			case 'homezonefactor':
+            case 'roaming_zone':
 				$output[] = ctools_ajax_command_reload();
 				break;
 			case 'actionsetcounter':

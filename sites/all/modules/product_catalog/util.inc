@@ -742,13 +742,11 @@ function _get_redirect_url_in_view_n_delete($viewOrDel, $node) {
 		break;
 	
 	case 'roaming_country':
-    case 'roaming_zone':
-	case 'roaming_carrier':
+    case 'roaming_carrier':
 	case 'roaming_plan':
 		$fragments = array('roaming_country' =>  'quickset-roaming=0',
-		                   'roaming_zone' =>  'quickset-roaming=1',
-							'roaming_carrier' =>  'quickset-roaming=2',
-							'roaming_plan' =>  'quickset-roaming=3');
+		                   'roaming_carrier' =>  'quickset-roaming=1',
+						   'roaming_plan' =>  'quickset-roaming=2');
 	
 		$tempArr = explode('_', $node->type);
 		if ($viewOrDel == 'view') {
@@ -887,13 +885,11 @@ function _get_redirect_url_in_create_n_list($addOrList, $content_type, $params) 
 		break;
 		
 	case 'roaming_country':
-    case 'roaming_zone':
-	case 'roaming_carrier':
+    case 'roaming_carrier':
 	case 'roaming_plan':
         $fragments = array('roaming_country' =>  'quickset-roaming=0',
-		                   'roaming_zone' => 'quickset-roaming=1',
-							'roaming_carrier' =>  'quickset-roaming=2',
-							'roaming_plan' => 'quickset-roaming=3');
+							'roaming_carrier' =>  'quickset-roaming=1',
+							'roaming_plan' => 'quickset-roaming=2');
 					
 		$tempArr = explode('_', $content_type);
 		$url['path'] = 'common/'. join('/', $tempArr) .'/'. $addOrList;
