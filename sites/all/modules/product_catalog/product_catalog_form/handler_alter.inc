@@ -1592,7 +1592,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             //add custom id for ajax
             $form['field_ref_roaming_carrier']['und']['#prefix'] = '<div id="custom_roaming_ratinggroup_carrier">';
             $form['field_ref_roaming_carrier']['und']['#postfix'] = '</div>';
-            
+             
             //add ajax callback
             $form['field_ref_roaming_country']['und']['#ajax'] = array(
                 'callback' => 'roaming_options_callback_carrier',
