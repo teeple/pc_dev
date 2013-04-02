@@ -627,6 +627,10 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
         case 'counter_node_form' :
             $counterTypeTerm = current(taxonomy_get_term_by_name($form_state['counter_type'], 'countertype'));
             $form['field_weight_for_unittransfer']['#type'] = 'hidden';
+            
+            dsm($form, 'form');
+            dsm($form_state, 'form_state');
+            
             // Edit
             if (isset($form['nid']['#value'])) {
                 $form['field_counter_id']['und']['#disabled'] = TRUE;
@@ -772,6 +776,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             unset($form['field_weight']);
             _unset_menu_items($form, $form_id);
             break;
+            /*
         case 'counter_node_form' :
             unset($form['field_parent_node']);
             unset($form['field_weight']);
@@ -791,7 +796,8 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             $form['actions']['submit']['#submit'][] = '_common_counter_submit_handler';
             $form['actions']['submit']['#submit'][] = 'product_catalog_form_form_redirect_handler';
             break;
-
+            */
+            
         case 'simpleproductoffering_node_form' :
             if (isset($form['field_r_prodofferingrel']))
                 unset($form['field_r_prodofferingrel']);
