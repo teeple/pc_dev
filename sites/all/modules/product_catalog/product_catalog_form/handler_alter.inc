@@ -1526,30 +1526,48 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             );
             break;
         case 'roaming_ratinggroup_node_form' :
+            $form['field_ref_roaming_plan']['#type'] = 'hidden';
+            _unset_menu_items($form, $form_id);
             // only for create
             //
+            $carrierOptions = array();
+            $carrierOptions['_none'] = ' - None -';
+            $zoneOptions = array();
+            $zoneOptions['_none'] = ' - None -';
+            
+            /*
             if (!isset($form['nid']['#value'])) {
                 if (isset($form_state['roamingplan_nid'])) {
                     $form['actions']['submit']['#submit'][] = '_ratinggroup_link_to_roaming_plan';
                 }
-                $form['field_ref_roaming_carrier']['und']['#options']= array('_none' => '- None -');
-                //unset($form['field_ref_roaming_carrier']['und']['#default_value']);
-                $form['field_roaming_zone']['und']['#options']= array('_none' => '- None -');
-                //unset($form['field_roaming_zone']['und']['#default_value']);
-            }else{//edit
-                $roamingCountryNid = $form_state['build_info']['args'][0]->field_ref_roaming_country['und'][0]['nid'];
-                $view = views_get_view('list_roaming_carrier');
-                $view->set_display('panel_pane_3');
-                $view->set_arguments(array('0' => $roamingCountryNid));
-                $view->execute(); 
-                foreach($view->result as $item){
-                    $options[$item->nid] = $item->node_title;
-                } 
-                $form['field_ref_roaming_carrier']['und']['#options'] = $options;
-                $form['field_ref_roaming_carrier']['und']['#default_value'] = $form_state['values']['field_ref_roaming_carrier']['und'][0]['nid'];
-                
-                $roamingCarrierNid = $form_state['build_info']['args'][0]->field_ref_roaming_carrier['und'][0]['nid'];
-                $roamingTypeTid = $form_state['build_info']['args'][0]->field_ref_roaming_type['und'][0]['tid'];
+            }
+            */ 
+            
+            $roamingCountryNid = NULL;
+            $roamingCarrierNid = NULL;
+            $roamingTypeTid = NULL;
+            if(isset($form_state['values'])){
+                $roamingCarrierNid = $form_state['values']['field_ref_roaming_carrier']['und'][0]['nid'];
+                $roamingCountryNid = $form_state['values']['field_ref_roaming_country']['und'][0]['nid'];
+                $roamingTypeTid = $form_state['values']['field_ref_roaming_type']['und'][0]['tid'];
+            }else{
+                if (isset($form['nid']['#value'])) {
+                    $roamingCarrierNid = $form_state['build_info']['args'][0]->field_ref_roaming_carrier['und'][0]['nid'];    
+                    $roamingCountryNid = $form_state['build_info']['args'][0]->field_ref_roaming_country['und'][0]['nid'];    
+                    $roamingTypeTid = $form_state['build_info']['args'][0]->field_ref_roaming_type['und'][0]['tid'];    
+                }
+            }
+            
+            $view = views_get_view('list_roaming_carrier');
+            $view->set_display('panel_pane_3');
+            $view->set_arguments(array('0' => $roamingCountryNid));
+            $view->execute(); 
+            foreach($view->result as $item){
+                $carrierOptions[$item->nid] = $item->node_title;
+            } 
+            $form['field_ref_roaming_carrier']['und']['#options'] = $carrierOptions;
+            //$form['field_ref_roaming_carrier']['und']['#default_value'] = $form_state['values']['field_ref_roaming_carrier']['und'][0]['nid'];
+            if(isset($roamingTypeTid)){
                 $roamingTypeTerm = taxonomy_term_load($roamingTypeTid);
                 switch($roamingTypeTerm->name){
                    case 'Other PLMN':
@@ -1561,22 +1579,16 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
                        $view->set_arguments(array('0' => $roamingCarrierNid));
                        $view->execute(); 
                        foreach($view->result as $item){
-                           $options[$item->nid] = $item->node_title;
+                           $zoneOptions[$item->nid] = $item->node_title;
                        } 
-                       $form['field_roaming_zone']['und']['#options'] = $options;
+                       $form['field_roaming_zone']['und']['#options'] = $zoneOptions;
                        break;
                    default:
                        unset($form['field_roaming_zone']);
                        break;
                 }
-            }
-            
-            dsm($form,'form 1');
-            dsm($form_state,'form state 1')
-            // unset($form['field_ref_roaming_plan']);
-            $form['field_ref_roaming_plan']['#type'] = 'hidden';
-            _unset_menu_items($form, $form_id);
-            
+            } 
+                
             //add custom id for ajax
             $form['field_ref_roaming_carrier']['und']['#prefix'] = '<div id="custom_roaming_ratinggroup_carrier">';
             $form['field_ref_roaming_carrier']['und']['#postfix'] = '</div>';
@@ -1587,8 +1599,8 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
                 'wrapper' => 'custom_roaming_ratinggroup_carrier'
             );
             
-            $form['field_ref_roaming_zone']['und']['#prefix'] = '<div id="custom_roaming_ratinggroup_zone">';
-            $form['field_ref_roaming_zone']['und']['#postfix'] = '</div>';
+            $form['field_roaming_zone']['und']['#prefix'] = '<div id="custom_roaming_ratinggroup_zone">';
+            $form['field_roaming_zone']['und']['#postfix'] = '</div>';
             
             $form['field_ref_roaming_type']['und']['#ajax'] = array(
                 'callback' => 'roaming_options_callback_zone',
@@ -2083,9 +2095,9 @@ function roaming_options_callback_carrier($form,$form_state){
     $renderStr .= drupal_render($form['field_ref_roaming_carrier']);
     $renderStr .= '</div>';
     
-    //return $renderStr;
-    $commands[] = ajax_command_replace("#custom_roaming_ratinggroup_carrier", $renderStr);
-    return array('#type' => 'ajax', '#commands' => $commands);
+    return $renderStr;
+    //$commands[] = ajax_command_replace("#custom_roaming_ratinggroup_carrier", $renderStr);
+    //return array('#type' => 'ajax', '#commands' => $commands);
 }
 
 function roaming_options_callback_zone($form,$form_state){
@@ -2105,7 +2117,7 @@ function roaming_options_callback_zone($form,$form_state){
                $options[$item->nid] = $item->node_title;
            } 
            $form['field_roaming_zone']['und']['#options'] = $options;
-           dsm($zoneView,'view roaming_options_callback_zone');
+           //dsm($zoneView,'view roaming_options_callback_zone');
            break;
        default:
            unset($form['field_roaming_zone']);
@@ -2116,8 +2128,9 @@ function roaming_options_callback_zone($form,$form_state){
     $renderStr .= drupal_render($form['field_roaming_zone']);
     $renderStr .= '</div>'; 
    
-    $commands[] = ajax_command_replace("#custom_roaming_ratinggroup", $renderStr);
-    return array('#type' => 'ajax', '#commands' => $commands);
+    return $renderStr;
+    //$commands[] = ajax_command_replace("#custom_roaming_ratinggroup", $renderStr);
+    //return array('#type' => 'ajax', '#commands' => $commands);
 }
 
 function _get_existing_counter_list($productNid) {
