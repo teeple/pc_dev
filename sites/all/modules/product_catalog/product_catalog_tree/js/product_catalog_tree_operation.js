@@ -274,6 +274,7 @@
             case 'treenodevouchercardforproduct':
             case 'prdattributepackaged':
             case "treenodeproductforvoucher":
+            case "treenodeproductfordisvoucher":
             case 'treenodeunittransferscheme':
             case 'actionpricechargeonetime':
             case 'actionpriceallowanceonetime':

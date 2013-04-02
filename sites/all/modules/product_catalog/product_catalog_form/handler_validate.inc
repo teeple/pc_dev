@@ -419,7 +419,29 @@ function product_catalog_form_node_validate($node, $form, &$form_state) {
                 drupal_set_message("Only Number is allowed for ID", 'error');
                 form_set_error("Only Number is allowed for ID");
             }
-
+            
+            $voucherCardTypeTerm = taxonomy_term_load($form_state['values']['field_ref_voucher_type']['und'][0]['tid']);
+            
+            dsm($voucherCardTypeTerm, 'voucherCardTypeTerm');
+            
+            if($voucherCardTypeTerm->name == 'Discount') {
+            	dsm($form_state['values'], 'form state values');
+            	if(empty($form_state['values']['field_ref_product_for_disvoucher']) 
+            		|| empty($form_state['values']['field_ref_product_for_disvoucher']['und'])
+            		|| empty($form_state['values']['field_ref_product_for_disvoucher']['und'][0])
+            		|| empty($form_state['values']['field_ref_product_for_disvoucher']['und'][0]['nid'])            		
+            	) {
+								drupal_set_message("You should select the product mapped by the discount coupon", 'error');
+								form_set_error("You should select the product mapped by the discount coupon");
+            	} else {
+            		if( count($form_state['values']['field_ref_product_for_disvoucher']['und']) > 1 ) {
+	            		drupal_set_message("You should select only one mapping product", 'error');
+	            		form_set_error("You should select only one mapping product");
+            		}
+            	}
+            	
+            }
+            
             break;
 
         case 'simpleproductoffering_node_form' :

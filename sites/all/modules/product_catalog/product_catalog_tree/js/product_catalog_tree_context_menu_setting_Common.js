@@ -138,12 +138,23 @@
 							"voucher_product_specific" : {
 								"label" : "Select Product",
 								action : function(node) {
-									console.log('here');
 									$.fn.loadSelectForm(node);
 								}
 							},
 						};
 						break;
+					case "discount_voucher_product_specific":
+						menus.custom_create._disabled = false;
+						menus.custom_create.submenu = {
+							"discount_voucher_product_specific" : {
+								"label" : "Select Product",
+								action : function(node) {
+									$.fn.loadSelectForm(node);
+								}
+							},
+						};
+						break;
+					case "treenodeproductfordisvoucher":
 					case "treenodeproductforvoucher":
 						menus.custom_delete._disabled = false;
 						menus.custom_delete.action = function(node) {

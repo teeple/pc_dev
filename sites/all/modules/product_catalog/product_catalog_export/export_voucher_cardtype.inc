@@ -36,22 +36,52 @@ function _array_voucher_cardtype($exportItemNids=NULL){
 				$validFor = $validStart . ' ~ '. $validEnd;
 				$jsonRecord['valid_for'] = $validFor;
 				
-        $listProduct = views_get_view_result('list_treenodeproductforvoucher', 'panel_pane_1', $record->nid);
+				if($record->field_field_ref_voucher_type[0]['rendered']['#title'] == 'Discount') {
 				
-				$ret_product = array();
-				foreach($listProduct as $product) {
-		      $originalProductNode = node_load($product->node_field_data_field_ref_product_nid);
-		      
-		      if(!empty($originalProductNode)) {
-			      $tmpProduct['product_id'] = $originalProductNode->field_product_id['und'][0]['safe_value'];
-			      $tmpProduct['product_name'] = $product->node_title;
-						$tmpProduct['active_period'] = !empty($product->field_field_active_period)? $product->field_field_active_period[0]['raw']['value'] : null;
-						$tmpProduct['grace_period'] = !empty($product->field_field_grace_period)? $product->field_field_grace_period[0]['raw']['value'] : null;
+					dsm($record, 'record');
+					$jsonRecord['mapping_product'] = !empty($record->field_field_product_id) ? $record->field_field_product_id[0]['raw']['value']: null;
+					
+					$saleTypeArr = array();
+					if(!empty($record->field_field_sale_type)) {
+						foreach($record->field_field_sale_type as $saleType) {
+							$saleTypeArr[] = $saleType['rendered']['#title'];
+						}
+						$jsonRecord['sale_type'] = $saleTypeArr;
 						
-						$ret_product[] = $tmpProduct;
+					} else {
+						$jsonRecord['sale_type'] = null;
 					}
+					
+					$listProduct = views_get_view_result('list_treenodeproductfordisvoucher', 'panel_pane_1', $record->nid);
+					$ret_product = array();
+					foreach($listProduct as $product) {
+					  $originalProductNode = node_load($product->node_field_data_field_ref_product_nid);
+					  
+					  if(!empty($originalProductNode)) {
+					    $tmpProduct['product_id'] = $originalProductNode->field_product_id['und'][0]['safe_value'];
+					    $tmpProduct['product_name'] = $product->node_title;
+							$ret_product[] = $tmpProduct;
+						}
+					}
+				
+				} else {
+					$listProduct = views_get_view_result('list_treenodeproductforvoucher', 'panel_pane_1', $record->nid);
+					$ret_product = array();
+					foreach($listProduct as $product) {
+			      $originalProductNode = node_load($product->node_field_data_field_ref_product_nid);
+			      
+			      if(!empty($originalProductNode)) {
+				      $tmpProduct['product_id'] = $originalProductNode->field_product_id['und'][0]['safe_value'];
+				      $tmpProduct['product_name'] = $product->node_title;
+							$tmpProduct['active_period'] = !empty($product->field_field_active_period)? $product->field_field_active_period[0]['raw']['value'] : null;
+							$tmpProduct['grace_period'] = !empty($product->field_field_grace_period)? $product->field_field_grace_period[0]['raw']['value'] : null;
+							
+							$ret_product[] = $tmpProduct;
+						}
+					}
+					
 				}
-		
+				
 				if(empty($ret_product)) {
 					$jsonRecord['products'] = null;
 		
