@@ -93,10 +93,13 @@ function _ocs_report_tariffplan( $tariffplanNid)
 
 	if ( isset($node->field_ref_numberingplan_domestic['und'][0]['nid'])) {
 		// list tariff plan
+		/*
 		$view = views_get_view('list_numberingplan_domestic_ratinggroup');
 		$view->set_display('panel_displayall');
 		$view->set_arguments(array( $node->field_ref_numberingplan_domestic['und'][0]['nid'], $tariffplanNid));
 		$output .= $view->render();
+		*/
+		$output .= _ocs_report_numberingplan( $tariffplanNid, $node->field_ref_numberingplan_domestic['und'][0]['nid']);
 
 		// list time table
 		$output .= _ocs_report_timetable( $node->field_ref_timetable_domestic['und'][0]['nid']);
@@ -105,6 +108,99 @@ function _ocs_report_tariffplan( $tariffplanNid)
 		//$output .= _ocs_report_tariff_mapping( $tariffplanNid);
 	}
 	return $output;
+}
+
+function _ocs_report_numberingplan( $tariffplan_nid, $numberingplan_nid)
+{
+	$output = '';
+	$node = node_load( $numberingplan_nid);
+	//dpm( $node, $node->title);
+
+	$np = array();
+	$field_list = array( 'field_range_units', 'field_uom_units', 'field_charge_collection', 'field_price');
+	foreach( $node->field_ref_domestic_ratinggroup['und'] as $rg_nid) {
+		$rg = node_load( $rg_nid['nid']);
+		if ( empty( $rg)) continue;
+		//dpm( $rg, $rg->title);
+
+		$query = new EntityFieldQuery();
+		$result = $query->entityCondition('entity_type', 'node')
+			->entityCondition('bundle', 'basicrate_domestic')
+			->fieldCondition( 'field_ref_tariffplan', 'nid', $tariffplan_nid)
+			->fieldCondition( 'field_rating_group', 'value', $rg->field_rating_group['und'][0]['value'])
+			->execute();
+
+		if ( count( $result) > 0) {
+			$map = array();
+			foreach( array_keys( $result['node']) as $rate_nid) {
+				$basicrate = node_load( $rate_nid);
+				$rate = node_load( $basicrate->field_ref_rate['und'][0]['nid']);
+				if ( empty( $rate)) continue;
+
+				$timefactor = node_load( $basicrate->field_ref_timetablefactors['und'][0]['nid']);
+				$map[ $timefactor->title] = array_merge( array( 'nid' => $rate->nid), _ocs_report_get_selected_fields_list( $rate, $field_list));
+			/*
+				$map[ $timefactor->title] = array( 
+					'range_units' => isset($rate->field_range_units['und'][0]['tid']) ? $rate->field_range_units['und'][0]['tid'] : null,
+					'uom_units' => isset($rate->field_uom_units['und'][0]['tid']) ? $rate->field_uom_units['und'][0]['tid'] : null,
+					'charge_collection' => isset($rate->field_charge_collection['und'][0]['value']) ? $rate->field_charge_collection['und'][0]['value'] : null,
+					'price' => isset($rate->field_price['und'][0]['value']) ? $rate->field_price['und'][0]['value'] : null,
+					);
+					*/
+				//dpm( $rate, $rate->title);
+			}
+			ksort( $map);
+			$np[json_encode( $map)][] = $rg_nid['nid'];
+		}
+	}
+
+	dpm( $np, 'map');
+
+	$rows = array();
+	$field_list = array( 'field_ref_carrier_mobile', 'field_is_samezone', 'field_area_code_of_the_callee', 'field_is_video_', 'field_rating_group');
+	$rg_field = null;
+	$rg_header = array();
+	foreach( $np as $key => $rg_list) {
+		$rg_output = '';
+		$rg_rows = array();
+		foreach( $rg_list as $rg_nid) {
+			$rg = node_load( $rg_nid);
+			if ( $rg_field == null) {
+				$rg_field = field_info_instances( 'node', $rg->type);
+				//dpm( $rg_field, 'rg field');
+			}
+
+			$rg_rows[] = _ocs_report_get_selected_fields_list( $rg, $field_list);
+		}
+
+		if ( empty( $rg_header )) {
+			foreach( $field_list as $name) {
+				$rg_header[] = $rg_field[$name]['label'];
+			}
+		}
+
+		// set rate 
+		//
+		$rate_key = json_decode( $key, TRUE);
+		$rate_field = null;
+		$rate_rows = array();
+		foreach( $rate_key as $key => $rate) {
+			$node = node_load( $rate['nid']);
+			if ( $rate_field == null) $rate_field = field_info_instances( 'node', $node->type);
+			$rate_rows[] = array( 'data' => $key);
+			$rate_rows[] = array( 'data' => _ocs_report_get_fields( $rate_field, $node));
+		}
+		//$rate = node_load( $rate_key['nid']);
+		//dpm( $rate_key, 'rate');
+
+		$rows[] = array( theme( 'table', array( 'header' => $rg_header, 'rows' => $rg_rows)), 
+				theme('item_list', array( 'items' => $rate_rows)));
+	}
+
+	$output .= theme( 'table', array( 'rows' => $rows));
+
+	return $output;
+
 }
 
 function _ocs_report_tariff_mapping( $nid)
@@ -190,7 +286,7 @@ function _ocs_report_time_rate( $rate_list)
 	return $output;
 }
 
-function _ocs_report_timetable( $nid)
+function _ocs_report_timetable_table( $nid)
 {
 	$timetable = array();
 	$node = node_load( $nid);
@@ -215,6 +311,48 @@ function _ocs_report_timetable( $nid)
 	return theme( 'table', array( 'header' => $header, 'rows' => $rows));
 
 //	dpm( $timetable,'timetable');
+}
+
+function _ocs_report_timetable( $nid)
+{
+	$timetable = array();
+	$node = node_load( $nid);
+	foreach( $node->field_ref_timetablefactors['und'] as $factor) {
+		$factor = node_load( $factor['nid']);
+		foreach( $factor->field_ref_timetablefactorsslot['und'] as $slot) {
+			$slot = node_load( $slot['nid']);
+			$timetable[$factor->title][$slot->field_day_of_week['und'][0]['value']][] = $slot->field_hour_slot['und'][0]['value'];
+		}
+	}
+
+	$header = array( 'Holiday', 'Mon', 'Tue', 'Wed', 'Thr', 'Fri', 'Sat', 'Sun');
+	$rows = array();
+	foreach( $timetable as $key => $time_list) {
+		$slot_list = array();
+		foreach( $time_list as $day => $timeslot) {
+			sort( $timeslot);
+			$idx = 0;
+			$str = array( 'From '. $timeslot[0]);
+			for( $i=0; $i < count($timeslot)-1; $i++) {
+				if ( ($timeslot[$i] +1) != $timeslot[$i+1]) {
+					$str[$idx++] .= ' to '. ($timeslot[$i]+1);
+					$str[$idx] = 'From '. $timeslot[$i+1];
+				}
+			}
+			$str[$idx] .= ' to '. ($timeslot[$i]+1);
+			$slot_list[implode(', ', $str)][] = $header[$day];
+		}
+
+		$items = array();
+		foreach( $slot_list as $slot => $day) {
+			$items[] = array( 'data' => t('<div class="myform report"><label>%label</label><div class="myform report value">%value</div></div>',
+				array( '%label' => implode( ', ', $day), '%value' => $slot)));
+		}
+		$rows[] = array( 'data' => $key);
+		$rows[] = array( 'data' => theme( 'item_list', array( 'items' => $items)));
+	}
+
+	return theme( 'item_list', array( 'items' => $rows));
 }
 
 function _ocs_report_field_cmp( $a, $b) 
@@ -288,4 +426,34 @@ function _ocs_report_get_fields( $field, $node)
 	$output .= theme( 'item_list', array( 'items' => $items));
 
 	return $output;
+}
+
+function _ocs_report_get_selected_fields_list( $node, $select_list)
+{
+	$list = array();
+
+	foreach( $select_list as $field_name) {
+		$v = $node->$field_name;
+
+		$value = array();
+		if ( isset( $v['und'])) {
+			foreach( $v['und'] as $v1) {
+				if ( isset( $v1['value'])) {
+					$value[] = $v1['value'];
+				}
+				else if ( isset( $v1['nid'])) {
+					$field_node = node_load( $v1['nid']);
+					$value[] = $field_node->title;
+				}
+				else if ( isset( $v1['tid'])) {
+					$term = taxonomy_term_load( $v1['tid']);
+					$value[] = $term->name;
+				}
+			}
+		}
+
+		$list[] = implode( ',', $value);
+	}
+
+	return $list;
 }
