@@ -387,7 +387,7 @@ function ocs_log_changes( $before, $after)
 
 	$diff = _compare_content( $field, $before, $after);
 	if ( ! empty( $diff)) {
-		dpm( $diff, 'diff');
+		//dpm( $diff, 'diff');
 		watchdog( 'change log', 'Content %type (%id) changed %data', array( '%type' => $type, '%id' => $id, '%data' => json_encode( $diff)), WATCHDOG_NOTICE); 
 	}
 }
