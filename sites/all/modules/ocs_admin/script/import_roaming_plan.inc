@@ -16,15 +16,34 @@ $reset_flag = FALSE;
 $product_name = NULL;
 $tariff_name = NULL;
 $sms_tariff_name = NULL;
+$print_json = FALSE;
 
 // check arguments
 while ($arg = drush_shift()) {
 	if ( $arg == 'reset') $reset_flag = TRUE;
+	if ( $arg == 'json') $print_json = TRUE;
 	if ( $arg == 'product') $product_name = drush_shift();
 	if ( $arg == 'tariff') {
 		$tariff_name = drush_shift();
 		$sms_tariff_name = drush_shift();
 	}
+}
+
+/* read rate list from DB */
+$rate_list = _get_roaming_rate_list();
+//print_r( $rate_list);
+
+if ( $print_json) {
+	$json = array();
+	foreach( $rate_list as $key => $records) {
+		if ( strstr( $key, 'Customer') == NULL) {
+			continue;
+		}
+		$json[$key] = $records;
+	}
+
+	print json_encode( $json);
+	return;
 }
 
 if ( $product_name == NULL || $tariff_name == NULL || $sms_tariff_name == NULL) {
@@ -65,10 +84,6 @@ if ( empty( $sms_tariff)) {
 $nid = $sms_tariff->field_ref_roaming_plan['und'][0]['nid'];
 $sms_plan = node_load( $nid);
 
-
-/* read rate list from DB */
-$rate_list = _get_roaming_rate_list();
-//print_r( $rate_list);
 
 /* get terms */
 $terms = ocs_get_terms('roaming_type');
