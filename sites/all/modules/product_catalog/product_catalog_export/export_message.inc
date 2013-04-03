@@ -8,7 +8,10 @@ function _array_message($exportItemNids = NULL)
 	if(!empty($exportItemNids) && count($exportItemNids) > 1) {
 		$exportItemNids = join('+', $exportItemNids);
 	}
-	
+	//dsm($exportItemNids,'export item nids');
+    if(is_array($exportItemNids) && empty($exportItemNids)){
+        $exportItemNids = NULL;
+    }
 	//fetch data
 	$viewResult = views_get_view_result('ocs_messages', 'panel_json', empty($exportItemNids)?NULL:$exporItemNids);
 	//dpm( $viewResult, 'messages');
@@ -31,7 +34,7 @@ function _array_message($exportItemNids = NULL)
 	}
 
 	$viewResult = views_get_view_result('ocs_message_group', 'panel_json', $exportItemNids);
-	// dpm( $viewResult, 'messages');
+	 //dpm( $viewResult, 'messages');
 
 	$msg = array();
 	foreach ($viewResult as $record) {
@@ -42,22 +45,28 @@ function _array_message($exportItemNids = NULL)
 			$msg[$record->nid]['name'] = $record->node_title;
 			$msg[$record->nid]['composed_messages'][] = $msg_nid;
 		}
-		$messageIds[] = $msg['message_id'];
+        //$messageIds[] = $msg['message_id'];
 	}
-	
+	//dsm($msg,'message after for');
 	//if(!empty($messageIds)){
 	//	$jsonData['ifvalues']['resources'] = $messageIds;
 	//} else {
 		$jsonData['ifvalues']['resources'] = array();
 	//}
-		
-	$jsonData['messages'] = array_merge( $jsonData['messages'], array_values( $msg));
 	
+	//dsm($jsonData,'jsonData');
+    foreach($msg as $composedMsg){
+        $jsonData['messages'][] = $composedMsg;
+    }
+    
+	//$jsonData['messages'] = array_merge( $jsonData['messages'], array_values( $msg));
+	//dsm($jsonData,'json data 1');
     $temp1 = $jsonData['ifvalues'];
     $temp2 = $jsonData['messages'];
     $jsonData2 = array();
     $jsonData2['ifvalues'] = $temp1;
     $jsonData2['messages'] = $temp2;
+   // dsm($jsonData2,'json data 2');
     return $jsonData2;
 }
 
