@@ -118,6 +118,10 @@ foreach( array( 'voice', 'sms') as $type) {
 }
 
 if ( $reset_flag ) {
+	// reset roaming rating groups
+	unset( $plan->field_ref_roaming_ratinggroup['und']);
+	node_save( $plan);
+
 	// remove all rating groups
 	$query = new EntityFieldQuery();
 	$result = $query->entityCondition('entity_type', 'node')
@@ -129,8 +133,6 @@ if ( $reset_flag ) {
 		print 'Remove rating group : '. $nid . $nl;
 		node_delete( $nid);
 	}
-
-	unset( $plan->field_ref_roaming_ratinggroup['und']);
 
 	// remove all rates
 	$query = new EntityFieldQuery();
@@ -232,21 +234,22 @@ foreach( $rate_list as $key => $records) {
 			print 'New roaming group : ' . $rate_code . $nl;
 		}
 		else {
-			print 'Existing roaming group : ' . $rate_code . $nl;
+			print 'Existing roaming group : ' . $rate_code . ' ratinggroup:' . $rm->nid . $nl;
 			$rm->title = 'roaming_rg:TR::' . $plmn;
 		}
 		$rm->field_ref_roaming_country['und'][0]['nid'] = $partner->field_ref_roaming_country['und'][0]['nid'];
 		$rm->field_ref_roaming_carrier['und'][0]['nid'] = $partner->nid;
 		$rm->field_ref_roaming_plan['und'][0]['nid'] = $plan->nid;
-
-		if ( ! array_search( $rm->nid, array_get_value( $plan->field_ref_roaming_ratinggroup, FALSE))) {
-			$plan->field_ref_roaming_ratinggroup['und'][] = array( 'nid' => $rm->nid);
-		}
 		$rm->field_ref_roaming_type['und'][0]['tid'] = $roaming_type[$plmn];
 		$rm->field_ref_type_of_call['und'][0]['tid'] = $call_type[$calltype];
-
 		node_save( $rm);
 
+		if ( FALSE === array_search( $rm->nid, array_get_value( $plan->field_ref_roaming_ratinggroup, FALSE))) {
+			print 'Insert to rating group list of the plan:'. $rm->nid . $nl;
+			//print_r( array_get_value( $plan->field_ref_roaming_ratinggroup, FALSE));
+			$plan->field_ref_roaming_ratinggroup['und'][] = array( 'nid' => $rm->nid);
+		}
+	
 		// add tariff
 		$rate_title = (strstr( $plmn, 'SMS') ? $sms_tariff_name : $tariff_name) . '_' . $rate_code;
 		$nids = ocs_get_nodes_by_title( 'rate', $rate_title);
@@ -323,6 +326,12 @@ foreach( $rate_list as $key => $records) {
 			print_r( $result['node']);
 		}
 	}
+}
+
+// remove NULL rating group
+for( $i=0; $i < count($plan->field_ref_roaming_ratinggroup['und']); $i++) {
+	if ( empty( $plan->field_ref_roaming_ratinggroup['und'][$i]['nid']))
+		unset( $plan->field_ref_roaming_ratinggroup['und'][$i]);
 }
 node_save( $plan);
 

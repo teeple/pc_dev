@@ -894,15 +894,18 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             } else {
                 unset($form['field_exclusiveness']);
             }
-
+            
+            $form['field_cug_group_type']['#type'] = 'hidden';
             switch($productTypeName){
                 case 'Main':
                     $form['field_next_join_product']['#type'] = 'hidden';
                     break;
                 default :
-                    break;
+                		$form['field_cug_group_type']['#type'] = 'container';
+                		break;
             }
             break;
+            
         case 'balance_node_form' :
         case 'context_admin_node_form_wrapper' :
         case 'prodoffernonusagesubitem_node_form' :
