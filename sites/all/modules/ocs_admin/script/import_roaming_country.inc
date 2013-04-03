@@ -1,12 +1,19 @@
 <?php
 
 $reset_prefix = FALSE;
+$print_json = FALSE;
 
 while ($arg = drush_shift()) {
 	if ( $arg == 'reset') $reset_prefix = TRUE;
+	else if ( $arg == 'json') $print_json = TRUE;
 }
 
 $country_list = _get_country_list();
+if ( $print_json) {
+	print json_encode( $country_list);
+	return;
+}
+
 print_r( $country_list);
 
 $nl = '
@@ -50,7 +57,7 @@ function _get_country_list()
 	db_set_active('csdb');
 
 	$fields = array(
-			'COUNTRY_CD', 'ISO_COUNTRY_CD', 'COUNTRY_NAME', 'INTL_PREFIX',
+			'COUNTRY_CD', 'ISO_COUNTRY_CD', 'COUNTRY_NAME', 'INTL_PREFIX', 'GMT_OFFSET',
 	);
 	$table = 'roaming_country';
 

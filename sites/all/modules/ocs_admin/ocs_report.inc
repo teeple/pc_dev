@@ -38,7 +38,13 @@ function _ocs_report_children( $node, $depth=0)
 {
 	$output = '';
 
-	$output .= $node['data'];
+	if ( isset( $node['data'])) {
+		$output .= $node['data'];
+	}
+	else {
+		dpm( $node, 'Data not found');
+		return $output;
+	}
 
 	if ( isset( $node['children'])) {
 
@@ -80,8 +86,11 @@ function _ocs_report_children( $node, $depth=0)
 			else if ( $node['attr']['rel'] == 'voice_tariffplan_international' ) {
 				$output .= _ocs_report_tariffplan_intl( $id[2]);
 			}
+			else if ( $node['attr']['rel'] == 'voice_tariffplan_roaming' ) {
+				$output .= _ocs_report_tariffplan_roaming( $id[2]);
+			}
 			else {
-//				dpm( $node['attr']['rel'], 'attr');
+	//			dpm( $node['attr']['rel'], 'attr');
 			}
 		}
 	}
@@ -90,17 +99,51 @@ function _ocs_report_children( $node, $depth=0)
 	return $output;
 }
 
+function _ocs_report_tariffplan_roaming( $tariffplanNid)
+{
+	$output = '';
+	$node = node_load( $tariffplanNid);
+	//dpm( $node, $node->title);
+
+	if ( isset($node->field_ref_roaming_plan['und'][0]['nid'])) {
+		$field = field_info_instances( 'node', $node->type);
+		$output .= _ocs_report_get_fields( $field, $node);
+
+		// list time table
+		//$output .= _ocs_report_timetable( $node->field_ref_timetable_domestic['und'][0]['nid']);
+
+		// list numbering plan
+		$output .= _ocs_report_numberingplan_roaming( $tariffplanNid, $node->field_ref_roaming_plan['und'][0]['nid']);
+
+		// list tariff
+		//$output .= _ocs_report_tariff_mapping( $tariffplanNid);
+	}
+	return $output;
+}
+
+
 function _ocs_report_tariffplan_intl( $tariffplanNid)
 {
 	$output = '';
 	$node = node_load( $tariffplanNid);
-	dpm( $node, $node->title);
-	$field = field_info_instances( 'node', $node->type);
-	$output .= _ocs_report_get_fields( $field, $node);
+	//dpm( $node, $node->title);
 
 	if ( isset($node->field_ref_numberingplan_idd['und'][0]['nid'])) {
+		$field = field_info_instances( 'node', $node->type);
+		$output .= _ocs_report_get_fields( $field, $node);
+
 		// list time table
-		//$output .= _ocs_report_timetable( $node->field_ref_timetable_domestic['und'][0]['nid']);
+		$rows = array();
+		foreach( $node->field_ref_tariffplan_idd_carrier['und'] as $carrier_nid) {
+			$carrier_timetable = node_load( $carrier_nid['nid']);	
+			$timetable = _ocs_report_timetable( $carrier_timetable->field_ref_timetable_idd['und'][0]['nid']);
+			if ( ! empty( $timetable)) {
+				$carrier = node_load( $carrier_timetable->field_ref_carrier_mobile['und'][0]['nid']);
+				$timetable[0] = array_merge( array( array( 'data' => $carrier->title, 'rowspan' => count($timetable))), $timetable[0]);
+			}
+			$rows = array_merge( $rows, $timetable);
+		}
+		$output .= theme( 'table', array( 'rows' => $rows, 'header' => array( 'Carrier', 'Timeband', 'Weekdays', 'Time Slots')));
 
 		// list numbering plan
 		$output .= _ocs_report_numberingplan_intl( $tariffplanNid, $node->field_ref_numberingplan_idd['und'][0]['nid']);
@@ -116,10 +159,11 @@ function _ocs_report_tariffplan( $tariffplanNid)
 	$output = '';
 	$node = node_load( $tariffplanNid);
 	//dpm( $node, $node->title);
-	$field = field_info_instances( 'node', $node->type);
-	$output .= _ocs_report_get_fields( $field, $node);
 
 	if ( isset($node->field_ref_numberingplan_domestic['und'][0]['nid'])) {
+		$field = field_info_instances( 'node', $node->type);
+		$output .= _ocs_report_get_fields( $field, $node);
+
 		/*
 		$view = views_get_view('list_numberingplan_domestic_ratinggroup');
 		$view->set_display('panel_displayall');
@@ -127,7 +171,8 @@ function _ocs_report_tariffplan( $tariffplanNid)
 		$output .= $view->render();
 		*/
 		// list time table
-		$output .= _ocs_report_timetable( $node->field_ref_timetable_domestic['und'][0]['nid']);
+		$rows = _ocs_report_timetable( $node->field_ref_timetable_domestic['und'][0]['nid']);
+		$output .= theme( 'table', array( 'rows' => $rows, 'header' => array('Timeband', 'Weekdays', 'Time Slots')));
 
 		// list numbering plan
 		$output .= _ocs_report_numberingplan( $tariffplanNid, $node->field_ref_numberingplan_domestic['und'][0]['nid']);
@@ -137,6 +182,51 @@ function _ocs_report_tariffplan( $tariffplanNid)
 	}
 	return $output;
 }
+
+function _ocs_report_numberingplan_roaming( $tariffplan_nid, $numberingplan_nid)
+{
+	$node = node_load( $numberingplan_nid);
+	//dpm( $node, $node->title);
+
+	$np = array();
+	foreach( $node->field_ref_roaming_ratinggroup['und'] as $rg_nid) {
+		$rg = node_load( $rg_nid['nid']);
+		if ( empty( $rg)) continue;
+		//dpm( $rg, $rg->title);
+
+		$query = new EntityFieldQuery();
+		$result = $query->entityCondition('entity_type', 'node')
+			->entityCondition('bundle', 'basicrate_roaming')
+			->fieldCondition( 'field_ref_tariffplan', 'nid', $tariffplan_nid)
+			->fieldCondition( 'field_rating_group', 'value', $rg->field_rating_group['und'][0]['value'])
+			->execute();
+
+		//dpm( $result, 'result');
+
+		if ( count( $result) > 0) {
+			$map = array();
+			foreach( array_keys( $result['node']) as $rate_nid) {
+				$basicrate = node_load( $rate_nid);
+				if ( ! isset( $basicrate->field_ref_rate['und'][0]['nid'])) continue;
+
+				list( $timefactor, $rate_value) = _ocs_report_get_rate_value( $basicrate);
+
+				$map[$timefactor] = $rate_value;
+			}
+			ksort( $map);
+			//dpm( $map, 'map');
+
+			$np[json_encode( $map)][] = $rg_nid['nid'];
+		}
+	}
+
+	dpm( $np, 'map');
+
+	//$field_list = array( 'field_ref_roaming_country', 'field_ref_roaming_carrier', 'field_ref_roaming_type', 'field_ref_type_of_call', 'field_roaming_zone', 'field_rating_group');
+	$field_list = array( 'field_ref_roaming_country', 'field_ref_roaming_carrier', 'field_ref_roaming_type', 'field_ref_type_of_call', 'field_rating_group');
+	return _ocs_report_carrier_rating( $np, $field_list);
+}
+
 
 function _ocs_report_numberingplan_intl( $tariffplan_nid, $numberingplan_nid)
 {
@@ -197,7 +287,7 @@ function _ocs_report_carrier_rating( $np, $field_list)
 				//dpm( $rg_field, 'rg field');
 			}
 
-			$rg_rows[] = _ocs_report_get_selected_fields_list( $rg, $field_list);
+			$rg_rows[] = _ocs_report_get_selected_fields_list( $rg, $field_list, TRUE);
 		}
 
 		if ( empty( $rg_header )) {
@@ -334,8 +424,6 @@ function _ocs_report_get_rate_value( $basicrate)
 {
 	$rate = node_load( $basicrate->field_ref_rate['und'][0]['nid']);
 
-	$timefactor = node_load( $basicrate->field_ref_timetablefactors['und'][0]['nid']);
-
 	// get charge collection
 	$rate_value = $rate->nid . ',' . ( isset($rate->field_range_units['und'][0]['tid']) ? $rate->field_range_units['und'][0]['tid'] : ' ') . ',' . 
 		( isset($rate->field_uom_units['und'][0]['tid']) ? $rate->field_uom_units['und'][0]['tid'] : ' ') . ',' .
@@ -351,7 +439,12 @@ function _ocs_report_get_rate_value( $basicrate)
 		}
 	}
 
-	return array( $timefactor->title, $rate_value);
+	if ( isset( $basicrate->field_ref_timetablefactors['und'][0]['nid'])) {
+		$timefactor = node_load( $basicrate->field_ref_timetablefactors['und'][0]['nid']);
+
+		return array( $timefactor->title, $rate_value);
+	}
+	return array( 'All Time', $rate_value);
 }
 
 function _ocs_report_tariff_mapping( $nid)
@@ -503,7 +596,7 @@ function _ocs_report_timetable( $nid)
 		}
 	}
 
-	return theme( 'table', array( 'rows' => $rows, 'header' => array('Timeband', 'Weekdays', 'Time Slots')));
+	return $rows;
 }
 
 function _ocs_report_field_cmp( $a, $b) 
