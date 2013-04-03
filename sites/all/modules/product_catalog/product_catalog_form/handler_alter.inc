@@ -63,6 +63,7 @@ function _add_ajax_submit_callback($form_id, &$form) {
         case 'conditionwhendayofmonth_node_form' :
         case 'conditionwhendayfactors_node_form' :
         case 'conditionwhentimeslotfactors_node_form' :
+        case 'conditionwhencallingzonetime_node_form' :
         case 'conditionwhenholidayfactors_node_form' :
         case 'conditionwhenactivedays_node_form' :
         case 'conditionwhenweekfactors_node_form' :
@@ -921,6 +922,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
         case 'conditionwhendayofmonth_node_form' :
         case 'conditionwhendayfactors_node_form' :
         case 'conditionwhentimeslotfactors_node_form' :
+        case 'conditionwhencallingzonetime_node_form':
         case 'conditionwhenholidayfactors_node_form' :
 
         case 'conditionwhenweekfactors_node_form' :

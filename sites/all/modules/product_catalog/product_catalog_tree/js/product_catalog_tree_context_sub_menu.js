@@ -169,7 +169,8 @@
 			"Holiday" : $.fn.getSubMenuAddNodeWithoutWrapper("Holiday","conditionwhenholidayfactors"),
 			"Timeslot" : $.fn.getSubMenuAddNodeWithoutWrapper("Timeslot","conditionwhentimeslotfactors"),
 			"Week" : $.fn.getSubMenuAddNodeWithoutWrapper("Week","conditionwhenweekfactors"),
-			"First Month" : $.fn.getSubMenuAddNodeWithoutWrapper("First Month","conditionwhenfirstmonth")
+			"First Month" : $.fn.getSubMenuAddNodeWithoutWrapper("First Month","conditionwhenfirstmonth"),
+			"Calling Zone Time" : $.fn.getSubMenuAddNodeWithoutWrapper("Calling Zone Time","conditionwhencallingzonetime")
 		};
 		return obj;
 	};
