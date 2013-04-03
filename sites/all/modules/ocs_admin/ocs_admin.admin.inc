@@ -6,6 +6,7 @@ define( 'OCS_DEFAULT_GETOPENITEM_METHOD', 'GET');
 define( 'OCS_DEFAULT_ROAMING_API_METHOD', 'GET');
 define( 'OCS_DEFAULT_URL_ROAMING_COUNTRY', 'http://0.0.0.0/roaming/country');
 define( 'OCS_DEFAULT_URL_ROAMING_PARTNER', 'http://0.0.0.0/roaming/partner');
+define( 'OCS_DEFAULT_URL_ROAMING_TARIFF', 'http://0.0.0.0/roaming/tariff');
 
 /*
 define( 'OCS_DEFAULT_USER_ACCOUNT', 'uocs');
@@ -98,14 +99,20 @@ function ocs_admin_config( $form, &$form_state)
 
     $form['roaming']['roaming_api_country'] = array(
         '#type' => 'textfield',
-        '#title' => 'URL',
+        '#title' => 'GET Roaming Country List',
         '#default_value' => variable_get('ocs_admin_roaming_api_country', OCS_DEFAULT_URL_ROAMING_COUNTRY),
     );
 
     $form['roaming']['roaming_api_partner'] = array(
         '#type' => 'textfield',
-        '#title' => 'URL',
+        '#title' => 'GET Roaming Partner List',
         '#default_value' => variable_get('ocs_admin_roaming_api_partner', OCS_DEFAULT_URL_ROAMING_PARTNER),
+    );
+
+    $form['roaming']['roaming_api_tariff'] = array(
+        '#type' => 'textfield',
+        '#title' => 'GET Roaming Tariff List',
+        '#default_value' => variable_get('ocs_admin_roaming_api_tariff', OCS_DEFAULT_URL_ROAMING_TARIFF),
     );
 
 	/*
@@ -296,6 +303,7 @@ function ocs_admin_config_submit( $form, &$form_state)
     variable_set('ocs_admin_roaming_api_method', $form_state['values']['roaming_api_method']);
     variable_set('ocs_admin_roaming_api_country', $form_state['values']['roaming_api_country']);
     variable_set('ocs_admin_roaming_api_partner', $form_state['values']['roaming_api_partner']);
+    variable_set('ocs_admin_roaming_api_tariff', $form_state['values']['roaming_api_tariff']);
 	/*
     variable_set('ocs_admin_ip_address', $form_state['values']['ip_address']);
     variable_set('ocs_admin_user_account', $form_state['values']['user_account']);
