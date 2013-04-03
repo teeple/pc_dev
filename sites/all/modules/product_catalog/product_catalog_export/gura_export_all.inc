@@ -1154,6 +1154,9 @@ function get_rating_factor_info($rating_factor_name)
         {
             $ret = array();
             $ret["label"] = $rating_factor_name;
+            if(!isset($node->field_rating_factor_op['und'])){
+                dsm($node,'und not defined node');
+            }
             $ret["default_op"] = $node->field_rating_factor_op['und'][0]['value'];
             $ret["size"] = $node->field_rating_factor_size['und'][0]['value'];
             $ret["type"] = $node->field_rating_factor_type['und'][0]['value'];
