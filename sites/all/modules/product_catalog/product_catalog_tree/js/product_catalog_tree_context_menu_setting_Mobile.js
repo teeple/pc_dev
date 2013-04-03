@@ -396,6 +396,7 @@
 					case "conditionwhenbillingdate":
 					case "conditionwhenactivedays":
 					case "conditionwhentimeslotfactors":
+					case "conditionwhencallingzonetime":
 					case "conditionwhenweekfactors":
 					case "conditionwherecountryfactors":
 					case "conditionwherenetworkfactors":

@@ -63,6 +63,7 @@ function _add_ajax_submit_callback($form_id, &$form) {
         case 'conditionwhendayofmonth_node_form' :
         case 'conditionwhendayfactors_node_form' :
         case 'conditionwhentimeslotfactors_node_form' :
+        case 'conditionwhencallingzonetime_node_form' :
         case 'conditionwhenholidayfactors_node_form' :
         case 'conditionwhenactivedays_node_form' :
         case 'conditionwhenweekfactors_node_form' :
@@ -924,6 +925,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
         case 'conditionwhendayofmonth_node_form' :
         case 'conditionwhendayfactors_node_form' :
         case 'conditionwhentimeslotfactors_node_form' :
+        case 'conditionwhencallingzonetime_node_form':
         case 'conditionwhenholidayfactors_node_form' :
 
         case 'conditionwhenweekfactors_node_form' :
@@ -1536,21 +1538,13 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             break;
         case 'roaming_ratinggroup_node_form' :
             $form['field_ref_roaming_plan']['#type'] = 'hidden';
+            $form['field_ref_roaming_type']['und']['#options']['_none'] = 'SMS Outgoing';
+            
             _unset_menu_items($form, $form_id);
-            // only for create
-            //
-            $carrierOptions = array();
+             $carrierOptions = array();
             $carrierOptions['_none'] = ' - None -';
             $zoneOptions = array();
             $zoneOptions['_none'] = ' - None -';
-            
-            /*
-            if (!isset($form['nid']['#value'])) {
-                if (isset($form_state['roamingplan_nid'])) {
-                    $form['actions']['submit']['#submit'][] = '_ratinggroup_link_to_roaming_plan';
-                }
-            }
-            */ 
             
             $roamingCountryNid = NULL;
             $roamingCarrierNid = NULL;
