@@ -26,6 +26,7 @@ function product_catalog_form_form_redirect_handler(&$form, &$form_state){
 		case 'conditionwhendurationfactors_node_form':
 		case 'conditionwhendayfactors_node_form':
 		case 'conditionwhentimeslotfactors_node_form':
+        case 'conditionwhencallingzonetime_node_form':
 		case 'conditionwhenweekfactors_node_form':
 		case 'conditionwherecountryfactors_node_form':
 		case 'conditionwherecustomfactors_node_form':

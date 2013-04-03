@@ -3,6 +3,10 @@
 define( 'OCS_DEFAULT_GETOPENITEM_URL', 'http://0.0.0.0/ocs/openitem');
 define( 'OCS_DEFAULT_GETOPENITEM_METHOD', 'GET');
 
+define( 'OCS_DEFAULT_ROAMING_API_METHOD', 'GET');
+define( 'OCS_DEFAULT_URL_ROAMING_COUNTRY', 'http://0.0.0.0/roaming/country');
+define( 'OCS_DEFAULT_URL_ROAMING_PARTNER', 'http://0.0.0.0/roaming/partner');
+
 /*
 define( 'OCS_DEFAULT_USER_ACCOUNT', 'uocs');
 define( 'OCS_DEFAULT_CONFIG_DIR', 'HOME/lua/script/uocs/ui');
@@ -76,6 +80,32 @@ function ocs_admin_config( $form, &$form_state)
         '#type' => 'textfield',
         '#title' => 'URL',
         '#default_value' => variable_get('ocs_admin_getopenitem_url', OCS_DEFAULT_GETOPENITEM_URL),
+    );
+
+    $form['roaming'] = array(
+        '#type' => 'fieldset',
+        '#title' => 'API to get Roaming Configuration',
+        '#collapsible' => TRUE, 
+        '#collapsed' => FALSE,
+    );
+
+    $form['roaming']['roaming_api_method'] = array(
+        '#type' => 'select',
+        '#title' => 'Method',
+		'#options' => drupal_map_assoc(array( 'GET', 'POST')),
+        '#default_value' => variable_get('ocs_admin_roaming_api_method', OCS_DEFAULT_ROAMING_API_METHOD),
+    );
+
+    $form['roaming']['roaming_api_country'] = array(
+        '#type' => 'textfield',
+        '#title' => 'URL',
+        '#default_value' => variable_get('ocs_admin_roaming_api_country', OCS_DEFAULT_URL_ROAMING_COUNTRY),
+    );
+
+    $form['roaming']['roaming_api_partner'] = array(
+        '#type' => 'textfield',
+        '#title' => 'URL',
+        '#default_value' => variable_get('ocs_admin_roaming_api_partner', OCS_DEFAULT_URL_ROAMING_PARTNER),
     );
 
 	/*
@@ -263,6 +293,9 @@ function ocs_admin_config_submit( $form, &$form_state)
 {
     variable_set('ocs_admin_getopenitem_url', $form_state['values']['getopenitem_url']);
     variable_set('ocs_admin_getopenitem_method', $form_state['values']['getopenitem_method']);
+    variable_set('ocs_admin_roaming_api_method', $form_state['values']['roaming_api_method']);
+    variable_set('ocs_admin_roaming_api_country', $form_state['values']['roaming_api_country']);
+    variable_set('ocs_admin_roaming_api_partner', $form_state['values']['roaming_api_partner']);
 	/*
     variable_set('ocs_admin_ip_address', $form_state['values']['ip_address']);
     variable_set('ocs_admin_user_account', $form_state['values']['user_account']);

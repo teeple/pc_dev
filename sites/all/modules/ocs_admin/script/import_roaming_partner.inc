@@ -1,12 +1,19 @@
 <?php
 
 $reset_prefix = FALSE;
+$print_json = FALSE;
 
 while ($arg = drush_shift()) {
 	if ( $arg == 'reset') $reset_prefix = TRUE;
+	if ( $arg == 'json') $print_json = TRUE;
 }
 
 $partner_list = _get_partner_list();
+if ( $print_json) {
+	print json_encode( $partner_list);
+	return;
+}
+
 print_r( $partner_list);
 
 $nl = '
