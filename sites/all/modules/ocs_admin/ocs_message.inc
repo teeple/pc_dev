@@ -3,6 +3,7 @@
 define('OCS_MESSAGE_PARAMETER', 0);
 define('OCS_MESSAGE_COUNTER', 1);
 define('OCS_MESSAGE_COUNTER_GROUP' , 2);
+define('OCS_MESSAGE_SCRIPT' , 3);
 
 global $param_type_options;
 $param_type_options = array(
@@ -32,7 +33,8 @@ global $param_types;
 $param_types = array(
 	OCS_MESSAGE_PARAMETER => 'Parameter',
 	OCS_MESSAGE_COUNTER => 'Counter',
-	OCS_MESSAGE_COUNTER_GROUP => 'Counter Group'
+	OCS_MESSAGE_COUNTER_GROUP => 'Counter Group',
+	OCS_MESSAGE_SCRIPT => 'Script'
 );
 
 global $supported_lang;
@@ -97,6 +99,45 @@ function ocs_admin_message_form($form, &$form_state, $nid = NULL, $op = NULL)
 			'#default_value' => $format[$lang],
 			'#description' => 'Enter message format in "printf" style. Use "%1, %2" to substitue numeric value.' . 
 				'<br>Ex) "You have remains %1 won."',
+		);
+	}
+
+	$scheduled = isset($form_state['values']['flag']) ? $form_state['values']['flag'] : 0;
+	$form['scheduled'] = array(
+		'#type' => 'fieldset',
+		'#prefix' => '<div id="message_scheduled_div">',
+		'#suffix' => '</div>',
+	);
+
+	$form['scheduled']['flag'] = array(
+		'#type' => 'radios',
+		'#title' => 'Scheduled Delivery',
+		'#default_value' => $scheduled,
+		'#options' => array( 0 => 'No', 1 => 'Yes'),
+		'#ajax' => array(
+			'callback' => 'ocs_admin_ajax_message_scheduled_callback',
+			'wrapper' => 'message_scheduled_div',
+		)
+	);
+
+	if ( $scheduled ) {
+		$form['scheduled']['delivery_date'] = array(
+			'#type' => 'textfield',
+			'#title' => 'Date ',
+			'#default_value' => '3',
+			'#field_prefix' => 'After ',
+			'#field_suffix' => 'Days ',
+		);
+
+		$time_list = array(
+				"00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11",
+				"12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23",
+				);
+
+		$form['scheduled']['delivery_time'] = array(
+			'#type' => 'select',
+			'#title' => 'Time',
+			'#options' => drupal_map_assoc( $time_list),
 		);
 	}
 
@@ -186,61 +227,85 @@ function ocs_admin_message_form($form, &$form_state, $nid = NULL, $op = NULL)
 		$selected_value = isset($form_state['values']['value:' . $i]) ? $form_state['values']['value:' . $i] : 
 			(($op == 'edit') ? $node->field_ocs_value['und'][$i - 1]['value'] : '');
 			
-		// select parameter such as (today, act_date) if it's Parameter type
-		// select counter id if it's Counter type
-		// select counter group if it's Counter Group type
-		$form['valueset'][$i]['valueset' . $i]['value:' . $i] = array(
-			'#type' => 'select',
-			'#title' => $param_types[$type],
-			'#options' => $options[$type],
-			'#default_value' => $selected_value,
-		);
-
-		$format_value = isset($form_state['values']['format:' . $i]) ? $form_state['values']['format:' . $i] : 
-			(($op == 'edit') ? $node->field_ocs_value_format['und'][$i - 1]['value'] : '');
-
-		if ($type == OCS_MESSAGE_PARAMETER) {
-			// add ajax handler to change format if it's parameter such as (today, active_date) 
-			$form['valueset'][$i]['valueset' . $i]['value:' . $i]['#ajax'] = array(
-				'callback' => 'ocs_admin_ajax_variable_type_format_callback',
-				'wrapper' => 'ocs_variable_type_format_div' . $i,
+		if ( $type == OCS_MESSAGE_SCRIPT) {
+			$form['valueset'][$i]['valueset' . $i]['value:' . $i] = array(
+				'#type' => 'textarea',
+				'#title' => $param_types[$type],
+				'#default_value' => $selected_value,
+				'#description' => 'Enter LUA script <br>' .
+				 	'<ol>' . 
+					'<li> Variables : COUNTER[], COUNTER_GROUP[]</li>' .
+					'<li> arithmetic operation : '.
+				  	'<ul><li>return COUNTER_GROUP[6].balance - math.floor(COUNTER[2].counter_tbl.counter_value/COUNTER[2].countername_tbl.counter_scale) </li></ul>' .
+					'</li>' .
+			   		'<li> date format : '.
+					    '<ul><li>return os.date("%Y%m%d", os.time() + 60 * 86400)</li>' .
+						'<li>return os.date("%Y%m%d", COUNTER[2].counter_tbl.counter_expire + 14 * 86400)</li></ul>'.
+					'</li>' .
+				  	'<li> conditional operation : ' .
+				  		'<ul><li>if (  COUNTER_GROUP[6].balance == 0) then return "";</li>'. 
+					   	'<li>else return string.format("FREE_SMS=%s", COUNTER_GROUP[6].balance);</li></ul>'.
+					   	'<li>end</li>'.
+					'</li></ol>' 
 			);
-			
-			$selected_param_type = $params->type($selected_value);
-			global $param_type_options;
-						
-			if ($selected_param_type == OCS_PARAM_TYPE_DATE || $selected_param_type == OCS_PARAM_TYPE_TIME) {
+		}
+		else {
+			// select parameter such as (today, act_date) if it's Parameter type
+			// select counter id if it's Counter type
+			// select counter group if it's Counter Group type
+			$form['valueset'][$i]['valueset' . $i]['value:' . $i] = array(
+				'#type' => 'select',
+				'#title' => $param_types[$type],
+				'#options' => $options[$type],
+				'#default_value' => $selected_value,
+			);
+
+			$format_value = isset($form_state['values']['format:' . $i]) ? $form_state['values']['format:' . $i] : 
+				(($op == 'edit') ? $node->field_ocs_value_format['und'][$i - 1]['value'] : '');
+
+			if ($type == OCS_MESSAGE_PARAMETER) {
+				// add ajax handler to change format if it's parameter such as (today, active_date) 
+				$form['valueset'][$i]['valueset' . $i]['value:' . $i]['#ajax'] = array(
+					'callback' => 'ocs_admin_ajax_variable_type_format_callback',
+					'wrapper' => 'ocs_variable_type_format_div' . $i,
+				);
+				
+				$selected_param_type = $params->type($selected_value);
+				global $param_type_options;
+							
+				if ($selected_param_type == OCS_PARAM_TYPE_DATE || $selected_param_type == OCS_PARAM_TYPE_TIME) {
+					$form['valueset'][$i]['valueset' . $i]['format:' . $i] = array(
+						'#type' => 'select',
+						'#title' => 'Format',
+						'#options' => $param_type_options[$selected_param_type],
+					);
+				}
+				else {
+					$form['valueset'][$i]['valueset' . $i]['format:' . $i] = array(
+						'#type' => 'textfield',
+						'#title' => 'Format',
+						'#size' => 30,
+						'#default_value' => $format_value,
+					);
+				}
+				
+				$form['valueset'][$i]['valueset' . $i]['format:' . $i]['#prefix'] = 
+					t('<div id="ocs_variable_type_format_div@idx">', array( '@idx' => $i));
+				$form['valueset'][$i]['valueset' . $i]['format:' . $i]['#suffix'] = '</div>';
+									
+			}
+			else if ($type == OCS_MESSAGE_COUNTER) {
 				$form['valueset'][$i]['valueset' . $i]['format:' . $i] = array(
 					'#type' => 'select',
 					'#title' => 'Format',
-					'#options' => $param_type_options[$selected_param_type],
-				);
-			}
-			else {
-				$form['valueset'][$i]['valueset' . $i]['format:' . $i] = array(
-					'#type' => 'textfield',
-					'#title' => 'Format',
-					'#size' => 30,
+					'#options' => array(
+						'_value' => 'Value',
+						'_expire' => 'Expire Date',
+						'_delta_value' => 'Delta Value'
+					),
 					'#default_value' => $format_value,
 				);
 			}
-			
-			$form['valueset'][$i]['valueset' . $i]['format:' . $i]['#prefix'] = 
-				t('<div id="ocs_variable_type_format_div@idx">', array( '@idx' => $i));
-			$form['valueset'][$i]['valueset' . $i]['format:' . $i]['#suffix'] = '</div>';
-								
-		}
-		else if ($type == OCS_MESSAGE_COUNTER) {
-			$form['valueset'][$i]['valueset' . $i]['format:' . $i] = array(
-				'#type' => 'select',
-				'#title' => 'Format',
-				'#options' => array(
-					'_value' => 'Value',
-					'_expire' => 'Expire Date',
-					'_delta_value' => 'Delta Value'
-				),
-				'#default_value' => $format_value,
-			);
 		}
 	}
 
@@ -260,6 +325,11 @@ function ocs_admin_message_form($form, &$form_state, $nid = NULL, $op = NULL)
 }
 
 // ajax handlers
+
+function ocs_admin_ajax_message_scheduled_callback($form, &$form_state)
+{
+	return $form['scheduled'];
+}
 
 function ocs_admin_ajax_message_form_callback($form, &$form_state)
 {
@@ -286,6 +356,12 @@ function ocs_admin_message_form_validate($form, &$form_state)
 	if ($values['op'] == 'Save') {
 		if (empty($values['title'])) {
 			form_set_error('title', $form['title']['#title'] . ' is empty');
+		}
+
+		if ( $values['flag'] == 1 ) {
+			if ( intval( $values['delivery_date']) <= 0) {
+				form_set_error('delivery_date', 'Invalid delivery date');
+			}
 		}
 
 		global $supported_lang;
@@ -325,6 +401,10 @@ function ocs_admin_message_form_submit($form, &$form_state)
 		}
 		$node->title = $values['title'];
 
+		$node->field_scheduled_delivery['und'][0]['value'] = $values['flag'];
+		$node->field_value['und'][0]['value'] = $values['delivery_date'];
+		$node->field_valid_date_hour['und'][0]['value'] = $values['delivery_time'];
+
 		$options = $form['#options'];
 		// flatten $options[1], counter
 		$options[1] = array_get_value($options[1]);
@@ -333,9 +413,15 @@ function ocs_admin_message_form_submit($form, &$form_state)
 		for ($i = 1; $i <= $values['num_values']; $i++) {
 			$type = $values['type:' . $i];
 			$node->field_ocs_value_type['und'][$i - 1]['value'] = $type;
-			$node->field_ocs_value_str['und'][$i - 1]['value'] = $options[$type][$values['value:' . $i]];
 			$node->field_ocs_value['und'][$i - 1]['value'] = $values['value:' . $i];
 			$node->field_ocs_value_format['und'][$i - 1]['value'] = isset($values['format:' . $i]) ? $values['format:' . $i] : '';
+
+			if ( $type == OCS_MESSAGE_SCRIPT) {
+				$node->field_ocs_value_str['und'][$i - 1]['value'] = $values['value:' . $i];
+			}
+			else {
+				$node->field_ocs_value_str['und'][$i - 1]['value'] = $options[$type][$values['value:' . $i]];
+			}
 		}
 
 		global $supported_lang;
@@ -357,8 +443,15 @@ function ocs_admin_message_form_submit($form, &$form_state)
 					else if ($type == OCS_MESSAGE_COUNTER) {// counter
 						$value_str = 'counter' . $values['format:'.$idx] . ',' . $values['value:' . $idx];
 					}
-					else {// counter group
+					else if ($type == OCS_MESSAGE_COUNTER_GROUP) {// counter group
 						$value_str = 'counter_group,' . $values['value:' . $idx];
+					}
+					else if ($type == OCS_MESSAGE_SCRIPT) {
+						$value_str = 'script,' . $values['value:' . $idx];
+					}
+					else {
+						dsm('Undefined message type : '. $type, 'error');
+						continue;
 					}
 					$node->field_ocs_export_format['und'][$idx - 1]['value'] = $value_str;
 				}

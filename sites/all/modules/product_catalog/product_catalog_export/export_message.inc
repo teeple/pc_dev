@@ -28,6 +28,10 @@ function _array_message($exportItemNids = NULL)
 			$msg['ui_param'][] = $export['rendered']['#markup'];
 		}
 		
+		$msg['scheduled_delivery'] = $record->field_field_scheduled_delivery[0]['raw']['value'];
+	//	$msg['delivery_date'] = $record->field_field_value[0]['raw']['value'];
+		$msg['delivery_time'] = $record->field_field_valid_date_hour[0]['raw']['value'];
+
 		$messageIds[] = $msg['message_id'];
 		
 		$jsonData['messages'][] = $msg;

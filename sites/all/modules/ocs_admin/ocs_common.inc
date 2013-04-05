@@ -195,8 +195,11 @@ function ocs_admin_get_counter_id_list()
         $items = entity_load( 'node', FALSE, array( 'type' => 'counter'));
         foreach( $items as $item) {
 //            dpm( $item, 'counter');
-            $group = $terms[$item->field_counter_group['und'][0]['tid']]->name;
-            $counter_id[$group][$item->field_counter_id['und'][0]['value']] = $item->title;
+            $tid = $item->field_counter_group['und'][0]['tid'];
+			if ( isset($terms[$tid])) {
+				$group = $terms[$tid]->name;
+				$counter_id[$group][$item->field_counter_id['und'][0]['value']] = $item->title;
+			}
         }
     }
 
