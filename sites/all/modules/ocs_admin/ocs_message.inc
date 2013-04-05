@@ -609,12 +609,16 @@ function ocs_message_group_format($nid)
 function ocs_admin_message_group_form_submit($form, &$form_state)
 {
 	$values = $form_state['values'];
-	dpm($values, 'submit values');
-	dpm($form, 'form');
+	//dpm($values, 'submit values');
+	//dpm($form, 'form');
 
 	if ($values['op'] == 'Save') {
 		if ($form['#op'] == 'edit') {
 			$node = node_load($form['#nid']);
+            $totalList = $node->field_ocs_message_list['und'];
+            
+            $remains = array_slice($totalList,0,$values['num_values']);
+            $node->field_ocs_message_list['und'] = $remains;
 		}
 		else {
 			$node = ocs_admin_get_new_node('ocs_message_group');
