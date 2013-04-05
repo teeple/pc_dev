@@ -19,7 +19,6 @@ function _unset_menu_items(&$form, $formId) {
         case 'packetdynamicchargingrule_node_form' :
         case 'packetpredefinedchargingrule_node_form' :
         case 'roaming_country_node_form' :
-        case 'roaming_zone_node_form':
         case 'roaming_carrier_node_form' :
         case 'roaming_plan_node_form' :
         case 'counter_node_form':
@@ -630,9 +629,6 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             $counterTypeTerm = current(taxonomy_get_term_by_name($form_state['counter_type'], 'countertype'));
             $form['field_weight_for_unittransfer']['#type'] = 'hidden';
             
-            dsm($form, 'form');
-            dsm($form_state, 'form_state');
-            
             // Edit
             if (isset($form['nid']['#value'])) {
                 $form['field_counter_id']['und']['#disabled'] = TRUE;
@@ -827,6 +823,10 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
                 $productTypeName = $form_state['product_type_name'];
                 if($productTypeName != 'CUG') {
                 	$form['field_cug_member_counter']['#type'] = 'hidden';
+                }
+                
+                if(current($productTypeTerm)->name != 'Main') {
+                	unset($form['field_billing_type']['und']['#options'][680]);
                 }
                 
             // in case Edit
@@ -2174,6 +2174,7 @@ function _get_available_counter_list($productNid, $existingCounterNids) {
     $args = array();
 
     // counter type (Basic ,Optional or all)
+    /*
     if ($term_product_type -> name == 'Main') {
         $args[0] = 'all';
     } else {
@@ -2181,15 +2182,19 @@ function _get_available_counter_list($productNid, $existingCounterNids) {
         $temp2Term = taxonomy_get_term_by_name('Rollover', 'countertype');
         $args[0] =  current($temp1Term) -> tid . '+' .  current($temp2Term) -> tid;
     }
-
+    */
+    $args[0] = 'all';
+    
     // service domain
     $args[1] = $product -> field_service_type_of_provider['und'][0]['tid'];
 
     if ($term_billing_type_product -> name == 'Hybrid' || $term_billing_type_product -> name == 'Postpaid') {
         $args[2] = 'all';
+        
     } else {
         $term_billing_type_counter = taxonomy_get_term_by_name($term_billing_type_product -> name, 'billtypecounter');
         $args[2] =  current($term_billing_type_counter) -> tid;
+        
     }
 
     if (isset($existingCounterNids)) {
