@@ -148,9 +148,11 @@ html, body {
 	overflow: visible;
 }
 
+/*
 ol, ul {
 	list-style: none;
 }
+*/
 blockquote, q {
 	quotes: none;
 }
@@ -2495,4 +2497,12 @@ td.supported_lang ul li.last {
 }
 .myform.report.value {
 	float:none;
+}
+
+div.exported_data .content {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	-o-text-overflow: ellipsis;
+	white-space: nowrap;
+	width: 200pt;
 }
