@@ -17,6 +17,32 @@
 			$('#clear-test-result-button').bind('click', function(event) {
 				$('#run-test-ocs-result').text('');
 			});
+
+			$('.more_data').bind('click', function(event) {
+				var target=$(event.target), 
+					content=$(target).parent().children('.content'),
+					print=$(target).attr('href'),
+					json = $.parseJSON( $(content).text());
+				if ( $(content).hasClass('export_result')) {
+					json.data = $.parseJSON( json.data);
+				}
+				$(print).append( prettyPrint( json, {expanded:false}));
+			});
+
+			/*
+			$('.export_result').each(function(i){
+				var json = $.parseJSON($(this).text());
+				json.data = $.parseJSON( json.data);
+				console.log(json);
+				//$(this).append( prettyPrint( json, {expanded:false}));
+			});
+			var str= $('.export_result').text();
+			if ( str != 'undefined') {
+				var json = $.parseJSON(str);
+				console.log( json);
+				$('.export_data').text( prettyPrint( json, {expanded:false}));
+			}
+			*/
 		}
 	};
 
