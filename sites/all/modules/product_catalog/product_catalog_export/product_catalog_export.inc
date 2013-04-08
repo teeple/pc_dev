@@ -84,10 +84,27 @@ function export_json($export_type,$exportItemNid=NULL){
 	return $output;
 }
 
+function _get_export_base_url($target){
+    if($_SERVER['SERVER_ADDR'] === '192.168.1.63' || $_SERVER['SERVER_ADDR'] === '127.0.0.1'){
+        $exportIPTerm = taxonomy_get_term_by_name('Development', 'export_ip');
+    }else{
+        if($target == 'testbed'){
+            $exportIPTerm = taxonomy_get_term_by_name('Testbed', 'export_ip');
+        }else{
+            $exportIPTerm = taxonomy_get_term_by_name('Commercial', 'export_ip');
+        }
+    }
+    $exportIPTerm = current($exportIPTerm);
+    $baseURL = $exportIPTerm->field_export_ip['und'][0]['value'];
+    
+    return $baseURL;
+}
+
 function export_deploy($export_type,$export_item_list = NULL, $target){
 	global $user;
-	
-	$exportItemNids = !empty($export_item_list)? array_keys($export_item_list): array();
+	$baseURL = _get_export_base_url($target);
+   
+   	$exportItemNids = !empty($export_item_list)? array_keys($export_item_list): array();
 	
 	$failedValidation = FALSE;
     switch($export_type){
@@ -151,7 +168,7 @@ function export_deploy($export_type,$export_item_list = NULL, $target){
         $historyNode->field_export_target['und'][0]['safe_value'] = $target;
       
     	foreach($targetItem as $item){
-    		$url = $item['safe_value'];
+    		$url = $baseURL.$item['safe_value'];
     		$result = drupal_http_request($url, $options);
             
             dsm($url,'url');		 
