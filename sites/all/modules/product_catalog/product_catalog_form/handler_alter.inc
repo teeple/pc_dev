@@ -434,9 +434,23 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             unset($form['field_active_period']);
             unset($form['field_grace_period']);
 
+						// Create
 						if (!isset($form['nid']['#value'])) {
-                $form['actions']['submit']['#submit'][] = '_vouchercardtype_submit_handler';
-                $form['actions']['submit']['#submit'][] = 'product_catalog_form_form_redirect_handler';
+							
+							$viewResult = views_get_view_result('query_vouchercardtype_max_id', 'panel_pane_1');
+							if(sizeof($viewResult) > 0) {
+								$maxVoucherId = current($viewResult)->field_field_voucher_id[0]['raw']['value'];
+							} else {
+								$maxVoucherId = 10000;
+							}
+							
+							$form['field_voucher_id']['und'][0]['value']['#default_value'] = $maxVoucherId + 1;
+							$form['field_voucher_id']['und']['#disabled'] = TRUE;
+							
+							$form['actions']['submit']['#submit'][] = '_vouchercardtype_submit_handler';
+              $form['actions']['submit']['#submit'][] = 'product_catalog_form_form_redirect_handler';
+              
+            // Edit  
             } else {
             	$form['field_ref_voucher_type']['und']['#disabled'] = TRUE;
             	$form['field_voucher_id']['und']['#disabled'] = TRUE;
