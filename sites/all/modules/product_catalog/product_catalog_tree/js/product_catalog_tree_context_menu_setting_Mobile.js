@@ -140,10 +140,10 @@
 						menus.custom_create._disabled = false;
 						menus.custom_create.submenu = $.fn.getSubMenuAddNode("Discount Factors","actionpricediscountfactors");
 						break;
-					case "treeNodeCugDiscount":
-						menus.custom_create._disabled = false;
-						menus.custom_create.submenu = $.fn.getSubMenuAddNode("Discount Factors","actionpricecugdiscountfactors");
-						break;
+					//case "treeNodeCugDiscount":
+					//	menus.custom_create._disabled = false;
+					//	menus.custom_create.submenu = $.fn.getSubMenuAddNode("Discount Factors","actionpricecugdiscountfactors");
+					//	break;
 					case "treeNodeCustomBlock":
 						menus.custom_create._disabled = false;
 						menus.custom_create.submenu = $.fn.getSubMenuAddNode("Block Service Factors","actionblockfactors");
