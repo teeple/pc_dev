@@ -80,6 +80,8 @@ function _add_ajax_submit_callback($form_id, &$form) {
         case 'conditionwhereclientip_node_form' :
         case 'conditionwheremacaddress_node_form' :
         case 'conditionwheredevicetype_node_form' :
+        case 'conditionwhererattype_node_form' :
+        case 'conditionwheresgsn_node_form' :
         case 'conditionwhocustomfactors_node_form' :
         case 'conditionwhomemberfactors_node_form' :
         case 'conditionwhonumberfactors_node_form' :
@@ -337,6 +339,8 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
         case 'conditionwhereroamingcountry_node_form':
         case 'conditionwhereroamingzone_node_form':
         case 'conditionwhatroamingtype_node_form':
+        case 'conditionwhererattype_node_form' :
+        case 'conditionwheresgsn_node_form' :
             _unset_menu_items($form, $form_id);
             $form['field_weight']['#type'] = 'hidden';
             $form['field_parent_node']['#type'] = 'hidden';
@@ -645,7 +649,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             
             // Edit
             if (isset($form['nid']['#value'])) {
-                $form['field_counter_id']['und']['#disabled'] = TRUE;
+                // $form['field_counter_id']['und']['#disabled'] = TRUE;
                 $form['field_scale']['und']['#disabled'] = TRUE;
                 $form['field_counter_type']['und']['#disabled'] = TRUE;
                 $form['field_service_domain']['und']['#disabled'] = TRUE;
@@ -1902,6 +1906,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             break;
         case 'packetdynamicl4_node_form' :
         case 'packetdynamicchargingrule_node_form' :
+        case 'packetsgsn_node_form':
         case 'packetpredefinedchargingrule_node_form' :
         case 'roaming_country_node_form' :
         case 'roaming_carrier_node_form' :
@@ -2197,6 +2202,7 @@ function _get_available_counter_list($productNid, $existingCounterNids) {
         $args[0] =  current($temp1Term) -> tid . '+' .  current($temp2Term) -> tid;
     }
     */
+    // counter type : 모든 counter가 보이도록 함
     $args[0] = 'all';
     
     // service domain
