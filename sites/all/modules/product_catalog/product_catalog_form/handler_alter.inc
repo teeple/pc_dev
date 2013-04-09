@@ -645,7 +645,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             
             // Edit
             if (isset($form['nid']['#value'])) {
-                $form['field_counter_id']['und']['#disabled'] = TRUE;
+                //$form['field_counter_id']['und']['#disabled'] = TRUE;
                 $form['field_scale']['und']['#disabled'] = TRUE;
                 $form['field_counter_type']['und']['#disabled'] = TRUE;
                 $form['field_service_domain']['und']['#disabled'] = TRUE;
@@ -684,7 +684,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
                     }
                 }
                 $form['field_counter_id']['und'][0]['value']['#default_value'] = $maxCounterId;
-                $form['field_counter_id']['und']['#disabled'] = TRUE;
+                // $form['field_counter_id']['und']['#disabled'] = TRUE;
 
                 if (!empty($counterTypeTerm)) {
                     $form['field_counter_type']['und']['#default_value'] = $counterTypeTerm -> tid;
