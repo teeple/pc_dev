@@ -37,6 +37,10 @@
 				console.log('relType');
 				console.log(relType);
 				switch (relType) {
+					case "nonusage_recurring_discount_on_main":		
+						menus.custom_create._disabled = false;
+						menus.custom_create.submenu = $.fn.getSubMenuAddNode("Discount","actionpricediscount");
+						break;
 					case "treenodevouchercardforproduct":
 						menus.custom_create._disabled = false;
 						menus.custom_create.submenu = {
