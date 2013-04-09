@@ -85,7 +85,6 @@
 					case "actionpriceallowance":
 					case "actionpricechargefactors":
 					case "actionpricediscountfactors":
-					case "actionpricecugdiscountfactors":
 					case "actionpriceallowancefactors":
 					case 'treenodepacketpredefined':
 					case 'treenodepacketdynamic':
@@ -94,6 +93,10 @@
 						menus.custom_delete.action = function(node) {
 							$.fn.deleteNode(node);
 						};
+						menus.custom_create._disabled = false;
+						menus.custom_create.submenu = $.fn.getSubMenuAddNode("Condition Set","conditioncommonand");
+						break;
+					case "actionpricecugdiscountfactors":
 						menus.custom_create._disabled = false;
 						menus.custom_create.submenu = $.fn.getSubMenuAddNode("Condition Set","conditioncommonand");
 						break;
