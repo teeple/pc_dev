@@ -65,6 +65,8 @@
 			"Service ID" : $.fn.getSubMenuAddNodeWithoutWrapper("Service ID","conditionwhereserviceid"),
 			"Roaming Zone" : $.fn.getSubMenuAddNodeWithoutWrapper("Roaming Zone","conditionwhereroamingzone"),
 			"Roaming Country" : $.fn.getSubMenuAddNodeWithoutWrapper("Roaming Country","conditionwhereroamingcountry"),
+			"RAT Type" : $.fn.getSubMenuAddNodeWithoutWrapper("RAT Type","conditionwhererattype"),
+			"SGSN" : $.fn.getSubMenuAddNodeWithoutWrapper("SGSN","conditionwheresgsn")
 		};
 		return obj;
 	};
@@ -86,7 +88,9 @@
 			"Client IP" : $.fn.getSubMenuAddNodeWithoutWrapper("Client IP","conditionwhereclientip"),
 			"Client MAC Address" : $.fn.getSubMenuAddNodeWithoutWrapper("Client MAC Address","conditionwheremacaddress"),
 			"Client Device Type" : $.fn.getSubMenuAddNodeWithoutWrapper("Client Device Type","conditionwheredevicetype"),
-			"Service ID" : $.fn.getSubMenuAddNodeWithoutWrapper("Service ID","conditionwhereserviceid")
+			"Service ID" : $.fn.getSubMenuAddNodeWithoutWrapper("Service ID","conditionwhereserviceid"),
+			"RAT Type" : $.fn.getSubMenuAddNodeWithoutWrapper("RAT Type","conditionwhererattype"),
+			"SGSN" : $.fn.getSubMenuAddNodeWithoutWrapper("SGSN","conditionwheresgsn")
 		};
 		return obj;
 	};
