@@ -657,7 +657,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
                 $form['field_counter_unit_type']['und']['#disabled'] = TRUE;
                 //$form['field_default_usage_type']['und']['#disabled'] = TRUE;
                 
-                //후불일경우 counter그룹에 remain만 선택 가능하도록
+                //후불일 경우 counter그룹에 remains 또는 threshold counter group만 선택 가능하도록
                 $billTypeTid = $form['#node']->field_billing_type_counter['und'][0]['tid'];
                 $postPaidBillTypeTerm = current(taxonomy_get_term_by_name('Postpaid','billtypecounter'));
                 
@@ -1237,6 +1237,8 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             $view -> execute();
             $options = array();
             $options['_none'] = '- None -';
+            
+            dsm($view->result, 'viewresult');
             foreach ($view->result as $item) {
                 $options[$item -> nid] = $item -> node_title;
             }
