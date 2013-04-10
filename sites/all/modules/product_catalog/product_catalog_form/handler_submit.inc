@@ -440,9 +440,10 @@ function _create_default_prdattributes($product, $voca_name) {
 		$node->field_ref_tree_tid['und'][0]['value'] = current($treeTerm)->tid;
 		node_save($node);
 	}
-	
 }
 
+
+// 해당 상품 type의 basic counter를 return 한다.
 function _get_default_basic_counters($productNid) {
 	global $user;
     
@@ -470,6 +471,67 @@ function _get_default_basic_counters($productNid) {
 	$view->execute();
 	
 	return $view->result;
+}
+
+function _get_taxonomy_term_name_by_svcdomain($svcDomain) {
+
+	$vocaNameDefaultTpl = array(
+			'Cross' => 'tpl_default_tree_cross_main',
+			'IPTV' => 'tpl_default_tree_iptv',
+			'Mobile' => 'tpl_default_tree_mobile',
+			'Broadband' => 'tpl_default_tree_broadband',
+			'VoIP' => 'tpl_default_tree_voip',
+			'Satellite' => 'tpl_default_tree_satellite',
+			'Dummy' => 'tpl_default_tree_dummy',
+	);
+	
+	return $vocaNameDefaultTpl[$svcDomain];
+}
+
+function _attach_basic_counter($counterNid, $svcDomain) {
+	global $user;
+	
+	$weightStep = 100;
+	
+	$vocaNameDefaultTpl = _get_taxonomy_term_name_by_svcdomain($svcDomain);
+	
+	// get refTreeTid
+	$refTreeTerm = taxonomy_get_term_by_name('Charging', $vocaNameDefaultTpl);
+	$refTreeTid = current($refTreeTerm)->tid;
+	
+	// get main product list
+	$viewResult = views_get_view_result('list_product', 'panel_pane_1', $svcDomain);
+	
+	$args = array('0' => '', '1' => $refTreeTid);
+	
+	foreach($viewResult as $record) {
+	
+		$args[0] = $record->nid;
+		$args[1] = $refTreeTid;
+		
+		// $viewResultMinWeight = views_get_view_result('query_min_weight_in_treenodecounter', 'panel_pane_1', $args);
+		$viewMinWeight = views_get_view('query_min_weight_in_treenodecounter');
+		$viewMinWeight->set_display('panel_pane_1');
+		$viewMinWeight->set_arguments($args);
+		$viewMinWeight->execute();
+		
+		$minWeight = current($viewMinWeight->result)->field_data_field_weight_field_weight_value;
+		
+		$treeNodeCounter = new StdClass();
+		$treeNodeCounter->uid = $user->uid;
+		$treeNodeCounter->type = 'treenodecounter';
+		$treeNodeCounter->language = 'und';
+		
+		$treeNodeCounter->field_ref_counter['und'][0]['nid'] = $$countering;
+		$treeNodeCounter->field_weight['und'][0]['value'] = $minWeight - $weightStep;
+		$treeNodeCounter->field_ref_tree_tid['und'][0]['value'] = $refTreeTid;
+		$treeNodeCounter->field_ref_product['und'][0]['nid'] = $record->nid;
+		
+		node_save($treeNodeCounter);
+		
+	}
+		
+	return;
 }
 
 // 상품 생성시 global에 있는 basic counter는 
