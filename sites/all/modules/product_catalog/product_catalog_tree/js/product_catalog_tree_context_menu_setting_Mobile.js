@@ -85,7 +85,6 @@
 					case "actionpriceallowance":
 					case "actionpricechargefactors":
 					case "actionpricediscountfactors":
-					case "actionpricecugdiscountfactors":
 					case "actionpriceallowancefactors":
 					case 'treenodepacketpredefined':
 					case 'treenodepacketdynamic':
@@ -94,6 +93,10 @@
 						menus.custom_delete.action = function(node) {
 							$.fn.deleteNode(node);
 						};
+						menus.custom_create._disabled = false;
+						menus.custom_create.submenu = $.fn.getSubMenuAddNode("Condition Set","conditioncommonand");
+						break;
+					case "actionpricecugdiscountfactors":
 						menus.custom_create._disabled = false;
 						menus.custom_create.submenu = $.fn.getSubMenuAddNode("Condition Set","conditioncommonand");
 						break;
@@ -140,10 +143,10 @@
 						menus.custom_create._disabled = false;
 						menus.custom_create.submenu = $.fn.getSubMenuAddNode("Discount Factors","actionpricediscountfactors");
 						break;
-					case "treeNodeCugDiscount":
-						menus.custom_create._disabled = false;
-						menus.custom_create.submenu = $.fn.getSubMenuAddNode("Discount Factors","actionpricecugdiscountfactors");
-						break;
+					//case "treeNodeCugDiscount":
+					//	menus.custom_create._disabled = false;
+					//	menus.custom_create.submenu = $.fn.getSubMenuAddNode("Discount Factors","actionpricecugdiscountfactors");
+					//	break;
 					case "treeNodeCustomBlock":
 						menus.custom_create._disabled = false;
 						menus.custom_create.submenu = $.fn.getSubMenuAddNode("Block Service Factors","actionblockfactors");
@@ -449,7 +452,9 @@
        	  case 'conditionwhereroamingcountry':
           case 'conditionwhereroamingzone':
           case 'conditionwhatroamingtype':
-						menus.custom_delete._disabled = false;	
+          case 'conditionwhererattype':
+          case 'conditionwheresgsn':
+          	menus.custom_delete._disabled = false;	
 						menus.custom_delete.action = function(node) {
 							$.fn.deleteNode(node);
 						};

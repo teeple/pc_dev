@@ -2154,6 +2154,8 @@ function roaming_options_callback_zone($form,$form_state){
     //return array('#type' => 'ajax', '#commands' => $commands);
 }
 
+// prdcounterlist에 있는 counter list를 리턴한다.
+// 
 function _get_existing_counter_list($productNid) {
 
     $view = views_get_view('list_prdcounterlist');
@@ -2176,9 +2178,10 @@ function _get_existing_counter_list($productNid) {
 
     $retArray = array();
     foreach ($view->result as $record) {
-        $unit = view_get_field_value_by_label($view, 'Unit Type', $record);
-        $retArray[$record -> nid] = $record -> node_title . '(Unit: ' . $unit . ')';
-    }
+    		dsm($record, 'record');
+    		$retArray[$record -> nid] = '';
+        
+     }
 
     return $retArray;
 }
@@ -2227,7 +2230,7 @@ function _get_available_counter_list($productNid, $existingCounterNids) {
 
     $retArray = array();
     foreach ($view->result as $record) {
-        $retArray[$record -> nid] = $record -> node_title;
+    		$retArray[$record -> nid] = $record -> node_title;
     }
 
     return $retArray;
