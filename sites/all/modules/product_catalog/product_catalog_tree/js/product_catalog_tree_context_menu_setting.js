@@ -49,7 +49,7 @@
 					case "packaged_product":
 					case "packaged_optional":
 					case "packaged_hidden":
-					case "cross_available_product":
+					case "available_product":
 						menus.custom_create._disabled = false;
 						menus.custom_create.submenu = $.fn.getSubMenuLoadSelectForm("Select Product");
 						break;
@@ -460,10 +460,14 @@
 						};
 						break;
 					case "usage_voice":
+					case "mobile_usage_voice":
 					case "cross_mobile_usage_voice":
 					case "cross_voip_usage_voice":
+					case "voip_usage_voice":
 					case "usage_sms":
+					case "mobile_usage_sms":
 					case "cross_mobile_usage_sms":
+					case "voip_usage_sms":
 					case "cross_voip_usage_sms":
 					case "usage_data":
 					case "mobile_usage_data":
