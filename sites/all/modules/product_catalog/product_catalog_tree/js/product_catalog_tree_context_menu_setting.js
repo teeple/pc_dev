@@ -464,15 +464,26 @@
 					case "cross_mobile_usage_sms":
 					case "cross_voip_usage_sms":
 					case "usage_data":
+					case "mobile_usage_data":
 					case "cross_mobile_usage_data":
 					case "usage_mms":
+					case "mobile_usage_mms":
 					case "cross_mobile_usage_mms":
 					case "usage_crbt":
+					case "mobile_usage_crbt":
 					case "cross_mobile_usage_crbt":
 					case "usage_vod":
+					case "mobile_usage_vod":
 					case "cross_mobile_usage_vod":
+					case "iptv_usage_vod":
 					case "cross_iptv_usage_vod":
 					case "usage_loyaltypoint":
+					case "mobile_usage_loyaltypoint":
+					case "iptv_usage_loyaltypoint":
+					case "voip_usage_loyaltypoint":
+					case "broadband_usage_loyaltypoint":
+					case "satellite_usage_loyaltypoint":
+					case "dummy_usage_loyaltypoint":
 					case "cross_mobile_usage_loyaltypoint":
 					case "cross_voip_usage_loyaltypoint":
 						menus.custom_create._disabled = false;
@@ -536,11 +547,81 @@
 						break;
 				}  
 				break;
+				case "numberspecial_tree":
+				var relType = obj.attr("rel");
+				switch (relType) {
+					case "number_special":
+					case 'numberspecialrate':
+					case "conditioncommonratinggroup":
+						menus.custom_delete._disabled = false;
+						menus.custom_delete.action = function(node) {
+							$.fn.deleteNode(node);
+						};
+						break;
+					case "Rates":
+						menus.custom_create._disabled = false;
+						menus.custom_create.submenu = $.fn.getSubMenuAddNode("Rate","numberspecialrate");
+						break;
+					case "actionpricechargefactors":
+						menus.custom_create._disabled = false;
+						menus.custom_create.submenu = $.fn.getSubMenuAddNode("Rating Group","conditioncommonratinggroup");
+						menus.custom_delete._disabled = false;
+						menus.custom_delete.action = function(node) {
+							$.fn.deleteNode(node);
+						};
+						break;
+				}
+				break;
+			case "unittransfer_tree":
+				var relType = obj.attr("rel");
+				switch (relType) {
+					case "unittransfer":
+						menus.custom_create._disabled = false;
+						menus.custom_create.submenu = $.fn.getSubMenuLoadSelectForm("Select Counter Group");
+						menus.custom_delete._disabled = false;
+						menus.custom_delete.action = function(node) {
+							$.fn.deleteNode(node);
+						};
+					break;
+					case "unittransferfactor":
+						menus.custom_delete._disabled = false;
+						menus.custom_delete.action = function(node) {
+							$.fn.deleteNode(node);
+						};
+					break;
+				}
+				break;
+			case "vouchercardtype_tree":
+				var relType = obj.attr("rel");
+				switch (relType) {
+					case "vouchercardtype":
+					case "treenodeproductfordisvoucher":
+					case "treenodeproductforvoucher":
+						menus.custom_delete._disabled = false;
+						menus.custom_delete.action = function(node) {
+							$.fn.deleteNode(node);
+						};
+					case "voucher_domain_specific":
+					case "voucher_domain_specific_mobile":
+					case "voucher_domain_specific_iptv":
+					case "voucher_domain_specific_broadband":
+					case "voucher_domain_specific_voip":
+					case "voucher_domain_specific_satellite":
+					case "voucher_domain_specific_dummy":
+						break;
+					case "voucher_product_specific":
+					case "discount_voucher_product_specific":
+						menus.custom_create._disabled = false;
+						menus.custom_create.submenu = $.fn.getSubMenuLoadSelectForm("Select Product");
+						break;
+				}
+				break;
 			default:
 				menus.custom_create = null;
 				menus.custom_copy = null;
 				menus.custom_paste = null;
 				menus.custom_delete = null;
+				break;
 		};// switch
 		console.log(menus);
 		return menus;

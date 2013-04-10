@@ -645,10 +645,17 @@ function load_required_js_css_before_ajax_load(){
     	drupal_add_js($product_catalog_tree_path  . '/js/product_catalog_tree_context_sub_menu.js',
             array('type'=>'file','scope'=>'header','group'=>JS_DEFAULT,'everypage'=>TRUE,'weight'=>100)
         );
+        drupal_add_js($product_catalog_tree_path  . '/js/product_catalog_tree_type_setting.js',
+            array('type'=>'file','scope'=>'header','group'=>JS_DEFAULT,'everypage'=>TRUE,'weight'=>200)
+        );
         
+        drupal_add_js($product_catalog_tree_path  . '/js/product_catalog_tree_context_menu_setting.js',
+            array('type'=>'file','scope'=>'header','group'=>JS_DEFAULT,'everypage'=>TRUE,'weight'=>300)
+        );
+        
+    	/*
     	$paths = explode('/', current_path());
     	$serviceDomains = array('Mobile', 'IPTV', 'VoIP', 'Broadband', 'Satellite', 'Dummy', 'Cross');
-    	
     	if(!empty($paths) && $paths[0] == 'product_designer') {
     	  $serviceDomain = 'Mobile';
     	  if(in_array($paths[1], $serviceDomains)) {
@@ -665,10 +672,7 @@ function load_required_js_css_before_ajax_load(){
                 array('type'=>'file','scope'=>'header','group'=>JS_DEFAULT,'everypage'=>TRUE,'weight'=>300)
             );
     	}
-    	
-    	drupal_add_js($product_catalog_tree_path  . '/js/product_catalog_tree_type_setting.js',
-            array('type'=>'file','scope'=>'header','group'=>JS_DEFAULT,'everypage'=>TRUE,'weight'=>200)
-        );
+        */
     	drupal_add_js($product_catalog_tree_path  . '/js/product_catalog_tree_operation.js',
             array('type'=>'file','scope'=>'header','group'=>JS_DEFAULT,'everypage'=>TRUE,'weight'=>400)
         );
