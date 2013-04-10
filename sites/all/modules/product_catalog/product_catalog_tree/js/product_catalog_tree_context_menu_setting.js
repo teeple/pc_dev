@@ -452,7 +452,9 @@
        	  case 'conditionwhereroamingcountry':
           case 'conditionwhereroamingzone':
           case 'conditionwhatroamingtype':
-						menus.custom_delete._disabled = false;	
+          case 'conditionwhererattype':
+          case 'conditionwheresgsn':
+          	menus.custom_delete._disabled = false;	
 						menus.custom_delete.action = function(node) {
 							$.fn.deleteNode(node);
 						};
