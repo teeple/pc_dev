@@ -488,26 +488,27 @@ function _get_taxonomy_term_name_by_svcdomain($svcDomain) {
 	return $vocaNameDefaultTpl[$svcDomain];
 }
 
-function _attach_basic_counter($counterNid, $svcDomain) {
+function _attach_basic_counter($counter, $svcDomain) {
 	global $user;
 	
 	$weightStep = 100;
 	
 	$vocaNameDefaultTpl = _get_taxonomy_term_name_by_svcdomain($svcDomain);
 	
+	$billingTypeCounterTerm = taxonomy_term_load($counter->field_billing_type_counter['und'][0]['tid']);
+	$prdBillingTypes = array('0' => 'Hybrid',
+													'1' => $billingTypeCounterTerm->name);
+	
 	// get refTreeTid
 	$refTreeTerm = taxonomy_get_term_by_name('Charging', $vocaNameDefaultTpl);
 	$refTreeTid = current($refTreeTerm)->tid;
 	
 	// get main product list
-	$viewResult = views_get_view_result('list_product', 'panel_pane_1', $svcDomain);
-	
-	$args = array('0' => '', '1' => $refTreeTid);
+	$viewResult = views_get_view_result('list_product', 'panel_pane_1', array('0' => $svcDomain, '1' => join('+', $prdBillingTypes)));
+	$args = array('0' => $refTreeTid);
 	
 	foreach($viewResult as $record) {
-	
-		$args[0] = $record->nid;
-		$args[1] = $refTreeTid;
+		$args[1] = $record->nid;
 		
 		// $viewResultMinWeight = views_get_view_result('query_min_weight_in_treenodecounter', 'panel_pane_1', $args);
 		$viewMinWeight = views_get_view('query_min_weight_in_treenodecounter');
@@ -522,7 +523,7 @@ function _attach_basic_counter($counterNid, $svcDomain) {
 		$treeNodeCounter->type = 'treenodecounter';
 		$treeNodeCounter->language = 'und';
 		
-		$treeNodeCounter->field_ref_counter['und'][0]['nid'] = $$countering;
+		$treeNodeCounter->field_ref_counter['und'][0]['nid'] = $counter->nid;
 		$treeNodeCounter->field_weight['und'][0]['value'] = $minWeight - $weightStep;
 		$treeNodeCounter->field_ref_tree_tid['und'][0]['value'] = $refTreeTid;
 		$treeNodeCounter->field_ref_product['und'][0]['nid'] = $record->nid;
