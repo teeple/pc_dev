@@ -387,7 +387,9 @@ function _get_attribute($product) {
     $result = array();
     $result_attribute_general = array();
     $result_attrbitue_exception = array();
-
+    
+    dsm($product, 'product');
+    
     $reqArray = array(
                       "product_id" => array("through_common_code" => FALSE, "field" => "field_product_id", "field_value" => "field_product_id['und'][0]['value']", "field_default" => NULL), 
                       "product_name" => array("through_common_code" => FALSE, "field" => "title", "field_value" => "title", "field_value_default" => ""), 
@@ -404,6 +406,7 @@ function _get_attribute($product) {
                       'customer_type' => array('through_common_code' => TRUE, 'field' => 'field_customer_type', 'field_value' => "field_customer_type['und'][0]['tid']", 'field_value_default' => NULL), 
                       'customer_group_type' => array('through_common_code' => TRUE, 'field' => 'field_customer_group_type', 'field_value' => "field_customer_group_type['und'][0]['tid']", 'field_value_default' => NULL), 
                       'cug_member_counter' => array('through_common_code' => FALSE, 'field' => 'field_cug_member_counter', 'field_value' => "field_cug_member_counter['und'][0]['value']", 'field_value_default' => NULL, ), 
+                      'cug_group_type' => array('through_common_code' => TRUE, 'field' => 'field_cug_group_type', 'field_value' => "field_cug_group_type['und'][0]['tid']", 'field_value_default' => NULL, ), 
                       'treatment_day' => array('through_common_code' => FALSE, 'field' => 'field_treatment_day', 'field_value' => "field_treatment_day['und'][0]['value']", 'field_value_default' => NULL), 
                       'treatment_price' => array('through_common_code' => FALSE, 'field' => 'field_treatment_price_amount', 'field_value' => "field_treatment_price_amount['und'][0]['value']", 'field_value_default' => 0), 
                       'contract_period' => array('through_common_code' => FALSE, 'field' => 'field_contract_period‎', 'field_value' => "field_contract_period‎['und'][0]['value']", 'field_value_default' => 0), 
@@ -647,7 +650,17 @@ function _get_attribute_exceptions($product) {
         }
         $retArray['available_channel'] = $availableChannel;
     }
-
+    
+    if(!empty($product->field_next_join_product)
+    	&& !empty($product->field_next_join_product['und']) 
+    	&& !empty($product->field_next_join_product['und'][0])
+    	&& !empty($product->field_next_join_product['und'][0]['nid'])
+    	
+     ) {
+     	$nextJoinProduct = node_load($product->field_next_join_product['und'][0]['nid']);
+     	$retArray['next_join_product'] = $nextJoinProduct->field_product_id['und'][0]['value'];
+    }
+    
     return $retArray;
 }
 
