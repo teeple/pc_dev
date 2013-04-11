@@ -36,6 +36,8 @@
 				var relType = obj.attr("rel");
 				switch (relType) {
 					case "number_special":
+					case 'numberspecialrate':
+					case "conditioncommonratinggroup":
 						menus.custom_delete._disabled = false;
 						menus.custom_delete.action = function(node) {
 							$.fn.deleteNode(node);
@@ -43,42 +45,11 @@
 						break;
 					case "Rates":
 						menus.custom_create._disabled = false;
-						menus.custom_create.submenu = {
-							"Rates" : {
-								"label" : "Rate",
-								action : function(node) {
-									$.fn.addNode(node, {
-										'childContentType' : 'numberspecialrate'
-									});
-								}
-							},
-						};
-						break;
-
-					case 'numberspecialrate':
-						menus.custom_delete._disabled = false;
-						menus.custom_delete.action = function(node) {
-							$.fn.deleteNode(node);
-						};
+						menus.custom_create.submenu = $.fn.getSubMenuAddNode("Rate","numberspecialrate");
 						break;
 					case "actionpricechargefactors":
 						menus.custom_create._disabled = false;
-						menus.custom_create.submenu = {
-							"actionpricechargefactors" : {
-								"label" : "Rating Group",
-								action : function(node) {
-									$.fn.addNode(node, {
-										'childContentType' : 'conditioncommonratinggroup'
-									});
-								}
-							},
-						};
-						menus.custom_delete._disabled = false;
-						menus.custom_delete.action = function(node) {
-							$.fn.deleteNode(node);
-						};
-						break;
-					case "conditioncommonratinggroup":
+						menus.custom_create.submenu = $.fn.getSubMenuAddNode("Rating Group","conditioncommonratinggroup");
 						menus.custom_delete._disabled = false;
 						menus.custom_delete.action = function(node) {
 							$.fn.deleteNode(node);
@@ -90,18 +61,11 @@
 				var relType = obj.attr("rel");
 				switch (relType) {
 					case "unittransfer":
+						menus.custom_create._disabled = false;
+						menus.custom_create.submenu = $.fn.getSubMenuLoadSelectForm("Select Counter Group");
 						menus.custom_delete._disabled = false;
 						menus.custom_delete.action = function(node) {
 							$.fn.deleteNode(node);
-						};
-						menus.custom_create._disabled = false;
-						menus.custom_create.submenu = {
-							"unittransferfactor" : {
-								"label" : "Select Counter Group",
-								action : function(node) {
-									$.fn.loadSelectForm(node);
-								}
-							},
 						};
 					break;
 					case "unittransferfactor":
@@ -112,18 +76,16 @@
 					break;
 				}
 				break;
-
-			// vouchercardtype tree
 			case "vouchercardtype_tree":
 				var relType = obj.attr("rel");
-
 				switch (relType) {
 					case "vouchercardtype":
+					case "treenodeproductfordisvoucher":
+					case "treenodeproductforvoucher":
 						menus.custom_delete._disabled = false;
 						menus.custom_delete.action = function(node) {
 							$.fn.deleteNode(node);
 						};
-
 					case "voucher_domain_specific":
 					case "voucher_domain_specific_mobile":
 					case "voucher_domain_specific_iptv":
@@ -133,39 +95,12 @@
 					case "voucher_domain_specific_dummy":
 						break;
 					case "voucher_product_specific":
-						menus.custom_create._disabled = false;
-						menus.custom_create.submenu = {
-							"voucher_product_specific" : {
-								"label" : "Select Product",
-								action : function(node) {
-									$.fn.loadSelectForm(node);
-								}
-							},
-						};
-						break;
 					case "discount_voucher_product_specific":
 						menus.custom_create._disabled = false;
-						menus.custom_create.submenu = {
-							"discount_voucher_product_specific" : {
-								"label" : "Select Product",
-								action : function(node) {
-									$.fn.loadSelectForm(node);
-								}
-							},
-						};
-						break;
-					case "treenodeproductfordisvoucher":
-					case "treenodeproductforvoucher":
-						menus.custom_delete._disabled = false;
-						menus.custom_delete.action = function(node) {
-							$.fn.deleteNode(node);
-						};
+						menus.custom_create.submenu = $.fn.getSubMenuLoadSelectForm("Select Product");
 						break;
 				}
-
 				break;
-			// vouchercardtype tree
-
 			default:
 				menus.custom_create = null;
 				menus.custom_copy = null;
