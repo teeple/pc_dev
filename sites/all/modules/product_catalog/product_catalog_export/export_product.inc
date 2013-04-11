@@ -564,15 +564,6 @@ function _get_attribute_exceptions($product) {
         } else {
             $benefit['bonus'] = NULL;
         }
-        /*
-         $benefit['cug_flag'] = $benefitNode->field_cug_flag['und'][0]['value'];
-         $benefit['cug_discount'] = array();
-         if(!empty($benefitNode->field_discount_for_cug)) {
-         foreach($benefitNode->field_discount_for_cug['und'] as $discount_value) {
-         $benefit['cug_discount'][] = $discount_value['value'];
-         }
-         }
-         */
         $retArray['benefit'] = $benefit;
     }
 
