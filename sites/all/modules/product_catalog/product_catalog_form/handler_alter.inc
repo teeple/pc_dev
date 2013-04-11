@@ -522,11 +522,6 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             unset($form['field_weight']);
             _unset_menu_items($form, $form_id);
 
-            if ($prdTypeTerm -> name != 'Additional') {
-                $form['field_cug_flag']['#type'] = 'hidden';
-                $form['field_discount_for_cug']['#type'] = 'hidden';
-                unset($form['#group_children']);
-            }
             break;
 
         case 'locationfactor_node_form' :
