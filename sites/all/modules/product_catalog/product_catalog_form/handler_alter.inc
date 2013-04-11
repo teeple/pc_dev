@@ -1729,22 +1729,8 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
                 $serviceTypeTerm = taxonomy_term_load($form_state['build_info']['args'][0] -> field_ref_tree_tid['und'][0]['value']);
 
                 if ($serviceDomainTerm -> name == 'Cross') {
-                    $relType = $relTypeTerm -> field_rel_type['und'][0]['value'];
-                    $temp_list = explode('_', $relType);
-
-                    switch($temp_list[0]) {
-                        case 'mobile' :
-                            $serviceType = 'Mobile_' . $serviceTypeTerm -> name;
-                            break;
-                        case 'voip' :
-                            $serviceType = 'VoIP_' . $serviceTypeTerm -> name;
-                            break;
-                        case 'iptv' :
-                            $serviceType = 'IPTV_' . $serviceTypeTerm -> name;
-                            break;
-                    }
+                    $serviceType = $serviceTypeTerm -> name;
                     $ref_voca_name = _get_vocabulary_name('tariffplan', $productNode, $serviceType);
-
                 } else {
 
                     $ref_voca_name = _get_vocabulary_name('tariffplan', $productNode, $serviceTypeTerm -> name);
