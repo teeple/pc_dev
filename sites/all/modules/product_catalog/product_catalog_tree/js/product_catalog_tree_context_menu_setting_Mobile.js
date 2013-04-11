@@ -49,7 +49,7 @@
 					case "packaged_product":
 					case "packaged_optional":
 					case "packaged_hidden":
-					case "cross_available_product":
+					case "available_product":
 						menus.custom_create._disabled = false;
 						menus.custom_create.submenu = $.fn.getSubMenuLoadSelectForm("Select Product");
 						break;
@@ -452,27 +452,44 @@
        	  case 'conditionwhereroamingcountry':
           case 'conditionwhereroamingzone':
           case 'conditionwhatroamingtype':
-						menus.custom_delete._disabled = false;	
+          case 'conditionwhererattype':
+          case 'conditionwheresgsn':
+          	menus.custom_delete._disabled = false;	
 						menus.custom_delete.action = function(node) {
 							$.fn.deleteNode(node);
 						};
 						break;
 					case "usage_voice":
+					case "mobile_usage_voice":
 					case "cross_mobile_usage_voice":
 					case "cross_voip_usage_voice":
+					case "voip_usage_voice":
 					case "usage_sms":
+					case "mobile_usage_sms":
 					case "cross_mobile_usage_sms":
+					case "voip_usage_sms":
 					case "cross_voip_usage_sms":
 					case "usage_data":
+					case "mobile_usage_data":
 					case "cross_mobile_usage_data":
 					case "usage_mms":
+					case "mobile_usage_mms":
 					case "cross_mobile_usage_mms":
 					case "usage_crbt":
+					case "mobile_usage_crbt":
 					case "cross_mobile_usage_crbt":
 					case "usage_vod":
+					case "mobile_usage_vod":
 					case "cross_mobile_usage_vod":
+					case "iptv_usage_vod":
 					case "cross_iptv_usage_vod":
 					case "usage_loyaltypoint":
+					case "mobile_usage_loyaltypoint":
+					case "iptv_usage_loyaltypoint":
+					case "voip_usage_loyaltypoint":
+					case "broadband_usage_loyaltypoint":
+					case "satellite_usage_loyaltypoint":
+					case "dummy_usage_loyaltypoint":
 					case "cross_mobile_usage_loyaltypoint":
 					case "cross_voip_usage_loyaltypoint":
 						menus.custom_create._disabled = false;
@@ -541,6 +558,7 @@
 				menus.custom_copy = null;
 				menus.custom_paste = null;
 				menus.custom_delete = null;
+				break;
 		};// switch
 		console.log(menus);
 		return menus;
