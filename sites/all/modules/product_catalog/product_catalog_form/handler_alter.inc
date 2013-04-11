@@ -1728,14 +1728,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
                 $serviceDomainTerm = taxonomy_term_load($productNode -> field_service_type_of_provider['und'][0]['tid']);
                 $serviceTypeTerm = taxonomy_term_load($form_state['build_info']['args'][0] -> field_ref_tree_tid['und'][0]['value']);
 
-                if ($serviceDomainTerm -> name == 'Cross') {
-                    $serviceType = $serviceTypeTerm -> name;
-                    $ref_voca_name = _get_vocabulary_name('tariffplan', $productNode, $serviceType);
-                } else {
-
-                    $ref_voca_name = _get_vocabulary_name('tariffplan', $productNode, $serviceTypeTerm -> name);
-                }
-
+                $ref_voca_name = _get_vocabulary_name('tariffplan', $productNode, $serviceTypeTerm -> name);
                 $form_state['build_info']['args'][0] -> field_tree_child_voca_name['und'][0]['value'] = $ref_voca_name;
             }
 
