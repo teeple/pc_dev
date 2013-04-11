@@ -841,6 +841,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
                 $productTypeName = $form_state['product_type_name'];
                 if($productTypeName != 'CUG') {
                 	$form['field_cug_member_counter']['#type'] = 'hidden';
+                	$form['field_cug_group_type']['und']['#type'] = 'hidden';
                 }
                 
                 if(current($productTypeTerm)->name != 'Main') {
@@ -857,8 +858,10 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
              		
              		$productTypeTid = $form['field_product_type']['und']['#default_value'][0];
              		$productTypeName = $form['field_product_type']['und']['#options'][$productTypeTid];
+             		
              		if($productTypeName != 'CUG' ) {
                 	$form['field_cug_member_counter']['#type'] = 'hidden';
+                	$form['field_cug_group_type']['und']['#type'] = 'hidden';
              		}
             }
             
