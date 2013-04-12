@@ -786,7 +786,8 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
                 $productTypeName = $form_state['product_type_name'];
                 if($productTypeName != 'CUG') {
                 	$form['field_cug_member_counter']['#type'] = 'hidden';
-                	$form['field_cug_group_type']['und']['#type'] = 'hidden';
+                	//$form['field_cug_group_type']['und']['#type'] = 'hidden';
+                	unset($form['field_cug_group_type']);
                 }
                 
                 if(current($productTypeTerm)->name != 'Main') {
@@ -806,7 +807,8 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
              		
              		if($productTypeName != 'CUG' ) {
                 	$form['field_cug_member_counter']['#type'] = 'hidden';
-                	$form['field_cug_group_type']['und']['#type'] = 'hidden';
+                	unset($form['field_cug_group_type']);
+                	// $form['field_cug_group_type']['und']['#type'] = 'hidden';
              		}
             }
             
@@ -1326,8 +1328,8 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             // $existingCounterList = _get_existing_counter_list($form_state['product_nid']);
             $existingCounterList = _get_existing_counter_list($rootNid);
 						$basicCounterList = _get_default_basic_counters($form_state['root_nid']);
+						$counterList = $existingCounterList + $basicCounterList;
 						
-						$counterList = array_merge($existingCounterList, $basicCounterList);
 						$counterList = array_unique($counterList);
 						
             //$form['field_ref_counter']['und']['#options'] = $existingCounterList;
@@ -1479,15 +1481,9 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             
             $basicCounterList = array();
             $basicCounterList = _get_default_basic_counters($productNid);
-            
             $existingCounterList = _get_existing_counter_list($productNid);
-
-            foreach ($basicCounterList as $key => $value) {
-                $mergedCounterList[$key] = $value;
-            }
-            foreach ($existingCounterList as $key => $value) {
-                $mergedCounterList[$key] = $value;
-            }
+            
+            $mergedCounterList = $basicCounterList + $existingCounterList;
             $form['field_ref_counter']['und']['#options'] = $mergedCounterList;
 
             _unset_menu_items($form, $form_id);
@@ -1583,30 +1579,30 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             $form['field_ref_source_action']['#type'] = 'hidden';
             $productNid = $form_state['product_nid'];
 
+						$basicCounterList = array();
+						$existingCounterList = array();
+						
             $product = node_load($productNid);
+            
             $billingTypeTerm = taxonomy_term_load($product -> field_billing_type['und'][0]['tid']);
             if ($billingTypeTerm -> name == 'Postpaid') {
                 $tempTerm = taxonomy_get_term_by_name('Prepaid', 'billtypecounter');
                 $existingCounterList = _get_existing_counter_list($productNid,  current($tempTerm) -> tid);
 
             } else {
-                $basicCounterList = array();
                 $basicCounterList = _get_default_basic_counters($productNid);
                 $existingCounterList = _get_existing_counter_list($productNid);
 
-                foreach ($basicCounterList as $key => $value) {
-                    $mergedCounterList[$key] = $value;
-                }
             }
+            $mergedCounterList = $basicCounterList + $existingCounterList;
             
-            foreach ($existingCounterList as $key => $value) {
-                $mergedCounterList[$key] = $value;
-            }
             $form['field_ref_counter']['und']['#options'] = $mergedCounterList;
             
+            /*
             $form['field_ref_counter']['#ajax'] = 
             	array('callback' => '_ajax_counter_type_validate',
             				'event' => 'change');
+            */
             
             _unset_menu_items($form, $form_id);
             break;
@@ -1629,14 +1625,9 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
                 
                 $existingCounterList = _get_existing_counter_list($productNid);
 
-                foreach ($basicCounterList as $key => $value) {
-                    $mergedCounterList[$key] = $value;
-                }
             }
             
-            foreach ($existingCounterList as $key => $value) {
-                $mergedCounterList[$key] = $value;
-            }
+            $mergedCounterList = $basicCounterList + $existingCounterList;
             $form['field_ref_counter']['und']['#options'] = $mergedCounterList;
             
             $form['field_ref_counter']['#ajax'] = 

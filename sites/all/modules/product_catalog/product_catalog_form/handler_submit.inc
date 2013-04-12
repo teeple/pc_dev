@@ -459,7 +459,8 @@ function _get_default_basic_counters($productNid) {
 		$args[2] = 'all';
 	} else {
 		$term_bill_type_counter = taxonomy_get_term_by_name($term_bill_type_product->name, 'billtypecounter');
-		$args[2] = current($term_bill_type_counter)->tid;
+		$billTypeCounter = current($term_bill_type_counter);
+		$args[2] = $billTypeCounter->tid;
 	}
 
   // 예) POSTPAID/MOBILE로 view검색
