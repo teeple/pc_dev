@@ -1324,9 +1324,12 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             }
 
             // $existingCounterList = _get_existing_counter_list($form_state['product_nid']);
-            $counterList = _get_existing_counter_list($rootNid);
-						$counterList = _get_default_basic_counters($form_state['root_nid']);
-            
+            $existingCounterList = _get_existing_counter_list($rootNid);
+						$basicCounterList = _get_default_basic_counters($form_state['root_nid']);
+						
+						$counterList = array_merge($existingCounterList, $basicCounterList);
+						$counterList = array_unique($counterList);
+						
             //$form['field_ref_counter']['und']['#options'] = $existingCounterList;
             $form['field_ref_counter']['und']['#options'] = $counterList;
             break;
