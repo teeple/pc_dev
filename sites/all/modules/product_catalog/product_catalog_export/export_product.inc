@@ -387,9 +387,12 @@ function _get_attribute($product) {
     $result = array();
     $result_attribute_general = array();
     $result_attrbitue_exception = array();
-
+    
+    dsm($product, 'product');
+    
     $reqArray = array(
                       "product_id" => array("through_common_code" => FALSE, "field" => "field_product_id", "field_value" => "field_product_id['und'][0]['value']", "field_default" => NULL), 
+                      "short_code" => array("through_common_code" => FALSE, "field" => "field_short_code", "field_value" => "field_short_code['und'][0]['value']", "field_default" => NULL), 
                       "product_name" => array("through_common_code" => FALSE, "field" => "title", "field_value" => "title", "field_value_default" => ""), 
                       'is_bundle' => array('through_common_code' => FALSE, 'field' => 'field_is_bundle', 'field_value' => "field_is_bundle['und'][0]['value']", 'field_value_default' => '0'), 
                       'deferred_changing' => array('through_common_code' => FALSE, 'field' => 'field_field_deferred_subscriptio', 'field_value' => "field_field_deferred_subscriptio['und'][0]['value']", 'field_value_default' => '0'), 
@@ -404,12 +407,13 @@ function _get_attribute($product) {
                       'customer_type' => array('through_common_code' => TRUE, 'field' => 'field_customer_type', 'field_value' => "field_customer_type['und'][0]['tid']", 'field_value_default' => NULL), 
                       'customer_group_type' => array('through_common_code' => TRUE, 'field' => 'field_customer_group_type', 'field_value' => "field_customer_group_type['und'][0]['tid']", 'field_value_default' => NULL), 
                       'cug_member_counter' => array('through_common_code' => FALSE, 'field' => 'field_cug_member_counter', 'field_value' => "field_cug_member_counter['und'][0]['value']", 'field_value_default' => NULL, ), 
+                      'cug_group_type' => array('through_common_code' => TRUE, 'field' => 'field_cug_group_type', 'field_value' => "field_cug_group_type['und'][0]['tid']", 'field_value_default' => NULL, ), 
                       'treatment_day' => array('through_common_code' => FALSE, 'field' => 'field_treatment_day', 'field_value' => "field_treatment_day['und'][0]['value']", 'field_value_default' => NULL), 
                       'treatment_price' => array('through_common_code' => FALSE, 'field' => 'field_treatment_price_amount', 'field_value' => "field_treatment_price_amount['und'][0]['value']", 'field_value_default' => 0), 
                       'contract_period' => array('through_common_code' => FALSE, 'field' => 'field_contract_period‎', 'field_value' => "field_contract_period‎['und'][0]['value']", 'field_value_default' => 0), 
                       'expire_date' => array('through_common_code' => FALSE, 'field' => 'field_expire_date', 'field_value' => "field_expire_date['und'][0]['value']", 'field_value_default' => 0), 
                       'expire_date_type' => array('through_common_code' => TRUE, 'field' => 'field_expire_date_type', 'field_value' => "field_expire_date_type['und'][0]['tid']", 'field_value_default' => NULL), 
-                      
+                      'currency' => array('through_common_code' => TRUE, 'field' => 'field_price_units', 'field_value' => "field_price_units['und'][0]['tid']", 'field_value_default' => NULL), 
                 );
 
     $result_attribute_general = _get_result($reqArray, $product);
@@ -561,15 +565,6 @@ function _get_attribute_exceptions($product) {
         } else {
             $benefit['bonus'] = NULL;
         }
-        /*
-         $benefit['cug_flag'] = $benefitNode->field_cug_flag['und'][0]['value'];
-         $benefit['cug_discount'] = array();
-         if(!empty($benefitNode->field_discount_for_cug)) {
-         foreach($benefitNode->field_discount_for_cug['und'] as $discount_value) {
-         $benefit['cug_discount'][] = $discount_value['value'];
-         }
-         }
-         */
         $retArray['benefit'] = $benefit;
     }
 
@@ -647,7 +642,17 @@ function _get_attribute_exceptions($product) {
         }
         $retArray['available_channel'] = $availableChannel;
     }
-
+    
+    if(!empty($product->field_next_join_product)
+    	&& !empty($product->field_next_join_product['und']) 
+    	&& !empty($product->field_next_join_product['und'][0])
+    	&& !empty($product->field_next_join_product['und'][0]['nid'])
+    	
+     ) {
+     	$nextJoinProduct = node_load($product->field_next_join_product['und'][0]['nid']);
+     	$retArray['next_join_product'] = $nextJoinProduct->field_product_id['und'][0]['value'];
+    }
+    
     return $retArray;
 }
 

@@ -292,6 +292,7 @@
             case 'prdattributeallowedmodel':
             case 'prdattributeavailablechannel':
             case 'prdattributefeaturecode':
+            case 'actionpricecugdiscountfactors':
             	needToLoadEdit = false;
             	needToLoadDetail = false;
             	break; 

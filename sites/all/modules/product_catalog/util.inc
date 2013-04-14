@@ -777,12 +777,15 @@ function _get_redirect_url_in_view_n_delete($viewOrDel, $node) {
 	case 'packetpredefinedchargingrule':
 	case 'packetdynamicchargingrule':
 	case 'packetdynamicl4':
+	case 'packetsgsn':
 		$paths = array('packetpredefinedchargingrule' => 'packet/predefined/charging_rule',
 								'packetdynamicchargingrule' => 'packet/dynamic/charging_rule',
-								'packetdynamicl4' => 'packet/dynamic/l4');
+								'packetdynamicl4' => 'packet/dynamic/l4',
+								'packetsgsn' => 'packet/sgsn' );
 		$fragments = array('packetpredefinedchargingrule' => '',
 								'packetdynamicchargingrule' => 'quickset-packet=1',
-								'packetdynamicl4' => 'quickset-packet=2');
+								'packetdynamicl4' => 'quickset-packet=2',
+								'packetsgsn' => 'quickset-packet=3');
 		
 		if ($viewOrDel == 'view') {
 			$url['path'] = 'common/'.$paths[$node->type].'/'.$node->nid;
@@ -793,9 +796,9 @@ function _get_redirect_url_in_view_n_delete($viewOrDel, $node) {
 		break;
 	}
 		
-	//dsm($url, 'url view and delete');
 	return $url;
 }
+
 // $createOrList = 'add', 'list'
 //
 function _get_redirect_url_in_create_n_list($addOrList, $content_type, $params) {
@@ -899,12 +902,15 @@ function _get_redirect_url_in_create_n_list($addOrList, $content_type, $params) 
 	case 'packetpredefinedchargingrule':
 	case 'packetdynamicchargingrule':
 	case 'packetdynamicl4':
+	case 'packetsgsn':
 		$paths = array('packetpredefinedchargingrule' => 'packet/predefined/charging_rule',
 								'packetdynamicchargingrule' => 'packet/dynamic/charging_rule',
-								'packetdynamicl4' => 'packet/dynamic/l4');
+								'packetdynamicl4' => 'packet/dynamic/l4',
+								'packetsgsn' => 'packet/sgsn' );
 		$fragments = array('packetpredefinedchargingrule' => '',
 								'packetdynamicchargingrule' => 'quickset-packet=1',
-								'packetdynamicl4' => 'quickset-packet=2');
+								'packetdynamicl4' => 'quickset-packet=2',
+								'packetsgsn' => 'quickset-packet=3');
 		
 		$url['path'] = 'common/'.$paths[$content_type].'/'.$addOrList;
 		$url['fragment'] = $fragments[$content_type];

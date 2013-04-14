@@ -80,6 +80,8 @@ function _add_ajax_submit_callback($form_id, &$form) {
         case 'conditionwhereclientip_node_form' :
         case 'conditionwheremacaddress_node_form' :
         case 'conditionwheredevicetype_node_form' :
+        case 'conditionwhererattype_node_form' :
+        case 'conditionwheresgsn_node_form' :
         case 'conditionwhocustomfactors_node_form' :
         case 'conditionwhomemberfactors_node_form' :
         case 'conditionwhonumberfactors_node_form' :
@@ -337,6 +339,8 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
         case 'conditionwhereroamingcountry_node_form':
         case 'conditionwhereroamingzone_node_form':
         case 'conditionwhatroamingtype_node_form':
+        case 'conditionwhererattype_node_form' :
+        case 'conditionwheresgsn_node_form' :
             _unset_menu_items($form, $form_id);
             $form['field_weight']['#type'] = 'hidden';
             $form['field_parent_node']['#type'] = 'hidden';
@@ -434,9 +438,23 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             unset($form['field_active_period']);
             unset($form['field_grace_period']);
 
+						// Create
 						if (!isset($form['nid']['#value'])) {
-                $form['actions']['submit']['#submit'][] = '_vouchercardtype_submit_handler';
-                $form['actions']['submit']['#submit'][] = 'product_catalog_form_form_redirect_handler';
+							
+							$viewResult = views_get_view_result('query_vouchercardtype_max_id', 'panel_pane_1');
+							if(sizeof($viewResult) > 0) {
+								$maxVoucherId = current($viewResult)->field_field_voucher_id[0]['raw']['value'];
+							} else {
+								$maxVoucherId = 10000;
+							}
+							
+							$form['field_voucher_id']['und'][0]['value']['#default_value'] = $maxVoucherId + 1;
+							$form['field_voucher_id']['und']['#disabled'] = TRUE;
+							
+							$form['actions']['submit']['#submit'][] = '_vouchercardtype_submit_handler';
+              $form['actions']['submit']['#submit'][] = 'product_catalog_form_form_redirect_handler';
+              
+            // Edit  
             } else {
             	$form['field_ref_voucher_type']['und']['#disabled'] = TRUE;
             	$form['field_voucher_id']['und']['#disabled'] = TRUE;
@@ -504,11 +522,6 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             unset($form['field_weight']);
             _unset_menu_items($form, $form_id);
 
-            if ($prdTypeTerm -> name != 'Additional') {
-                $form['field_cug_flag']['#type'] = 'hidden';
-                $form['field_discount_for_cug']['#type'] = 'hidden';
-                unset($form['#group_children']);
-            }
             break;
 
         case 'locationfactor_node_form' :
@@ -522,11 +535,10 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             $basicCounterList = array();
 
             $productNid = $form_state['product_nid'];
-            $tempList = _get_default_basic_counters($productNid);
-            foreach ($tempList as $record) {
-                $counterUnitType = $record -> field_field_counter_unit_type[0]['rendered']['#options']['entity'] -> name;
-                $basicCounterList[$record -> nid] = $record -> node_title . '(' . $counterUnitType . ')';
-            }
+            
+            $basicCounterList = array();
+            $basicCounterList = _get_default_basic_counters($productNid);
+            
             $existingCounterList = _get_existing_counter_list($productNid);
 
             foreach ($basicCounterList as $key => $value) {
@@ -588,11 +600,8 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             $productNid = $form['#node'] -> field_ref_product['und'][0]['nid'];
 
             $basicCounterList = array();
-            $tempList = _get_default_basic_counters($productNid);
-            foreach ($tempList as $record) {
-                $counterUnitType = $record -> field_field_counter_unit_type[0]['rendered']['#options']['entity'] -> name;
-                $basicCounterList[$record -> nid] = $record -> node_title . '(' . $counterUnitType . ')';
-            }
+            $basicCounterList = _get_default_basic_counters($productNid);
+            
             $existingCounterList = _get_existing_counter_list($productNid);
 
             foreach ($basicCounterList as $key => $value) {
@@ -631,7 +640,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             
             // Edit
             if (isset($form['nid']['#value'])) {
-                $form['field_counter_id']['und']['#disabled'] = TRUE;
+                // $form['field_counter_id']['und']['#disabled'] = TRUE;
                 $form['field_scale']['und']['#disabled'] = TRUE;
                 $form['field_counter_type']['und']['#disabled'] = TRUE;
                 $form['field_service_domain']['und']['#disabled'] = TRUE;
@@ -639,7 +648,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
                 $form['field_counter_unit_type']['und']['#disabled'] = TRUE;
                 //$form['field_default_usage_type']['und']['#disabled'] = TRUE;
                 
-                //후불일경우 counter그룹에 remain만 선택 가능하도록
+                //후불일 경우 counter그룹에 remains 또는 threshold counter group만 선택 가능하도록
                 $billTypeTid = $form['#node']->field_billing_type_counter['und'][0]['tid'];
                 $postPaidBillTypeTerm = current(taxonomy_get_term_by_name('Postpaid','billtypecounter'));
                 
@@ -649,7 +658,8 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
                         $remainsGroupTerm->tid => $remainsGroupTerm->name
                     );
                 }
-                // Create
+                
+						// Create
             } else {
                 if (!empty($counterTypeTerm) && ($counterTypeTerm -> name == 'Rollover')) {
                     $viewResult = views_get_view_result('query_counter_max_id', 'panel_pane_2');
@@ -676,6 +686,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
                     $form['field_counter_type']['und']['#default_value'] = $counterTypeTerm -> tid;
                     $form['field_counter_type']['und']['#disabled'] = TRUE;
                 }
+                
                 //billtype에 따라 counter group 제한하도록 ajax handler 추가 
                 $form['field_counter_group']['und']['#prefix'] = '<div id="counter_group">';
                 $form['field_counter_group']['und']['#postfix'] = '</div>';
@@ -684,8 +695,6 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
                     'callback' => 'counter_bill_type_change_callback',
                     'wrapper' => 'counter_group'  
                 );
-                //dsm($form,'form');
-                //dsm($form_state,'formstate');
             }
 
             unset($form['field_weight']);
@@ -728,31 +737,6 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
                     unset($options[$form['#node']->field_ref_counter['und'][0]['nid']]);
                 }
                 
-                /*
-                $basicCounterList = array();
-                $tempList = _get_default_basic_counters($productNid);
-                foreach ($tempList as $record) {
-                    $counterUnitType = $record -> field_field_counter_unit_type[0]['rendered']['#options']['entity'] -> name;
-                    $basicCounterList[$record -> nid] = $record -> node_title . '(' . $counterUnitType . ')';
-                }
-                foreach ($basicCounterList as $key => $value) {
-                    $mergedCounterList[$key] = $value;
-                }
-                
-                $existingCounterList = _get_existing_counter_list($productNid);
-                foreach ($existingCounterList as $key => $value) {
-                    $existingCounterNode = node_load($key);
-                    $mainOrAccuTerm = taxonomy_term_load($existingCounterNode->field_main_or_accumulated['und'][0]['tid']);
-                    if($mainOrAccuTerm->name ==='Main'){
-                        $mergedCounterList[$key] = $value;
-                    }
-                }
-
-                $options = $mergedCounterList;
-                $element = $form['field_counter']['und'];
-                $form['field_counter']['und']['#options'] = $mergedCounterList;
-                */
-                
                 $form['field_counter']['und']['#options'] = $options;
 
             }
@@ -774,27 +758,6 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             unset($form['field_weight']);
             _unset_menu_items($form, $form_id);
             break;
-            /*
-        case 'counter_node_form' :
-            unset($form['field_parent_node']);
-            unset($form['field_weight']);
-            _unset_menu_items($form, $form_id);
-
-            if (!isset($form['nid']['#value'])) {
-                $view = views_get_view('query_counter_max_id');
-                $view -> execute();
-                $viewResult = $view -> result;
-
-                foreach ($viewResult as $record) {
-                    $maxCounterId = view_get_field_value_by_label($view, 'max_counter_id', $record);
-                }
-                $form['field_counter_id']['und'][0]['value']['#default_value'] = $maxCounterId + 1;
-            }
-
-            $form['actions']['submit']['#submit'][] = '_common_counter_submit_handler';
-            $form['actions']['submit']['#submit'][] = 'product_catalog_form_form_redirect_handler';
-            break;
-            */
             
         case 'simpleproductoffering_node_form' :
             if (isset($form['field_r_prodofferingrel']))
@@ -823,6 +786,8 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
                 $productTypeName = $form_state['product_type_name'];
                 if($productTypeName != 'CUG') {
                 	$form['field_cug_member_counter']['#type'] = 'hidden';
+                	//$form['field_cug_group_type']['und']['#type'] = 'hidden';
+                	unset($form['field_cug_group_type']);
                 }
                 
                 if(current($productTypeTerm)->name != 'Main') {
@@ -839,8 +804,11 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
              		
              		$productTypeTid = $form['field_product_type']['und']['#default_value'][0];
              		$productTypeName = $form['field_product_type']['und']['#options'][$productTypeTid];
+             		
              		if($productTypeName != 'CUG' ) {
                 	$form['field_cug_member_counter']['#type'] = 'hidden';
+                	unset($form['field_cug_group_type']);
+                	// $form['field_cug_group_type']['und']['#type'] = 'hidden';
              		}
             }
             
@@ -1219,6 +1187,8 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             $view -> execute();
             $options = array();
             $options['_none'] = '- None -';
+            
+            dsm($view->result, 'viewresult');
             foreach ($view->result as $item) {
                 $options[$item -> nid] = $item -> node_title;
             }
@@ -1356,13 +1326,12 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             }
 
             // $existingCounterList = _get_existing_counter_list($form_state['product_nid']);
-            $counterList = _get_existing_counter_list($rootNid);
-
-            $results = _get_default_basic_counters($form_state['root_nid']);
-            foreach ($results as $record) {
-                $counterList[$record -> nid] = $record -> node_title . '(' . $record -> field_field_counter_unit_type[0]['rendered']['#title'] . ')';
-            }
-
+            $existingCounterList = _get_existing_counter_list($rootNid);
+						$basicCounterList = _get_default_basic_counters($form_state['root_nid']);
+						$counterList = $existingCounterList + $basicCounterList;
+						
+						$counterList = array_unique($counterList);
+						
             //$form['field_ref_counter']['und']['#options'] = $existingCounterList;
             $form['field_ref_counter']['und']['#options'] = $counterList;
             break;
@@ -1511,19 +1480,10 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             $productNid = $form_state['product_nid'];
             
             $basicCounterList = array();
-            $tempList = _get_default_basic_counters($productNid);
-            foreach ($tempList as $record) {
-                $counterUnitType = $record -> field_field_counter_unit_type[0]['rendered']['#options']['entity'] -> name;
-                $basicCounterList[$record -> nid] = $record -> node_title . '(' . $counterUnitType . ')';
-            }
+            $basicCounterList = _get_default_basic_counters($productNid);
             $existingCounterList = _get_existing_counter_list($productNid);
-
-            foreach ($basicCounterList as $key => $value) {
-                $mergedCounterList[$key] = $value;
-            }
-            foreach ($existingCounterList as $key => $value) {
-                $mergedCounterList[$key] = $value;
-            }
+            
+            $mergedCounterList = $basicCounterList + $existingCounterList;
             $form['field_ref_counter']['und']['#options'] = $mergedCounterList;
 
             _unset_menu_items($form, $form_id);
@@ -1619,34 +1579,30 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             $form['field_ref_source_action']['#type'] = 'hidden';
             $productNid = $form_state['product_nid'];
 
+						$basicCounterList = array();
+						$existingCounterList = array();
+						
             $product = node_load($productNid);
+            
             $billingTypeTerm = taxonomy_term_load($product -> field_billing_type['und'][0]['tid']);
             if ($billingTypeTerm -> name == 'Postpaid') {
                 $tempTerm = taxonomy_get_term_by_name('Prepaid', 'billtypecounter');
                 $existingCounterList = _get_existing_counter_list($productNid,  current($tempTerm) -> tid);
 
             } else {
-                $basicCounterList = array();
-                $tempList = _get_default_basic_counters($productNid);
-                foreach ($tempList as $record) {
-                    $counterUnitType = $record -> field_field_counter_unit_type[0]['rendered']['#options']['entity'] -> name;
-                    $basicCounterList[$record -> nid] = $record -> node_title . '(' . $counterUnitType . ')';
-                }
+                $basicCounterList = _get_default_basic_counters($productNid);
                 $existingCounterList = _get_existing_counter_list($productNid);
 
-                foreach ($basicCounterList as $key => $value) {
-                    $mergedCounterList[$key] = $value;
-                }
             }
+            $mergedCounterList = $basicCounterList + $existingCounterList;
             
-            foreach ($existingCounterList as $key => $value) {
-                $mergedCounterList[$key] = $value;
-            }
             $form['field_ref_counter']['und']['#options'] = $mergedCounterList;
             
+            /*
             $form['field_ref_counter']['#ajax'] = 
             	array('callback' => '_ajax_counter_type_validate',
             				'event' => 'change');
+            */
             
             _unset_menu_items($form, $form_id);
             break;
@@ -1665,21 +1621,13 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 
             } else {
                 $basicCounterList = array();
-                $tempList = _get_default_basic_counters($productNid);
-                foreach ($tempList as $record) {
-                    $counterUnitType = $record -> field_field_counter_unit_type[0]['rendered']['#options']['entity'] -> name;
-                    $basicCounterList[$record -> nid] = $record -> node_title . '(' . $counterUnitType . ')';
-                }
+                $basicCounterList = _get_default_basic_counters($productNid);
+                
                 $existingCounterList = _get_existing_counter_list($productNid);
 
-                foreach ($basicCounterList as $key => $value) {
-                    $mergedCounterList[$key] = $value;
-                }
             }
             
-            foreach ($existingCounterList as $key => $value) {
-                $mergedCounterList[$key] = $value;
-            }
+            $mergedCounterList = $basicCounterList + $existingCounterList;
             $form['field_ref_counter']['und']['#options'] = $mergedCounterList;
             
             $form['field_ref_counter']['#ajax'] = 
@@ -1710,28 +1658,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
                 $serviceDomainTerm = taxonomy_term_load($productNode -> field_service_type_of_provider['und'][0]['tid']);
                 $serviceTypeTerm = taxonomy_term_load($form_state['build_info']['args'][0] -> field_ref_tree_tid['und'][0]['value']);
 
-                if ($serviceDomainTerm -> name == 'Cross') {
-                    $relType = $relTypeTerm -> field_rel_type['und'][0]['value'];
-                    $temp_list = explode('_', $relType);
-
-                    switch($temp_list[0]) {
-                        case 'mobile' :
-                            $serviceType = 'Mobile_' . $serviceTypeTerm -> name;
-                            break;
-                        case 'voip' :
-                            $serviceType = 'VoIP_' . $serviceTypeTerm -> name;
-                            break;
-                        case 'iptv' :
-                            $serviceType = 'IPTV_' . $serviceTypeTerm -> name;
-                            break;
-                    }
-                    $ref_voca_name = _get_vocabulary_name('tariffplan', $productNode, $serviceType);
-
-                } else {
-
-                    $ref_voca_name = _get_vocabulary_name('tariffplan', $productNode, $serviceTypeTerm -> name);
-                }
-
+                $ref_voca_name = _get_vocabulary_name('tariffplan', $productNode, $serviceTypeTerm -> name);
                 $form_state['build_info']['args'][0] -> field_tree_child_voca_name['und'][0]['value'] = $ref_voca_name;
             }
 
@@ -1888,6 +1815,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             break;
         case 'packetdynamicl4_node_form' :
         case 'packetdynamicchargingrule_node_form' :
+        case 'packetsgsn_node_form':
         case 'packetpredefinedchargingrule_node_form' :
         case 'roaming_country_node_form' :
         case 'roaming_carrier_node_form' :
@@ -2136,6 +2064,8 @@ function roaming_options_callback_zone($form,$form_state){
     //return array('#type' => 'ajax', '#commands' => $commands);
 }
 
+// prdcounterlist에 있는 counter list를 리턴한다.
+// 
 function _get_existing_counter_list($productNid) {
 
     $view = views_get_view('list_prdcounterlist');
@@ -2158,14 +2088,16 @@ function _get_existing_counter_list($productNid) {
 
     $retArray = array();
     foreach ($view->result as $record) {
-        $unit = view_get_field_value_by_label($view, 'Unit Type', $record);
-        $retArray[$record -> nid] = $record -> node_title . '(Unit: ' . $unit . ')';
-    }
+    		$retArray[$record -> nid] = view_get_field_value_by_label($view, 'PHP', $record);
+    		// $retArray[$record -> nid] = '';
+        
+     }
 
     return $retArray;
 }
 
 function _get_available_counter_list($productNid, $existingCounterNids) {
+    
     $product = node_load($productNid);
 
     $term_billing_type_product = taxonomy_term_load($product -> field_billing_type['und'][0]['tid']);
@@ -2183,7 +2115,12 @@ function _get_available_counter_list($productNid, $existingCounterNids) {
         $args[0] =  current($temp1Term) -> tid . '+' .  current($temp2Term) -> tid;
     }
     */
-    $args[0] = 'all';
+    
+    // counter type : 모든 counter가 보이도록 함
+    $temp1Term = taxonomy_get_term_by_name('Optional', 'countertype');
+    $temp2Term = taxonomy_get_term_by_name('Rollover', 'countertype');
+    $args[0] =  current($temp1Term) -> tid . '+' .  current($temp2Term) -> tid;
+    // $args[0] = 'all';
     
     // service domain
     $args[1] = $product -> field_service_type_of_provider['und'][0]['tid'];
@@ -2208,7 +2145,7 @@ function _get_available_counter_list($productNid, $existingCounterNids) {
 
     $retArray = array();
     foreach ($view->result as $record) {
-        $retArray[$record -> nid] = $record -> node_title;
+    	$retArray[$record -> nid] = view_get_field_value_by_label($view, 'PHP', $record);
     }
 
     return $retArray;

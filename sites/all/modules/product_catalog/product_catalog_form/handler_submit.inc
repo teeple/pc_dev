@@ -270,13 +270,10 @@ function _create_default_cugdiscountfactors_in_tariffplan($tariffplan) {
   
   node_save($node);
 	
-	dsm($node, 'node');
 	
 }
 
 function _create_default_items_in_product($product) {
-    //dsm('_create_default_items_in_product');
-    //dsm($product->field_is_cloned); 
     session_set('TOUCH_PRODUCT', FALSE);
     dsm(session_get('TOUCH_PRODUCT'));
 	if(!empty($product->field_is_cloned) && $product->field_is_cloned['und'][0]['value'] == 0){
@@ -440,16 +437,18 @@ function _create_default_prdattributes($product, $voca_name) {
 		$node->field_ref_tree_tid['und'][0]['value'] = current($treeTerm)->tid;
 		node_save($node);
 	}
-	
 }
 
+
+// 해당 상품 type의 basic counter를 return 한다.
 function _get_default_basic_counters($productNid) {
 	global $user;
-    
-    $product = node_load($productNid);
+	$retArray = array();
+	  
+	$product = node_load($productNid);
 
-    $term_service_domain_tid = $product->field_service_type_of_provider['und'][0]['tid'];
-    $term_counter_type = taxonomy_get_term_by_name('Basic', 'countertype');
+  $term_service_domain_tid = $product->field_service_type_of_provider['und'][0]['tid'];
+  $term_counter_type = taxonomy_get_term_by_name('Basic', 'countertype');
 	$term_bill_type_product = taxonomy_term_load($product->field_billing_type['und'][0]['tid']);
 	
 	$args = array();
@@ -460,16 +459,98 @@ function _get_default_basic_counters($productNid) {
 		$args[2] = 'all';
 	} else {
 		$term_bill_type_counter = taxonomy_get_term_by_name($term_bill_type_product->name, 'billtypecounter');
-		$args[2] = current($term_bill_type_counter)->tid;
+		$billTypeCounter = current($term_bill_type_counter);
+		$args[2] = $billTypeCounter->tid;
 	}
 
-    // 예) POSTPAID/MOBILE로 view검색
-    $view = views_get_view('query_list_counter');
-    $view->set_display('panel_pane_1');
-    $view->set_arguments($args);
+  // 예) POSTPAID/MOBILE로 view검색
+  $view = views_get_view('query_list_counter');
+  $view->set_display('panel_pane_1');
+  $view->set_arguments($args);
 	$view->execute();
 	
-	return $view->result;
+	$retArray = array();
+	foreach ($view->result as $record) {
+		$retArray[$record -> nid] = view_get_field_value_by_label($view, 'PHP', $record);
+	}
+	
+	return $retArray;
+	// return $view->result;
+}
+
+function _get_taxonomy_term_name_by_svcdomain($svcDomain) {
+
+	$vocaNameDefaultTpl = array(
+			'Cross' => 'tpl_default_tree_cross_main',
+			'IPTV' => 'tpl_default_tree_iptv',
+			'Mobile' => 'tpl_default_tree_mobile',
+			'Broadband' => 'tpl_default_tree_broadband',
+			'VoIP' => 'tpl_default_tree_voip',
+			'Satellite' => 'tpl_default_tree_satellite',
+			'Dummy' => 'tpl_default_tree_dummy',
+	);
+	
+	return $vocaNameDefaultTpl[$svcDomain];
+}
+
+function _attach_basic_counter($counter, $svcDomain) {
+	global $user;
+	
+	$weightStep = 100;
+	
+	$vocaNameDefaultTpl = _get_taxonomy_term_name_by_svcdomain($svcDomain);
+	
+	$billingTypeCounterTerm = taxonomy_term_load($counter->field_billing_type_counter['und'][0]['tid']);
+	$prdBillingTypes = array('0' => 'Hybrid',
+													'1' => $billingTypeCounterTerm->name);
+	
+	// get refTreeTid
+	$refTreeTerm = taxonomy_get_term_by_name('Charging', $vocaNameDefaultTpl);
+	$refTreeTid = current($refTreeTerm)->tid;
+	
+	// get main product list
+	$args_1 = array('0' => $svcDomain, '1' => join('+', $prdBillingTypes));
+	
+	// $viewResult = views_get_view_result('list_product', 'panel_pane_1', array('0' => $svcDomain, '1' => join('+', $prdBillingTypes)));
+	$view = views_get_view('list_product');
+	$view->set_display('panel_pane_1');
+	$view->set_arguments($args_1);
+	$view->execute();
+	$viewResult = $view->result;
+	
+	$args = array('0' => $refTreeTid);
+	foreach($viewResult as $record) {
+		$args[1] = $record->nid;
+		
+		// $viewResultMinWeight = views_get_view_result('query_min_weight_in_treenodecounter', 'panel_pane_1', $args);
+		$viewMinWeight = views_get_view('query_min_weight_in_treenodecounter');
+		$viewMinWeight->set_display('panel_pane_1');
+		$viewMinWeight->set_arguments($args);
+		$viewMinWeight->execute();
+		
+		$currentView = $viewMinWeight->result;
+		
+		if(!empty($currentView)) {
+			$minWeight = $currentView[0]->field_data_field_weight_field_weight_value;
+		} else {
+			$minWeight = 0;
+		}
+		
+		$treeNodeCounter = new StdClass();
+		$treeNodeCounter->uid = $user->uid;
+		$treeNodeCounter->type = 'treenodecounter';
+		$treeNodeCounter->language = 'und';
+		
+		$treeNodeCounter->field_ref_counter['und'][0]['nid'] = $counter->nid;
+		$treeNodeCounter->field_weight['und'][0]['value'] = $minWeight - $weightStep;
+		$treeNodeCounter->field_ref_tree_tid['und'][0]['value'] = $refTreeTid;
+		$treeNodeCounter->field_ref_product['und'][0]['nid'] = $record->nid;
+		$treeNodeCounter->field_main_or_accumulated['und'][0]['tid'] = 689; // Main(Charging) main or accmulating
+		
+		node_save($treeNodeCounter);
+	}
+		
+	return;
 }
 
 // 상품 생성시 global에 있는 basic counter는 
