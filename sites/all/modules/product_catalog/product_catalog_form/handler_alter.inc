@@ -1143,7 +1143,6 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             
         case 'depositschemefactors_node_form' :
             _unset_menu_items($form, $form_id);
-            /*
             $form['field_ref_depositscheme']['#type'] = 'hidden';
             $form['field_is_default_factor']['#type'] = 'hidden';
             
@@ -1177,7 +1176,8 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
                   $form['field_thismonth_accu_counter']['und']['#options'] = $options;
 
               } else {
-                  $form['field_thismonth_accu_counter']['#type'] = 'hidden';
+                  // $form['field_thismonth_accu_counter']['#type'] = 'hidden';
+                  unset($form['field_thismonth_acc_counter']['#type']);
               }
 
               $counterUnitType = $form_state['build_info']['args'][0]->field_counter_unit_type['und'][0]['tid'];
@@ -1198,12 +1198,9 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
               $form['field_ref_thres_counter_acc']['und']['#options'] = $options;
               $form['field_ref_thres_counter_limit']['und']['#options'] = $options;
             }
-            */
             
             $form['field_ref_thres_counter_acc']['#prefix'] = '<div id="deposit_counter_set">';
-            $form['field_ref_thres_counter_limit']['#postfix'] = '</div>';
-            
-            dsm($form, 'form');
+            $form['field_ref_thresholdscheme']['#prefix'] = '</div>';
             
             $form['field_counter_unit_type']['und']['#ajax'] = array(
                 'callback' => 'deposit_counter_callback',
@@ -2048,12 +2045,12 @@ function deposit_counter_callback($form,$form_state) {
 			$options[$item->nid] = $item -> node_title. '[' . $item->field_field_counter_unit_type[0]['rendered']['#title'] . ',' . $item->field_field_counter_id[0]['rendered']['#markup'] . ']';
 	}
 	$form['field_ref_thres_counter_acc']['und']['#options'] = $options;
-	//$form['field_ref_thres_counter_limit']['und']['#options'] = $options;
+	$form['field_ref_thres_counter_limit']['und']['#options'] = $options;
 	
-	$renderStr = '<div id="deposit_counter_set">';
+//	$renderStr = '<div id="deposit_counter_set">';
 	$renderStr .= drupal_render($form['field_ref_thres_counter_acc']);
-	//$renderStr .= drupal_render($form['field_ref_thres_counter_limit']);
-	$renderStr .= '</div>';
+	$renderStr .= drupal_render($form['field_ref_thres_counter_limit']);
+//	$renderStr .= '</div>';
 	
 	dsm($renderStr, 'renderStr');
 	
