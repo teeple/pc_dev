@@ -104,7 +104,6 @@ function _array_deposit_scheme($exportItemNids=NULL){
             $depositScheme['factors'] = $factorArray;
             
             //adjustment
-            /*
             $adjustmentList = views_get_view_result('list_depositschemeadjustment', 'panel_pane_4', $record->nid);
             
             $adjustmentArray = array();
@@ -125,7 +124,6 @@ function _array_deposit_scheme($exportItemNids=NULL){
                 $adjustmentArray[] = $adjustment;                
             }
             $depositScheme['adjustment'] = $adjustmentArray;
-            */
         }
         $jsonData_schemes[] = $depositScheme;
         $depositSchemeIds[] = $depositScheme['id'];
