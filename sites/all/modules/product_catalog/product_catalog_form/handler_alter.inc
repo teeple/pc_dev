@@ -856,7 +856,11 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
                 unset($form['field_cug_member_counter']);
                 unset($form['field_short_code']);
                 unset($form['field_next_join_product']);
-
+                unset($form['field_expire_date_type']);
+                unset($form['field_expire_date']);
+                unset($form['field_field_deferred_subscriptio']);
+                unset($form['field_hlr_template_id']);
+                
             } else {
                 unset($form['field_exclusiveness']);
             }
@@ -1179,7 +1183,10 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
                   $form['field_thismonth_accu_counter']['#type'] = 'hidden';
               }
 
-              $counterUnitType = $form_state['build_info']['args'][0]->field_counter_unit_type['und'][0]['tid'];
+              $counterUnitType = $form_state['values']['field_counter_unit_type']['und'][0]['tid'];
+              if(empty($counterUnitType)) {
+              	$counterUnitType = $form_state['build_info']['args'][0]->field_counter_unit_type['und'][0]['tid'];
+              }
               
               $view = views_get_view('list_counter');
               $view -> set_display('panel_pane_10');
@@ -1205,7 +1212,6 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             $form['field_counter_unit_type']['und']['#ajax'] = array(
                 'callback' => 'deposit_counter_callback',
                 'wrapper' => 'deposit_counter_set',
-                'method' => 'replace'
             );
             
             break;
@@ -2051,6 +2057,8 @@ function deposit_counter_callback($form,$form_state) {
 	$renderStr .= drupal_render($form['field_ref_thres_counter_acc']);
 	$renderStr .= drupal_render($form['field_ref_thres_counter_limit']);
 //	$renderStr .= '</div>';
+
+	$form_state['rebuild'] = TRUE;
 	
 	return $renderStr;
 }
