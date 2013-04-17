@@ -37,10 +37,14 @@ function pc_voucher_services_access() {
 
 function pc_voucher_services_retrieve($voucher_id) {
 	$jsonData = array();
+	
 	$viewResult = views_get_view_result('list_vouchercardtype', 'panel_pane_7', $voucher_id);
 	
 	if(!empty($viewResult)) {
-		$jsonData = _array_voucher_cardtype($viewResult[0]->nid);
+		$isExternalAPI = TRUE;
+		error_log('view nid:'.$viewResult[0]->nid);
+		$jsonData = _array_voucher_cardtype('104470');
+		
 	} else {
 		$jsonData['PCatalog']['result_code'] = '0';
 		$jsonData['PCatalog']['result_reason'] = 'Fail';

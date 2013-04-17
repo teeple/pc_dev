@@ -1,0 +1,574 @@
+diff --git a/sites/all/modules/ocs_admin/ocs_common.inc b/sites/all/modules/ocs_admin/ocs_common.inc
+index 54245c8..a20946b 100644
+--- a/sites/all/modules/ocs_admin/ocs_common.inc
++++ b/sites/all/modules/ocs_admin/ocs_common.inc
+@@ -387,7 +387,7 @@ function ocs_log_changes( $before, $after)
+ 
+ 	$diff = _compare_content( $field, $before, $after);
+ 	if ( ! empty( $diff)) {
+-		dpm( $diff, 'diff');
++		//dpm( $diff, 'diff');
+ 		watchdog( 'change log', 'Content %type (%id) changed %data', array( '%type' => $type, '%id' => $id, '%data' => json_encode( $diff)), WATCHDOG_NOTICE); 
+ 	}
+ }
+diff --git a/sites/all/modules/ocs_admin/ocs_migrate_numberingplan.inc b/sites/all/modules/ocs_admin/ocs_migrate_numberingplan.inc
+index 646f851..8cda004 100644
+--- a/sites/all/modules/ocs_admin/ocs_migrate_numberingplan.inc
++++ b/sites/all/modules/ocs_admin/ocs_migrate_numberingplan.inc
+@@ -184,6 +184,14 @@ function ocs_migrate_fce_numberingplan_submit($form, &$form_state)
+                     node_delete( $nid);
+                     dpm( 'idd_ratinggroup instance is deleted. nid='. $nid);
+                 }
++
++				// load numbering plan
++				$np = node_load( $values['target']);
++				unset($np->field_ref_idd_ratinggroup['und']);
++				node_save( $np);
++				dpm( $np, $np->title);
++				return;
++
+             }
+              _update_numberingplan_for_intl_voice( $carrier_info, $values['target'], $form['#rule'], $values['check'] == '1');
+         }
+@@ -641,7 +649,7 @@ function _update_numberingplan_for_intl_voice( $carrier_info, $target_nid, $reco
+             if ( isset( $rating_group_list[$prefix])) {
+                 dpm( 'Rating group exist already: prefix=' . $prefix);
+             }
+-            $rating_group_list[$node->field_prefix['und'][0]['value']] = $nid;
++            $rating_group_list[$prefix] = $nid;
+ 		}
+ 	}
+ 	dpm( $rating_group_list, 'rating group list');	
+diff --git a/sites/all/modules/ocs_admin/ocs_migrate_rate.inc b/sites/all/modules/ocs_admin/ocs_migrate_rate.inc
+index 05b017e..a3454db 100644
+--- a/sites/all/modules/ocs_admin/ocs_migrate_rate.inc
++++ b/sites/all/modules/ocs_admin/ocs_migrate_rate.inc
+@@ -1,5 +1,9 @@
+ <?php
+ 
++global $unit_range;
++global $unit_measure;
++global $tree_tid;
++
+ function _load_all_price()
+ {
+ 	$rate = &drupal_static(__FUNCTION__, NULL);
+@@ -152,8 +156,50 @@ function _get_rate_list($rate, $name)
+ 	return $list;
+ }
+ 
++function _get_terms()
++{
++	global $unit_measure;
++	global $unit_range;
++	global $tree_tid;
++
++	// get terms : unit_of_measure 
++	$terms = ocs_get_terms('unit_of_measure');
++	$unit_measure = array(); 
++	foreach( $terms as $tid => $term) {
++		$unit_measure[$term->name] = $tid;
++	}       
++	    
++	// get terms : unif_of_range
++	$terms = ocs_get_terms('unit_of_range');
++	$unit_range = array();
++	foreach( $terms as $tid => $term) {
++		$unit_range[$term->name] = $tid;
++	}
++
++	$tree_tid = array();
++	foreach( array( 'voice', 'sms') as $type) {
++		$vid = taxonomy_vocabulary_machine_name_load('tpl_tariffplan_' . $type);
++		$tree = taxonomy_get_tree( $vid->vid, 0, 1);
++		foreach( $tree as $node) {
++			$children = taxonomy_get_tree( $vid->vid, $node->tid, 1);
++			foreach( $children as $child) {
++				//dpm( $child, $node->name);
++				if ( $child->name == 'Basic Rate') {
++					$tree_tid[$type][$node->name] = $child->tid;
++				}
++			}
++		}
++	}
++	//dpm( $tree_tid, 'tree tid');
++}
++
+ function ocs_migrate_fce_rate_submit($form, &$form_state)
+ {
++	// tid list
++	global $tree_tid;
++
++	_get_terms();
++
+ 	$values = $form_state['values'];
+ 	if ($values['op'] == 'Save') {
+ 		dpm($values, 'values');
+@@ -161,12 +207,17 @@ function ocs_migrate_fce_rate_submit($form, &$form_state)
+ 		// get tree tid 
+         // $a:intl or domestic, $b:voice or sms
+         list( $a, $b) = explode( ':', $form['#call_type']);
++		/*
+ 		$nids = array_keys( taxonomy_get_term_by_name( 
+             ($a == 'intl') ? 'International' : 'Domestic',
+             ($b == 'voice') ? 'tpl_tariffplan_voice' : 'tpl_tariffplan_sms'));
+ 
+-		// tid list
+-		$tid = array( 'tree_tid' => $nids[0]);
++		//dpm( $nids, 'taxonomy_get_term_by_name');
++		*/
++
++		$tid = $tree_tid[$b][($a == 'intl') ? 'International' : 'Domestic'];
++		dpm( $tree_tid, 'tree_tid');
++		dpm( $tid, 'tree_tid');
+ 
+ 		$processed_rate_list = array();
+ 
+@@ -254,11 +305,13 @@ function _set_price($plan_nid, $name, $price, $tid, $check_only = TRUE)
+ 		}
+ 	}
+ 
++	global $unit_measure;
++
+ 	$new_rate->title = $name;
+     // count
+-	$new_rate->field_uom_units['und'][0]['tid'] = 1551;     
++	$new_rate->field_uom_units['und'][0]['tid'] = $unit_measure['Seconds'];     
+ 	$new_rate->field_ref_tariffplan['und'][0]['nid'] = $plan_nid;
+-	$new_rate->field_ref_tree_tid['und'][0]['value'] = $tid['tree_tid'];
++	$new_rate->field_ref_tree_tid['und'][0]['value'] = $tid;
+ 	$new_rate->field_price['und'][0]['value'] = $price;
+ 
+ 	if ( ! $check_only) {
+@@ -346,15 +399,15 @@ function _set_rate($plan_nid, $name, $rate_list, $tid, $check_only = TRUE)
+ 		}
+ 	}
+ 
++	global $unit_range, $unit_measure;
++
+ 	$new_rate->title = $name;
+ 	// seconds
+-	$new_rate->field_range_units['und'][0]['tid'] = 390;
+-	// MNT
+-	$new_rate->field_price_units['und'][0]['tid'] = 450;
++	$new_rate->field_range_units['und'][0]['tid'] = $unit_range['Seconds'];
+ 	// seconds
+-	$new_rate->field_uom_units['und'][0]['tid'] = 451;
++	$new_rate->field_uom_units['und'][0]['tid'] = $unit_measure['Seconds'];
+ 	$new_rate->field_ref_tariffplan['und'][0]['nid'] = $plan_nid;
+-	$new_rate->field_ref_tree_tid['und'][0]['value'] = $tid['tree_tid'];
++	$new_rate->field_ref_tree_tid['und'][0]['value'] = $tid;
+ 
+ 	if ( ! $check_only) {
+ 		node_save($new_rate);
+diff --git a/sites/all/modules/ocs_admin/ocs_report.inc b/sites/all/modules/ocs_admin/ocs_report.inc
+index 57b463c..4982991 100644
+--- a/sites/all/modules/ocs_admin/ocs_report.inc
++++ b/sites/all/modules/ocs_admin/ocs_report.inc
+@@ -22,7 +22,7 @@ function _ocs_report_product( $node)
+ 	$output .= _ocs_report_get_fields( $field, $node);
+ 
+ 	$tree_info = _load_tree_item_mixed_with_node_and_term( $node);
+-	dpm( $tree_info, 'tree info');
++	//dpm( $tree_info, 'tree info');
+ 
+ 	// for each attribute
+ 
+@@ -73,9 +73,16 @@ function _ocs_report_children( $node, $depth=0)
+ 					$output .= _ocs_report_get_fields( $field, $node);
+ 				}
+ 			}
+-			else if ( $node['attr']['rel'] == 'voice_tariffplan_domestic') {
++			else if ( $node['attr']['rel'] == 'voice_tariffplan_domestic' ||
++				$node['attr']['rel'] == 'sms_tariffplan_domestic' ) {
+ 				$output .= _ocs_report_tariffplan( $id[2]);
+ 			}
++			else if ( $node['attr']['rel'] == 'voice_tariffplan_international' ) {
++				$output .= _ocs_report_tariffplan_intl( $id[2]);
++			}
++			else {
++//				dpm( $node['attr']['rel'], 'attr');
++			}
+ 		}
+ 	}
+ 
+@@ -83,7 +90,7 @@ function _ocs_report_children( $node, $depth=0)
+ 	return $output;
+ }
+ 
+-function _ocs_report_tariffplan( $tariffplanNid)
++function _ocs_report_tariffplan_intl( $tariffplanNid)
+ {
+ 	$output = '';
+ 	$node = node_load( $tariffplanNid);
+@@ -91,30 +98,150 @@ function _ocs_report_tariffplan( $tariffplanNid)
+ 	$field = field_info_instances( 'node', $node->type);
+ 	$output .= _ocs_report_get_fields( $field, $node);
+ 
++	if ( isset($node->field_ref_numberingplan_idd['und'][0]['nid'])) {
++		// list time table
++		//$output .= _ocs_report_timetable( $node->field_ref_timetable_domestic['und'][0]['nid']);
++
++		// list numbering plan
++		$output .= _ocs_report_numberingplan_intl( $tariffplanNid, $node->field_ref_numberingplan_idd['und'][0]['nid']);
++
++		// list tariff
++		//$output .= _ocs_report_tariff_mapping( $tariffplanNid);
++	}
++	return $output;
++}
++
++function _ocs_report_tariffplan( $tariffplanNid)
++{
++	$output = '';
++	$node = node_load( $tariffplanNid);
++	//dpm( $node, $node->title);
++	$field = field_info_instances( 'node', $node->type);
++	$output .= _ocs_report_get_fields( $field, $node);
++
+ 	if ( isset($node->field_ref_numberingplan_domestic['und'][0]['nid'])) {
+-		// list tariff plan
+ 		/*
+ 		$view = views_get_view('list_numberingplan_domestic_ratinggroup');
+ 		$view->set_display('panel_displayall');
+ 		$view->set_arguments(array( $node->field_ref_numberingplan_domestic['und'][0]['nid'], $tariffplanNid));
+ 		$output .= $view->render();
+ 		*/
+-		$output .= _ocs_report_numberingplan( $tariffplanNid, $node->field_ref_numberingplan_domestic['und'][0]['nid']);
+-
+ 		// list time table
+ 		$output .= _ocs_report_timetable( $node->field_ref_timetable_domestic['und'][0]['nid']);
+ 
++		// list numbering plan
++		$output .= _ocs_report_numberingplan( $tariffplanNid, $node->field_ref_numberingplan_domestic['und'][0]['nid']);
++
+ 		// list tariff
+ 		//$output .= _ocs_report_tariff_mapping( $tariffplanNid);
+ 	}
+ 	return $output;
+ }
+ 
++function _ocs_report_numberingplan_intl( $tariffplan_nid, $numberingplan_nid)
++{
++	$node = node_load( $numberingplan_nid);
++	dpm( $node, $node->title);
++
++	$np = array();
++	foreach( $node->field_ref_idd_ratinggroup['und'] as $rg_nid) {
++		$rg = node_load( $rg_nid['nid']);
++		if ( empty( $rg)) continue;
++		//dpm( $rg, $rg->title);
++
++		$query = new EntityFieldQuery();
++		$result = $query->entityCondition('entity_type', 'node')
++			->entityCondition('bundle', 'basicrate_idd')
++			->fieldCondition( 'field_ref_tariffplan', 'nid', $tariffplan_nid)
++			->fieldCondition( 'field_rating_group', 'value', $rg->field_rating_group['und'][0]['value'])
++		//	->fieldCondition( 'field_ref_tariffplan_idd_carrier', 'nid', $rg->field_ref_carrier_mobile['und'][0]['nid'])
++			->execute();
++
++		//dpm( $result, 'result');
++
++		if ( count( $result) > 0) {
++			$map = array();
++			foreach( array_keys( $result['node']) as $rate_nid) {
++				$basicrate = node_load( $rate_nid);
++				if ( ! isset( $basicrate->field_ref_rate['und'][0]['nid'])) continue;
++
++				list( $timefactor, $rate_value) = _ocs_report_get_rate_value( $basicrate);
++
++				$map[$rg->field_ref_carrier_mobile['und'][0]['nid'] . ',' . $timefactor] = $rate_value;
++			}
++			ksort( $map);
++			//dpm( $map, 'map');
++
++			$np[json_encode( $map)][] = $rg_nid['nid'];
++		}
++	}
++
++	dpm( $np, 'map');
++
++	$field_list = array( 'field_ref_carrier_mobile', 'field_prefix', 'field_area_name', 'field_ref_type_of_call', 'field_rating_group');
++	return _ocs_report_carrier_rating( $np, $field_list);
++}
++
++function _ocs_report_carrier_rating( $np, $field_list)
++{
++	$rows = array();
++	$rg_field = null;
++	$rg_header = array();
++	foreach( $np as $key => $rg_list) {
++		$rg_output = '';
++		$rg_rows = array();
++		foreach( $rg_list as $rg_nid) {
++			$rg = node_load( $rg_nid);
++			if ( $rg_field == null) {
++				$rg_field = field_info_instances( 'node', $rg->type);
++				//dpm( $rg_field, 'rg field');
++			}
++
++			$rg_rows[] = _ocs_report_get_selected_fields_list( $rg, $field_list);
++		}
++
++		if ( empty( $rg_header )) {
++			foreach( $field_list as $name) {
++				$rg_header[] = $rg_field[$name]['label'];
++			}
++		}
++
++		// set rate 
++		//
++		$rate_rows = array();
++		$rate_key = json_decode( $key, TRUE);
++		$rate_field = null;
++		foreach( $rate_key as $key => $rate) {
++			$str = explode( ',', $rate);
++			$node = node_load( $str[0]);
++			if ( $rate_field == null) $rate_field = field_info_instances( 'node', $node->type);
++			$keys = explode( ',', $key);
++			if ( count( $keys) > 1) {		// international numbering plan 
++				$carrier = node_load( $keys[0]);
++				$rate_rows[] = array( 'data' => t( '<div class="myform report"><label>%label</label><div class="myform report value">%value</div></div>',
++							array( '%label' => $carrier->title, '%value' => $keys[1])));
++			}
++			else {
++				$rate_rows[] = array( 'data' => $key);
++			}
++			$rate_rows[] = array( 'data' => _ocs_report_get_fields( $rate_field, $node));
++		}
++		if ( empty( $rate_rows)) {
++			$rate_rows = array( 'data' => 'No rate is defined');
++		}
++
++		$rows[] = array( theme( 'table', array( 'header' => $rg_header, 'rows' => $rg_rows)), 
++				theme('item_list', array( 'items' => $rate_rows)));
++	}
++
++	return theme( 'table', array( 'rows' => $rows, 'header' => array( 'Carriers and Rating Group', 'Rate')));
++}
++
+ function _ocs_report_numberingplan( $tariffplan_nid, $numberingplan_nid)
+ {
+ 	$output = '';
+ 	$node = node_load( $numberingplan_nid);
+-	//dpm( $node, $node->title);
++	dpm( $node, $node->title);
+ 
+ 	$np = array();
+ 	$field_list = array( 'field_range_units', 'field_uom_units', 'field_charge_collection', 'field_price');
+@@ -134,30 +261,27 @@ function _ocs_report_numberingplan( $tariffplan_nid, $numberingplan_nid)
+ 			$map = array();
+ 			foreach( array_keys( $result['node']) as $rate_nid) {
+ 				$basicrate = node_load( $rate_nid);
+-				$rate = node_load( $basicrate->field_ref_rate['und'][0]['nid']);
+-				if ( empty( $rate)) continue;
+-
+-				$timefactor = node_load( $basicrate->field_ref_timetablefactors['und'][0]['nid']);
+-				$map[ $timefactor->title] = array_merge( array( 'nid' => $rate->nid), _ocs_report_get_selected_fields_list( $rate, $field_list));
+-			/*
+-				$map[ $timefactor->title] = array( 
+-					'range_units' => isset($rate->field_range_units['und'][0]['tid']) ? $rate->field_range_units['und'][0]['tid'] : null,
+-					'uom_units' => isset($rate->field_uom_units['und'][0]['tid']) ? $rate->field_uom_units['und'][0]['tid'] : null,
+-					'charge_collection' => isset($rate->field_charge_collection['und'][0]['value']) ? $rate->field_charge_collection['und'][0]['value'] : null,
+-					'price' => isset($rate->field_price['und'][0]['value']) ? $rate->field_price['und'][0]['value'] : null,
+-					);
+-					*/
+-				//dpm( $rate, $rate->title);
++				if ( ! isset( $basicrate->field_ref_rate['und'][0]['nid'])) continue;
++
++				list( $timefactor, $rate_value) = _ocs_report_get_rate_value( $basicrate);
++
++				$map[ $timefactor] = $rate_value;
+ 			}
+ 			ksort( $map);
+ 			$np[json_encode( $map)][] = $rg_nid['nid'];
+ 		}
+ 	}
+ 
+-	dpm( $np, 'map');
++	//dpm( $np, 'map');
+ 
+-	$rows = array();
+ 	$field_list = array( 'field_ref_carrier_mobile', 'field_is_samezone', 'field_area_code_of_the_callee', 'field_is_video_', 'field_rating_group');
++	return _ocs_report_carrier_rating( $np, $field_list);
++}
++
++/*
++function __a()
++{
++	$rows = array();
+ 	$rg_field = null;
+ 	$rg_header = array();
+ 	foreach( $np as $key => $rg_list) {
+@@ -190,18 +314,45 @@ function _ocs_report_numberingplan( $tariffplan_nid, $numberingplan_nid)
+ 			$rate_rows[] = array( 'data' => $key);
+ 			$rate_rows[] = array( 'data' => _ocs_report_get_fields( $rate_field, $node));
+ 		}
+-		//$rate = node_load( $rate_key['nid']);
+-		//dpm( $rate_key, 'rate');
++		if ( empty( $rate_rows)) {
++			$rate_rows = array( 'data' => 'No rate is defined');
++		}
+ 
+ 		$rows[] = array( theme( 'table', array( 'header' => $rg_header, 'rows' => $rg_rows)), 
+ 				theme('item_list', array( 'items' => $rate_rows)));
+ 	}
+ 
+-	$output .= theme( 'table', array( 'rows' => $rows));
++	$output .= theme( 'table', array( 'rows' => $rows, 'header' => array( 'Carriers and Rating Group', 'Rate')));
+ 
+ 	return $output;
+ 
+ }
++*/
++
++
++function _ocs_report_get_rate_value( $basicrate)
++{
++	$rate = node_load( $basicrate->field_ref_rate['und'][0]['nid']);
++
++	$timefactor = node_load( $basicrate->field_ref_timetablefactors['und'][0]['nid']);
++
++	// get charge collection
++	$rate_value = $rate->nid . ',' . ( isset($rate->field_range_units['und'][0]['tid']) ? $rate->field_range_units['und'][0]['tid'] : ' ') . ',' . 
++		( isset($rate->field_uom_units['und'][0]['tid']) ? $rate->field_uom_units['und'][0]['tid'] : ' ') . ',' .
++		( isset($rate->field_price['und'][0]['value']) ? $rate->field_price['und'][0]['value'] : ' ') ;
++
++	if ( isset( $rate->field_charge_collection['und'])) {
++		foreach( $rate->field_charge_collection['und'] as $charge) {
++			$charge_node = entity_load_single( 'field_collection_item', $charge['value']);
++			foreach( array( 'field_range_start', 'field_range_end', 'field_uom_amount', 'field_price_amount_float') as $f) {
++				$v = $charge_node->$f;
++				$rate_value .= (isset($v['und'][0]['value']) ? $v['und'][0]['value'] : ' ' ) . ',';
++			}
++		}
++	}
++
++	return array( $timefactor->title, $rate_value);
++}
+ 
+ function _ocs_report_tariff_mapping( $nid)
+ {
+@@ -343,16 +494,16 @@ function _ocs_report_timetable( $nid)
+ 			$slot_list[implode(', ', $str)][] = $header[$day];
+ 		}
+ 
+-		$items = array();
++		$idx = 0;
+ 		foreach( $slot_list as $slot => $day) {
+-			$items[] = array( 'data' => t('<div class="myform report"><label>%label</label><div class="myform report value">%value</div></div>',
+-				array( '%label' => implode( ', ', $day), '%value' => $slot)));
++			if ( $idx ++ == 0) 
++				$rows[] = array( array( 'data' => $key, 'rowspan' => count($slot_list)), implode( ', ', $day), $slot);
++			else
++				$rows[] = array( implode( ', ', $day), $slot);
+ 		}
+-		$rows[] = array( 'data' => $key);
+-		$rows[] = array( 'data' => theme( 'item_list', array( 'items' => $items)));
+ 	}
+ 
+-	return theme( 'item_list', array( 'items' => $rows));
++	return theme( 'table', array( 'rows' => $rows, 'header' => array('Timeband', 'Weekdays', 'Time Slots')));
+ }
+ 
+ function _ocs_report_field_cmp( $a, $b) 
+@@ -382,7 +533,7 @@ function _ocs_report_get_fields( $field, $node)
+ 		$label = $value['label'];
+ 
+ 		$value_str = '';
+-		if ( isset( $value['display']['default']['module']) && $value['display']['default']['module'] == 'field_collection') {
++		if ( isset( $v['und']) && isset( $value['display']['default']['module']) && $value['display']['default']['module'] == 'field_collection') {
+ 			$field_info = field_info_instances('field_collection_item', $value['field_name']);
+ 			//dpm( $field_info, $value['field_name']);
+ 			$field_table = array();
+@@ -428,7 +579,7 @@ function _ocs_report_get_fields( $field, $node)
+ 	return $output;
+ }
+ 
+-function _ocs_report_get_selected_fields_list( $node, $select_list)
++function _ocs_report_get_selected_fields_list( $node, $select_list, $load_value = FALSE)
+ {
+ 	$list = array();
+ 
+@@ -442,12 +593,22 @@ function _ocs_report_get_selected_fields_list( $node, $select_list)
+ 					$value[] = $v1['value'];
+ 				}
+ 				else if ( isset( $v1['nid'])) {
+-					$field_node = node_load( $v1['nid']);
+-					$value[] = $field_node->title;
++					if ( $load_value) {
++						$field_node = node_load( $v1['nid']);
++						$value[] = $field_node->title;
++					}
++					else {
++						$value[] = $v1['nid'];
++					}
+ 				}
+ 				else if ( isset( $v1['tid'])) {
+-					$term = taxonomy_term_load( $v1['tid']);
+-					$value[] = $term->name;
++					if ( $load_value) {
++						$term = taxonomy_term_load( $v1['tid']);
++						$value[] = $term->name;
++					}
++					else {
++						$value[] = $v1['tid'];
++					}
+ 				}
+ 			}
+ 		}
+diff --git a/sites/all/modules/product_catalog/product_catalog_export/export_product.inc b/sites/all/modules/product_catalog/product_catalog_export/export_product.inc
+index 40a8375..5897c08 100755
+--- a/sites/all/modules/product_catalog/product_catalog_export/export_product.inc
++++ b/sites/all/modules/product_catalog/product_catalog_export/export_product.inc
+@@ -406,7 +406,10 @@ function _get_attribute($product) {
+                       'cug_member_counter' => array('through_common_code' => FALSE, 'field' => 'field_cug_member_counter', 'field_value' => "field_cug_member_counter['und'][0]['value']", 'field_value_default' => NULL, ), 
+                       'treatment_day' => array('through_common_code' => FALSE, 'field' => 'field_treatment_day', 'field_value' => "field_treatment_day['und'][0]['value']", 'field_value_default' => NULL), 
+                       'treatment_price' => array('through_common_code' => FALSE, 'field' => 'field_treatment_price_amount', 'field_value' => "field_treatment_price_amount['und'][0]['value']", 'field_value_default' => 0), 
+-                      'contract_period' => array('through_common_code' => FALSE, 'field' => 'field_contract_period‎', 'field_value' => "field_contract_period‎['und'][0]['value']", 'field_value_default' => 0), 
++                      'contract_period' => array('through_common_code' => FALSE, 'field' => 'field_contract_period‎', 'field_value' => "field_contract_period‎['und'][0]['value']", 'field_value_default' => 0), 
++                      'expire_date' => array('through_common_code' => FALSE, 'field' => 'field_expire_date', 'field_value' => "field_expire_date['und'][0]['value']", 'field_value_default' => 0), 
++                      'expire_date_type' => array('through_common_code' => TRUE, 'field' => 'field_expire_date_type', 'field_value' => "field_expire_date_type['und'][0]['tid']", 'field_value_default' => NULL), 
++                      
+                 );
+ 
+     $result_attribute_general = _get_result($reqArray, $product);
+diff --git a/sites/all/modules/product_catalog/product_catalog_form/handler_alter.inc b/sites/all/modules/product_catalog/product_catalog_form/handler_alter.inc
+index 959a611..148d5ed 100755
+--- a/sites/all/modules/product_catalog/product_catalog_form/handler_alter.inc
++++ b/sites/all/modules/product_catalog/product_catalog_form/handler_alter.inc
+@@ -627,7 +627,11 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
+ 
+         case 'counter_node_form' :
+             $counterTypeTerm = current(taxonomy_get_term_by_name($form_state['counter_type'], 'countertype'));
+-            $form['field_weight_for_unittransfer']['#type'] = 'hidden';
++            $form['field_weight_for_unittransfer']['#type'] = 'hidden';
++            
++            dsm($form, 'form');
++            dsm($form_state, 'form_state');
++            
+             // Edit
+             if (isset($form['nid']['#value'])) {
+                 $form['field_counter_id']['und']['#disabled'] = TRUE;
+@@ -772,7 +776,8 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
+             unset($form['field_parent_node']);
+             unset($form['field_weight']);
+             _unset_menu_items($form, $form_id);
+-            break;
++            break;
++            /*
+         case 'counter_node_form' :
+             unset($form['field_parent_node']);
+             unset($form['field_weight']);
+@@ -791,8 +796,9 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
+ 
+             $form['actions']['submit']['#submit'][] = '_common_counter_submit_handler';
+             $form['actions']['submit']['#submit'][] = 'product_catalog_form_form_redirect_handler';
+-            break;
+-
++            break;
++            */
++            
+         case 'simpleproductoffering_node_form' :
+             if (isset($form['field_r_prodofferingrel']))
+                 unset($form['field_r_prodofferingrel']);
