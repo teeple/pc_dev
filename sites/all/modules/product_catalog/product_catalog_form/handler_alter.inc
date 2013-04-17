@@ -1158,7 +1158,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
               $form['field_thismonth_accu_counter']['#type'] = 'hidden';
 
             } else {// edit
-						  $depositSchemeNode = node_load($depositSchemeFactorNode->field_ref_depositscheme['und'][0]['nid']);
+			  $depositSchemeNode = node_load($depositSchemeFactorNode->field_ref_depositscheme['und'][0]['nid']);
               $serviceDomainTid = $depositSchemeNode->field_service_domain['und'][0]['tid'];
               
               $isDefaultFactor = $form_state['build_info']['args'][0]->field_is_default_factor['und'][0]['value'];
@@ -1206,25 +1206,10 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
               
             }
             
-            //filter calltype based on service domain
-            $view = views_get_view('list_calltype');
-            $view -> set_display('panel_pane_1');
-            $view -> set_arguments(array('0' => $serviceDomainTid));
-            $view -> execute();
-
-            $options = array();
-            //$options['_none'] = '- None -';
-            
-            foreach ($view->result as $item) {
-                $options[$item->tid] = $item->taxonomy_term_data_name 
-                                    . '[' 
-                                    . $item->field_field_sub_group1[0]['raw']['value']
-                                    . ','
-                                    . $item->field_field_sub_group2[0]['raw']['value']
-                                    . ']';
-            }
+            //calltype
+            $options = _get_call_type_options();
             $form['field_ref_type_of_call_mul']['und']['#options'] = $options;
-               
+             
             $form['field_ref_thres_counter_acc']['#prefix'] = '<div id="deposit_counter_set">';
             $form['field_ref_thresholdscheme']['#prefix'] = '</div>';
             
@@ -2290,4 +2275,24 @@ function _alter_field_action_price_factors(&$form, &$form_state) {
      }
      */
     unset($form['field_action_price_factor_type']);
+}
+
+function _get_call_type_options(){
+    //filter calltype based on service domain
+    $view = views_get_view('list_calltype');
+    $view -> set_display('panel_pane_1');
+    //$view -> set_arguments(array('0' => $serviceDomainTid));
+    $view -> execute();
+
+    $options = array();
+    //$options['_none'] = '- None -';
+    //dsm($view->result);
+    foreach ($view->result as $item) {
+        $str = $item->taxonomy_term_data_name . ' [';
+        $str .= isset($item->taxonomy_term_data_field_data_field_service_domain_name)?$item->taxonomy_term_data_field_data_field_service_domain_name:'Not defined';
+        $str .= ','. $item->field_field_sub_group1[0]['raw']['value'] . ',' . $item->field_field_sub_group2[0]['raw']['value'] . ']';
+        $options[$item->tid] = $str;
+    }
+    
+    return $options;
 }
