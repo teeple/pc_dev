@@ -1206,6 +1206,25 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
               
             }
             
+            //filter calltype based on service domain
+            $view = views_get_view('list_calltype');
+            $view -> set_display('panel_pane_1');
+            $view -> set_arguments(array('0' => $serviceDomainTid));
+            $view -> execute();
+
+            $options = array();
+            //$options['_none'] = '- None -';
+            
+            foreach ($view->result as $item) {
+                $options[$item->tid] = $item->taxonomy_term_data_name 
+                                    . '[' 
+                                    . $item->field_field_sub_group1[0]['raw']['value']
+                                    . ','
+                                    . $item->field_field_sub_group2[0]['raw']['value']
+                                    . ']';
+            }
+            $form['field_ref_type_of_call_mul']['und']['#options'] = $options;
+               
             $form['field_ref_thres_counter_acc']['#prefix'] = '<div id="deposit_counter_set">';
             $form['field_ref_thresholdscheme']['#prefix'] = '</div>';
             

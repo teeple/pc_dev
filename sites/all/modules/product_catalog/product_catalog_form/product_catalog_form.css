@@ -134,3 +134,8 @@
 #field-charge-collection-values > tbody > tr > td > div> div>div>input{
   width:100px;
 }
+
+/* jquery multiselect width in depositschemefactors */
+#edit-field-ref-type-of-call-mul-und{
+  width:400px;
+}
