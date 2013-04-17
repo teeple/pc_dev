@@ -1,6 +1,6 @@
 <?php
 
-function _array_voucher_cardtype($exportItemNids=NULL){
+function _array_voucher_cardtype($exportItemNids=NULL, $isExternalAPI = FALSE){
 	$jsonData = array();
 	$jsonData_common = array();
 	
@@ -10,9 +10,13 @@ function _array_voucher_cardtype($exportItemNids=NULL){
 	}
 	
 	$viewResult = views_get_view_result('list_vouchercardtype', 'panel_pane_2', $exportItemNids);
-
-    foreach($viewResult as $record) {
-    	
+	
+	error_log('exportItemNids: '.$exportItemNids);
+	dsm($viewResult, 'viewResult');
+	
+	$jsonRecord_vouchers = array();
+	  foreach($viewResult as $record) {
+	  
     		$jsonRecord['id'] = isset($record->field_field_voucher_id)?$record->field_field_voucher_id[0]['rendered']['#markup']: null;
         $jsonRecord['title'] = isset($record->node_title) ? $record->node_title: null;
         $jsonRecord['price'] = !empty($record->field_field_price_amount_float) ? $record->field_field_price_amount_float[0]['raw']['value']: null;
@@ -30,9 +34,11 @@ function _array_voucher_cardtype($exportItemNids=NULL){
         if(!empty($record->field_field_valid_date_ymd_w_enddate)) {
 					$tempArr = explode(' ', $record->field_field_valid_date_ymd_w_enddate[0]['raw']['value']);
 					$validEnd = $tempArr[0].' 23:59:59';
+					
 				} else {
 				  $validEnd = '9999-12-31 23:59:59';
 				}
+				
 				$validFor = $validStart . ' ~ '. $validEnd;
 				$jsonRecord['valid_for'] = $validFor;
 				
@@ -97,9 +103,11 @@ function _array_voucher_cardtype($exportItemNids=NULL){
     } else {
       $jsonData_common['resources'] = array();
     }
-    
-    $jsonData['ifvalues'] = $jsonData_common;
-    $jsonData['vouchers'] = $jsonRecord_vouchers;
+   
+   	if(!$isExternalAPI) {
+   		$jsonData['ifvalues'] = $jsonData_common;
+   	}
+   	$jsonData['vouchers'] = $jsonRecord_vouchers;
     
 		return $jsonData;
 }

@@ -635,65 +635,51 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             $counterTypeTerm = current(taxonomy_get_term_by_name($form_state['counter_type'], 'countertype'));
             $form['field_weight_for_unittransfer']['#type'] = 'hidden';
             
-            // Edit
-            if (isset($form['nid']['#value'])) {
-                // $form['field_counter_id']['und']['#disabled'] = TRUE;
-                $form['field_scale']['und']['#disabled'] = TRUE;
-                $form['field_counter_type']['und']['#disabled'] = TRUE;
-                $form['field_service_domain']['und']['#disabled'] = TRUE;
-                $form['field_billing_type_counter']['und']['#disabled'] = TRUE;
-                $form['field_counter_unit_type']['und']['#disabled'] = TRUE;
-                //$form['field_default_usage_type']['und']['#disabled'] = TRUE;
-                
-                //후불일 경우 counter그룹에 remains 또는 threshold counter group만 선택 가능하도록
-                $billTypeTid = $form['#node']->field_billing_type_counter['und'][0]['tid'];
-                $postPaidBillTypeTerm = current(taxonomy_get_term_by_name('Postpaid','billtypecounter'));
-                
-                if($billTypeTid == $postPaidBillTypeTerm->tid){
-                    $remainsGroupTerm = current(taxonomy_get_term_by_name('REMAINS','countergroup'));
-                    $form['field_counter_group']['und']['#options'] = array(
-                        $remainsGroupTerm->tid => $remainsGroupTerm->name
-                    );
-                }
-                
-						// Create
+            // Create
+            if(!isset($form['nid']['#value'])) {
+            
+            	if($counterTypeTerm->name == 'Basic' || $counterTypeTerm->name == 'Optional') {
+	            	$viewResult = views_get_view_result('query_counter_max_id', 'panel_pane_1');
+	            	$maxCounterId = $viewResult[0] -> field_field_counter_id[0]['raw']['value'] + 1;
+	            	
+            	} else if($counterTypeTerm->name == 'Rollover') {
+	            	$viewResult = views_get_view_result('query_counter_max_id', 'panel_pane_2');
+	            	if (!empty($viewResult)) {
+	            	    $maxCounterId = $viewResult[0] -> field_field_counter_id[0]['raw']['value'] + 100;
+	            	} else {
+	            	    $maxCounterId = 1000000;
+	            	}
+            	}
+            	
+          		$form['field_counter_type']['und']['#default_value'] = $counterTypeTerm -> tid;
+          		$form['field_counter_type']['und']['#disabled'] = TRUE;
+          	  
+          	  $form['field_counter_id']['und'][0]['value']['#default_value'] = $maxCounterId;
+          	  $form['field_counter_id']['und']['#disabled'] = TRUE;
+          	  
+          	  //billtype에 따라 counter group 제한하도록 ajax handler 추가 
+          	  $form['field_counter_group']['und']['#prefix'] = '<div id="counter_group">';
+          	  $form['field_counter_group']['und']['#postfix'] = '</div>';
+          	  
+          	  $form['field_billing_type_counter']['und']['#ajax'] = array(
+          	      'callback' => 'counter_bill_type_change_callback',
+          	      'wrapper' => 'counter_group'  
+          	  );
+            	
             } else {
-                if (!empty($counterTypeTerm) && ($counterTypeTerm -> name == 'Rollover')) {
-                    $viewResult = views_get_view_result('query_counter_max_id', 'panel_pane_2');
-                    if (!empty($viewResult)) {
-                        $maxCounterId = $viewResult[0] -> field_field_counter_id[0]['raw']['value'] + 100;
-                    } else {
-                        $maxCounterId = 1000000;
-                    }
-                } else {
-                    $viewResult = views_get_view_result('query_counter_max_id', 'panel_pane_1');
-                    $maxCounterId = $viewResult[0] -> field_field_counter_id[0]['raw']['value'] + 1;
-                    
-                    //optional 카운터의 경우 선불만 가능하도록 
-                    if($counterTypeTerm->name == 'Optional'){
-                        $billTypeTerm = current(taxonomy_get_term_by_name('Prepaid','billtypecounter'));
-                        $form['field_billing_type_counter']['und']['#default_value'] = $billTypeTerm->tid;
-                        $form['field_billing_type_counter']['und']['#disabled'] = TRUE;
-                    }
-                }
-                $form['field_counter_id']['und'][0]['value']['#default_value'] = $maxCounterId;
-                $form['field_counter_id']['und']['#disabled'] = TRUE;
-
-                if (!empty($counterTypeTerm)) {
-                    $form['field_counter_type']['und']['#default_value'] = $counterTypeTerm -> tid;
-                    $form['field_counter_type']['und']['#disabled'] = TRUE;
-                }
-                
-                //billtype에 따라 counter group 제한하도록 ajax handler 추가 
-                $form['field_counter_group']['und']['#prefix'] = '<div id="counter_group">';
-                $form['field_counter_group']['und']['#postfix'] = '</div>';
-                
-                $form['field_billing_type_counter']['und']['#ajax'] = array(
-                    'callback' => 'counter_bill_type_change_callback',
-                    'wrapper' => 'counter_group'  
-                );
+	            $disabledFields = array('field_scale', 
+	            												'field_counter_type',
+	            												'field_service_domain',
+	            												'field_billing_type_counter',
+	            												'field_counter_unit_type',
+	            												'field_counter_group'
+	            									);
+            	foreach ($disabledFields as $field) {
+            		$command = '$form[\'' . $field ."']['und']['#disabled'] = TRUE;";
+            		eval($command);
+            	}
             }
-
+            
             unset($form['field_weight']);
             unset($form['field_parent_node']);
 
@@ -1992,19 +1978,36 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 }
 
 function counter_bill_type_change_callback($form,$form_state){
-    $billTypeTid = $form_state['values']['field_billing_type_counter']['und'][0]['tid'];
-    $postPaidBillTypeTerm = current(taxonomy_get_term_by_name('Postpaid','billtypecounter'));
-    
-    if($billTypeTid == $postPaidBillTypeTerm->tid){
-        $remainsGroupTerm = current(taxonomy_get_term_by_name('REMAINS','countergroup'));
-        $form['field_counter_group']['und']['#options'] = array(
-            $remainsGroupTerm->tid => $remainsGroupTerm->name
-        );
-    }
-    
+		$counterTypeTerm = taxonomy_term_load($form_state['values']['field_counter_type']['und'][0]['tid']);
+		$billTypeTerm = taxonomy_term_load($form_state['values']['field_billing_type_counter']['und'][0]['tid']);
+		
+		$counterGroupTermNames = array();
+		if($billTypeTerm->name == 'Postpaid') {
+			switch($counterTypeTerm->name) {
+				case 'Basic':
+					$counterGroupTermNames = array('REMAINS');
+					foreach($counterGroupTermNames as $termName) {
+						$term = current(taxonomy_get_term_by_name($termName, 'countergroup'));
+						$options[$term->tid] = $term->name;
+					};
+					$form['field_counter_group']['und']['#options'] = $options;
+					
+					break;
+				case 'Optional':
+					$counterGroupTermNames = array('Threshold', 'Usage');
+					foreach($counterGroupTermNames as $termName) {
+						$term = current(taxonomy_get_term_by_name($termName, 'countergroup'));
+						$options[$term->tid] = $term->name;
+					};
+					$form['field_counter_group']['und']['#options'] = $options;
+					break;
+			}
+		}
+		
     $returnStr = '<div id="counter_group">';
     $returnStr .= drupal_render($form['field_counter_group']);
     $returnStr .= '</div>';
+    
     return $returnStr;
 }
 

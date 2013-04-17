@@ -1,6 +1,6 @@
 <?php
 
-function _product_for_export($exportItemNids = NULL) {
+function _product_for_export($exportItemNids = NULL, $isExternalAPI = FALSE) {
     $retData = array();
     $retDataTmp = array();
     $productNids = array();
@@ -70,19 +70,23 @@ function _product_for_export($exportItemNids = NULL) {
         $product['usage'] = array();
 
         // $product['rating_rules'] = rating_rules_export_by_content_type('rating_rule_export_product' ,  $products[$i]->nid);
-        $product['rating_rules'] = rating_rules_export_by_content_type('rating_rule_export_product', $node -> nid);
-
+        if(!$isExternalAPI) {
+           $product['rating_rules'] = rating_rules_export_by_content_type('rating_rule_export_product', $node -> nid);
+        }
+        
         $productNids[] = $node -> field_product_id['und'][0]['value'];
 
         $retDataTmp[] = $product;
     }
-
-    if (!empty($productNids)) {
-        $retData['ifvalues']['resources'] = array_values($productNids);
-    } else {
-        $retData['ifvalues']['resources'] = '';
-    }
-
+    
+    if(!$isExternalAPI) {
+	    if (!empty($productNids)) {
+	        $retData['ifvalues']['resources'] = array_values($productNids);
+	    } else {
+	        $retData['ifvalues']['resources'] = '';
+	    }
+	  }
+	  
     $retData['products'] = $retDataTmp;
 
     return $retData;
