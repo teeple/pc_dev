@@ -15,10 +15,8 @@ define( 'RATE_APLY_DV_CD_STEP', '2');
 
 function ocs_roaming_import( $form, &$form_state, $type)
 {
-    // $form['desc'] = array(
-        // '#type' => 'markup',
-        // '#markup' => '<p>Import configuration file from OCS.</p>',
-    // );
+	$selected_product_nid = isset($form_state['values']['product']) ? $form_state['values']['product'] : 0;
+	if ( $selected_product_nid) $tariff_plan_list = _ocs_roaming_get_tariff_plan( $selected_product_nid);
 
 	$form['#config_type'] = $type;
 
@@ -39,6 +37,27 @@ function ocs_roaming_import( $form, &$form_state, $type)
         '#title' => 'URL to get roaming configuration from RMS',
         '#markup' => '<br><p>' . $method . ' ' . $url . '</p>',
     );
+
+	$form['delete'] = array(
+		'#type' => 'radios', 
+		'#title' => 'Delete all existing data',
+		'#options' => array( 0 => 'No', 1 => 'Yes'),
+		'#default_value' => 0,
+	);
+
+	$form['reset'] = array(
+		'#type' => 'radios', 
+		'#title' => 'Reset all existing data',
+		'#options' => array( 0 => 'No', 1 => 'Yes'),
+		'#default_value' => 0,
+	);
+
+	$response = drupal_http_request( $url, array(
+		'method' => $method,
+		'headers' => array('Content-Type' => 'application/json', 'Accept' => 'application/json'),
+		'timeout'=>5));
+	dpm( $url, 'url');
+	dpm( $response, 'response');
 
 	if ( $type == 'tariff') {
 		$terms = ocs_get_terms('PrdType');
@@ -64,38 +83,70 @@ function ocs_roaming_import( $form, &$form_state, $type)
 		if ( count( $result) > 0) {
 			$prd_list = array();
 			foreach(  array_keys( $result['node']) as $nid) {
-				$node = node_load( $nid);
-				$prd_list[$nid] = $node->title;
+				// find the product which as roaming tariff plan
+				$tariff_plan = _ocs_roaming_get_tariff_plan( $nid);
+				if ( count( $tariff_plan) > 0) {
+					$node = node_load( $nid);
+					$prd_list[$nid] = $node->title;
+					if ( $selected_product_nid == 0) {
+						$selected_product_nid = $nid;
+						$tariff_plan_list = $tariff_plan;
+					}
+				}
 			}
 
 			$form['product'] = array(
 				'#type' => 'select',
 				'#title' => 'Product',
 				'#options' => $prd_list,
+				'#default_value' => $selected_product_nid,
+				'#attributes' => array('class' => array('myform')),
+				'#ajax' => array(
+					'callback' => 'ocs_ajax_select_roaming_product',
+					'wrapper' => 'ocs_ajax_select_roaming_product_div',
+					),
 			);
 		}
+
+		// get start date list from API result
+		$start_date_list = array();
+		$tariff_list = json_decode( $response->data, TRUE);
+		foreach( $tariff_list as $partner => $tariffs) {
+			foreach( $tariffs as $tariff) {
+				list( $plmn, $calltype) = _ocs_roaming_get_plmn_calltype( $tariff);
+				$start_date_list[ $tariff['VALD_STRT_DT']][] = t('@a:@b:@c', array( '@a' => $partner, '@b' => $plmn, '@c' => $calltype));
+			}
+		}
+		dpm( $start_date_list, 'start date list');
+
+		dpm( $tariff_plan_list, 'tariff plan list');
+
+		$form['tariff_plan'] = array(
+			'#type' => 'fieldset',
+			'#title' => 'Roaming Tariff Plans ',
+			'#prefix' => '<div id="ocs_ajax_select_roaming_product_div">',
+			'#suffix' => '</div>',
+			'#attributes' => array('class' => array('myform')),
+		);
+
+		foreach( array_keys( $start_date_list) as $date) {
+			$form['tariff_plan']['VOICE:'.$date] = array(
+				'#type' => 'select',
+				'#title' => 'VOICE '.$date,
+				'#options' => $tariff_plan_list,
+//				'#description' => 'Tariff plan shall be applied from ' . $date,
+			);
+			$form['tariff_plan']['SMS:'.$date] = array(
+				'#type' => 'select',
+				'#title' => 'SMS '.$date,
+				'#options' => $tariff_plan_list,
+			);
+			$form['tariff_plan']['markup:'.$date] = array(
+				'#markup' => '<br>',
+			);
+		}
+
 	}
-
-	$form['delete'] = array(
-		'#type' => 'radios', 
-		'#title' => 'Delete all existing data',
-		'#options' => array( 0 => 'No', 1 => 'Yes'),
-		'#default_value' => 0,
-	);
-
-	$form['reset'] = array(
-		'#type' => 'radios', 
-		'#title' => 'Reset all existing data',
-		'#options' => array( 0 => 'No', 1 => 'Yes'),
-		'#default_value' => 0,
-	);
-
-	$response = drupal_http_request( $url, array(
-		'method' => $method,
-		'headers' => array('Content-Type' => 'application/json', 'Accept' => 'application/json'),
-		'timeout'=>5));
-	dpm( $url, 'url');
-	dpm( $response, 'response');
 
 	/*
 	global $json_country;
@@ -108,9 +159,15 @@ function ocs_roaming_import( $form, &$form_state, $type)
     $form['actions'] = array('#type' => 'actions');
 
 	if ( $response->code == 200) {
-		$form['response'] = array(
-			'#type' => 'textarea',
+		$form['data'] = array(
+			'#type' => 'fieldset',
 			'#title' => 'API Return Result',
+			'#collapsible' => TRUE, 
+			'#collapsed' => FALSE,
+		);
+
+		$form['data']['response'] = array(
+			'#type' => 'textarea',
 			'#rows' => 20,
 			'#default_value' => $response->data,
 	//		'#default_value' => $json[$type],
@@ -145,35 +202,6 @@ function ocs_roaming_import_validate( $form, &$form_state)
     if ( $values['op'] == 'Update Configuration') {
 		if ( $form['#config_type'] == 'tariff') {
 
-			// check if it has tariff plan
-			$query = new EntityFieldQuery();
-			$result = $query->entityCondition('entity_type', 'node')
-				->entityCondition('bundle', 'tariffplan')
-				->fieldCondition('field_ref_product', 'nid', $values['product'])
-				->execute();
-
-			if ( count( $result) > 0) {
-				/* get terms */
-				$terms = ocs_get_terms('TPL_DEFAULT_TREE_MOBILE');
-				$tree_tid = array();
-				foreach( $terms as $tid => $term) {
-					$tree_tid[$term->name] = $tid;
-				}
-
-				foreach( array_keys( $result['node']) as $nid) {
-					$tp = node_load( $nid);
-					if ( $tp->field_ref_tree_tid['und'][0]['value'] == $tree_tid['Voice'] ) {
-						$form_state['#voice_tariffplan'] = $tp;
-						if ( ! isset( $tp->field_ref_roaming_plan['und'][0]['nid']))
-							form_set_error( 'product', 'Roaming plan is not defined for Voice tariff plan ' . $tp->title);
-					}
-					if ( $tp->field_ref_tree_tid['und'][0]['value'] == $tree_tid['SMS'] ) {
-						$form_state['#sms_tariffplan'] = $tp;
-						if ( ! isset( $tp->field_ref_roaming_plan['und'][0]['nid']))
-							form_set_error( 'product', 'Roaming plan is not defined for SMS tariff plan ' . $tp->title);
-					}
-				}
-			}
 
 			if ( ! isset( $form_state['#voice_tariffplan'])) 
 				form_set_error( 'product', 'Voice tariff plan is not defined.');
@@ -184,7 +212,37 @@ function ocs_roaming_import_validate( $form, &$form_state)
 	}
 }
 
+function _ocs_roaming_get_tariff_plan( $product_nid)
+{
+	// check if it has tariff plan
+	$query = new EntityFieldQuery();
+	$result = $query->entityCondition('entity_type', 'node')
+		->entityCondition('bundle', 'tariffplan')
+		->fieldCondition('field_ref_product', 'nid', $product_nid)
+		->execute();
 
+	$tariff_plan_list = array();
+
+	if ( count( $result) > 0) {
+		/* get terms */
+		$terms = ocs_get_terms('TPL_DEFAULT_TREE_MOBILE');
+		$tree_tid = array();
+		foreach( $terms as $tid => $term) {
+			$tree_tid[$term->name] = $tid;
+		}
+
+		foreach( array_keys( $result['node']) as $nid) {
+			$tp = node_load( $nid);
+			if ( $tp->field_ref_tree_tid['und'][0]['value'] == $tree_tid['Voice'] 
+				 || $tp->field_ref_tree_tid['und'][0]['value'] == $tree_tid['SMS'] ) {
+				$tariff_plan_list[$nid] = $tp->title;
+			}
+		}
+	}
+
+	return $tariff_plan_list;
+
+}
 
 /*
     submit OCS configuration
@@ -535,6 +593,52 @@ function _ocs_roaming_save_tariff( $delete, $reset, $json, $tariff, $sms_tariff)
 	return TRUE;
 }
 
+function _ocs_roaming_get_plmn_calltype( $rec)
+{
+	$plmn = $calltype = NULL;
+
+	if ( $rec['IOCLL_DV_CD'] == '2') { // incoming call
+		if ( $rec['FTR_CD'] == RoamingRSMS || $rec['FTR_CD'] == RoamingSMS) {
+			$plmn = 'Incoming';
+			$calltype = 'ROAMING_SMS_RECEIVE';
+		}
+		else {
+			$plmn = 'Incoming';
+			$calltype = 'ROAMING_RECEIVE_CALL';
+		}
+	}
+	else {
+		if ( $rec['FTR_CD'] == RoamingHCC ) {
+			$plmn = 'HPLMN';
+			$calltype = 'ROAMING_HOME_CALL';
+		}
+		else if ( $rec['FTR_CD'] == RoamingIVC ) {
+			$plmn = 'Other PLMN';
+			$calltype = 'ROAMING_OTHER_COUNTRY';
+		}
+		else if ( $rec['FTR_CD'] == RoamingLVC ) {
+			$plmn = 'VPLMN';
+			$calltype = 'ROAMING_CALL_TO_NATIONAL';
+		}
+		else if ( $rec['FTR_CD'] == RoamingRSMS ) {
+			$plmn = 'Incoming';
+			$calltype = 'ROAMING_SMS_RECEIVE';
+		}
+		else if ( $rec['FTR_CD'] == RoamingSMS ) {
+			$plmn = 'Outgoing SMS';
+			$calltype = 'ROAMING_SMS_SENT';
+		}
+		else if ( $rec['FTR_CD'] == RoamingGPRS ) {
+			// TODO implement roaming GPRS
+//			drupal_set_message( 'Roaming GPRS : Not implmented ', 'error');
+		}
+		else {
+			drupal_set_message( 'Warning : invalid FTR_CD ' . $rec['FTR_CD'], 'error');
+		}
+	}
+
+	return array( $plmn, $calltype);
+}
 
 function _batch_build_save_roaming_tariff_op( $env, $key, $records, $operation_details, &$context)
 {
@@ -560,49 +664,8 @@ function _batch_build_save_roaming_tariff_op( $env, $key, $records, $operation_d
 				continue;
 			}
 
-			$plmn = '';
-			if ( $rec['IOCLL_DV_CD'] == '2') { // incoming call
-				if ( $rec['FTR_CD'] == RoamingRSMS || $rec['FTR_CD'] == RoamingSMS) {
-					$plmn = 'Incoming';
-					$calltype = 'ROAMING_SMS_RECEIVE';
-				}
-				else {
-					$plmn = 'Incoming';
-					$calltype = 'ROAMING_RECEIVE_CALL';
-				}
-			}
-			else {
-				if ( $rec['FTR_CD'] == RoamingHCC ) {
-					$plmn = 'HPLMN';
-					$calltype = 'ROAMING_HOME_CALL';
-				}
-				else if ( $rec['FTR_CD'] == RoamingIVC ) {
-					$plmn = 'Other PLMN';
-					$calltype = 'ROAMING_OTHER_COUNTRY';
-				}
-				else if ( $rec['FTR_CD'] == RoamingLVC ) {
-					$plmn = 'VPLMN';
-					$calltype = 'ROAMING_CALL_TO_NATIONAL';
-				}
-				else if ( $rec['FTR_CD'] == RoamingRSMS ) {
-					$plmn = 'Incoming';
-					$calltype = 'ROAMING_SMS_RECEIVE';
-				}
-				else if ( $rec['FTR_CD'] == RoamingSMS ) {
-					$plmn = 'Outgoing SMS';
-					$calltype = 'ROAMING_SMS_SENT';
-				}
-				else if ( $rec['FTR_CD'] == RoamingGPRS ) {
-					// TODO implement roaming GPRS
-					drupal_set_message( 'Roaming GPRS : Not implmented for ' . $key, 'error');
-					continue;
-				}
-				else {
-					drupal_set_message( 'Warning : invalid FTR_CD ' . $rec['FTR_CD'], 'error');
-					$stop = TRUE;
-					continue;
-				}
-			}
+			list( $plmn, $calltype) = _ocs_roaming_get_plmn_calltype( $rec);
+			if ( empty( $plmn)) continue;
 
 			//dpm( $plmn);
 
@@ -841,5 +904,11 @@ function _ocs_roaming_get_rate( $rate_code)
 	}
 
 	return NULL;
+}
+
+// ajax handler
+function ocs_ajax_select_roaming_product($form, &$form_state)
+{
+	    return $form['tariff_plan'];
 }
 
