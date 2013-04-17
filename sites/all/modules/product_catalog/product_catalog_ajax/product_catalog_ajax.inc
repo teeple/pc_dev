@@ -700,8 +700,8 @@ function load_required_js_css_before_ajax_load(){
         drupal_add_css($jQuery_ui_multiselect_path. '/jquery-ui-multiselect-widget/jquery.multiselect.filter.css');
         */
         $jQuery_ui_multiselect_path = libraries_get_path('jquery_ui_multiselect');
-        drupal_add_js($jQuery_ui_multiselect_path.'/jquery.multiselect.js');
-        drupal_add_css($jQuery_ui_multiselect_path.'/jquery.multiselect.css');
+        drupal_add_js($jQuery_ui_multiselect_path.'/js/jquery_ui_multiselect.js');
+        //drupal_add_css($jQuery_ui_multiselect_path.'/jquery.multiselect.css');
     }
 }
 
