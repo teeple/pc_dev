@@ -6,7 +6,9 @@
     attach: function(context, settings) {
       $('select.jquery-ui-multiselect', context).each(function(index) {
         var multiselectSettings = $.parseJSON($(this).attr('data-jquery-ui-multiselect'));
+        console.log(multiselectSettings);
         $(this).multiselect(multiselectSettings);
+        
       });
     }
   }

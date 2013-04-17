@@ -40,6 +40,7 @@ $.widget("ui.multiselect", {
 		selectedContainerOnLeft: true,
 		width: null,
 		height: null,
+		single: false,
 		nodeComparator: function(node1,node2) {
 			var text1 = node1.text(),
 			    text2 = node2.text();
@@ -53,6 +54,7 @@ $.widget("ui.multiselect", {
 		this.element.hide();
 		this.id = this.element.attr("id");
 		this.container = $('<div class="ui-multiselect ui-helper-clearfix ui-widget"></div>').insertAfter(this.element);
+		this.container.css('clear','both');
 		this.count = 0; // number of currently selected options
 		this.selectedContainer = $('<div class="selected"></div>');
 		if (this.options.selectedContainerOnLeft) {
@@ -71,7 +73,7 @@ $.widget("ui.multiselect", {
 
 		var that = this;
 
-		var width = this.options.width;
+		var width = this.options.width + 1;
 		if (!width) {
 			width = this.element.width();
 		}
@@ -269,6 +271,12 @@ $.widget("ui.multiselect", {
 		return clone;
 	},
 	_setSelected: function(item, selected) {
+		if(selected == true && this.options.single == true){
+			if(this.selectedList.children('.ui-element').length > 0){
+				alert('Only 1 Item is allowed!');
+				return false;
+			}
+		}
 		var temp = item.data('optionLink').attr('selected', selected);
 		var parent = temp.parent();
 		temp.detach().appendTo(parent);
@@ -392,13 +400,14 @@ $.widget("ui.multiselect", {
 		var that = this;
 		elements.click(function() {
 			var item = that._setSelected($(this).parent().removeClass('ui-draggable'), true);
-			that.count += 1;
-			that._updateCount();
-
-			// Prevent extra clicks from triggering bogus add events, if a user
-			// tries clicking during the removal process.
-			$(this).unbind('click');
-
+			if(item != false){
+				that.count += 1;
+				that._updateCount();
+	
+				// Prevent extra clicks from triggering bogus add events, if a user
+				// tries clicking during the removal process.
+				$(this).unbind('click');
+			}
 			return false;
 		});
 
