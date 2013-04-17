@@ -994,7 +994,10 @@ function view_get_field_value($view , $field_name , $record)
 						}
 						if(get_field_type_string($field_name) == 'list_text')
 						{
-							$value = $field_handler->field_info['settings']['allowed_values'][$value];
+							if(array_key_exists($value , $field_handler->field_info['settings']['allowed_values']))
+							{
+								$value = $field_handler->field_info['settings']['allowed_values'][$value];
+							}
 						}
 
 						if(get_field_type_string($field_name) == 'list_boolean')

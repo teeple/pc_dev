@@ -530,6 +530,7 @@ function product_catalog_form_node_validate($node, $form, &$form_state) {
             break;
 
         case 'depositschemefactors_node_form' :
+        
             // create
             if (!isset($form['nid']['#value'])) {
                 $ref_depositscheme = $form_state['build_info']['args'][0] -> field_ref_depositscheme['und'][0]['nid'];
@@ -545,6 +546,12 @@ function product_catalog_form_node_validate($node, $form, &$form_state) {
                     form_set_error('Deposit factors name should be unique');
                 }
             }
+            
+            if($form_state['values']['field_ref_thres_counter_acc']['und'][0]['nid'] == $form_state['values']['field_ref_thres_counter_limit']['und'][0]['nid']) {
+	            drupal_set_message("Accumulating and Limit Counter should be different");
+	            form_set_error('Accumulating and Limit Counter should be different');
+            }
+            
             break;
     }
 
