@@ -2082,4 +2082,251 @@ function deposit_counter_callback($form,$form_state) {
 	$options['_none'] = '- None -';
 	foreach ($view->result as $item) {
 			// $options[$item->nid] = view_get_field_value_by_label($view, 'Title', $item);
-			$options[$item->nid] = $item -> node_title. '[' . $item->field_field_counter_unit_type[0]['rendere
+			$options[$item->nid] = $item -> node_title. '[' . $item->field_field_counter_unit_type[0]['rendered']['#title'] . ',' . $item->field_field_counter_id[0]['rendered']['#markup'] . ']';
+	}
+	$form['field_ref_thres_counter_acc']['und']['#options'] = $options;
+	$form['field_ref_thres_counter_limit']['und']['#options'] = $options;
+	
+//	$renderStr = '<div id="deposit_counter_set">';
+	$renderStr .= drupal_render($form['field_ref_thres_counter_acc']);
+	$renderStr .= drupal_render($form['field_ref_thres_counter_limit']);
+//	$renderStr .= '</div>';
+
+	$form_state['rebuild'] = TRUE;
+	
+	return $renderStr;
+}
+
+function roaming_options_callback_carrier($form,$form_state){
+    $roamingCountryNid = $form_state['values']['field_ref_roaming_country']['und'][0]['nid'];
+    $view = views_get_view('list_roaming_carrier');
+    $view->set_display('panel_pane_3');
+    $view->set_arguments(array('0' => $roamingCountryNid));
+    $view->execute(); 
+    foreach($view->result as $item){
+        $options[$item->nid] = $item->node_title;
+    } 
+    $form['field_ref_roaming_carrier']['und']['#options'] = $options;
+    $renderStr = '<div id="custom_roaming_ratinggroup_carrier">';
+    $renderStr .= drupal_render($form['field_ref_roaming_carrier']);
+    $renderStr .= '</div>';
+    
+    return $renderStr;
+    //$commands[] = ajax_command_replace("#custom_roaming_ratinggroup_carrier", $renderStr);
+    //return array('#type' => 'ajax', '#commands' => $commands);
+}
+
+function roaming_options_callback_zone($form,$form_state){
+    $roamingCarrierNid = $form_state['values']['field_ref_roaming_carrier']['und'][0]['nid'];
+    $roamingTypeTid = $form_state['values']['field_ref_roaming_type']['und'][0]['tid'];
+    $roamingTypeTerm = taxonomy_term_load($roamingTypeTid);
+    switch($roamingTypeTerm->name){
+       case 'Other PLMN':
+           $options = array();
+           $options['_none'] = '- None -';
+           
+           $zoneView = views_get_view('list_roaming_zone');
+           $zoneView->set_display('selection');
+           $zoneView->set_arguments(array('0' => $roamingCarrierNid));
+           $zoneView->execute(); 
+           foreach($zoneView->result as $item){
+               $options[$item->nid] = $item->node_title;
+           } 
+           $form['field_roaming_zone']['und']['#options'] = $options;
+           break;
+       default:
+           unset($form['field_roaming_zone']);
+           break;
+    }
+    
+    $renderStr = '<div id="custom_roaming_ratinggroup_zone">';
+    $renderStr .= drupal_render($form['field_roaming_zone']);
+    $renderStr .= '</div>'; 
+   
+    return $renderStr;
+    //$commands[] = ajax_command_replace("#custom_roaming_ratinggroup", $renderStr);
+    //return array('#type' => 'ajax', '#commands' => $commands);
+}
+
+// prdcounterlist에 있는 counter list를 리턴한다.
+// 
+function _get_existing_counter_list($productNid) {
+
+    $view = views_get_view('list_prdcounterlist');
+    $view -> set_display('panel_pane_2');
+    $view -> set_arguments(array('0' => $productNid));
+    $view -> execute();
+
+    $counterList = array();
+
+    foreach ($view->result as $record) {
+        $existingCounterList[] = view_get_field_value_by_label($view, 'qtabConfigNid', $record);
+    }
+
+    $args[0] = join('+', $existingCounterList);
+
+    $view = views_get_view('query_list_counter');
+    $view -> set_display('panel_pane_3');
+    $view -> set_arguments($args);
+    $view -> execute();
+
+    $retArray = array();
+    foreach ($view->result as $record) {
+    		$retArray[$record -> nid] = view_get_field_value_by_label($view, 'PHP', $record);
+    		// $retArray[$record -> nid] = '';
+        
+     }
+
+    return $retArray;
+}
+
+function _get_available_counter_list($productNid, $existingCounterNids) {
+    
+    $product = node_load($productNid);
+
+    $term_billing_type_product = taxonomy_term_load($product -> field_billing_type['und'][0]['tid']);
+    $term_product_type = taxonomy_term_load($product -> field_product_type['und'][0]['tid']);
+
+    $args = array();
+
+    // counter type (Basic ,Optional or all)
+    /*
+    if ($term_product_type -> name == 'Main') {
+        $args[0] = 'all';
+    } else {
+        $temp1Term = taxonomy_get_term_by_name('Optional', 'countertype');
+        $temp2Term = taxonomy_get_term_by_name('Rollover', 'countertype');
+        $args[0] =  current($temp1Term) -> tid . '+' .  current($temp2Term) -> tid;
+    }
+    */
+    
+    // counter type : 모든 counter가 보이도록 함
+    $temp1Term = taxonomy_get_term_by_name('Optional', 'countertype');
+    $temp2Term = taxonomy_get_term_by_name('Rollover', 'countertype');
+    $args[0] =  current($temp1Term) -> tid . '+' .  current($temp2Term) -> tid;
+    // $args[0] = 'all';
+    
+    // service domain
+    $args[1] = $product -> field_service_type_of_provider['und'][0]['tid'];
+
+    if ($term_billing_type_product -> name == 'Hybrid' || $term_billing_type_product -> name == 'Postpaid') {
+        $args[2] = 'all';
+        
+    } else {
+        $term_billing_type_counter = taxonomy_get_term_by_name($term_billing_type_product -> name, 'billtypecounter');
+        $args[2] =  current($term_billing_type_counter) -> tid;
+        
+    }
+
+    if (isset($existingCounterNids)) {
+        $args[3] = join('+', $existingCounterNids);
+    }
+
+    $view = views_get_view('query_list_counter');
+    $view -> set_display('panel_pane_1');
+    $view -> set_arguments($args);
+    $view -> execute();
+
+    $retArray = array();
+    foreach ($view->result as $record) {
+    	$retArray[$record -> nid] = view_get_field_value_by_label($view, 'PHP', $record);
+    }
+
+    return $retArray;
+}
+
+function ajax_example_add_more_add_one($form, $form_state) {
+    return $form['names_fieldset'];
+}
+
+function ajax_example_add_more_remove_one() {
+    $form_state['num_names']++;
+    $form_state['rebuild'] = TRUE;
+}
+
+function _alter_field_action_price_factors(&$form, &$form_state) {
+
+    if (isset($form['nid']['#value'])) {//Edit
+        $form_state['rule_nid'] = $form_state['build_info']['args'][1]['rule_nid'];
+        $form_state['price_type'] = $form_state['build_info']['args'][1]['price_type'];
+    }
+
+    $priceType = $form_state['price_type'];
+    $rule = node_load($form_state['rule_nid']);
+
+    $array_unset_items = array();
+    $array_required = array();
+
+    switch($priceType) {
+        case 'CHARGE' :
+            $array_unset_items = array('field_allow_start', 'field_allow_interval', 'field_allow_interval_unit', 'field_threshold', 'field_threshold_unit', 'field_ref_counter');
+            $array_required = array('field_range_start', 'field_range_end', 'field_range_units');
+
+            // action price ��� �ы�..
+            // �����吏�린 ���吏�����ы� ��� ��
+            /*
+             if(!isset($form['nid']['#value'])) { //create
+             if( count($rule->field_ref_action_charge) == 0){ //define constraint
+             $form['field_range_start']['und'][0]['value']['#default_value'] = 0;
+             $form['field_range_start']['und'][0]['value']['#disabled'] = TRUE;
+             }else{
+             $temp = end($rule->field_ref_action_charge['und']);
+             $last = node_load($temp['nid']);
+
+             $form['field_range_start']['und'][0]['value']['#default_value'] = $last->field_range_end['und'][0]['value'];
+             $form['field_range_start']['und'][0]['value']['#disabled'] = TRUE;
+             $form['field_range_units']['und']['#value'] = $last->field_range_units['und'][0]['tid'];
+             $form['field_range_units']['und']['#disabled'] = TRUE;
+             $form['field_uom_units']['und']['#value'] = $last->field_uom_units['und'][0]['tid'];
+             $form['field_uom_units']['und']['#disabled'] = TRUE;
+             $form['field_price_units']['und']['#value'] = $last->field_price_units['und'][0]['tid'];
+             $form['field_price_units']['und']['#disabled'] = TRUE;
+             }
+             }
+             */
+            break;
+        case 'DISCOUNT' :
+            $array_unset_items = array('field_allow_start', 'field_allow_interval', 'field_allow_interval_unit', 'field_ref_counter', );
+            break;
+        case 'ALLOWANCE' :
+            $array_unset_items = array('field_range_start', 'field_range_end', 'field_range_units');
+            $array_required = array('field_allow_start', 'field_allow_interval', 'field_allow_interval_unit', );
+            break;
+    }
+
+    foreach ($array_unset_items as $item) {
+        unset($form[$item]);
+    }
+    //required ��� �ы� �쇰� 二쇱��쇰� 留�� ��
+    /*
+     foreach($array_required as $item) {
+     $form[$item]['und'][0]['value']['#required'] = TRUE;
+     $form[$item]['und']['#required'] = TRUE;
+     }
+     */
+    unset($form['field_action_price_factor_type']);
+}
+
+function _get_call_type_options(){
+    //filter calltype based on service domain
+    $view = views_get_view('list_calltype');
+    $view -> set_display('panel_pane_1');
+    //$view -> set_arguments(array('0' => $serviceDomainTid));
+    $view -> execute();
+
+    $options = array();
+    //$options['_none'] = '- None -';
+    //dsm($view->result);
+    foreach ($view->result as $item) {
+        $str = $item->taxonomy_term_data_name . ' [';
+        $str .= isset($item->taxonomy_term_data_field_data_field_service_domain_name)?$item->taxonomy_term_data_field_data_field_service_domain_name:'Not defined';
+        $str .= ',';
+        $str .= isset($item->field_field_sub_group1[0]['raw']['value'])?$item->field_field_sub_group1[0]['raw']['value']:'Not defined';
+        $str .= ',';
+        $str .= isset($item->field_field_sub_group2[0]['raw']['value'])?$item->field_field_sub_group2[0]['raw']['value']:'Not defined';
+        $str .= ']';
+        $options[$item->tid] = $str;
+    }
+    
+    return $options;
+}
