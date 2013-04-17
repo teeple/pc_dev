@@ -749,11 +749,14 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             _unset_menu_items($form, $form_id);
 
             break;
-        case 'conditionwhocustomerlevel_node_form' :
         case 'conditionwhatcalltype_node_form' :
             unset($form['field_parent_node']);
             unset($form['field_weight']);
             _unset_menu_items($form, $form_id);
+            
+            //calltype
+            $options = _get_call_type_options();
+            $form['field_ref_type_of_call']['und']['#options'] = $options;
             break;
             
         case 'simpleproductoffering_node_form' :
@@ -885,6 +888,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
         case 'conditionwherecalleezone_node_form' :
         case 'conditionwhereclientip_node_form' :
         		$form['field_rating_operation']['#type'] = 'hidden';
+            break;
         case 'conditionwhatusagetypefactors_node_form' :
         case 'conditionwhatnonusagetypefactors_node_form' :
         case 'conditionwhatcustomfactors_node_form' :
@@ -914,6 +918,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
         case 'conditioncommoncounterfactors_node_form' :
         case 'conditionwhatqos_node_form' :
         case 'tvchannel_node_form' :
+        case 'conditionwhocustomerlevel_node_form' :
             _unset_menu_items($form, $form_id);
             unset($form['field_weight']);
             unset($form['field_parent_node']);
@@ -1111,6 +1116,11 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             foreach($view->result as $item){
                 $newOptions[$item->nid] = $item->node_title;
             }
+            
+            //calltype
+            $options = _get_call_type_options();
+            $form['field_ref_type_of_call']['und']['#options'] = $options;
+            
             $form['field_ref_carrier_mobile']['und']['#options'] = $newOptions;
             break;
         case 'basicrate_idd_node_form' :
@@ -1249,6 +1259,10 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
                 $newOptions[$item->nid] = $item->node_title;
             }
             $form['field_ref_carrier_mobile']['und']['#options'] = $newOptions;
+            
+            //calltype
+            $options = _get_call_type_options();
+            $form['field_ref_type_of_call']['und']['#options'] = $options;
             
             //for select all area
             $form['field_ref_area_code_from']['und']['#options']['_none'] = 'All';
@@ -1524,7 +1538,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             $form['field_ref_roaming_type']['und']['#options']['_none'] = 'SMS Outgoing';
             
             _unset_menu_items($form, $form_id);
-             $carrierOptions = array();
+            $carrierOptions = array();
             $carrierOptions['_none'] = ' - None -';
             $zoneOptions = array();
             $zoneOptions['_none'] = ' - None -';
@@ -1574,6 +1588,10 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
                        break;
                 }
             } 
+           
+            //calltype
+            $options = _get_call_type_options();
+            $form['field_ref_type_of_call']['und']['#options'] = $options;
                 
             // add custom id for ajax
             $form['field_ref_roaming_carrier']['und']['#prefix'] = '<div id="custom_roaming_ratinggroup_carrier">';
@@ -1707,6 +1725,10 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             }
             
             $form['field_ref_numberspecialrate']['und']['#options'] = $options;
+            
+            //calltype
+            $options = _get_call_type_options();
+            $form['field_ref_type_of_call']['und']['#options'] = $options;
             break;
         case 'numberspecialrate_node_form' :
             unset($form['field_parent_node']);
@@ -1837,8 +1859,13 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
         case 'lifecyclescheme_node_form' :
             _unset_menu_items($form, $form_id);
             break;
-        case 'packetdynamicl4_node_form' :
         case 'packetdynamicchargingrule_node_form' :
+            //calltype
+            $options = _get_call_type_options();
+            $form['field_sid_type_of_call']['und']['#options'] = $options;
+             _unset_menu_items($form, $form_id);
+            break;
+        case 'packetdynamicl4_node_form' :
         case 'packetsgsn_node_form':
         case 'packetpredefinedchargingrule_node_form' :
         case 'roaming_country_node_form' :
@@ -2290,7 +2317,11 @@ function _get_call_type_options(){
     foreach ($view->result as $item) {
         $str = $item->taxonomy_term_data_name . ' [';
         $str .= isset($item->taxonomy_term_data_field_data_field_service_domain_name)?$item->taxonomy_term_data_field_data_field_service_domain_name:'Not defined';
-        $str .= ','. $item->field_field_sub_group1[0]['raw']['value'] . ',' . $item->field_field_sub_group2[0]['raw']['value'] . ']';
+        $str .= ',';
+        $str .= isset($item->field_field_sub_group1[0]['raw']['value'])?$item->field_field_sub_group1[0]['raw']['value']:'Not defined';
+        $str .= ',';
+        $str .= isset($item->field_field_sub_group2[0]['raw']['value'])?$item->field_field_sub_group2[0]['raw']['value']:'Not defined';
+        $str .= ']';
         $options[$item->tid] = $str;
     }
     

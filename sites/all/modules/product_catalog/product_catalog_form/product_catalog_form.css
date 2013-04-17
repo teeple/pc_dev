@@ -135,7 +135,14 @@
   width:100px;
 }
 
-/* jquery multiselect width in depositschemefactors */
+/* jquery multiselect width for call type */
 #edit-field-ref-type-of-call-mul-und{
   width:500px;
 }
+#edit-field-ref-type-of-call-und{
+  width:500px;
+}
+#edit-field-sid-type-of-call-und{
+  width:500px;
+}
+
