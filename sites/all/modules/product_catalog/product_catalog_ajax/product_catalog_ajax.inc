@@ -661,7 +661,7 @@ function load_required_js_css_before_ajax_load(){
                 array('type'=>'file','scope'=>'header','group'=>JS_DEFAULT,'everypage'=>TRUE,'weight' => 300)
             );
 				
-    	} else {
+    	} else if(!empty($paths) && $paths[0] == 'common'){
     		drupal_add_js($product_catalog_tree_path  . '/js/product_catalog_tree_context_menu_setting_Common.js',
                 array('type'=>'file','scope'=>'header','group'=>JS_DEFAULT,'everypage'=>TRUE,'weight'=>300)
             );

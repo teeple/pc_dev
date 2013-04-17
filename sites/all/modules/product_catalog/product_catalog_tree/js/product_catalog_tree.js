@@ -162,7 +162,7 @@
  
 							$.fn.unmasking();
 							
-							console.log(data);
+							//console.log(data);
 							
 							// 임시로 모두 오픈
 							// $(".product_catalog_tree").jstree('open_all');

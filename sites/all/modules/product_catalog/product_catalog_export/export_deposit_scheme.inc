@@ -26,10 +26,14 @@ function _array_deposit_scheme($exportItemNids=NULL){
                 $factor['id'] = $factorNode->nid;
                 $factor['title'] = $factorNode->title;
                 
+                // threshold unit type
+                $factor['threshold_unit_type'] = _add_commoncode($item->field_field_counter_unit_type);
+                
                 //toc
                 if(!empty($item->field_field_ref_type_of_call_mul)){
                     foreach($item->field_field_ref_type_of_call_mul as $toc){
 												$tempArray = array($toc);
+												dsm($tempArray, 'tempArray');
 												$factor['type_of_call'][] = _add_commoncode($tempArray);
                     }   
                 }else{
@@ -104,14 +108,13 @@ function _array_deposit_scheme($exportItemNids=NULL){
             $depositScheme['factors'] = $factorArray;
             
             //adjustment
-            /*
             $adjustmentList = views_get_view_result('list_depositschemeadjustment', 'panel_pane_4', $record->nid);
             
             $adjustmentArray = array();
             
             foreach($adjustmentList as $item){
                 $adjustment = array();
-                $adjustment['id'] = $item->nid;
+                // $adjustment['id'] = $item->nid;
                 if(isset($item->field_field_ref_customer_level[0]['raw']['taxonomy_term'])){
                     $adjustment['customer_level'] = _get_common_code($item->field_field_ref_customer_level[0]['raw']['taxonomy_term']);
                 }else{
@@ -125,7 +128,6 @@ function _array_deposit_scheme($exportItemNids=NULL){
                 $adjustmentArray[] = $adjustment;                
             }
             $depositScheme['adjustment'] = $adjustmentArray;
-            */
         }
         $jsonData_schemes[] = $depositScheme;
         $depositSchemeIds[] = $depositScheme['id'];

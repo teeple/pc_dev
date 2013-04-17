@@ -216,7 +216,6 @@ function edit_pane_callback($form, &$form_state) {
 
 function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
     load_required_js_css_before_ajax_load();
-    //dsm($form_id,'form id');
 
     if ((isset($form['#attributes']) && isset($form['#attributes']['class'])) && gettype($form['#attributes']['class']) == 'array') {
         $form['#attributes']['class'][] = 'myform';
@@ -359,7 +358,6 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             
             $parentNode = node_load($form['#node']->field_parent_node['und'][0]['nid']);
 	        $productNode = find_parent_product($parentNode);
-            //dsm($productNode,'product');
             $args = array(
                 '0' => $productNode->field_service_type_of_provider['und'][0]['tid'],
                 '1' => $productNode->field_service_operator['und'][0]['tid'],
@@ -371,7 +369,6 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			$tempView->set_display('panel_pane_1');
 			$tempView->set_arguments($args);
 			$tempView->execute();
-            //dsm($tempView,'view');
              
             $options = array();
     	    foreach($tempView->result as $item){
@@ -751,11 +748,14 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             _unset_menu_items($form, $form_id);
 
             break;
-        case 'conditionwhocustomerlevel_node_form' :
         case 'conditionwhatcalltype_node_form' :
             unset($form['field_parent_node']);
             unset($form['field_weight']);
             _unset_menu_items($form, $form_id);
+            
+            //calltype
+            $options = _get_call_type_options();
+            $form['field_ref_type_of_call']['und']['#options'] = $options;
             break;
             
         case 'simpleproductoffering_node_form' :
@@ -858,7 +858,11 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
                 unset($form['field_cug_member_counter']);
                 unset($form['field_short_code']);
                 unset($form['field_next_join_product']);
-
+                unset($form['field_expire_date_type']);
+                unset($form['field_expire_date']);
+                unset($form['field_field_deferred_subscriptio']);
+                unset($form['field_hlr_template_id']);
+                
             } else {
                 unset($form['field_exclusiveness']);
             }
@@ -883,6 +887,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
         case 'conditionwherecalleezone_node_form' :
         case 'conditionwhereclientip_node_form' :
         		$form['field_rating_operation']['#type'] = 'hidden';
+            break;
         case 'conditionwhatusagetypefactors_node_form' :
         case 'conditionwhatnonusagetypefactors_node_form' :
         case 'conditionwhatcustomfactors_node_form' :
@@ -912,6 +917,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
         case 'conditioncommoncounterfactors_node_form' :
         case 'conditionwhatqos_node_form' :
         case 'tvchannel_node_form' :
+        case 'conditionwhocustomerlevel_node_form' :
             _unset_menu_items($form, $form_id);
             unset($form['field_weight']);
             unset($form['field_parent_node']);
@@ -1109,6 +1115,11 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             foreach($view->result as $item){
                 $newOptions[$item->nid] = $item->node_title;
             }
+            
+            //calltype
+            $options = _get_call_type_options();
+            $form['field_ref_type_of_call']['und']['#options'] = $options;
+            
             $form['field_ref_carrier_mobile']['und']['#options'] = $newOptions;
             break;
         case 'basicrate_idd_node_form' :
@@ -1137,64 +1148,87 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             unset($form['field_ref_domestic_ratinggroup']);
             _unset_menu_items($form, $form_id);
             break;
+            
         case 'roaming_plan_node_form' :
             unset($form['field_ref_roaming_ratinggroup']);
             _unset_menu_items($form, $form_id);
             break;
+            
         case 'depositschemefactors_node_form' :
             _unset_menu_items($form, $form_id);
             $form['field_ref_depositscheme']['#type'] = 'hidden';
             $form['field_is_default_factor']['#type'] = 'hidden';
-
+            
             $depositSchemeFactorNode = node_load($form['nid']['#value']);
-
+            
             if (!isset($form['nid']['#value'])) {// create
-                $depositSchemeNode = node_load($form_state['build_info']['args'][0] -> field_ref_depositscheme['und'][0]['nid']);
-                $serviceDomainTid = $depositSchemeNode -> field_service_domain['und'][0]['tid'];
-                $form['field_thismonth_accu_counter']['#type'] = 'hidden';
+              $depositSchemeNode = node_load($form_state['build_info']['args'][0] -> field_ref_depositscheme['und'][0]['nid']);
+              $serviceDomainTid = $depositSchemeNode -> field_service_domain['und'][0]['tid'];
+              $form['field_thismonth_accu_counter']['#type'] = 'hidden';
 
             } else {// edit
+			  $depositSchemeNode = node_load($depositSchemeFactorNode->field_ref_depositscheme['und'][0]['nid']);
+              $serviceDomainTid = $depositSchemeNode->field_service_domain['und'][0]['tid'];
+              
+              $isDefaultFactor = $form_state['build_info']['args'][0]->field_is_default_factor['und'][0]['value'];
+              
+              if ($isDefaultFactor == 1) {
+                  $form['title']['#disabled'] = TRUE;
 
-                $depositSchemeNode = node_load($depositSchemeFactorNode -> field_ref_depositscheme['und'][0]['nid']);
-                $serviceDomainTid = $depositSchemeNode -> field_service_domain['und'][0]['tid'];
+                  // Only rollover counters
+                  $view = views_get_view('list_counter');
+                  $view -> set_display('panel_pane_12');
+                  $view -> set_arguments(array('0' => $serviceDomainTid));
+                  $view -> execute();
 
-                if ($form_state['build_info']['args'][0] -> field_is_default_factor['und'][0]['value'] == 1) {
-                    $form['title']['#disabled'] = TRUE;
+                  $options = array();
+                  $options['_none'] = '- None -';
+                  foreach ($view->result as $item) {
+                      $options[$item -> nid] = $item -> node_title;
+                  }
+                  $form['field_thismonth_accu_counter']['und']['#options'] = $options;
 
-                    // Only rollover counters
-                    $view = views_get_view('list_counter');
-                    $view -> set_display('panel_pane_12');
-                    $view -> set_arguments(array('0' => $serviceDomainTid));
-                    $view -> execute();
+              } else {
+                  $form['field_thismonth_accu_counter']['#type'] = 'hidden';
+              }
 
-                    $options = array();
-                    $options['_none'] = '- None -';
-                    foreach ($view->result as $item) {
-                        $options[$item -> nid] = $item -> node_title;
-                    }
-                    $form['field_thismonth_accu_counter']['und']['#options'] = $options;
-
-                } else {
-                    $form['field_thismonth_accu_counter']['#type'] = 'hidden';
-                }
+              $counterUnitType = $form_state['values']['field_counter_unit_type']['und'][0]['tid'];
+              if(empty($counterUnitType)) {
+              	$counterUnitType = $form_state['build_info']['args'][0]->field_counter_unit_type['und'][0]['tid'];
+              }
+              
+              $view = views_get_view('list_counter');
+              $view -> set_display('panel_pane_10');
+              $view -> set_arguments(array('0' => $serviceDomainTid,
+              														'1' => $counterUnitType)
+              											);
+              $view -> execute();
+              
+              $options = array();
+              $options['_none'] = '- None -';
+              foreach ($view->result as $item) {
+              		$options[$item->nid] = view_get_field_value_by_label($view, 'PHP', $item);
+              }
+              
+              $form['field_ref_thres_counter_acc']['und']['#options'] = $options;
+              $form['field_ref_thres_counter_limit']['und']['#options'] = $options;
+              
             }
-
-            // set other counters only basic, optional counters
-            $view = views_get_view('list_counter');
-            $view -> set_display('panel_pane_10');
-            $view -> set_arguments(array('0' => $serviceDomainTid));
-            $view -> execute();
-            $options = array();
-            $options['_none'] = '- None -';
             
-            dsm($view->result, 'viewresult');
-            foreach ($view->result as $item) {
-                $options[$item -> nid] = $item -> node_title;
-            }
-            $form['field_ref_thres_counter_acc']['und']['#options'] = $options;
-            $form['field_ref_thres_counter_limit']['und']['#options'] = $options;
-
+            //calltype
+            $options = _get_call_type_options();
+            $form['field_ref_type_of_call_mul']['und']['#options'] = $options;
+             
+            $form['field_ref_thres_counter_acc']['#prefix'] = '<div id="deposit_counter_set">';
+            $form['field_ref_thresholdscheme']['#prefix'] = '</div>';
+            
+            $form['field_counter_unit_type']['und']['#ajax'] = array(
+                'callback' => 'deposit_counter_callback',
+                'wrapper' => 'deposit_counter_set',
+            );
+            
             break;
+            
         case 'depositschemeadjustment_node_form' :
             _unset_menu_items($form, $form_id);
             $form['field_ref_depositscheme']['#type'] = 'hidden';
@@ -1205,7 +1239,6 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             // only for create
             //
             if (!isset($form['nid']['#value'])) {
-                //dsm($form_state,'formstate');    
                 if (isset($form_state['numberingplan_domestic_nid'])) {
                     $form['actions']['submit']['#submit'][] = '_ratinggroup_link_to_numberingplan_domestic';
                 }
@@ -1225,6 +1258,10 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
                 $newOptions[$item->nid] = $item->node_title;
             }
             $form['field_ref_carrier_mobile']['und']['#options'] = $newOptions;
+            
+            //calltype
+            $options = _get_call_type_options();
+            $form['field_ref_type_of_call']['und']['#options'] = $options;
             
             //for select all area
             $form['field_ref_area_code_from']['und']['#options']['_none'] = 'All';
@@ -1500,7 +1537,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             $form['field_ref_roaming_type']['und']['#options']['_none'] = 'SMS Outgoing';
             
             _unset_menu_items($form, $form_id);
-             $carrierOptions = array();
+            $carrierOptions = array();
             $carrierOptions['_none'] = ' - None -';
             $zoneOptions = array();
             $zoneOptions['_none'] = ' - None -';
@@ -1550,12 +1587,16 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
                        break;
                 }
             } 
+           
+            //calltype
+            $options = _get_call_type_options();
+            $form['field_ref_type_of_call']['und']['#options'] = $options;
                 
-            //add custom id for ajax
+            // add custom id for ajax
             $form['field_ref_roaming_carrier']['und']['#prefix'] = '<div id="custom_roaming_ratinggroup_carrier">';
             $form['field_ref_roaming_carrier']['und']['#postfix'] = '</div>';
              
-            //add ajax callback
+            // add ajax callback
             $form['field_ref_roaming_country']['und']['#ajax'] = array(
                 'callback' => 'roaming_options_callback_carrier',
                 'wrapper' => 'custom_roaming_ratinggroup_carrier'
@@ -1572,7 +1613,9 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
                 'callback' => 'roaming_options_callback_zone',
                 'wrapper' => 'custom_roaming_ratinggroup_zone'
             );
-            break;    
+            
+            break;
+            
         case 'actionsetbonusonrecurringcharge_node_form' :
         
             $form['field_ref_source_action']['#type'] = 'hidden';
@@ -1607,7 +1650,6 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             break;
 
         case 'actionsetcounteronbonus_node_form' :
-        		//dsm($form, 'form');
         	
             $form['field_ref_source_action']['#type'] = 'hidden';
             $productNid = $form_state['product_nid'];
@@ -1682,6 +1724,10 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             }
             
             $form['field_ref_numberspecialrate']['und']['#options'] = $options;
+            
+            //calltype
+            $options = _get_call_type_options();
+            $form['field_ref_type_of_call']['und']['#options'] = $options;
             break;
         case 'numberspecialrate_node_form' :
             unset($form['field_parent_node']);
@@ -1812,8 +1858,13 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
         case 'lifecyclescheme_node_form' :
             _unset_menu_items($form, $form_id);
             break;
-        case 'packetdynamicl4_node_form' :
         case 'packetdynamicchargingrule_node_form' :
+            //calltype
+            $options = _get_call_type_options();
+            $form['field_sid_type_of_call']['und']['#options'] = $options;
+             _unset_menu_items($form, $form_id);
+            break;
+        case 'packetdynamicl4_node_form' :
         case 'packetsgsn_node_form':
         case 'packetpredefinedchargingrule_node_form' :
         case 'roaming_country_node_form' :
@@ -1988,9 +2039,10 @@ function counter_bill_type_change_callback($form,$form_state){
 }
 
 function actionsetcounter_ajax_callback($form, &$form_state){
+    /*
     $form_state['hhhhhh'] = TRUE;
     $form_state['rebuild'] = TRUE;
-    /*
+    */
     $counterNode = node_load($form_state['values']['field_ref_counter']['und'][0]['nid']);
     $counterTypeTerm = taxonomy_term_load($counterNode->field_counter_type['und'][0]['tid']);
     
@@ -2007,9 +2059,39 @@ function actionsetcounter_ajax_callback($form, &$form_state){
         $returnStr .= '</div>';
     }
     return $returnStr;
-     */ 
 }
 
+function deposit_counter_callback($form,$form_state) {
+
+  $depositSchemeNode = node_load($form_state['build_info']['args'][0] -> field_ref_depositscheme['und'][0]['nid']);
+  $serviceDomainTid = $depositSchemeNode -> field_service_domain['und'][0]['tid'];
+
+	// set other counters only basic, optional counters
+	$view = views_get_view('list_counter');
+	$view -> set_display('panel_pane_10');
+	$view -> set_arguments(array('0' => $serviceDomainTid,
+															'1' => $form_state['values']['field_counter_unit_type']['und'][0]['tid'])
+												);
+	$view -> execute();
+	
+	$options = array();
+	$options['_none'] = '- None -';
+	foreach ($view->result as $item) {
+			// $options[$item->nid] = view_get_field_value_by_label($view, 'Title', $item);
+			$options[$item->nid] = $item -> node_title. '[' . $item->field_field_counter_unit_type[0]['rendered']['#title'] . ',' . $item->field_field_counter_id[0]['rendered']['#markup'] . ']';
+	}
+	$form['field_ref_thres_counter_acc']['und']['#options'] = $options;
+	$form['field_ref_thres_counter_limit']['und']['#options'] = $options;
+	
+//	$renderStr = '<div id="deposit_counter_set">';
+	$renderStr .= drupal_render($form['field_ref_thres_counter_acc']);
+	$renderStr .= drupal_render($form['field_ref_thres_counter_limit']);
+//	$renderStr .= '</div>';
+
+	$form_state['rebuild'] = TRUE;
+	
+	return $renderStr;
+}
 
 function roaming_options_callback_carrier($form,$form_state){
     $roamingCountryNid = $form_state['values']['field_ref_roaming_country']['und'][0]['nid'];
@@ -2047,7 +2129,6 @@ function roaming_options_callback_zone($form,$form_state){
                $options[$item->nid] = $item->node_title;
            } 
            $form['field_roaming_zone']['und']['#options'] = $options;
-           //dsm($zoneView,'view roaming_options_callback_zone');
            break;
        default:
            unset($form['field_roaming_zone']);
@@ -2220,4 +2301,28 @@ function _alter_field_action_price_factors(&$form, &$form_state) {
      }
      */
     unset($form['field_action_price_factor_type']);
+}
+
+function _get_call_type_options(){
+    //filter calltype based on service domain
+    $view = views_get_view('list_calltype');
+    $view -> set_display('panel_pane_1');
+    //$view -> set_arguments(array('0' => $serviceDomainTid));
+    $view -> execute();
+
+    $options = array();
+    //$options['_none'] = '- None -';
+    //dsm($view->result);
+    foreach ($view->result as $item) {
+        $str = $item->taxonomy_term_data_name . ' [';
+        $str .= isset($item->taxonomy_term_data_field_data_field_service_domain_name)?$item->taxonomy_term_data_field_data_field_service_domain_name:'Not defined';
+        $str .= ',';
+        $str .= isset($item->field_field_sub_group1[0]['raw']['value'])?$item->field_field_sub_group1[0]['raw']['value']:'Not defined';
+        $str .= ',';
+        $str .= isset($item->field_field_sub_group2[0]['raw']['value'])?$item->field_field_sub_group2[0]['raw']['value']:'Not defined';
+        $str .= ']';
+        $options[$item->tid] = $str;
+    }
+    
+    return $options;
 }
