@@ -22,15 +22,6 @@ function pc_voucher_services_services_resources() {
   return $resources;
 }
 
-/**
- * Check the access permission to a given views.
- *
- * @param $op
- *  String. The operation that's going to be performed.
- * @param $args
- *  Array. The arguments that will be passed to the callback.
- * @return
- */
 function pc_voucher_services_access() {
    return TRUE;
 }
@@ -43,7 +34,6 @@ function pc_voucher_services_retrieve($voucher_id) {
 	
 	if(!empty($viewResult)) {
 		$isExternalAPI = TRUE;
-		error_log('view nid:'.$viewResult[0]->nid);
 		$jsonData = _array_voucher_cardtype($viewResult[0]->nid, $isExternalAPI);
 		
 	} else {

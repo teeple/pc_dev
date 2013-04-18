@@ -13,21 +13,15 @@ function _array_voucher_cardtype($exportItemNids=NULL, $isExternalAPI = FALSE){
 		$exportItemNids = NULL;
 	}
 	
-	error_log('exportItemNids: '.$exportItemNids);
 	$args = array();
 	$args = array('0' => $exportItemNids);
 	
 	$view = views_get_view('list_vouchercardtype');
 	$view->set_display('panel_pane_2');
 	$view->set_arguments($args);
-	// $ivew->set_arguments(array('0'=>104470));
 	$view->execute();
 	
-	dsm($view, 'view');
-	
 	$viewResult = $view->result;
-	// $viewResult = views_get_view_result('list_vouchercardtype', 'panel_pane_2', '104470');
-	error_log('counter(voucher card type) : '.count($viewResult));
 	
 	$jsonRecord_vouchers = array();
 	  foreach($viewResult as $record) {
@@ -138,6 +132,7 @@ function _json_voucher_cardtype($exportItemNids=NULL) {
 	$arr[] = rating_rules_export_by_content_type_and_item_name("rating_rule_export", "list_loyaltypointfactors", $exportItemNids);
 	$arr[] = rating_rules_export_by_content_type_and_item_name("rating_rule_export", "rating_voucher_product", $exportItemNids);
 	$arr[] = rating_rules_export_by_content_type_and_item_name("rating_rule_export", "list_treenodecounterforvoucherprd", $exportItemNids);
+	
 	foreach($arr as $a)
 	{
 		foreach($a as $t => $v)
