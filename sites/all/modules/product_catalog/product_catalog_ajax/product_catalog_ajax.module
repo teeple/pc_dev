@@ -1709,7 +1709,6 @@ function product_catalog_ajax_add_content($js = NULL) {
 		    		break;
 				
     // case 'conditionwhatincomingcall':
-		// case 'conditionwhenfirstmonth':
 		// case 'conditionwhencustomerbirthday':
 		// case 'conditionwhencompanybirthday':
 		// case 'conditionwhereissamezone':

@@ -199,7 +199,6 @@
 			case 'conditionwhatmainproduct':
 			case 'conditionwhensubscriptionday':
 			case 'conditionwhenactivationday':
-			case 'conditionwhenfirstmonth':
 			case 'conditionwhencompanybirthday':
 			case 'conditionwhencustomerbirthday':
 			case 'conditionwhenstatechangedate':
@@ -721,7 +720,6 @@
 			"Holiday" : $.fn.getSubMenuAddNodeWithoutWrapper("Holiday", "conditionwhenholidayfactors"),
 			"Timeslot" : $.fn.getSubMenuAddNodeWithoutWrapper("Timeslot", "conditionwhentimeslotfactors"),
 			"Week" : $.fn.getSubMenuAddNodeWithoutWrapper("Week", "conditionwhenweekfactors"),
-			"First Month" : $.fn.getSubMenuAddNodeWithoutWrapper("First Month", "conditionwhenfirstmonth"),
 			"Calling Zone Time" : $.fn.getSubMenuAddNodeWithoutWrapper("Calling Zone Time", "conditionwhencallingzonetime")
 		};
 		return obj;
@@ -741,7 +739,6 @@
 			"Holiday" : $.fn.getSubMenuAddNodeWithoutWrapper("Holiday", "conditionwhenholidayfactors"),
 			"Timeslot" : $.fn.getSubMenuAddNodeWithoutWrapper("Timeslot", "conditionwhentimeslotfactors"),
 			"Week" : $.fn.getSubMenuAddNodeWithoutWrapper("Week", "conditionwhenweekfactors"),
-			"First Month" : $.fn.getSubMenuAddNodeWithoutWrapper("First Month", "conditionwhenfirstmonth"),
 		};
 		return obj;
 	};
