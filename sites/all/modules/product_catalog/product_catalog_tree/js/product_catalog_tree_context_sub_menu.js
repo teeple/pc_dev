@@ -217,6 +217,7 @@
 			case 'conditionwheresgsn':
 			case 'conditionwhatservicedomain':
 			case 'conditionwhatcontentprice':
+			case 'conditionwhatcalltype':
 				menus.custom_delete._disabled = false;
 				menus.custom_delete.action = function(node) {
 					$.fn.deleteNode(node);
