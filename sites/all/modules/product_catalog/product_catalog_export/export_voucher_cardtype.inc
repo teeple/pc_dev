@@ -8,8 +8,24 @@ function _array_voucher_cardtype($exportItemNids=NULL, $isExternalAPI = FALSE){
 	if(!empty($exportItemNids) && count($exportItemNids) > 1) {
 		$exportItemNids = join('+', $exportItemNids);
 	}
+	
+	if(is_array($exportItemNids) && empty($exportItemNids)) {
+		$exportItemNids = NULL;
+	}
+	
 	error_log('exportItemNids: '.$exportItemNids);
-	$viewResult = views_get_view_result('list_vouchercardtype', 'panel_pane_2', $exportItemNids);
+	$args = array();
+	$args = array('0' => $exportItemNids);
+	
+	$view = views_get_view('list_vouchercardtype');
+	$view->set_display('panel_pane_2');
+	$view->set_arguments($args);
+	// $ivew->set_arguments(array('0'=>104470));
+	$view->execute();
+	
+	dsm($view, 'view');
+	
+	$viewResult = $view->result;
 	// $viewResult = views_get_view_result('list_vouchercardtype', 'panel_pane_2', '104470');
 	error_log('counter(voucher card type) : '.count($viewResult));
 	
