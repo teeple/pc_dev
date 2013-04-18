@@ -148,7 +148,8 @@ function jquery_ui_multiselect_form_field_ui_field_edit_form_alter(&$form, $form
  * Injects the JavaScript needed to attach jQuery UI Multiselect to the widget.
  */
 function jquery_ui_multiselect_field_widget_options_select_form_alter(&$element, &$form_state, $context) {
-  if (isset($context['instance']['settings']['jquery_ui_multiselect']['enabled']) && $context['instance']['settings']['jquery_ui_multiselect']['enabled'] && $context['field']['cardinality'] != 1) {
+  //if (isset($context['instance']['settings']['jquery_ui_multiselect']['enabled']) && $context['instance']['settings']['jquery_ui_multiselect']['enabled'] && $context['field']['cardinality'] != 1) {
+    if (isset($context['instance']['settings']['jquery_ui_multiselect']['enabled']) && $context['instance']['settings']['jquery_ui_multiselect']['enabled']) {
     $element['#attached']['library'][] = array('jquery_ui_multiselect', 'jquery_ui_multiselect');
     $element['#attributes']['class'][] = 'jquery-ui-multiselect';
 
