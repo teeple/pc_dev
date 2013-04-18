@@ -9,7 +9,8 @@
  * Implements hook_field_info_alter().
  */
 function jquery_ui_multiselect_field_info_alter(&$info) {
-  $supported_fields = array('list_float', 'list_integer', 'list_text', 'taxonomy_term_reference');
+    //dsm($info,'info');
+  $supported_fields = array('list_float', 'list_integer', 'list_text', 'taxonomy_term_reference','entityreference');
   // TODO: Support Entity reference, node reference, user reference fields.
   
   foreach ($supported_fields as $field) {
@@ -27,6 +28,7 @@ function jquery_ui_multiselect_field_info_alter(&$info) {
         'dividerLocation' => 0.5,
         'width' => 0, // Requires fork crdeutsch/multiselect.
         'height' => 0, // Requires fork crdeutsch/multiselect.
+        'single' => 0
       );
     }
   }
@@ -131,6 +133,12 @@ function jquery_ui_multiselect_form_field_ui_field_edit_form_alter(&$form, $form
       '#element_validate' => array('value_is_integer'),
       '#min' => 0,
     );
+    $form['instance']['settings']['jquery_ui_multiselect']['single'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Force Single'),
+      //'#description' => t("When enabled, the regular select list gets replaced by the jQuery UI Multiselect widget. Note that the widget will only show up if the field's <em>Number of values</em> setting is greater than 1."),
+      '#default_value' => isset($form['#instance']['settings']['jquery_ui_multiselect']['single']) ? $form['#instance']['settings']['jquery_ui_multiselect']['single'] : 0,
+    );
   }
 }
 
@@ -160,7 +168,7 @@ function jquery_ui_multiselect_field_widget_options_select_form_alter(&$element,
     // Remove settings that should not be passed on to JS.
     unset($settings['enabled']);
     // Make sure that boolean values are typed as boolean.
-    foreach (array('sortable', 'dragToAdd', 'searchable', 'doubleClickable', 'includeRemoveAll', 'includeAddAll', 'selectedContainerOnLeft') as $key) {
+    foreach (array('sortable', 'dragToAdd', 'searchable', 'doubleClickable', 'includeRemoveAll', 'includeAddAll', 'selectedContainerOnLeft','single') as $key) {
       $settings[$key] = (bool)$settings[$key];
     }
     // Store settings in a data- attribute for convenient retrieval.
