@@ -8,11 +8,10 @@ function _array_voucher_cardtype($exportItemNids=NULL, $isExternalAPI = FALSE){
 	if(!empty($exportItemNids) && count($exportItemNids) > 1) {
 		$exportItemNids = join('+', $exportItemNids);
 	}
-	
-	$viewResult = views_get_view_result('list_vouchercardtype', 'panel_pane_2', $exportItemNids);
-	
 	error_log('exportItemNids: '.$exportItemNids);
-	dsm($viewResult, 'viewResult');
+	$viewResult = views_get_view_result('list_vouchercardtype', 'panel_pane_2', $exportItemNids);
+	// $viewResult = views_get_view_result('list_vouchercardtype', 'panel_pane_2', '104470');
+	error_log('counter(voucher card type) : '.count($viewResult));
 	
 	$jsonRecord_vouchers = array();
 	  foreach($viewResult as $record) {
@@ -104,9 +103,7 @@ function _array_voucher_cardtype($exportItemNids=NULL, $isExternalAPI = FALSE){
       $jsonData_common['resources'] = array();
     }
    
-   	if(!$isExternalAPI) {
-   		$jsonData['ifvalues'] = $jsonData_common;
-   	}
+   	$jsonData['ifvalues'] = $jsonData_common;
    	$jsonData['vouchers'] = $jsonRecord_vouchers;
     
 		return $jsonData;
