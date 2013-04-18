@@ -1872,6 +1872,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             $options = _get_call_type_options();
             $form['field_sid_type_of_call']['und']['#options'] = $options;
              _unset_menu_items($form, $form_id);
+            //dsm($form,'form');
             break;
         case 'packetdynamicl4_node_form' :
         case 'packetsgsn_node_form':
