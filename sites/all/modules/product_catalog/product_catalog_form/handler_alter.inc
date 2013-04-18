@@ -873,7 +873,10 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
         case 'conditionwherecallerzone_node_form' :
         case 'conditionwherecalleezone_node_form' :
         case 'conditionwhereclientip_node_form' :
-        		$form['field_rating_operation']['#type'] = 'hidden';
+            _unset_menu_items($form, $form_id);
+            unset($form['field_weight']);
+            unset($form['field_parent_node']);
+        	$form['field_rating_operation']['#type'] = 'hidden';
             break;
         case 'conditionwhatusagetypefactors_node_form' :
         case 'conditionwhatnonusagetypefactors_node_form' :
