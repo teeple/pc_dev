@@ -1153,8 +1153,30 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
               $serviceDomainTid = $depositSchemeNode -> field_service_domain['und'][0]['tid'];
               $form['field_thismonth_accu_counter']['#type'] = 'hidden';
 
+							$options = array();
+							$options['_none'] = '- None -';
+							              
+              $counterUnitType = $form_state['values']['field_counter_unit_type']['und'][0]['tid'];
+              if(!empty($counterUnitType)) {
+	              $view = views_get_view('list_counter');
+	              $view -> set_display('panel_pane_10');
+	              $view -> set_arguments(array('0' => $serviceDomainTid,
+	              														'1' => $counterUnitType)
+	              											);
+	              $view -> execute();
+	              
+	              foreach ($view->result as $item) {
+	              		$options[$item->nid] = view_get_field_value_by_label($view, 'PHP', $item);
+	              }
+	            }
+	            
+              $form['field_ref_thres_counter_acc']['und']['#options'] = $options;
+              $form['field_ref_thres_counter_limit']['und']['#options'] = $options;
+              
+              
+
             } else {// edit
-			  $depositSchemeNode = node_load($depositSchemeFactorNode->field_ref_depositscheme['und'][0]['nid']);
+			  			$depositSchemeNode = node_load($depositSchemeFactorNode->field_ref_depositscheme['und'][0]['nid']);
               $serviceDomainTid = $depositSchemeNode->field_service_domain['und'][0]['tid'];
               
               $isDefaultFactor = $form_state['build_info']['args'][0]->field_is_default_factor['und'][0]['value'];
