@@ -38,7 +38,7 @@ $.widget("ui.multiselect", {
 		hide: 'slideUp',
 		dividerLocation: 0.6,
 		selectedContainerOnLeft: true,
-		width: null,
+		width: null, 
 		height: null,
 		single: false,
 		nodeComparator: function(node1,node2) {
