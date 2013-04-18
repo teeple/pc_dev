@@ -10,8 +10,8 @@
  */
 function jquery_ui_multiselect_field_info_alter(&$info) {
     //dsm($info,'info');
-  $supported_fields = array('list_float', 'list_integer', 'list_text', 'taxonomy_term_reference','entityreference');
-  // TODO: Support Entity reference, node reference, user reference fields.
+  $supported_fields = array('list_float', 'list_integer', 'list_text', 'taxonomy_term_reference','entityreference','node_reference');
+  // TODO: Support user reference fields.
   
   foreach ($supported_fields as $field) {
     if (isset($info[$field])) {
