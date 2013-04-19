@@ -746,6 +746,15 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             $form['field_ref_product']['#type'] = 'hidden';
             _unset_menu_items($form, $form_id);
             $options = _get_product_exclusive_list($form['#node']->field_ref_product['und'][0]['nid']);
+            
+            //remove already set as exclusive product
+            $productNode = node_load($form['#node']->field_ref_product['und'][0]['nid']);
+            if(isset($productNode->field_exclusiveness['und'])){
+                foreach($productNode->field_exclusiveness['und'] as $item){
+                    unset($options['list'][$item['nid']]);
+                }
+            }
+            
             $form['field_ref_target_product']['und']['#options'] = $options['list'];
             break;
         case 'simpleproductoffering_node_form' :
