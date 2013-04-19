@@ -746,7 +746,6 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             $form['field_ref_product']['#type'] = 'hidden';
             _unset_menu_items($form, $form_id);
             $options = _get_product_exclusive_list($form['#node']->field_ref_product['und'][0]['nid']);
-            unset($options[$form['#node']->field_ref_product['und'][0]['nid']]);
             $form['field_ref_target_product']['und']['#options'] = $options;
             break;
         case 'simpleproductoffering_node_form' :
@@ -2404,6 +2403,6 @@ function _get_product_exclusive_list($productNid){
     foreach($viewResult as $item) {
             $options[$item->nid] = view_get_field_value_by_label($view, 'PHP', $item);
     }
-
+    unset($options[$productNid]);
     return $options;
 }

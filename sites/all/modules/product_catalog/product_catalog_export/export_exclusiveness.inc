@@ -6,9 +6,9 @@ function _json_exclusiveness($exportItemNids=NULL){
 	if(!empty($exportItemNids) && count($exportItemNids) > 1) {
 		$exportItemNids = join('+', $exportItemNids);
 	}
-	
+	dsm($exportItemNids,'nid');
 	$viewResult = views_get_view_result('list_exclusiveness', 'panel_pane_1', $exportItemNids);
-	
+	dsm($viewResult,'result');
 	foreach($viewResult as $record) {
 		$product = array();	
 		$exclusive_product_nids = array();
