@@ -859,7 +859,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
                 $options = _get_product_exclusive_list($form['nid']['#value']);
                 $form['field_exclusiveness']['und']['#options'] = $options;
 				
-				$product = node_load($productNid);
+				$product = node_load($form['nid']['#value']);
                 $svcDomainTid = $product->field_service_type_of_provider['und'][0]['tid'];
                 $billingTypeTid = $product->field_billing_type['und'][0]['tid'];
                 $svcOperatorTid = $product->field_service_operator['und'][0]['tid'];
