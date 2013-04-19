@@ -69,6 +69,9 @@ function _product_for_export($exportItemNids = NULL, $isExternalAPI = FALSE) {
         $product['nonusage'] = $nonUsage;
         $product['usage'] = array();
 
+        //relationship
+        $product['relationship'] = _get_product_relationship($nid);
+        
         // $product['rating_rules'] = rating_rules_export_by_content_type('rating_rule_export_product' ,  $products[$i]->nid);
         if(!$isExternalAPI) {
            $product['rating_rules'] = rating_rules_export_by_content_type('rating_rule_export_product', $node -> nid);
@@ -90,6 +93,34 @@ function _product_for_export($exportItemNids = NULL, $isExternalAPI = FALSE) {
     $retData['products'] = $retDataTmp;
 
     return $retData;
+}
+
+function _get_product_relationship($nid){
+    $viewResult = views_get_view_result('list_exclusiveness', 'panel_pane_1', $nid);
+    $relationship = array(); 
+    
+    foreach($viewResult as $record) {
+        //exclusiveness
+        foreach($record->field_field_exclusiveness as $item){
+            $exclusive_product_ids[] = $item['raw']['node']->field_product_id['und'][0]['safe_value'];
+        }
+        //exclusiveness others
+        foreach($record->field_field_exclusiveness_others as $item){
+            $exclusive_product_other_ids[] = $item['raw']['node']->field_product_id['und'][0]['safe_value'];
+        }
+        //downgrade penalty
+        $downgradePenaltyViewResult = views_get_view_result('list_product_downgrade_penalty', 'panel_pane_2', $record->nid);
+        foreach($downgradePenaltyViewResult as $item){
+            $downgrade[] = array('product_id' => $item->field_field_ref_target_product[0]['raw']['node']->field_product_id['und'][0]['safe_value'],
+                                 'penalty_amount' => $item->field_field_amount[0]['raw']['value']);
+        }
+        
+        $relationship['product_id'] = $record->field_field_product_id[0]['raw']['value'];
+        $relationship['exclusiveness'] = $exclusive_product_ids;
+        $relationship['exclusiveness_other'] = $exclusive_product_other_ids;
+        $relationship['downgrade_penalty'] = $downgrade;
+    }
+    return $relationship;
 }
 
 function _get_deposit_scheme($product) {
