@@ -742,7 +742,13 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             $options = _get_call_type_options();
             $form['field_ref_type_of_call']['und']['#options'] = $options;
             break;
-            
+        case 'prddowngradepenalty_node_form':
+            $form['field_ref_product']['#type'] = 'hidden';
+            _unset_menu_items($form, $form_id);
+            $options = _get_product_exclusive_list($form['#node']->field_ref_product['und'][0]['nid']);
+            unset($options[$form['#node']->field_ref_product['und'][0]['nid']]);
+            $form['field_ref_target_product']['und']['#options'] = $options;
+            break;
         case 'simpleproductoffering_node_form' :
         
             if (isset($form['field_r_prodofferingrel']))
@@ -851,44 +857,23 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
                 unset($form['field_field_deferred_subscriptio']);
                 unset($form['field_hlr_template_id']);
                 
-                $product = node_load($form['nid']['#value']);
-                $svcDomainTid = $product->field_service_type_of_provider['und'][0]['tid'];
-                $billingTypeTid = $product->field_billing_type['und'][0]['tid'];
-                $svcOperatorTid = $product->field_service_operator['und'][0]['tid'];
-                $customerTypeTid = $product->field_customer_type['und'][0]['tid'];
-                
-                $args = array('0' => $svcDomainTid,
-                						'1' => $svcOperatorTid,
-                						'2' => $billingTypeTid,
-                						'3' => $customerTypeTid );
-                
-                $view = views_get_view('list_product_in_exclusive');
-                $view->set_display('panel_pane_2');
-                $view->set_arguments($args);
-                $view->execute();
-                
-                $viewResult = $view->result;
-                
-								$options = array();
-								foreach($viewResult as $item) {
-										$options[$item->nid] = view_get_field_value_by_label($view, 'PHP', $item);
-								}
-								$form['field_exclusiveness']['und']['#options'] = $options;
-								
-								$view = views_get_view('list_product_in_exclusive');
-								$view->set_display('panel_pane_3');
-								$view->set_arguments($args);
-								$view->execute();
-								
-								$viewResult = $view->result;
-								
-								// $options = array('- None -');
-								$options = array();
-								foreach($viewResult as $item) {
-										$options[$item->nid] = view_get_field_value_by_label($view, 'PHP', $item);
-								}
-								
-								$form['field_exclusiveness_others']['und']['#options'] = $options;
+                $options = _get_product_exclusive_list($form['nid']['#value']);
+                $form['field_exclusiveness']['und']['#options'] = $options;
+				
+				$view = views_get_view('list_product_in_exclusive');
+				$view->set_display('panel_pane_3');
+				$view->set_arguments($args);
+				$view->execute();
+				
+				$viewResult = $view->result;
+				
+				// $options = array('- None -');
+				$options = array();
+				foreach($viewResult as $item) {
+						$options[$item->nid] = view_get_field_value_by_label($view, 'PHP', $item);
+				}
+				
+				$form['field_exclusiveness_others']['und']['#options'] = $options;
                 
             } else {
                 unset($form['field_exclusiveness']);
@@ -2393,5 +2378,32 @@ function _get_call_type_options(){
         $options[$item->tid] = $str;
     }
     
+    return $options;
+}
+
+function _get_product_exclusive_list($productNid){
+    $product = node_load($productNid);
+    $svcDomainTid = $product->field_service_type_of_provider['und'][0]['tid'];
+    $billingTypeTid = $product->field_billing_type['und'][0]['tid'];
+    $svcOperatorTid = $product->field_service_operator['und'][0]['tid'];
+    $customerTypeTid = $product->field_customer_type['und'][0]['tid'];
+    
+    $args = array('0' => $svcDomainTid,
+                  '1' => $svcOperatorTid,
+                  '2' => $billingTypeTid,
+                  '3' => $customerTypeTid );
+    
+    $view = views_get_view('list_product_in_exclusive');
+    $view->set_display('panel_pane_2');
+    $view->set_arguments($args);
+    $view->execute();
+    
+    $viewResult = $view->result;
+    
+    $options = array();
+    foreach($viewResult as $item) {
+            $options[$item->nid] = view_get_field_value_by_label($view, 'PHP', $item);
+    }
+
     return $options;
 }
