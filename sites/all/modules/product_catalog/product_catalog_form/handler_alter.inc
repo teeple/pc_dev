@@ -823,8 +823,8 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 
             $firstPathName = current(explode('/', current_path()));
             if ($firstPathName == 'relation') {
-                //$form['title']['#type'] = 'hidden';
-                $form['title']['#disabled'] = TRUE;
+                $form['title']['#type'] = 'hidden';
+                //$form['title']['#disabled'] = TRUE;
                 
                 unset($form['field_description']);
                 unset($form['field_offering_status']);
