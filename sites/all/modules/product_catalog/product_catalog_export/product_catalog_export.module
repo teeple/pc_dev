@@ -19,10 +19,8 @@ module_load_include('inc', 'product_catalog_export', 'export_lifecycle_scheme');
 module_load_include('inc', 'product_catalog_export', 'export_ocs_config');
 module_load_include('inc', 'product_catalog_export', 'export_message');
 module_load_include('inc', 'product_catalog_export', 'export_tvchannel');
-module_load_include('inc', 'product_catalog_export', 'export_exclusiveness');
 module_load_include('inc', 'product_catalog_export', 'export_unittransfer_scheme');
 module_load_include('inc', 'product_catalog_export', 'export_lifecycle_status');
-
 
 function export_product($export_item_nids=NULL){
     $data = _product_for_export($export_item_nids);
@@ -95,9 +93,5 @@ function export_lifecycle_status($export_item_nids=NULL){
 
 function export_tvchannel($export_item_nids=NULL){
     return _json_tvchannel($export_item_nids);
-}
-
-function export_exclusiveness($export_item_nids=NULL){
-	return _json_exclusiveness($export_item_nids);
 }
 ?>
