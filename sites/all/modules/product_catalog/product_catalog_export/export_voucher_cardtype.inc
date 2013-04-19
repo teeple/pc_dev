@@ -16,12 +16,22 @@ function _array_voucher_cardtype($exportItemNids=NULL, $isExternalAPI = FALSE){
 	$args = array();
 	$args = array('0' => $exportItemNids);
 	
-	$view = views_get_view('list_vouchercardtype');
-	$view->set_display('panel_pane_2');
-	$view->set_arguments($args);
+	$view = views_get_view('list_vouchercardtype_export');
+	$view->set_display('panel_pane_1');
+	$view->set_arguments(array('0'=>'104470'));
+	
 	$view->execute();
 	
+	/*
+	$view = views_get_view('list_simple_product_offering');
+	$view->set_display('panel_pane_8');
+	$view->set_arguments(array('0'=>'e2e_songodog9000'));
+	$view->execute();
+	*/
+	
 	$viewResult = $view->result;
+	
+	error_log('count : '.count($viewResult));
 	
 	$jsonRecord_vouchers = array();
 	  foreach($viewResult as $record) {

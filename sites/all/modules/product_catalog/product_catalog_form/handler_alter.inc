@@ -882,6 +882,8 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
                 
             } else {
                 unset($form['field_exclusiveness']);
+                unset($form['field_exclusiveness_others']);
+                
             }
             
             $form['field_cug_group_type']['#type'] = 'hidden';
