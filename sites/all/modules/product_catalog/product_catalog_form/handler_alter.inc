@@ -859,7 +859,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
                 $options = _get_product_exclusive_list($form['nid']['#value']);
                 $form['field_exclusiveness']['und']['#options'] = $options['list'];
 				
-				$view = views_get_view('list_product_in_exclusive');
+                $view = views_get_view('list_product_in_exclusive');
 				$view->set_display('panel_pane_3');
 				$view->set_arguments($options['args']);
 				$view->execute();
@@ -2389,11 +2389,14 @@ function _get_product_exclusive_list($productNid){
     $svcOperatorTid = $product->field_service_operator['und'][0]['tid'];
     $customerTypeTid = $product->field_customer_type['und'][0]['tid'];
     
+    $options = array();
+    
     $args = array('0' => $svcDomainTid,
                   '1' => $svcOperatorTid,
                   '2' => $billingTypeTid,
                   '3' => $customerTypeTid );
     $options['args'] = $args;
+    
     $view = views_get_view('list_product_in_exclusive');
     $view->set_display('panel_pane_2');
     $view->set_arguments($args);
@@ -2401,7 +2404,6 @@ function _get_product_exclusive_list($productNid){
     
     $viewResult = $view->result;
     
-    $options = array();
     foreach($viewResult as $item) {
             $options['list'][$item->nid] = view_get_field_value_by_label($view, 'PHP', $item);
     }
