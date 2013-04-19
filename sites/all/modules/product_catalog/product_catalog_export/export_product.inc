@@ -115,7 +115,7 @@ function _get_product_relationship($nid){
                                  'penalty_amount' => $item->field_field_amount[0]['raw']['value']);
         }
         
-        $relationship['product_id'] = $record->field_field_product_id[0]['raw']['value'];
+        //$relationship['product_id'] = $record->field_field_product_id[0]['raw']['value'];
         $relationship['exclusiveness'] = $exclusive_product_ids;
         $relationship['exclusiveness_other'] = $exclusive_product_other_ids;
         $relationship['downgrade_penalty'] = $downgrade;
