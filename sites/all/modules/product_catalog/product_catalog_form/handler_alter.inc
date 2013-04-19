@@ -746,7 +746,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             $form['field_ref_product']['#type'] = 'hidden';
             _unset_menu_items($form, $form_id);
             $options = _get_product_exclusive_list($form['#node']->field_ref_product['und'][0]['nid']);
-            $form['field_ref_target_product']['und']['#options'] = $options;
+            $form['field_ref_target_product']['und']['#options'] = $options['list'];
             break;
         case 'simpleproductoffering_node_form' :
         
@@ -857,17 +857,11 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
                 unset($form['field_hlr_template_id']);
                 
                 $options = _get_product_exclusive_list($form['nid']['#value']);
-                $form['field_exclusiveness']['und']['#options'] = $options;
+                $form['field_exclusiveness']['und']['#options'] = $options['list'];
 				
-				$product = node_load($form['nid']['#value']);
-                $svcDomainTid = $product->field_service_type_of_provider['und'][0]['tid'];
-                $billingTypeTid = $product->field_billing_type['und'][0]['tid'];
-                $svcOperatorTid = $product->field_service_operator['und'][0]['tid'];
-                $customerTypeTid = $product->field_customer_type['und'][0]['tid'];
-                
 				$view = views_get_view('list_product_in_exclusive');
 				$view->set_display('panel_pane_3');
-				$view->set_arguments($args);
+				$view->set_arguments($options['args']);
 				$view->execute();
 				
 				$viewResult = $view->result;
@@ -2399,7 +2393,7 @@ function _get_product_exclusive_list($productNid){
                   '1' => $svcOperatorTid,
                   '2' => $billingTypeTid,
                   '3' => $customerTypeTid );
-    
+    $options['args'] = $args;
     $view = views_get_view('list_product_in_exclusive');
     $view->set_display('panel_pane_2');
     $view->set_arguments($args);
@@ -2409,8 +2403,9 @@ function _get_product_exclusive_list($productNid){
     
     $options = array();
     foreach($viewResult as $item) {
-            $options[$item->nid] = view_get_field_value_by_label($view, 'PHP', $item);
+            $options['list'][$item->nid] = view_get_field_value_by_label($view, 'PHP', $item);
     }
-    unset($options[$productNid]);
+    unset($options['list'][$productNid]);
+    
     return $options;
 }
