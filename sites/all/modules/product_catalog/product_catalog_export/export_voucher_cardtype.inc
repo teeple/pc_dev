@@ -140,7 +140,7 @@ function _array_voucher_cardtype($exportItemNids = NULL, $isExternalAPI = FALSE)
     } else {
         $jsonData_common['resources'] = array();
     }
-
+		
     $jsonData['ifvalues'] = $jsonData_common;
     $jsonData['vouchers'] = $jsonRecord_vouchers;
 
