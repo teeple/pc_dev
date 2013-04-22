@@ -893,6 +893,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             switch($productTypeName){
                 case 'Main':
                     $form['field_next_join_product']['#type'] = 'hidden';
+                    $form['field_next_join_confirm']['#type'] = 'hidden';
                     break;
                 default :
                 		$form['field_cug_group_type']['#type'] = 'container';

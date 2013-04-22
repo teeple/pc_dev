@@ -116,9 +116,9 @@ function _get_product_relationship($nid){
         }
         
         //$relationship['product_id'] = $record->field_field_product_id[0]['raw']['value'];
-        $relationship['exclusiveness'] = $exclusive_product_ids;
-        $relationship['exclusiveness_other'] = $exclusive_product_other_ids;
-        $relationship['downgrade_penalty'] = $downgrade;
+        if(isset($exclusive_product_ids)) $relationship['exclusiveness'] = $exclusive_product_ids;
+        if(isset($exclusive_product_other_ids)) $relationship['exclusiveness_other'] = $exclusive_product_other_ids;
+        if(isset($downgrade)) $relationship['downgrade_penalty'] = $downgrade;
     }
     return $relationship;
 }
@@ -685,6 +685,12 @@ function _get_attribute_exceptions($product) {
      ) {
      	$nextJoinProduct = node_load($product->field_next_join_product['und'][0]['nid']);
      	$retArray['next_join_product'] = $nextJoinProduct->field_product_id['und'][0]['value'];
+        if(isset($product->field_next_join_confirm['und'][0]['value'])){
+            $retArray['next_join_confirm'] = 1;
+        }else{
+            $retArray['next_join_product'] = 0;
+            
+        }
     }
     
     return $retArray;
