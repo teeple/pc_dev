@@ -1,5 +1,7 @@
 <?php
 
+define( 'TID_MOBILE', 406);
+
 function ocs_migrate_fce_numberingplan($form, &$form_state, $domestic_or_intl, $call_type)
 {
 	$category = isset($form_state['values']['category']) ? $form_state['values']['category'] : 'A';
@@ -257,6 +259,132 @@ function _load_all_call_type_terms()
     return $list;
 }
 
+function _ocs_migrate_type_of_call( $service_type, $carrier)
+{
+	if ( $service_type == 'SMS') {
+		$mapping = array(
+			'G-Mobile' => 'SMS_G_MOBILE',
+			'G_Mobile' => 'SMS_G_MOBILE',
+			'G_Mobile_53' => 'SMS_G_MOBILE',
+			'G_Mobile_97' => 'SMS_G_MOBILE',
+			'MOBICOM' => 'SMS_MOBICOM',
+			'MOBI_NEW' => 'SMS_MOBICOM',
+			'MOBI_WLL' => 'SMS_MOBICOM',
+			'MTC_WLLnew' => 'SMS_MTC',
+			'SKYTEL' => 'SMS_SKYTEL',
+			'SKY_WLL' => 'SMS_SKYTEL',
+			'UNITEL' => 'SMS_UNITEL',
+			'UNITEL_new' => 'SMS_UNITEL',
+			'UNITEL_VOIP' => 'SMS_UNITEL',
+			);
+
+		if ( isset( $mapping[$carrier])) return $mapping[$carrier];
+		dpm( $carrier, 'Undefined carrier');
+		return 'SMS_PREMIUM';
+	}
+	else if ( $service_type == 'VOICE') {
+		$mapping = array(
+				'AIRPORT' => 'MOBILE_DDD',
+				'Dornodzuuch' => 'MOBILE_DDD',
+				'eeverich' => 'MOBILE_DDD',
+				'G-Mobile' => 'MOBILE_DDD',
+				'Ganaa_Test' => 'MOBILE_DDD',
+				'Garts_1' => 'MOBILE_DDD',
+				'Garts_12' => 'MOBILE_DDD',
+				'Garts_2' => 'MOBILE_DDD',
+				'Garts_3' => 'MOBILE_DDD',
+				'Garts_4' => 'MOBILE_DDD',
+				'Garts_5' => 'MOBILE_DDD',
+				'Garts_6' => 'MOBILE_DDD',
+				'GobiInfo' => 'MOBILE_DDD',
+				'Goviin_javkhaa' => 'MOBILE_DDD',
+				'GVRMNT1' => 'MOBILE_DDD',
+				'GVRMNT2' => 'MOBILE_DDD',
+				'GVRMNT3' => 'MOBILE_DDD',
+				'G_Mobile' => 'MOBILE_DDD',
+				'G_Mobile_53' => 'MOBILE_DDD',
+				'G_Mobile_78' => 'MOBILE_DDD',
+				'G_Mobile_97' => 'MOBILE_DDD',
+				'INFO_10' => 'MOBILE_DDD',
+				'INFO_111' => 'MOBILE_DDD',
+				'INFO_12' => 'MOBILE_DDD',
+				'info_123' => 'MOBILE_DDD',
+				'INFO_12_70' => 'MOBILE_DDD',
+				'INFO_13' => 'MOBILE_DDD',
+				'INFO_14' => 'MOBILE_DDD',
+				'INFO_15' => 'MOBILE_DDD',
+				'Info_17' => 'MOBILE_DDD',
+				'Info_180' => 'MOBILE_DDD',
+				'INFO_191' => 'MOBILE_DDD',
+				'INFO_193' => 'MOBILE_DDD',
+				'INFO_195' => 'MOBILE_DDD',
+				'Info_199' => 'MOBILE_DDD',
+				'INFO_2' => 'MOBILE_DDD',
+				'INFO_3' => 'MOBILE_DDD',
+				'INFO_5' => 'MOBILE_DDD',
+				'INFO_6' => 'MOBILE_DDD',
+				'INFO_7' => 'MOBILE_DDD',
+				'INFO_8' => 'MOBILE_DDD',
+				'Info_Baganuur' => 'MOBILE_DDD',
+				'Info_Darhan' => 'MOBILE_DDD',
+				'Info_Darhan_Upd' => 'MOBILE_DDD',
+				'INFO_Darkhan_19' => 'MOBILE_DDD',
+				'Info_Dorngovi' => 'MOBILE_DDD',
+				'INFO_Dornod' => 'MOBILE_DDD',
+				'INFO_Dund_govi' => 'MOBILE_DDD',
+				'Info_Uvurhangai' => 'MOBILE_DDD',
+				'Inkomnet' => 'MOBILE_DDD',
+				'Inkomnet_1' => 'MOBILE_DDD',
+				'Khubsgul_in' => 'MOBILE_DDD',
+				'MOBICOM' => 'MOBILE_DDD',
+				'MOBINET' => 'MOBILE_DDD',
+				'MOBI_DIAL' => 'MOBILE_DDD',
+				'MOBI_INT' => 'MOBILE_IDD',
+				'MOBI_NEW' => 'MOBILE_DDD',
+				'MOBI_WLL' => 'MOBILE_DDD',
+				'MOBI_WLLnew' => 'MOBILE_DDD',
+				'MONGOLCOM' => 'MOBILE_DDD',
+				'MonSat' => 'MOBILE_DDD',
+				'MTC_DDD' => 'MOBILE_DDD',
+				'MTC_INFO' => 'MOBILE_DDD',
+				'MTC_INT' => 'MOBILE_IDD',
+				'MTC_NGN' => 'MOBILE_DDD',
+				'MTC_UB' => 'MOBILE_DDD',
+				'MTC_WLL' => 'MOBILE_DDD',
+				'MTC_WLLnew' => 'MOBILE_DDD',
+				'MTD_LLC' => 'MOBILE_DDD',
+				'Nalaih' => 'MOBILE_DDD',
+				'nalaih_in' => 'MOBILE_DDD',
+				'Orkhon_Asgat' => 'MOBILE_DDD',
+				'Orkhon_Asgat_70' => 'MOBILE_DDD',
+				'Popularcom' => 'MOBILE_DDD',
+				'RAILWAY' => 'MOBILE_DDD',
+				'RAILWAY_UB' => 'MOBILE_DDD',
+				'RAY_INT' => 'MOBILE_IDD',
+				'selenge_in' => 'MOBILE_DDD',
+				'Selenge_Info' => 'MOBILE_DDD',
+				'Skynetwork' => 'MOBILE_DDD',
+				'SKYTEL' => 'MOBILE_DDD',
+				'SKY_INT' => 'MOBILE_IDD',
+				'Sky_Voip' => 'MOBILE_DDD',
+				'SKY_WLL' => 'MOBILE_DDD',
+				'TEST' => 'MOBILE_DDD',
+				'UNITEL' => 'MOBILE_DDD',
+				'Unitel_Ayalguu' => 'MOBILE_LOCAL',
+				'UNITEL_new' => 'MOBILE_LOCAL',
+				'UNITEL_VOIP' => 'MOBILE_LOCAL',
+				'UNI_INT' => 'MOBILE_IDD',
+				'ZuunKharaa_in' => 'MOBILE_DDD',
+			);
+
+		if ( isset( $mapping[$carrier])) return $mapping[$carrier];
+		dpm( $carrier, 'Undefined carrier');
+		return 'MOBILE_LOCAL';
+	}
+
+	return NULL;
+}
+
 
 function _update_numberingplan_for_domestic_sms( $carrier_info, $target_nid, $rule_list, $check_only)
 {
@@ -286,18 +414,13 @@ function _update_numberingplan_for_domestic_sms( $carrier_info, $target_nid, $ru
 		$carrier_nid = $carrier_info[$carrier_name]['nid'];
 
         // set type of call
-        if (strcasecmp(substr($carrier_name, 0, 6), 'UNITEL') == 0) {
-            // outgoing on net voice call
-            $type_of_call = $type_of_call_terms['Outgoing On net SMS'];
-        }
-        else if (substr($carrier_name, -1, 4) == '_INT') {
-            // outgoing international voice call
-            $type_of_call = $type_of_call_terms['Outgoing Intl SMS'];
-        }
-        else {
-            $type_of_call = $type_of_call_terms['Outgoing Off net SMS'];
-        }
+		$calltype = _ocs_migrate_type_of_call( 'SMS', $carrier_name);
+		if ( ! isset( $type_of_call_terms[$calltype])) {
+			drupal_set_message( 'Undefined call type : '. $calltype, 'error');
+			continue;
+		}
 
+		$type_of_call = $type_of_call_terms[$calltype];
 		if ( isset($rating_group_list[$carrier_name][$rule['ruleName']])) {
 			// rating group exist already
             $r = $rating_group_list[$carrier_name][$rule['ruleName']];
@@ -310,6 +433,7 @@ function _update_numberingplan_for_domestic_sms( $carrier_info, $target_nid, $ru
             _set_domestic_ratinggroup( $carrier_info, $r, $np, $rule, null, $rating_group_name, $type_of_call);
 
             if ( ! $check_only) {
+				//dpm( $r, $r->title);
                 node_save( $r);
                 $nid_list = array_get_value( $np->field_ref_domestic_ratinggroup, FALSE);
 
@@ -378,6 +502,7 @@ function _update_numberingplan_for_domestic_voice( $carrier_info, $target_nid, $
     $rating_group_list = _load_all_rating_group( $target_nid, 'domestic:voice');	
 
     $type_of_call_terms = _load_all_call_type_terms();
+	dpm( $type_of_call_terms, 'call types');
 			
 	// for each user category, check if all the conditions are same
 	// category별로 분석하기 위해 잠시 사용한 코드 
@@ -493,20 +618,13 @@ function _update_numberingplan_for_domestic_voice( $carrier_info, $target_nid, $
 
 		$carrier_nid = $carrier_info[$carrier_name]['nid'];
 
-        // set type of call
-        if (strcasecmp(substr($carrier_name, 0, 6), 'UNITEL') == 0) {
-            // outgoing on net voice call
-            $type_of_call = $type_of_call_terms['Outgoing On net Voice'];
-        }
-        else if (substr($carrier_name, -1, 4) == '_INT') {
-            // outgoing international voice call
-            $type_of_call = $type_of_call_terms['Outgoing Intl Voice'];;
-        }
-        else {
-            $type_of_call = $type_of_call_terms['Outgoing Off net Voice'];
-            // 1513 outgoing off net voice call
-        }
-
+		$calltype = _ocs_migrate_type_of_call( 'VOICE', $carrier_name);
+		if ( ! isset( $type_of_call_terms[$calltype])) {
+			drupal_set_message( 'Undefined call type : '. $calltype, 'error');
+			continue;
+		}   
+				            
+		$type_of_call = $type_of_call_terms[$calltype];
 
 		if ( isset($rating_group_list[$carrier_name][$rule['rating_group']])) {
 			// rating group exist already
@@ -530,6 +648,7 @@ function _update_numberingplan_for_domestic_voice( $carrier_info, $target_nid, $
 				_set_domestic_ratinggroup( $carrier_info, $r, $np, $rule, $need_area_code ? $area_code[$i++] : null, $rating_group_name, $type_of_call);
 
 				if ( ! $check_only) {
+					//dpm( $r, $r->title);
 					node_save( $r);
 					$nid_list = array_get_value( $np->field_ref_domestic_ratinggroup, FALSE);
 
@@ -580,10 +699,8 @@ function _set_domestic_ratinggroup( $carrier_info, &$r, $np, $rule, $area_code, 
 		
 	$r->title = 'domestic_ratinggroup';
 	$r->field_ref_numberingplan_domestic['und'][0]['nid'] = $np->nid;
-	$r->field_service_type_of_provider['und'][0]['tid'] = 406;		// Mobile
+	$r->field_service_type_of_provider['und'][0]['tid'] = TID_MOBILE;		// Mobile
 	$r->field_ref_carrier_mobile['und'][0]['nid'] = $carrier_info[$carrier_name]['nid'];
-	$r->field_is_samezone['und'][0]['tid'] = 1988;		// All
-	$r->field_rating_group['und'][0]['value'] = $name;
     $r->field_ref_type_of_call['und'][0]['tid'] = $type_of_call;
 	
 	// reset area_code_to
@@ -627,6 +744,9 @@ function _update_numberingplan_for_intl_voice( $carrier_info, $target_nid, $reco
     }
 	db_set_active('default');
 
+    $terms = _load_all_call_type_terms();
+	$idd_type_of_acll = $terms['MOBILE_IDD'];
+
 	// read numbering plan
 	$np = node_load( $target_nid);
 	dpm( $np, 'target numbering plan');
@@ -664,7 +784,7 @@ function _update_numberingplan_for_intl_voice( $carrier_info, $target_nid, $reco
 
             $nid = $rating_group_list[$prefix];
             $c = node_load( $nid);
-            _set_idd_ratinggroup( $carrier_info, $c, $np, $r, $prefix);
+            _set_idd_ratinggroup( $carrier_info, $c, $np, $r, $prefix, $idd_type_of_call);
             dpm( 'idd_ratinggroup nid='.$nid. ' rg='.$c->field_rating_group['und'][0]['value']);
 
             if ( ! $check_only) {
@@ -676,7 +796,7 @@ function _update_numberingplan_for_intl_voice( $carrier_info, $target_nid, $reco
                 '@p' => $prefix, '!n' => $r['ruleName'])));
 
             $c = ocs_admin_get_new_node('idd_ratinggroup');
-            _set_idd_ratinggroup( $carrier_info, $c, $np, $r, $prefix);
+            _set_idd_ratinggroup( $carrier_info, $c, $np, $r, $prefix, $idd_type_of_call);
             //dpm( $c, 'idd_ratinggroup');
 
             if ( ! $check_only) {
@@ -689,13 +809,13 @@ function _update_numberingplan_for_intl_voice( $carrier_info, $target_nid, $reco
 	if ( ! $check_only) node_save($np);
 }
 
-function _set_idd_ratinggroup( $carrier_info, &$r, $np, $rule, $prefix)
+function _set_idd_ratinggroup( $carrier_info, &$r, $np, $rule, $prefix, $type_of_call)
 {
 	$carrier_name = $rule['intl_carrier'];
 
 	$r->title = 'idd_ratinggroup';
 	$r->field_ref_numberingplan_idd['und'][0]['nid'] = $np->nid;
-	$r->field_service_type_of_provider['und'][0]['tid'] = 406;		// Mobile
+	$r->field_service_type_of_provider['und'][0]['tid'] = TID_MOBILE;		// Mobile
 	$r->field_ref_carrier_mobile['und'][0]['nid'] = $carrier_info[$carrier_name]['nid'];
 	$r->field_prefix['und'][0]['value'] = $prefix;
 	$r->field_area_name['und'][0]['value'] = $rule['ruleName'];
@@ -703,7 +823,7 @@ function _set_idd_ratinggroup( $carrier_info, &$r, $np, $rule, $prefix)
 	
 	// set type of call
     // outgoing international voice call
-    $r->field_ref_type_of_call['und'][0]['tid'] = 1514;
+    $r->field_ref_type_of_call['und'][0]['tid'] = $type_of_call;
 }
 
 
