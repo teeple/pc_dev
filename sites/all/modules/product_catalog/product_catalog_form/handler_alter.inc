@@ -68,7 +68,6 @@ function _add_ajax_submit_callback($form_id, &$form) {
         case 'conditionwhenweekfactors_node_form' :
         case 'conditionwhencustomerbirthday_node_form' :
         case 'conditionwhencompanybirthday_node_form' :
-        case 'conditionwhenfirstmonth_node_form' :
         case 'conditionwhenstatechangedate_node_form' :
         case 'conditionwhenbillingdate_node_form' :
         case 'conditionwherecountryfactors_node_form' :
@@ -167,8 +166,8 @@ function _add_ajax_submit_callback($form_id, &$form) {
             if (isset($form['nid']['#value'])) {// edit
                 $change = TRUE;
             }
-            $paths = explode('/', current_path());
-            if($paths[0] == 'relation') $change = FALSE;
+            //$paths = explode('/', current_path());
+            //if($paths[0] == 'relation') $change = FALSE;
             break;
     }
     
@@ -326,7 +325,6 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
         case 'views_form_list_treenodecounterforvoucher_panel_pane_1' :
             unset($form['actions']);
             break;
-        case 'conditionwhenfirstmonth_node_form' :
         case 'conditionwhenactivationday_node_form' :
         case 'conditionwhensubscriptionday_node_form' :
         case 'conditionwhenactivedays_node_form' :
@@ -635,65 +633,51 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             $counterTypeTerm = current(taxonomy_get_term_by_name($form_state['counter_type'], 'countertype'));
             $form['field_weight_for_unittransfer']['#type'] = 'hidden';
             
-            // Edit
-            if (isset($form['nid']['#value'])) {
-                // $form['field_counter_id']['und']['#disabled'] = TRUE;
-                $form['field_scale']['und']['#disabled'] = TRUE;
-                $form['field_counter_type']['und']['#disabled'] = TRUE;
-                $form['field_service_domain']['und']['#disabled'] = TRUE;
-                $form['field_billing_type_counter']['und']['#disabled'] = TRUE;
-                $form['field_counter_unit_type']['und']['#disabled'] = TRUE;
-                //$form['field_default_usage_type']['und']['#disabled'] = TRUE;
-                
-                //후불일 경우 counter그룹에 remains 또는 threshold counter group만 선택 가능하도록
-                $billTypeTid = $form['#node']->field_billing_type_counter['und'][0]['tid'];
-                $postPaidBillTypeTerm = current(taxonomy_get_term_by_name('Postpaid','billtypecounter'));
-                
-                if($billTypeTid == $postPaidBillTypeTerm->tid){
-                    $remainsGroupTerm = current(taxonomy_get_term_by_name('REMAINS','countergroup'));
-                    $form['field_counter_group']['und']['#options'] = array(
-                        $remainsGroupTerm->tid => $remainsGroupTerm->name
-                    );
-                }
-                
-						// Create
+            // Create
+            if(!isset($form['nid']['#value'])) {
+            
+            	if($counterTypeTerm->name == 'Basic' || $counterTypeTerm->name == 'Optional') {
+	            	$viewResult = views_get_view_result('query_counter_max_id', 'panel_pane_1');
+	            	$maxCounterId = $viewResult[0] -> field_field_counter_id[0]['raw']['value'] + 1;
+	            	
+            	} else if($counterTypeTerm->name == 'Rollover') {
+	            	$viewResult = views_get_view_result('query_counter_max_id', 'panel_pane_2');
+	            	if (!empty($viewResult)) {
+	            	    $maxCounterId = $viewResult[0] -> field_field_counter_id[0]['raw']['value'] + 100;
+	            	} else {
+	            	    $maxCounterId = 1000000;
+	            	}
+            	}
+            	
+          		$form['field_counter_type']['und']['#default_value'] = $counterTypeTerm -> tid;
+          		$form['field_counter_type']['und']['#disabled'] = TRUE;
+          	  
+          	  $form['field_counter_id']['und'][0]['value']['#default_value'] = $maxCounterId;
+          	  $form['field_counter_id']['und']['#disabled'] = TRUE;
+          	  
+          	  //billtype에 따라 counter group 제한하도록 ajax handler 추가 
+          	  $form['field_counter_group']['und']['#prefix'] = '<div id="counter_group">';
+          	  $form['field_counter_group']['und']['#postfix'] = '</div>';
+          	  
+          	  $form['field_billing_type_counter']['und']['#ajax'] = array(
+          	      'callback' => 'counter_bill_type_change_callback',
+          	      'wrapper' => 'counter_group'  
+          	  );
+            	
             } else {
-                if (!empty($counterTypeTerm) && ($counterTypeTerm -> name == 'Rollover')) {
-                    $viewResult = views_get_view_result('query_counter_max_id', 'panel_pane_2');
-                    if (!empty($viewResult)) {
-                        $maxCounterId = $viewResult[0] -> field_field_counter_id[0]['raw']['value'] + 100;
-                    } else {
-                        $maxCounterId = 1000000;
-                    }
-                } else {
-                    $viewResult = views_get_view_result('query_counter_max_id', 'panel_pane_1');
-                    $maxCounterId = $viewResult[0] -> field_field_counter_id[0]['raw']['value'] + 1;
-                    
-                    //optional 카운터의 경우 선불만 가능하도록 
-                    if($counterTypeTerm->name == 'Optional'){
-                        $billTypeTerm = current(taxonomy_get_term_by_name('Prepaid','billtypecounter'));
-                        $form['field_billing_type_counter']['und']['#default_value'] = $billTypeTerm->tid;
-                        $form['field_billing_type_counter']['und']['#disabled'] = TRUE;
-                    }
-                }
-                $form['field_counter_id']['und'][0]['value']['#default_value'] = $maxCounterId;
-                $form['field_counter_id']['und']['#disabled'] = TRUE;
-
-                if (!empty($counterTypeTerm)) {
-                    $form['field_counter_type']['und']['#default_value'] = $counterTypeTerm -> tid;
-                    $form['field_counter_type']['und']['#disabled'] = TRUE;
-                }
-                
-                //billtype에 따라 counter group 제한하도록 ajax handler 추가 
-                $form['field_counter_group']['und']['#prefix'] = '<div id="counter_group">';
-                $form['field_counter_group']['und']['#postfix'] = '</div>';
-                
-                $form['field_billing_type_counter']['und']['#ajax'] = array(
-                    'callback' => 'counter_bill_type_change_callback',
-                    'wrapper' => 'counter_group'  
-                );
+	            $disabledFields = array('field_scale', 
+	            												'field_counter_type',
+	            												'field_service_domain',
+	            												'field_billing_type_counter',
+	            												'field_counter_unit_type',
+	            												'field_counter_group'
+	            									);
+            	foreach ($disabledFields as $field) {
+            		$command = '$form[\'' . $field ."']['und']['#disabled'] = TRUE;";
+            		eval($command);
+            	}
             }
-
+            
             unset($form['field_weight']);
             unset($form['field_parent_node']);
 
@@ -758,8 +742,23 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             $options = _get_call_type_options();
             $form['field_ref_type_of_call']['und']['#options'] = $options;
             break;
+        case 'prddowngradepenalty_node_form':
+            $form['field_ref_product']['#type'] = 'hidden';
+            _unset_menu_items($form, $form_id);
+            $options = _get_product_exclusive_list($form['#node']->field_ref_product['und'][0]['nid']);
             
+            //remove already set as exclusive product
+            $productNode = node_load($form['#node']->field_ref_product['und'][0]['nid']);
+            if(isset($productNode->field_exclusiveness['und'])){
+                foreach($productNode->field_exclusiveness['und'] as $item){
+                    unset($options['list'][$item['nid']]);
+                }
+            }
+            
+            $form['field_ref_target_product']['und']['#options'] = $options['list'];
+            break;
         case 'simpleproductoffering_node_form' :
+        
             if (isset($form['field_r_prodofferingrel']))
                 unset($form['field_r_prodofferingrel']);
             if (isset($form['field_r_productspecification']))
@@ -839,6 +838,8 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             $firstPathName = current(explode('/', current_path()));
             if ($firstPathName == 'relation') {
                 $form['title']['#type'] = 'hidden';
+                //$form['title']['#disabled'] = TRUE;
+                
                 unset($form['field_description']);
                 unset($form['field_offering_status']);
                 unset($form['field_version']);
@@ -864,8 +865,28 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
                 unset($form['field_field_deferred_subscriptio']);
                 unset($form['field_hlr_template_id']);
                 
+                $options = _get_product_exclusive_list($form['nid']['#value']);
+                $form['field_exclusiveness']['und']['#options'] = $options['list'];
+				
+                $view = views_get_view('list_product_in_exclusive');
+				$view->set_display('panel_pane_3');
+				$view->set_arguments($options['args']);
+				$view->execute();
+				
+				$viewResult = $view->result;
+				
+				// $options = array('- None -');
+				$options = array();
+				foreach($viewResult as $item) {
+						$options[$item->nid] = view_get_field_value_by_label($view, 'PHP', $item);
+				}
+				
+				$form['field_exclusiveness_others']['und']['#options'] = $options;
+                
             } else {
                 unset($form['field_exclusiveness']);
+                unset($form['field_exclusiveness_others']);
+                
             }
             
             $form['field_cug_group_type']['#type'] = 'hidden';
@@ -887,7 +908,10 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
         case 'conditionwherecallerzone_node_form' :
         case 'conditionwherecalleezone_node_form' :
         case 'conditionwhereclientip_node_form' :
-        		$form['field_rating_operation']['#type'] = 'hidden';
+            _unset_menu_items($form, $form_id);
+            unset($form['field_weight']);
+            unset($form['field_parent_node']);
+            $form['field_rating_operation']['#type'] = 'hidden';
             break;
         case 'conditionwhatusagetypefactors_node_form' :
         case 'conditionwhatnonusagetypefactors_node_form' :
@@ -1167,8 +1191,30 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
               $serviceDomainTid = $depositSchemeNode -> field_service_domain['und'][0]['tid'];
               $form['field_thismonth_accu_counter']['#type'] = 'hidden';
 
+							$options = array();
+							$options['_none'] = '- None -';
+							              
+              $counterUnitType = $form_state['values']['field_counter_unit_type']['und'][0]['tid'];
+              if(!empty($counterUnitType)) {
+	              $view = views_get_view('list_counter');
+	              $view -> set_display('panel_pane_10');
+	              $view -> set_arguments(array('0' => $serviceDomainTid,
+	              														'1' => $counterUnitType)
+	              											);
+	              $view -> execute();
+	              
+	              foreach ($view->result as $item) {
+	              		$options[$item->nid] = view_get_field_value_by_label($view, 'PHP', $item);
+	              }
+	            }
+	            
+              $form['field_ref_thres_counter_acc']['und']['#options'] = $options;
+              $form['field_ref_thres_counter_limit']['und']['#options'] = $options;
+              
+              
+
             } else {// edit
-			  $depositSchemeNode = node_load($depositSchemeFactorNode->field_ref_depositscheme['und'][0]['nid']);
+			  			$depositSchemeNode = node_load($depositSchemeFactorNode->field_ref_depositscheme['und'][0]['nid']);
               $serviceDomainTid = $depositSchemeNode->field_service_domain['und'][0]['tid'];
               
               $isDefaultFactor = $form_state['build_info']['args'][0]->field_is_default_factor['und'][0]['value'];
@@ -2023,19 +2069,36 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 }
 
 function counter_bill_type_change_callback($form,$form_state){
-    $billTypeTid = $form_state['values']['field_billing_type_counter']['und'][0]['tid'];
-    $postPaidBillTypeTerm = current(taxonomy_get_term_by_name('Postpaid','billtypecounter'));
-    
-    if($billTypeTid == $postPaidBillTypeTerm->tid){
-        $remainsGroupTerm = current(taxonomy_get_term_by_name('REMAINS','countergroup'));
-        $form['field_counter_group']['und']['#options'] = array(
-            $remainsGroupTerm->tid => $remainsGroupTerm->name
-        );
-    }
-    
+		$counterTypeTerm = taxonomy_term_load($form_state['values']['field_counter_type']['und'][0]['tid']);
+		$billTypeTerm = taxonomy_term_load($form_state['values']['field_billing_type_counter']['und'][0]['tid']);
+		
+		$counterGroupTermNames = array();
+		if($billTypeTerm->name == 'Postpaid') {
+			switch($counterTypeTerm->name) {
+				case 'Basic':
+					$counterGroupTermNames = array('REMAINS');
+					foreach($counterGroupTermNames as $termName) {
+						$term = current(taxonomy_get_term_by_name($termName, 'countergroup'));
+						$options[$term->tid] = $term->name;
+					};
+					$form['field_counter_group']['und']['#options'] = $options;
+					
+					break;
+				case 'Optional':
+					$counterGroupTermNames = array('Threshold', 'Usage');
+					foreach($counterGroupTermNames as $termName) {
+						$term = current(taxonomy_get_term_by_name($termName, 'countergroup'));
+						$options[$term->tid] = $term->name;
+					};
+					$form['field_counter_group']['und']['#options'] = $options;
+					break;
+			}
+		}
+		
     $returnStr = '<div id="counter_group">';
     $returnStr .= drupal_render($form['field_counter_group']);
     $returnStr .= '</div>';
+    
     return $returnStr;
 }
 
@@ -2324,6 +2387,36 @@ function _get_call_type_options(){
         $str .= ']';
         $options[$item->tid] = $str;
     }
+    
+    return $options;
+}
+
+function _get_product_exclusive_list($productNid){
+    $product = node_load($productNid);
+    $svcDomainTid = $product->field_service_type_of_provider['und'][0]['tid'];
+    $billingTypeTid = $product->field_billing_type['und'][0]['tid'];
+    $svcOperatorTid = $product->field_service_operator['und'][0]['tid'];
+    $customerTypeTid = $product->field_customer_type['und'][0]['tid'];
+    
+    $options = array();
+    
+    $args = array('0' => $svcDomainTid,
+                  '1' => $svcOperatorTid,
+                  '2' => $billingTypeTid,
+                  '3' => $customerTypeTid );
+    $options['args'] = $args;
+    
+    $view = views_get_view('list_product_in_exclusive');
+    $view->set_display('panel_pane_2');
+    $view->set_arguments($args);
+    $view->execute();
+    
+    $viewResult = $view->result;
+    
+    foreach($viewResult as $item) {
+            $options['list'][$item->nid] = view_get_field_value_by_label($view, 'PHP', $item);
+    }
+    unset($options['list'][$productNid]);
     
     return $options;
 }

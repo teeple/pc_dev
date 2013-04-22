@@ -22,16 +22,6 @@ function pc_product_services_services_resources() {
   return $resources;
 }
 
-/**
- * Check the access permission to a given views.
- *
- * @param $op
- *  String. The operation that's going to be performed.
- * @param $args
- *  Array. The arguments that will be passed to the callback.
- * @return
- *  Boolean. TRUE if the user is allowed to load the given view.
- */
 function pc_product_services_access() {
    return TRUE;
 }
@@ -41,7 +31,8 @@ function pc_product_services_retrieve($product_id) {
 		$viewResult = views_get_view_result('list_simple_product_offering', 'panel_pane_8', $product_id);
 		
 		if(!empty($viewResult)) {
-			$jsonData = _product_for_export($viewResult[0]->nid);
+			$isExternalAPI = TRUE;
+			$jsonData = _product_for_export($viewResult[0]->nid, $isExternalAPI);
 		} else {
 			$jsonData['PCatalog']['result_code'] = '0';
 			$jsonData['PCatalog']['result_reason'] = 'Fail';

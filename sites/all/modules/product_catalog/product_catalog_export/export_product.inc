@@ -1,6 +1,6 @@
 <?php
 
-function _product_for_export($exportItemNids = NULL) {
+function _product_for_export($exportItemNids = NULL, $isExternalAPI = FALSE) {
     $retData = array();
     $retDataTmp = array();
     $productNids = array();
@@ -69,23 +69,58 @@ function _product_for_export($exportItemNids = NULL) {
         $product['nonusage'] = $nonUsage;
         $product['usage'] = array();
 
+        //relationship
+        $product['relationship'] = _get_product_relationship($nid);
+        
         // $product['rating_rules'] = rating_rules_export_by_content_type('rating_rule_export_product' ,  $products[$i]->nid);
-        $product['rating_rules'] = rating_rules_export_by_content_type('rating_rule_export_product', $node -> nid);
-
+        if(!$isExternalAPI) {
+           $product['rating_rules'] = rating_rules_export_by_content_type('rating_rule_export_product', $node -> nid);
+        }
+        
         $productNids[] = $node -> field_product_id['und'][0]['value'];
 
         $retDataTmp[] = $product;
     }
-
-    if (!empty($productNids)) {
-        $retData['ifvalues']['resources'] = array_values($productNids);
-    } else {
-        $retData['ifvalues']['resources'] = '';
-    }
-
+    
+    if(!$isExternalAPI) {
+	    if (!empty($productNids)) {
+	        $retData['ifvalues']['resources'] = array_values($productNids);
+	    } else {
+	        $retData['ifvalues']['resources'] = '';
+	    }
+	  }
+	  
     $retData['products'] = $retDataTmp;
 
     return $retData;
+}
+
+function _get_product_relationship($nid){
+    $viewResult = views_get_view_result('list_exclusiveness', 'panel_pane_1', $nid);
+    $relationship = array(); 
+    
+    foreach($viewResult as $record) {
+        //exclusiveness
+        foreach($record->field_field_exclusiveness as $item){
+            $exclusive_product_ids[] = $item['raw']['node']->field_product_id['und'][0]['safe_value'];
+        }
+        //exclusiveness others
+        foreach($record->field_field_exclusiveness_others as $item){
+            $exclusive_product_other_ids[] = $item['raw']['node']->field_product_id['und'][0]['safe_value'];
+        }
+        //downgrade penalty
+        $downgradePenaltyViewResult = views_get_view_result('list_product_downgrade_penalty', 'panel_pane_2', $record->nid);
+        foreach($downgradePenaltyViewResult as $item){
+            $downgrade[] = array('product_id' => $item->field_field_ref_target_product[0]['raw']['node']->field_product_id['und'][0]['safe_value'],
+                                 'penalty_amount' => $item->field_field_amount[0]['raw']['value']);
+        }
+        
+        //$relationship['product_id'] = $record->field_field_product_id[0]['raw']['value'];
+        $relationship['exclusiveness'] = $exclusive_product_ids;
+        $relationship['exclusiveness_other'] = $exclusive_product_other_ids;
+        $relationship['downgrade_penalty'] = $downgrade;
+    }
+    return $relationship;
 }
 
 function _get_deposit_scheme($product) {
@@ -392,16 +427,16 @@ function _get_attribute($product) {
                       "product_id" => array("through_common_code" => FALSE, "field" => "field_product_id", "field_value" => "field_product_id['und'][0]['value']", "field_default" => NULL), 
                       "short_code" => array("through_common_code" => FALSE, "field" => "field_short_code", "field_value" => "field_short_code['und'][0]['value']", "field_default" => NULL), 
                       "product_name" => array("through_common_code" => FALSE, "field" => "title", "field_value" => "title", "field_value_default" => ""), 
-                      'is_bundle' => array('through_common_code' => FALSE, 'field' => 'field_is_bundle', 'field_value' => "field_is_bundle['und'][0]['value']", 'field_value_default' => '0'), 
+                      // 	'is_bundle' => array('through_common_code' => FALSE, 'field' => 'field_is_bundle', 'field_value' => "field_is_bundle['und'][0]['value']", 'field_value_default' => '0'), 
                       'deferred_changing' => array('through_common_code' => FALSE, 'field' => 'field_field_deferred_subscriptio', 'field_value' => "field_field_deferred_subscriptio['und'][0]['value']", 'field_value_default' => '0'), 
-                      'description' => array('through_common_code' => FALSE, 'field' => 'field_description', 'field_value' => "field_description['und'][0]['safe_value']", 'field_value_default' => ''), 
-                      'version' => array('through_common_code' => FALSE, 'field' => 'field_version', 'field_value' => "field_version['und'][0]['value']", 'field_value_default' => '1.0'), 
-                      'billing_cycle' => array('through_common_code' => FALSE, 'field' => 'field_billing_cycle', 'field_value' => "field_billing_cycle['und'][0]['value']", 'field_value_default' => '1.0'), 
+                      'description' => array('through_common_code' => FALSE, 'field' => 'field_description', 'field_value' => "field_description['und'][0]['safe_value']", 'field_value_default' => NULL), 
+                      // 'version' => array('through_common_code' => FALSE, 'field' => 'field_version', 'field_value' => "field_version['und'][0]['value']", 'field_value_default' => '1.0'), 
+                      'billing_cycle' => array('through_common_code' => FALSE, 'field' => 'field_billing_cycle', 'field_value' => "field_billing_cycle['und'][0]['value']", 'field_value_default' => NULL), 
                       'bill_type' => array('through_common_code' => TRUE, 'field' => 'field_billing_type', 'field_value' => "field_billing_type['und'][0]['tid']", 'field_value_default' => NULL), 
                       'product_type' => array('through_common_code' => TRUE, 'field' => 'field_product_type', 'field_value' => "field_product_type['und'][0]['tid']", 'field_value_default' => NULL), 
                       'product_sub_type' => array('through_common_code' => TRUE, 'field' => 'field_product_sub_type', 'field_value' => "field_product_sub_type['und'][0]['tid']", 'field_value_default' => NULL), 
                       'service_domain' => array('through_common_code' => TRUE, 'field' => 'field_service_type_of_provider', 'field_value' => "field_service_type_of_provider['und'][0]['tid']", 'field_value_default' => NULL), 
-                      'status' => array('through_common_code' => TRUE, 'field' => 'field_offering_status', 'field_value' => "field_offering_status['und'][0]['tid']", 'field_value_default' => NULL), 
+                      //'status' => array('through_common_code' => TRUE, 'field' => 'field_offering_status', 'field_value' => "field_offering_status['und'][0]['tid']", 'field_value_default' => NULL), 
                       'customer_type' => array('through_common_code' => TRUE, 'field' => 'field_customer_type', 'field_value' => "field_customer_type['und'][0]['tid']", 'field_value_default' => NULL), 
                       'customer_group_type' => array('through_common_code' => TRUE, 'field' => 'field_customer_group_type', 'field_value' => "field_customer_group_type['und'][0]['tid']", 'field_value_default' => NULL), 
                       'cug_member_counter' => array('through_common_code' => FALSE, 'field' => 'field_cug_member_counter', 'field_value' => "field_cug_member_counter['und'][0]['value']", 'field_value_default' => NULL, ), 

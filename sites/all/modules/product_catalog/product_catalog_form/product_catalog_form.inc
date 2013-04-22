@@ -328,7 +328,7 @@ function numberingplan_domestic_view_form($form, &$form_state) {
 function depositscheme_view_form($form, &$form_state) {
 	$output = '<div><h2>Deposit Scheme Factors</h2></div>' ;
 	$view = views_get_view('list_depositschemefactors');
-	$view->execute_display('panel_pane_2', array('0' => $form_state['param']['depositscheme_nid']));
+	$view->execute_display('panel_pane_7', array('0' => $form_state['param']['depositscheme_nid']));
 	$output .= $view->render();
 	
 	$output .= '<hr>';

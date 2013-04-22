@@ -495,8 +495,31 @@ function product_catalog_form_node_validate($node, $form, &$form_state) {
             	};
             }
             
+            //check exclusivessness and downgrade penalty
+            if(isset($form_state['values']['field_exclusiveness']['und'])){
+                $isExist = FALSE;
+                $downgradePenaltyViewResult = views_get_view_result('list_product_downgrade_penalty', 'panel_pane_2', $form['#node']->nid);
+                
+                foreach($form_state['values']['field_exclusiveness']['und'] as $item){
+                    $selectedNids[] = $item['nid'];
+                }
+                
+                foreach($downgradePenaltyViewResult as $item){
+                     dsm($item,'$item');
+                    if(in_array($item->field_field_ref_target_product[0]['raw']['nid'],$selectedNids)){
+                        $isExist = TRUE;
+                        $existName = $item->field_field_ref_target_product[0]['raw']['node']->title;
+                        break;
+                    }
+                }
+                
+                if($isExist){
+                    drupal_set_message($existName . " is defined in Product Downgrade Penlaty", 'error');
+                    form_set_error("hhh");
+                }
+            }
+            
             break;
-
         case 'prdnonusagerecurringbonusscheme_node_form' :
             $bonus_cycle_types = array('0' => 'None', '1' => 'Daily', '2' => 'Weekly', '4' => 'Monthly');
 
