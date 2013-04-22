@@ -115,8 +115,11 @@ function _array_voucher_cardtype($exportItemNids=NULL, $isExternalAPI = FALSE){
       $jsonData_common['resources'] = array();
     }
    
-   	$jsonData['ifvalues'] = $jsonData_common;
-   	$jsonData['vouchers'] = $jsonRecord_vouchers;
+   	if(!$isExternalAPI) {
+	   	$jsonData['ifvalues'] = $jsonData_common;
+	  }
+	  
+	  $jsonData['vouchers'] = $jsonRecord_vouchers;
     
 		return $jsonData;
 }
