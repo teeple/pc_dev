@@ -563,13 +563,13 @@ function _create_default_basic_counters($productNid, $refTreeTid) {
     $weightStep = 100;
     $weight = 0;
 
-    foreach($basicCounters as $record){
+    foreach($basicCounters as $key=>$value){
     	$dtn_basic_counter = new StdClass();
         $dtn_basic_counter->uid = $user->uid;
         $dtn_basic_counter->type = 'treenodecounter';
         $dtn_basic_counter->language = 'und';
         
-        $dtn_basic_counter->field_ref_counter['und'][0]['nid'] = $record->nid;
+        $dtn_basic_counter->field_ref_counter['und'][0]['nid'] = $key;
 		$dtn_basic_counter->field_weight['und'][0]['value'] = $weight * $weightStep;
 		
 		$term_tree = taxonomy_get_term_by_name('Main', 'countermainoraccu');
