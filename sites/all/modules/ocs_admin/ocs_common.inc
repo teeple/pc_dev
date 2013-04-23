@@ -445,3 +445,14 @@ function _get_field_value( $v, $idx)
 	}
 	return NULL;
 }
+
+function ocs_get_terms_tid( $term_name)
+{
+	$result = array();
+	$terms = ocs_get_terms( $term_name);
+	foreach( $terms as $tid => $term) {
+		$result[$term->name] = $tid;
+	}
+
+	return $result;
+}

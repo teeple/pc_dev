@@ -119,8 +119,8 @@ function ocs_migrate_fce_rate($form, &$form_state, $domestic_or_intl = 'domestic
 
 	$form['data']['target'] = array(
         '#type' => 'select',
-		'#title' => 'Target plan name',
-		'#options' => _load_all_tariffplan()
+		'#title' => 'Target product',
+		'#options' => _load_all_mobile_products()
     );
 
 	$form['data']['list'] = array(
@@ -144,6 +144,36 @@ function ocs_migrate_fce_rate($form, &$form_state, $domestic_or_intl = 'domestic
 	return $form;
 }
 
+/*
+   $type : idd or domestic
+   */
+function _load_all_mobile_products()
+{
+	$tids = &drupal_static( __FUNCTION__, array( 
+				'PrdType' => ocs_get_terms_tid( 'PrdType'), 
+				'SvcDomain' => ocs_get_terms_tid( 'SvcDomain')));
+
+	//dpm( $tids, 'svc domain');
+
+	$query = new EntityFieldQuery();
+	$result = $query->entityCondition('entity_type', 'node')
+		->entityCondition('bundle', 'simpleproductoffering')
+		->fieldCondition('field_product_type', 'tid', $tids['PrdType']['Main'])
+		->fieldCondition('field_service_type_of_provider', 'tid', $tids['SvcDomain']['Mobile'])
+		->execute();
+
+	$list = array();
+	if ( count( $result) > 0) {
+		foreach( array_keys( $result['node']) as $nid) {
+			$node = node_load( $nid);
+			$list[$nid] = $node->title;
+		}
+	}
+
+	return $list;
+}
+
+
 function _get_rate_list($rate, $name)
 {
 	$list = array();
@@ -163,18 +193,10 @@ function _get_terms()
 	global $tree_tid;
 
 	// get terms : unit_of_measure 
-	$terms = ocs_get_terms('unit_of_measure');
-	$unit_measure = array(); 
-	foreach( $terms as $tid => $term) {
-		$unit_measure[$term->name] = $tid;
-	}       
+	$unit_measure = ocs_get_terms_tid('unit_of_measure');
 	    
 	// get terms : unif_of_range
-	$terms = ocs_get_terms('unit_of_range');
-	$unit_range = array();
-	foreach( $terms as $tid => $term) {
-		$unit_range[$term->name] = $tid;
-	}
+	$unit_range = ocs_get_terms_tid('unit_of_range');
 
 	$tree_tid = array();
 	foreach( array( 'voice', 'sms') as $type) {
@@ -191,6 +213,40 @@ function _get_terms()
 		}
 	}
 	//dpm( $tree_tid, 'tree tid');
+}
+
+function ocs_migrate_fce_rate_validate($form, &$form_state)
+{
+	$values = $form_state['values'];
+	if ( $values['op'] == 'Save') {
+		list( $domestic_or_intl, $calltype) = explode( ':', $form['#call_type']);
+
+		/* get terms */
+		$tree_tids = ocs_get_terms_tid('TPL_DEFAULT_TREE_MOBILE');
+		$tree_tid = ($calltype == 'voice') ? $tree_tids['Voice'] : $tree_tids['SMS'];
+
+		// check if it has tariff plan
+		$query = new EntityFieldQuery();
+		$result = $query->entityCondition('entity_type', 'node')
+			->entityCondition('bundle', 'tariffplan')
+			->fieldCondition('field_ref_product', 'nid', $values['target'])
+			->fieldCondition('field_ref_tree_tid', 'value', $tree_tid)
+			->execute();
+
+		$tariff_plan_list = array();
+
+		if ( count( $result) > 0) {
+			$nids = array_keys( $result['node']);
+			if ( count( $nids) == 1) {
+				$form_state['#tariff_plan'] = $nids[0];
+			}
+			else {
+				$product = node_load( $values['target']);
+				form_set_error( 'target', t('The product <em>@name</em> has not enough tariff plans for <em>@type</em>.',
+					array( '@name' => $product->title, '@type' => $calltype)));
+			}
+		}
+	}
 }
 
 function ocs_migrate_fce_rate_submit($form, &$form_state)
@@ -235,7 +291,7 @@ function ocs_migrate_fce_rate_submit($form, &$form_state)
 
                 //dpm( $rate_list, 'rate list:'.$rule['ruleName']);
                 if ( !isset( $processed_rate_list[$name])) {
-                    _set_price($values['target'], $name, $price, $tid, $values['check'] == '1');
+                    _set_price($form_state['#tariff_plan'], $name, $price, $tid, $values['check'] == '1');
                     $processed_rate_list[$name] = TRUE;
                 }
                 else {
@@ -252,7 +308,7 @@ function ocs_migrate_fce_rate_submit($form, &$form_state)
 
                 //dpm( $rate_list, 'rate list:'.$rule['ruleName']);
                 if ( !isset( $processed_rate_list[$name])) {
-                    _set_rate($values['target'], $name, $rate_list, $tid, $values['check'] == '1');
+                    _set_rate($form_state['#tariff_plan'], $name, $rate_list, $tid, $values['check'] == '1');
                     $processed_rate_list[$name] = TRUE;
                 }
                 else {
