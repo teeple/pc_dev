@@ -119,7 +119,7 @@ class backup_migrate_destination_db extends backup_migrate_destination_remote {
       "#multiple" => TRUE,
       "#title" => t("Exclude the following tables altogether"),
       "#options" => $tables,
-      "#default_value" => $settings['exclude_tables'],
+      "#default_value" => isset($settings['exclude_tables'])?$settings['exclude_tables']:NULL,
       "#description" => t("The selected tables will not be added to the backup file."),
     );
     $form['nodata_tables'] = array(
@@ -127,7 +127,7 @@ class backup_migrate_destination_db extends backup_migrate_destination_remote {
       "#multiple" => TRUE,
       "#title" => t("Exclude the data from the following tables"),
       "#options" => $tables,
-      "#default_value" => $settings['nodata_tables'],
+      "#default_value" => isset($settings['nodata_tables'])?$settings['nodata_tables']:NULL,
       "#description" => t("The selected tables will have their structure backed up but not their contents. This is useful for excluding cache data to reduce file size."),
     );
     $form['utils_lock_tables'] = array(
