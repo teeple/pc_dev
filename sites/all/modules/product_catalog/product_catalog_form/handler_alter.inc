@@ -37,6 +37,28 @@ function _unset_menu_items(&$form, $formId) {
         unset($form['actions']['delete']);
 }
 
+function _disable_form_elements(&$form, $fields) {
+
+	foreach($fields as $field) {
+		$command = '$form[\'' . $field ."']['und']['#disabled'] = TRUE;";
+		eval($command);
+	}
+}
+
+function _unset_form_elements(&$form, $fields) {
+	foreach($fields as $field) {
+		$command = 'unset($form[\'' . $field ."']);";
+		eval($command);
+	}
+}
+
+function _hidden_form_elements(&$form, $fields) {
+	foreach($fields as $field) {
+		$command = '$form[\'' . $field ."']['#type'] = 'hidden';";
+		eval($command);
+	}
+}
+
 function _ajax_counter_type_validate($form, &$form_state) {
 	$counter = node_load($form_state['values']['field_ref_counter']['und'][0]['nid']);
 	$counterTypeTerm = taxonomy_term_load($counter->field_counter_type['und'][0]['tid']);
@@ -758,35 +780,47 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             $form['field_ref_target_product']['und']['#options'] = $options['list'];
             break;
         case 'simpleproductoffering_node_form' :
-        
-            if (isset($form['field_r_prodofferingrel']))
-                unset($form['field_r_prodofferingrel']);
-            if (isset($form['field_r_productspecification']))
-                unset($form['field_r_productspecification']);
-            if (isset($form['field_r_prodspeccharvalueuse']))
-                unset($form['field_r_prodspeccharvalueuse']);
-            if (isset($form['field_r_productofferingprice']))
-                unset($form['field_r_productofferingprice']);
-            if (isset($form['field_r_productofferingprice']))
-                unset($form['field_r_productofferingprice']);
-            if (isset($form['field_version'])) unset($form['field_version']);
-            if (isset($form['field_is_bundle'])) unset($form['field_is_bundle']);
-            
-            // in case Create
+        		
+        		$disabledItems = array();
+				$hiddenItems = array();
+				/*
+        		$hiddenItems = array('field_next_join_product',
+									'field_next_join_confirm');
+									*/
+        		$unsetItems = array('field_r_prodofferingrel', 
+        												'field_r_productspecification',
+        												'field_r_prodspeccharvalueuse',
+        												'field_r_productofferingprice',
+        												'field_version',
+        												'field_is_bundle',
+        												'field_roaming_allowed',
+																'field_offering_status',
+																'field_parent_node_for_rp',
+																'field_weight_for_ratingpriority',
+																'field_weight',
+																'field_ref_product',
+																'field_parent_node',
+																'field_tpl_voca_machine_name',
+																'field_parent_node_for_hr',
+																'field_weight_for_hierarchy');
+					  // in case Create
             if (!isset($form['nid']['#value'])) {
+            
                 $paths = explode('/', current_path());
                 $productTypeTerm = taxonomy_get_term_by_name($paths[2], 'prdtype');
                 $form['field_product_type']['und']['#default_value'][0] =  current($productTypeTerm) -> tid;
-                $form['field_product_type']['#type'] = 'hidden';
                 $serviceTypeTerm = taxonomy_get_term_by_name($paths[1], 'svcdomain');
                 $form['field_service_type_of_provider']['und']['#default_value'][0] =  current($serviceTypeTerm) -> tid;
-                $form['field_service_type_of_provider']['#type'] = 'hidden';
+                
+                $hiddenItems += array('field_product_type', 'field_service_type_of_provider');
                 
                 $productTypeName = $form_state['product_type_name'];
                 if($productTypeName != 'CUG') {
-                	$form['field_cug_member_counter']['#type'] = 'hidden';
-                	//$form['field_cug_group_type']['und']['#type'] = 'hidden';
-                	unset($form['field_cug_group_type']);
+                	$hiddenItems[] = 'field_cug_member_counter';
+                	$unsetItems[] = 'field_cug_group_type';
+                	$unsetItems[] = 'field_cug_customer_type';
+                	unset($form['#fieldgroups']['group_cug']);
+	              	unset($form['#groups']['group_cug']);
                 }
                 
                 if(current($productTypeTerm)->name != 'Main') {
@@ -795,110 +829,135 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
                 
             // in case Edit
             } else {
-                $form['field_product_type']['#type'] = 'hidden';
-                $form['field_service_type_of_provider']['#type'] = 'hidden';
-             		$form['field_billing_type']['und']['#disabled'] = TRUE;
-             		$form['field_price_units']['und']['#disabled'] = TRUE;
-             		$form['field_product_id']['und']['#disabled'] = TRUE;
+            		$hiddenItems = array_merge($hiddenItems, array('field_product_type',
+            													'field_service_type_of_provider'));
+            													
+            		$disabledItems = array_merge($disabledItems, array('field_billing_type',
+            														'field_price_units',
+            														'field_product_id'));
              		
              		$productTypeTid = $form['field_product_type']['und']['#default_value'][0];
              		$productTypeName = $form['field_product_type']['und']['#options'][$productTypeTid];
              		
              		if($productTypeName != 'CUG' ) {
-                	$form['field_cug_member_counter']['#type'] = 'hidden';
-                	unset($form['field_cug_group_type']);
-                	// $form['field_cug_group_type']['und']['#type'] = 'hidden';
+             			$hiddenItems[] = 'field_cug_member_counter';
+             			$unsetItems[] = 'field_cug_group_type';
+             			$unsetItems[] = 'field_cug_customer_type';
+	              		unset($form['#groups']['group_cug']);
+						unset($form['#fieldgroups']['group_cug']);
              		}
-            }
-            
-            $productTypeTid = $form['field_product_type']['und']['#default_value'][0];
-            if($form['field_product_type']['und']['#options'][$productTypeTid] == 'Main') {
-            	//$form['field_product_sub_type']['#type'] = 'hidden';
-                unset($form['field_product_sub_type']);
-            }
-            
-            unset($form['field_roaming_allowed']);
-            unset($form['field_offering_status']);
-            unset($form['field_parent_node_for_rp']);
-            unset($form['field_weight_for_ratingpriority']);
-            unset($form['field_weight']);
-            unset($form['field_ref_nonusage']);
-            unset($form['field_ref_usage']);
-            unset($form['field_ref_counter']);
-            unset($form['field_ref_number_sp_allowed']);
-            unset($form['field_ref_number_sp_forbidden']);
-            unset($form['field_parent_node']);
-            unset($form['field_tpl_voca_machine_name']);
-            unset($form['field_ref_product']);
-            unset($form['field_parent_node_for_hr']);
-            unset($form['field_weight_for_hierarchy']);
 
+					$svcDomainTid = $form['field_service_type_of_provider']['und']['#default_value'][0];
+
+					dsm($form,' form');
+
+					$billingTypeTid = $form['field_billing_type']['und']['#default_value'];
+					$svcOperatorTid = $form['field_service_operator']['und']['#default_value'];
+					$customerTypeTid = $form['field_customer_type']['und']['#default_value'];
+
+					if($productTypeName != 'Main') {
+
+						$args = array('0' => $svcDomainTid, 
+									'1' => $productTypeTid,
+									'2' => $billingTypeTid,
+									'3' => $svcOperatorTid,
+									'4' => $customerTypeTid);
+
+						dsm($args, 'args');
+
+						$view = views_get_view('list_product_for_nextjoin');
+						$view->set_display('panel_pane_2');
+						$view->set_arguments($args);
+						$view->execute();
+
+						$viewResult = $view->result;
+
+						$options = array();
+						foreach($viewResult as $item) {
+							$options[$item->nid] = view_get_field_value_by_label($view, 'PHP', $item);
+						}
+						$form['field_next_join_product']['und']['#options'] = $options;
+					}
+            }
+
+            $productTypeTid = $form['field_product_type']['und']['#default_value'][0];
+
+            if($form['field_product_type']['und']['#options'][$productTypeTid] == 'Main') {
+            		$unsetItems[] = 'field_product_sub_type';
+            }
+            
             _unset_menu_items($form, $form_id);
 
             $firstPathName = current(explode('/', current_path()));
             if ($firstPathName == 'relation') {
                 $form['title']['#type'] = 'hidden';
-                //$form['title']['#disabled'] = TRUE;
                 
-                unset($form['field_description']);
-                unset($form['field_offering_status']);
-                unset($form['field_version']);
-                unset($form['field_billing_type']);
-                unset($form['field_validfor_product']);
-                unset($form['field_service_operator']);
-                unset($form['field_billing_cycle']);
-                unset($form['field_product_id']);
-                unset($form['field_customer_type']);
-                unset($form['field_customer_group_type']);
-                unset($form['field_is_bundle']);
-                unset($form['field_deferred_subscription_flag']);
-                unset($form['field_price_units']);
-                unset($form['field_treatment_price_amount']);
-                unset($form['field_treatment_day']);
-                unset($form['field_contract_period']);
-                unset($form['field_roaming_allowed']);
-                unset($form['field_cug_member_counter']);
-                unset($form['field_short_code']);
-                unset($form['field_next_join_product']);
-                unset($form['field_expire_date_type']);
-                unset($form['field_expire_date']);
-                unset($form['field_field_deferred_subscriptio']);
-                unset($form['field_hlr_template_id']);
+                $unsetItems = array_merge($unsetItems,
+                									array('field_description',
+                										'field_offering_status',
+                										'field_version',
+                										'field_billing_type',
+                										'field_validfor_product',
+                										'field_service_operator',
+                										'field_billing_cycle',
+                										'field_product_id',
+                										'field_customer_type',
+                										'field_customer_group_type',
+                										'field_is_bundle',
+                										'field_deferred_subscription_flag',
+                										'field_price_units',
+                										'field_treatment_price_amount',
+                										'field_treatment_day',
+                										'field_contract_period',
+                										'field_roaming_allowed',
+                										'field_cug_member_counter',
+                										'field_short_code',
+                										'field_next_join_product',
+                										'field_expire_date_type',
+                										'field_expire_date',
+                										'field_field_deferred_subscriptio',
+                										'field_hlr_template_id'));
                 
                 $options = _get_product_exclusive_list($form['nid']['#value']);
                 $form['field_exclusiveness']['und']['#options'] = $options['list'];
 				
                 $view = views_get_view('list_product_in_exclusive');
-				$view->set_display('panel_pane_3');
-				$view->set_arguments($options['args']);
-				$view->execute();
+								$view->set_display('panel_pane_3');
+								$view->set_arguments($options['args']);
+								$view->execute();
+								
+								$viewResult = $view->result;
+								
+								// $options = array('- None -');
+								$options = array();
+								foreach($viewResult as $item) {
+										$options[$item->nid] = view_get_field_value_by_label($view, 'PHP', $item);
+								}
 				
-				$viewResult = $view->result;
-				
-				// $options = array('- None -');
-				$options = array();
-				foreach($viewResult as $item) {
-						$options[$item->nid] = view_get_field_value_by_label($view, 'PHP', $item);
-				}
-				
-				$form['field_exclusiveness_others']['und']['#options'] = $options;
+								$form['field_exclusiveness_others']['und']['#options'] = $options;
                 
             } else {
-                unset($form['field_exclusiveness']);
-                unset($form['field_exclusiveness_others']);
-                
+            		$unsetItems = array_merge($unsetItems, array('field_exclusiveness',
+            												'field_exclusiveness_others'));
+            												
+            												
             }
             
-            $form['field_cug_group_type']['#type'] = 'hidden';
+            // $hiddenItems += 'field_cug_group_type';
             switch($productTypeName){
                 case 'Main':
-                    $form['field_next_join_product']['#type'] = 'hidden';
-                    $form['field_next_join_confirm']['#type'] = 'hidden';
+                		unset($form['#groups']['group_next_join']);
+                		unset($form['#fieldgroups']['group_next_join']);
                     break;
                 default :
-                		$form['field_cug_group_type']['#type'] = 'container';
+						                		$form['field_cug_group_type']['#type'] = 'container';
                 		break;
             }
+            
+            _unset_form_elements($form, $unsetItems);
+            _hidden_form_elements($form, $hiddenItems);
+            _disable_form_elements($form, $disabledItems);
+            
             break;
             
         case 'balance_node_form' :
@@ -2377,7 +2436,6 @@ function _get_call_type_options(){
 
     $options = array();
     //$options['_none'] = '- None -';
-    //dsm($view->result);
     foreach ($view->result as $item) {
         $str = $item->taxonomy_term_data_name . ' [';
         $str .= isset($item->taxonomy_term_data_field_data_field_service_domain_name)?$item->taxonomy_term_data_field_data_field_service_domain_name:'Not defined';
