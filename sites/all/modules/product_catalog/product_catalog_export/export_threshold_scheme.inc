@@ -22,39 +22,50 @@ function _array_threshold_scheme($exportItemNids=NULL){
             
             $factorArray = array();
             foreach($thresholdSchemeFactorsList as $item){
-                $factorNode = node_load($item->nid);
+            
+            		$factor = array();
+                $factor['id'] = $item->nid;
                 
-                $factor = array();
-                $factor['id'] = $factorNode->nid;
+                dsm($item->field_field_limittothreshold, 'limit to threshold');
+                $factor['limit_to_threshold'] = isset($item->field_field_limittothreshold[0]['raw']['value'])? $item->field_field_limittothreshold[0]['raw']['value'] : NULL;
                 
-                //limit
-                if(!empty($factorNode->field_limittothreshold['und'])){
-                    foreach($factorNode->field_limittothreshold['und'] as $item){
-                        $factor['limit_to_threshold'] = $item['value'];
-                    }   
-                }else{
-                    $factor['limit_to_threshold'] = NULL;
+                /*
+								"actions":[
+												{
+												     "action":"send_sms_notification",
+												     "parameters":{
+												          "orig":"9761414",
+												          "dest":"CALLING",
+												          "message":"61799"
+												     }
+												},
+								],
+                */
+                
+                $actionSetList = array();
+                foreach($item->field_field_threshold_action_set as $item) {
+                	$actionSet = array();
+                	$fieldCollection = current($item['rendered']['entity']['field_collection_item']);
+                	$actionSet['action'] = $fieldCollection['field_action_type']['#object']->field_action_type['und'][0]['taxonomy_term']->name;
+                	
+                	$message_orig = isset($fieldCollection['field_action_type']['#object']->field_message_orig['und'][0]['value'])? $fieldCollection['field_action_type']['#object']->field_message_orig['und'][0]['value']: NULL;
+                	$message_dest = isset($fieldCollection['field_action_type']['#object']->field_message_dest['und'][0]['taxonomy_term']->name)? $fieldCollection['field_action_type']['#object']->field_message_dest['und'][0]['taxonomy_term']->name: NULL;
+                	$message_id = isset($fieldCollection['field_action_type']['#object']->field_ref_messages['und'][0]['nid'])? $fieldCollection['field_action_type']['#object']->field_ref_messages['und'][0]['nid']: NULL;
+                	
+                	if(isset($message_id)) {
+                		$actionSet['parameters'] = array('orig' => $message_orig,
+                																		'dest' => $message_dest,
+                																		'message' => $message_id);
+                	} else {
+                		$actionSet['parameters'] = NULL;
+                	}
+                	
+                	
+                	$actionSetList[] = $actionSet;
                 }
-                       
-                //action
-                if(!empty($factorNode->field_field_ref_thresholdaction['und'])){
-                    foreach($factorNode->field_field_ref_thresholdaction['und'] as $item){
-                        $actionTerm = taxonomy_term_load($item['tid']);
-                        $actionInfo = _get_common_code($actionTerm);
-                        if($actionInfo['meaning'] == 'Notification' && isset($factorNode->field_message_select['und'])){
-                            foreach($factorNode->field_message_select['und'] as $messageItem){
-                                $actionInfo['message_id'][] = $messageItem['nid'];
-                            } 
-                        }
-                        //$factor['threshold_action'][] = _get_common_code($actionTerm);
-                        $factor['threshold_action'][] = $actionInfo;
-                    } 
-                }else{
-                    $factor['threshold_action'] = NULL;
-                }      
-                $factorArray[] = $factor;
+                $factor['actions'] = $actionSetList;
             }
-            $thresholdScheme['factors'] = $factorArray;            
+            $thresholdScheme['factors'] = $factor;            
         }
         $jsonData_schemes[] = $thresholdScheme;
         $schemeIds[] = $thresholdScheme['id'];
