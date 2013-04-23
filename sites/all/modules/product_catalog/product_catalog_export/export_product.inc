@@ -599,11 +599,13 @@ function _get_attribute_exceptions($product) {
         } else {
             $benefit['bonus'] = NULL;
         }
+        /*
         if (!empty($benefitNode -> field_attribute_recurring['und'][0]['safe_value'])) {
             $benefit['recurring'] = $benefitNode -> field_attribute_recurring['und'][0]['safe_value'];
         } else {
             $benefit['recurring'] = NULL;
         }
+        */
         $retArray['benefit'] = $benefit;
     }
 
