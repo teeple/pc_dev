@@ -782,12 +782,11 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
         case 'simpleproductoffering_node_form' :
         		
         		$disabledItems = array();
-				$hiddenItems = array();
-				/*
-        		$hiddenItems = array('field_next_join_product',
-									'field_next_join_confirm');
-									*/
-        		$unsetItems = array('field_r_prodofferingrel', 
+						$hiddenItems = array();
+						/*
+        		$hiddenItems = array('field_next_join_product', 'field_next_join_confirm');
+						*/
+						$unsetItems = array('field_r_prodofferingrel', 
         												'field_r_productspecification',
         												'field_r_prodspeccharvalueuse',
         												'field_r_productofferingprice',
@@ -807,12 +806,12 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             if (!isset($form['nid']['#value'])) {
             
                 $paths = explode('/', current_path());
-                $productTypeTerm = taxonomy_get_term_by_name($paths[2], 'prdtype');
-                $form['field_product_type']['und']['#default_value'][0] =  current($productTypeTerm) -> tid;
+                $productTypeTerm = current(taxonomy_get_term_by_name($paths[2], 'prdtype'));
+                $form['field_product_type']['und']['#default_value'][0] =  $productTypeTerm -> tid;
                 $serviceTypeTerm = taxonomy_get_term_by_name($paths[1], 'svcdomain');
                 $form['field_service_type_of_provider']['und']['#default_value'][0] =  current($serviceTypeTerm) -> tid;
                 
-                $hiddenItems += array('field_product_type', 'field_service_type_of_provider');
+                $hiddenItems = array_merge($hiddenItems, array('field_product_type', 'field_service_type_of_provider'));
                 
                 $productTypeName = $form_state['product_type_name'];
                 if($productTypeName != 'CUG') {
@@ -823,16 +822,24 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 	              	unset($form['#groups']['group_cug']);
                 }
                 
-                if(current($productTypeTerm)->name != 'Main') {
-                	unset($form['field_billing_type']['und']['#options'][680]);
+                if($productTypeTerm->name != 'Main') {
+                
+                	if($productTypeTerm->name == 'CUG') {
+                		$form['field_billing_type']['und']['#default_value'] = 680;
+                		$disabledItems[] = 'field_billing_type';
+                	} else {
+	                	// Hybrid Delete
+	                	unset($form['field_billing_type']['und']['#options'][680]);
+	                }
                 }
+                
                 
             // in case Edit
             } else {
             		$hiddenItems = array_merge($hiddenItems, array('field_product_type',
             													'field_service_type_of_provider'));
             													
-            		$disabledItems = array_merge($disabledItems, array('field_billing_type',
+            		$disabledItems = array_merge($disabledItems, array( //'field_billing_type',
             														'field_price_units',
             														'field_product_id'));
              		
@@ -843,13 +850,14 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
              			$hiddenItems[] = 'field_cug_member_counter';
              			$unsetItems[] = 'field_cug_group_type';
              			$unsetItems[] = 'field_cug_customer_type';
-	              		unset($form['#groups']['group_cug']);
-						unset($form['#fieldgroups']['group_cug']);
+	              	unset($form['#groups']['group_cug']);
+									unset($form['#fieldgroups']['group_cug']);
+             		} else {
+             			$disabledItems[] = 'field_cug_customer_type';
+             			$disabledItems[] = 'field_cug_group_type';
              		}
-
+             		
 					$svcDomainTid = $form['field_service_type_of_provider']['und']['#default_value'][0];
-
-					dsm($form,' form');
 
 					$billingTypeTid = $form['field_billing_type']['und']['#default_value'];
 					$svcOperatorTid = $form['field_service_operator']['und']['#default_value'];
@@ -863,8 +871,6 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 									'3' => $svcOperatorTid,
 									'4' => $customerTypeTid);
 
-						dsm($args, 'args');
-
 						$view = views_get_view('list_product_for_nextjoin');
 						$view->set_display('panel_pane_2');
 						$view->set_arguments($args);
@@ -876,9 +882,9 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 						foreach($viewResult as $item) {
 							$options[$item->nid] = view_get_field_value_by_label($view, 'PHP', $item);
 						}
-						$form['field_next_join_product']['und']['#options'] = $options;
-					}
-            }
+							$form['field_next_join_product']['und']['#options'] = $options;
+						}
+          }
 
             $productTypeTid = $form['field_product_type']['und']['#default_value'][0];
 
@@ -939,18 +945,15 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             } else {
             		$unsetItems = array_merge($unsetItems, array('field_exclusiveness',
             												'field_exclusiveness_others'));
-            												
-            												
             }
             
-            // $hiddenItems += 'field_cug_group_type';
             switch($productTypeName){
                 case 'Main':
                 		unset($form['#groups']['group_next_join']);
                 		unset($form['#fieldgroups']['group_next_join']);
                     break;
                 default :
-						                		$form['field_cug_group_type']['#type'] = 'container';
+										$form['field_cug_group_type']['#type'] = 'container';
                 		break;
             }
             
