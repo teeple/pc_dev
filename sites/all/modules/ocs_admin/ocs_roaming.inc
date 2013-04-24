@@ -72,19 +72,13 @@ function ocs_roaming_import( $form, &$form_state, $type)
 	if ( $type == 'tariff') {
 		$product_type = ( isset( $form_state['#product_type'])) ? $form_state['#product_type'] : NULL;
 		if ( empty($product_type)) {
-			$terms = ocs_get_terms('PrdType');
-			foreach( $terms as $tid => $term) {
-				$product_type[$term->name] = $tid;
-			}
+			$product_type = ocs_get_terms_tid( 'PrdType');
 			$form_state['#product_type'] = $product_type;
 		}
 
 		$service_domain = ( isset( $form_state['#service_domain'])) ? $form_state['#service_domain'] : NULL;
 		if ( empty( $service_domain)) {
-			$terms = ocs_get_terms('SvcDomain');
-			foreach( $terms as $tid => $term) {
-				$service_domain[$term->name] = $tid;
-			}
+			$service_domain = ocs_get_terms_tid( 'SvcDomain');
 			$form_state['#service_domain'] = $service_domain;
 		}
 
@@ -262,11 +256,7 @@ function _ocs_roaming_get_tariff_plan( $product_nid)
 
 	if ( count( $result) > 0) {
 		/* get terms */
-		$terms = ocs_get_terms('TPL_DEFAULT_TREE_MOBILE');
-		$tree_tid = array();
-		foreach( $terms as $tid => $term) {
-			$tree_tid[$term->name] = $tid;
-		}
+		$tree_tid = ocs_get_terms_tid('TPL_DEFAULT_TREE_MOBILE');
 
 		foreach( array_keys( $result['node']) as $nid) {
 			$tp = node_load( $nid);
@@ -495,41 +485,21 @@ function _ocs_roaming_save_tariff( $delete, $reset, $json, $plan_list)
 
 
 	/* get terms */
-	$terms = ocs_get_terms('roaming_type');
-	$roaming_type = array();
-	foreach( $terms as $tid => $term) {
-		$roaming_type[$term->name] = $tid;
-	}
+	$roaming_type = ocs_get_terms_tid('roaming_type');
 	dpm( $roaming_type, 'roaming type');
 
 	/* get terms: calltype */
-	$terms = ocs_get_terms('calltype');
-	$call_type = array();
-	foreach( $terms as $tid => $term) {
-		$call_type[$term->name] = $tid;
-	}
+	$call_type = ocs_get_terms_tid('calltype');
 	dpm( $call_type, 'call type');
 
 	// get terms : unit_of_measure 
-	$terms = ocs_get_terms('unit_of_measure');
-	$unit_measure = array();
-	foreach( $terms as $tid => $term) {
-		$unit_measure[$term->name] = $tid;
-	}
+	$unit_measure = ocs_get_terms_tid('unit_of_measure');
 
 	// get terms : unif_of_range
-	$terms = ocs_get_terms('unit_of_range');
-	$unit_range = array();
-	foreach( $terms as $tid => $term) {
-		$unit_range[$term->name] = $tid;
-	}
+	$unit_range = ocs_get_terms_tid('unit_of_range');
 
 	// get terms : usagetargetdomain
-	$terms = ocs_get_terms('usagetargetdomain');
-	$domain = array();
-	foreach( $terms as $tid => $term) {
-		$domain[$term->name] = $tid;
-	}
+	$domain = ocs_get_terms_tid('usagetargetdomain');
 
 	// get terms : tpl_tariffplan_voice
 	$tree_tid = array();

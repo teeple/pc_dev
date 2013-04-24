@@ -96,8 +96,8 @@ function ocs_migrate_fce_tariff($form, &$form_state, $domestic_or_intl = 'domest
 
 	$form['data']['target'] = array(
         '#type' => 'select',
-		'#title' => 'Target plan name',
-		'#options' => _load_all_tariffplan()
+		'#title' => 'Target product',
+		'#options' => _load_all_mobile_products()
     );
 
 	$form['data']['list'] = array(
@@ -121,6 +121,40 @@ function ocs_migrate_fce_tariff($form, &$form_state, $domestic_or_intl = 'domest
 	return $form;
 }
 
+function ocs_migrate_fce_tariff_validate($form, &$form_state)
+{
+	$values = $form_state['values'];
+	if ( $values['op'] == 'Save') {
+		list( $domestic_or_intl, $calltype) = explode( ':', $form['#call_type']);
+
+		/* get terms */
+		$tree_tids = ocs_get_terms_tid('TPL_DEFAULT_TREE_MOBILE');
+		$tree_tid = ($calltype == 'voice') ? $tree_tids['Voice'] : $tree_tids['SMS'];
+
+		// check if it has tariff plan
+		$query = new EntityFieldQuery();
+		$result = $query->entityCondition('entity_type', 'node')
+			->entityCondition('bundle', 'tariffplan')
+			->fieldCondition('field_ref_product', 'nid', $values['target'])
+			->fieldCondition('field_ref_tree_tid', 'value', $tree_tid)
+			->execute();
+
+		$tariff_plan_list = array();
+
+		if ( count( $result) > 0) {
+			$nids = array_keys( $result['node']);
+			if ( count( $nids) == 1) {
+				$form_state['#tariff_plan'] = $nids[0];
+			}
+			else {
+				$product = node_load( $values['target']);
+				form_set_error( 'target', t('The product <em>@name</em> has not enough tariff plans for <em>@type</em>.',
+					array( '@name' => $product->title, '@type' => $calltype)));
+			}
+		}
+	}
+}
+
 function ocs_migrate_fce_tariff_submit($form, &$form_state)
 {
 	$values = $form_state['values'];
@@ -137,7 +171,7 @@ function ocs_migrate_fce_tariff_submit($form, &$form_state)
                 $mapping[$rating_group][($r['intl_time_id'] == '2') ? 'discount' : 'normal'] = $r['ruleName'];
             }
 
-			_update_idd_tariff( $form['#rule'], $values['target'], $ratinggroup_list, $mapping, $values['check'] == '1');
+			_update_idd_tariff( $form['#rule'], $form_state['#tariff_plan'], $ratinggroup_list, $mapping, $values['check'] == '1');
 		}
 		else if ( $form['#call_type'] == 'domestic:voice') {
 
@@ -151,7 +185,7 @@ function ocs_migrate_fce_tariff_submit($form, &$form_state)
 
             dpm( $mapping, 'mapping');
 
-			_update_domestic_tariff( $form['#rule'], $values['target'], $ratinggroup_list, $mapping, $values['check'] == '1');
+			_update_domestic_tariff( $form['#rule'], $form_state['#tariff_plan'], $ratinggroup_list, $mapping, $values['check'] == '1');
 		}
         else if ( $form['#call_type'] == 'domestic:sms') {
             $mapping = array();
@@ -162,7 +196,7 @@ function ocs_migrate_fce_tariff_submit($form, &$form_state)
 
             dpm( $mapping, 'mapping');
 
-			_update_domestic_tariff( $form['#rule'], $values['target'], $ratinggroup_list, $mapping, $values['check'] == '1');
+			_update_domestic_tariff( $form['#rule'], $form_state['#tariff_plan'], $ratinggroup_list, $mapping, $values['check'] == '1');
         }
 
 	}
