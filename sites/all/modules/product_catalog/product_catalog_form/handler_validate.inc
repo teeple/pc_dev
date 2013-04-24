@@ -478,29 +478,31 @@ function product_catalog_form_node_validate($node, $form, &$form_state) {
 
         case 'simpleproductoffering_node_form' :
             if (!is_machine_name($form_state['values']['field_product_id']['und'][0]['value'])) {
-                drupal_set_message("Only lowercase letter, number and underscore are allowed for  product id", 'error');
-                form_set_error("Only lowercase letter, number and underscore are allowed for product id");
+                //drupal_set_message("Only lowercase letter, number and underscore are allowed for  product id", 'error');
+                form_set_error('field_product_id', "Only lowercase letter, number and underscore are allowed for product id");
             }
             
             if (!is_machine_name($form_state['values']['field_short_code']['und'][0]['value'])) {
-                drupal_set_message("Only lowercase letter, number and underscore are allowed for short code", 'error');
-                form_set_error("Only lowercase letter, number and underscore are allowed for short code");
+                //drupal_set_message("Only lowercase letter, number and underscore are allowed for short code", 'error');
+                form_set_error('field_short_code', "Only lowercase letter, number and underscore are allowed for short code");
             }
-            
-            dsm($form_state['values'], 'form_state_values');
             $prdTypeTerm = taxonomy_term_load($form_state['values']['field_product_type']['und'][0]['tid']);
             
             if($prdTypeTerm->name == 'CUG') {
 	            if ( empty($form_state['values']['field_cug_group_type'])
-	            	|| empty($form_state['values']['field_cug_group_type']['und'])) {
-									drupal_set_message("CUG Group Type is required", 'error');
-									form_set_error("CUG Group Type is required");
+	            	|| empty($form_state['values']['field_cug_group_type']['und'])
+	            	|| empty($form_state['values']['field_cug_group_type']['und'][0])
+	            	|| empty($form_state['values']['field_cug_group_type']['und'][0]['tid'])) {
+									// drupal_set_message("CUG Group Type is required", 'error');
+									form_set_error('field_cug_group_type', "CUG Group Type is required");
 	            }
 	
 							if ( empty($form_state['values']['field_cug_customer_type'])
-								|| empty($form_state['values']['field_cug_customer_type']['und'])) {
-									drupal_set_message("CUG Customer Type field is required", 'error');
-									form_set_error("CUG Customer Type field is required");
+								|| empty($form_state['values']['field_cug_customer_type']['und'])
+								|| empty($form_state['values']['field_cug_customer_type']['und'][0])
+								|| empty($form_state['values']['field_cug_customer_type']['und'][0]['tid'])) {
+									// drupal_set_message("CUG Customer Type field is required", 'error');
+									form_set_error('field_cug_customer_type', "CUG Customer Type field is required");
 							}
 	          }
 	          
