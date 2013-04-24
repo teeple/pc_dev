@@ -63,7 +63,10 @@ function _product_for_export($exportItemNids = NULL, $isExternalAPI = FALSE) {
         // $nonUsage['threshold_scheme'] = _get_thresdhold_scheme($node);
         $nonUsage['deposit_scheme'] = _get_deposit_scheme($node);
         $nonUsage['recurring_scheme'] = _get_recurring_scheme($node -> nid);
-        $nonUsage['recurring_amount'] = _get_recurring_amount($node->nid);
+        
+        $recurringTypes = array(1 => 'Daily', 3 => '1/3 Monthly', 4 => 'Monthly');
+        $nonUsage['recurring_charge']['period_type'] = $recurringTypes[$nonUsage['recurring_scheme']['charge_scheme']['rcrr_period_type']];;
+        $nonUsage['recurring_charge']['charge_items'] = _get_recurring_amount($node->nid);
         $nonUsage['onetime_charge'] = _get_onetime_charge($node -> nid);
         $nonUsage['onetime_charge_discount_on_main'] = _get_onetime_charge_discount($node -> nid);
 
@@ -215,14 +218,23 @@ function _get_recurring_amount($productNid) {
     $view -> execute();
     
     foreach($view->result as $chargingItem){
-        $chargeAmount = $chargingItem->field_field_price_amount_float[0]['raw']['value'];
+        $charge = array();
+        $charge['amount'] = $chargingItem->field_field_price_amount_float[0]['raw']['value'];
+        $charge['on'] = $chargingItem->field_field_pricing_cycle_type[0]['rendered']['#markup'];
+        $charge['conditions'] = array();
+        
         $conditionSets = get_children($chargingItem->nid);
         foreach($conditionSets['children'] as $set){
+            $conditionSet = array();
             $conditionCount = count($set['children']);
-            for($i=0;$i<$conditionCount;$i++){
-                $retArray[$chargeAmount][$i][] = $set['children'][$i]['data'];
+            
+            foreach($set['children'] as $condition){
+                $conditionSet[] = $condition['data'];
             }
+            $charge['conditions'][] = $conditionSet;
         }
+        
+       $retArray[] = $charge;
     }
     return $retArray;
 }
@@ -237,6 +249,7 @@ function _get_recurring_scheme($productNid) {
     $chargeScheme = node_load(current($records));
 
     $charging_cycle_type = !empty($chargeScheme -> field_charging_cycle_type) ? $chargeScheme -> field_charging_cycle_type['und'][0]['value'] : NULL;
+    
     if (empty($charging_cycle_type)) {
         $retArray['charge_scheme'] = NULL;
     } else {
