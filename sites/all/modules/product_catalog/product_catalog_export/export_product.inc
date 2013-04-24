@@ -63,6 +63,7 @@ function _product_for_export($exportItemNids = NULL, $isExternalAPI = FALSE) {
         // $nonUsage['threshold_scheme'] = _get_thresdhold_scheme($node);
         $nonUsage['deposit_scheme'] = _get_deposit_scheme($node);
         $nonUsage['recurring_scheme'] = _get_recurring_scheme($node -> nid);
+        $nonUsage['recurring_amount'] = _get_recurring_amount($node->nid);
         $nonUsage['onetime_charge'] = _get_onetime_charge($node -> nid);
         $nonUsage['onetime_charge_discount_on_main'] = _get_onetime_charge_discount($node -> nid);
 
@@ -203,6 +204,27 @@ function _get_thresdhold_scheme($product) {
         $scheme = NULL;
     }
     return $scheme;
+}
+
+function _get_recurring_amount($productNid) {
+    $retArray = array();
+
+    $view = views_get_view('list_actionpricechargerecurring');
+    $view -> set_display('panel_pane_3');
+    $view -> set_arguments(array('0' => $productNid));
+    $view -> execute();
+    
+    foreach($view->result as $chargingItem){
+        $chargeAmount = $chargingItem->field_field_price_amount_float[0]['raw']['value'];
+        $conditionSets = get_children($chargingItem->nid);
+        foreach($conditionSets['children'] as $set){
+            $conditionCount = count($set['children']);
+            for($i=0;$i<$conditionCount;$i++){
+                $retArray[$chargeAmount][$i][] = $set['children'][$i]['data'];
+            }
+        }
+    }
+    return $retArray;
 }
 
 function _get_recurring_scheme($productNid) {
