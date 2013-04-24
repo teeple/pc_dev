@@ -311,8 +311,8 @@ function _paste_tariffplan($targetNode,$productNid,$baseTid,$weight){
         $tariffplanNode->field_weight['und'][0]['value'] = $weight;
         $tariffplanNode->field_ref_product['und'][0]['nid'] = $productNid;
         _unset_unused_field_of_cloned_node($tariffplanNode);        
+        $tariiffplanNode->title = _create_tariffplan_title($tariiffplanNode);
         node_save($tariffplanNode);        
-        
         //create children for the new tariffplan
         //covers for basicrate_domestic, basicrate_idd, basicrate_data,basicrate_roaming,tariffplan_idd_carrier,rate content type        
         $view = views_get_view('query_tariffplan_children');
