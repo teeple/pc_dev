@@ -1002,4 +1002,16 @@ function _edit_node_form_in_tree($nid, $additionalParams){
 	
 	return $formRender;
 }
+
+function _create_tariffplan_title($node){
+    $product = node_load($node->field_ref_product['und'][0]['nid']);
+    $productId = $product->field_product_id['und'][0]['value'];
+    
+    $usageTypeTerm  = taxonomy_term_load($node->field_ref_tree_tid['und'][0]['value']);
+    $usageType = str_replace(' ' , '_', strtolower($usageTypeTerm->name));
+    $startDate  = strstr($node->field_valid_date_ymd['und'][0]['value'], ' ', TRUE);
+    
+    return $productId.'_'.$usageType.'_'.$startDate;
+}
+
 ?>
