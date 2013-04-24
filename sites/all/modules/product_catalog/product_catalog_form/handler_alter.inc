@@ -237,7 +237,7 @@ function edit_pane_callback($form, &$form_state) {
 
 function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
     load_required_js_css_before_ajax_load();
-
+dsm($form_id,'form id');
     if ((isset($form['#attributes']) && isset($form['#attributes']['class'])) && gettype($form['#attributes']['class']) == 'array') {
         $form['#attributes']['class'][] = 'myform';
     }
@@ -247,6 +247,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
                 $form['profile']['#type'] = 'hidden';
                 break;
             case 'backup_migrate_ui_manual_backup_form':
+                $form['advanced']['#collapsed'] = FALSE;
                 $form['source']['#type'] = 'hidden';
                 $form['file']['compression']['#type'] = 'hidden';
                 $form['file']['encryption']['#type'] = 'hidden';
