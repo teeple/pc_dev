@@ -14,6 +14,7 @@
 			case "packaged_optional":
 			case "packaged_hidden":
 			case "available_product":
+			case "member_product":
 				menus.custom_create._disabled = false;
 				menus.custom_create.submenu = $.fn.getSubMenuLoadSelectForm("Select Product");
 				break;

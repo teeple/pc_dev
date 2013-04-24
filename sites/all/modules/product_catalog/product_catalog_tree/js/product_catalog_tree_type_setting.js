@@ -144,6 +144,13 @@
 									"image" : "/sites/default/files/icons/file.png"
 								},
 				},
+				"member_product" : {
+							"valid_children" : "prdattributepackaged",
+							"icon" : {
+									"image" : "/sites/default/files/icons/tick-octagon.png"
+								},
+				},
+				
 	
 				// COUNTER
 				///////////////////////////////////////////////////////
@@ -154,7 +161,8 @@
 				        	},
 				},
 				"counter_main" : {
-					"valid_children" : ["tree_node_counter_main_basic_prepaid", 									"tree_node_counter_main_basic_postpaid",
+					"valid_children" : ["tree_node_counter_main_basic_prepaid", 									
+															"tree_node_counter_main_basic_postpaid",
 															"tree_node_counter_main_optional_prepaid",
 															"tree_node_counter_main_optional_postpaid",
 				            					"tree_node_counter_main_rollover_prepaid",
@@ -168,6 +176,17 @@
 																"tree_node_counter_accumulated_optional_postpaid",
 																'tree_node_counter_accumulated_rollover_prepaid',
 																'tree_node_counter_accumulated_rollover_prepaid'],
+				        	"icon" : {
+				        			"image" : "/sites/default/files/icons/inbox-document.png"
+				        		},
+				},
+				"counter_shared": {
+						"valid_children" : ["tree_node_counter_main_basic_prepaid", 									
+																"tree_node_counter_main_basic_postpaid",
+																"tree_node_counter_main_optional_prepaid",
+																"tree_node_counter_main_optional_postpaid",
+						          					"tree_node_counter_main_rollover_prepaid",
+						          					"tree_node_counter_main_rollover_postpaid"],
 				        	"icon" : {
 				        			"image" : "/sites/default/files/icons/inbox-document.png"
 				        		},

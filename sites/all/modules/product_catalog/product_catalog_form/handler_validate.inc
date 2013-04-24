@@ -474,7 +474,6 @@ function product_catalog_form_node_validate($node, $form, &$form_state) {
             	}
             	
             }
-            
             break;
 
         case 'simpleproductoffering_node_form' :
@@ -488,14 +487,24 @@ function product_catalog_form_node_validate($node, $form, &$form_state) {
                 form_set_error("Only lowercase letter, number and underscore are allowed for short code");
             }
             
-            if(!empty($form_state['values']['field_next_join_product'])) {
-            	if(!empty($form_state['values']['field_next_join_product']['und']) && (count($form_state['values']['field_next_join_product']['und']) >= 2) ) {
-            		drupal_set_message("Only one product should be selected for Next Join Product", 'error');
-            		form_set_error("Only one product should be selected for Next Join Product");
-            	};
-            }
+            dsm($form_state['values'], 'form_state_values');
+            $prdTypeTerm = taxonomy_term_load($form_state['values']['field_product_type']['und'][0]['tid']);
             
-            //check exclusivessness and downgrade penalty
+            if($prdTypeTerm->name == 'CUG') {
+	            if ( empty($form_state['values']['field_cug_group_type'])
+	            	|| empty($form_state['values']['field_cug_group_type']['und'])) {
+									drupal_set_message("CUG Group Type is required", 'error');
+									form_set_error("CUG Group Type is required");
+	            }
+	
+							if ( empty($form_state['values']['field_cug_customer_type'])
+								|| empty($form_state['values']['field_cug_customer_type']['und'])) {
+									drupal_set_message("CUG Customer Type field is required", 'error');
+									form_set_error("CUG Customer Type field is required");
+							}
+	          }
+	          
+	          //check exclusivessness and downgrade penalty
             if(isset($form_state['values']['field_exclusiveness']['und'])){
                 $isExist = FALSE;
                 $downgradePenaltyViewResult = views_get_view_result('list_product_downgrade_penalty', 'panel_pane_2', $form['#node']->nid);

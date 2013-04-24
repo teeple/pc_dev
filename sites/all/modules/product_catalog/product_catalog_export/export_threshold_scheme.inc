@@ -21,26 +21,12 @@ function _array_threshold_scheme($exportItemNids=NULL){
             $thresholdSchemeFactorsList = views_get_view_result('list_thresholdschemefactors', 'panel_pane_4', $record->nid);
             
             $factorArray = array();
-            foreach($thresholdSchemeFactorsList as $item){
-            
+            foreach($thresholdSchemeFactorsList as $item) {
             		$factor = array();
                 $factor['id'] = $item->nid;
                 
                 dsm($item->field_field_limittothreshold, 'limit to threshold');
                 $factor['limit_to_threshold'] = isset($item->field_field_limittothreshold[0]['raw']['value'])? $item->field_field_limittothreshold[0]['raw']['value'] : NULL;
-                
-                /*
-								"actions":[
-												{
-												     "action":"send_sms_notification",
-												     "parameters":{
-												          "orig":"9761414",
-												          "dest":"CALLING",
-												          "message":"61799"
-												     }
-												},
-								],
-                */
                 
                 $actionSetList = array();
                 foreach($item->field_field_threshold_action_set as $item) {
@@ -59,13 +45,11 @@ function _array_threshold_scheme($exportItemNids=NULL){
                 	} else {
                 		$actionSet['parameters'] = NULL;
                 	}
-                	
-                	
                 	$actionSetList[] = $actionSet;
                 }
                 $factor['actions'] = $actionSetList;
+                $thresholdScheme['factors'][] = $factor;            
             }
-            $thresholdScheme['factors'] = $factor;            
         }
         $jsonData_schemes[] = $thresholdScheme;
         $schemeIds[] = $thresholdScheme['id'];

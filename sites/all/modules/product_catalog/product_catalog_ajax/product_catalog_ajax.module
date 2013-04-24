@@ -968,7 +968,7 @@ function product_catalog_ajax_select_submit() {
       	break;
     
     case 'counter_shared':
-    		_remove_existing_children($tmpProductNid[1], $tmpParentNid[1]);
+    		// _remove_existing_children($tmpProductNid[1], $tmpParentNid[1]);
     
     		$child->type = 'treenodecounter'; 
     		
@@ -979,8 +979,8 @@ function product_catalog_ajax_select_submit() {
     		$child->field_weight['und'][0]['value'] = $weight;
     		$child->field_ref_product['und'][0]['nid'] = $tmpProductNid[1];
     		node_save($child);
-    		$js_data['append_to'] = 'inside';
-    		$js_data['replace_or_append'] = 'replace';
+    		$js_data['append_to'] = 'last';
+    		// $js_data['replace_or_append'] = 'replace';
     		
     		break;
     			
@@ -1011,6 +1011,20 @@ function product_catalog_ajax_select_submit() {
       	node_save($child);
       	$js_data['append_to'] = 'inside';
       	break;
+     
+    case 'member_product':
+    		$child->type = 'prdattributepackaged';
+    		$child->field_weight['und'][0]['value'] = $weight;
+    		$child->field_ref_product['und'][0]['nid'] = $tmpProductNid[1];
+    		$child->field_ref_connected_product['und'][0]['nid'] = $childNid;
+
+				$term = taxonomy_get_term_by_name('CUG_Member','prdrelationtype');
+				$child->field_ref_prdrelationtype['und'][0]['tid'] = current($term)->tid;
+				
+				node_save($child);
+				$js_data['append_to'] = 'inside';
+				break;
+    		  	
 	  case 'packaged_optional':
         $child->type = 'prdattributepackaged';
         $child->field_weight['und'][0]['value'] = $weight;

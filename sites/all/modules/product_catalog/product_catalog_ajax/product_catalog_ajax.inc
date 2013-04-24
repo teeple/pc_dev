@@ -18,6 +18,14 @@ function _load_tree_item_mixed_with_node_and_term($rootNode,$grandParentNode=NUL
             $productTypeTerm = taxonomy_term_load($rootNode->field_product_type['und'][0]['tid']);
             $billTypeTerm = taxonomy_term_load($rootNode->field_billing_type['und'][0]['tid']);
             $notAllowedCombinationStr = $productTypeTerm->name.'_'.$billTypeTerm->name;
+            
+            if($productTypeTerm->name == 'CUG') {
+            	$cugCustomerTypeTerm = taxonomy_term_load($rootNode->field_cug_customer_type['und'][0]['tid']);
+            	$notAllowedCombinationStr .= '_' . $cugCustomerTypeTerm->name;
+            	
+            	
+            }
+            
             break;			
 		case 'tariffplan':
             $filterTerm = TRUE;
