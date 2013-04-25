@@ -28,7 +28,7 @@ function _backup_and_migrate_manual_file_list() {
         foreach ((array)$files as $file) {
             $info = $file -> info();
             $operations = $destination -> get_file_links($file -> file_id());
-
+            dsm($operations,'operations');
             $description = '';
             // Add the description as a new row.
             if (!empty($info['description'])) {
