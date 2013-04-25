@@ -687,7 +687,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
           	  );
             	
             } else {
-	            $disabledFields = array('field_scale', 
+	            $disabledFields = array(// 'field_scale', 
 	            												'field_counter_type',
 	            												'field_service_domain',
 	            												'field_billing_type_counter',
@@ -797,7 +797,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 																'field_parent_node_for_rp',
 																'field_weight_for_ratingpriority',
 																'field_weight',
-																'field_ref_product',
+															'field_ref_product',
 																'field_parent_node',
 																'field_tpl_voca_machine_name',
 																'field_parent_node_for_hr',
@@ -899,30 +899,30 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
                 $form['title']['#type'] = 'hidden';
                 
                 $unsetItems = array_merge($unsetItems,
-                									array('field_description',
-                										'field_offering_status',
-                										'field_version',
-                										'field_billing_type',
-                										'field_validfor_product',
-                										'field_service_operator',
-                										'field_billing_cycle',
-                										'field_product_id',
-                										'field_customer_type',
-                										'field_customer_group_type',
-                										'field_is_bundle',
-                										'field_deferred_subscription_flag',
-                										'field_price_units',
-                										'field_treatment_price_amount',
-                										'field_treatment_day',
-                										'field_contract_period',
-                										'field_roaming_allowed',
-                										'field_cug_member_counter',
-                										'field_short_code',
-                										'field_next_join_product',
-                										'field_expire_date_type',
-                										'field_expire_date',
-                										'field_field_deferred_subscriptio',
-                										'field_hlr_template_id'));
+												array('field_description',
+													'field_offering_status',
+													'field_version',
+													'field_billing_type',
+													'field_validfor_product',
+													'field_service_operator',
+													'field_billing_cycle',
+													'field_product_id',
+													'field_customer_type',
+													'field_customer_group_type',
+													'field_is_bundle',
+													'field_deferred_subscription_flag',
+													'field_price_units',
+													'field_treatment_price_amount',
+													'field_treatment_day',
+													'field_contract_period',
+													'field_roaming_allowed',
+													'field_cug_member_counter',
+													'field_short_code',
+													'field_next_join_product',
+													'field_expire_date_type',
+													'field_expire_date',
+													'field_field_deferred_subscriptio',
+													'field_hlr_template_id'));
                 
                 $options = _get_product_exclusive_list($form['nid']['#value']);
                 $form['field_exclusiveness']['und']['#options'] = $options['list'];
@@ -1815,6 +1815,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 
             $form_state['ajax_actions'][] = '_node_save_handler_for_add_js_settings_after_node_save';
             break;
+            
         case 'numberspecialfactors_node_form' :
             unset($form['field_parent_node']);
             unset($form['field_weight']);
@@ -1839,6 +1840,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             $options = _get_call_type_options();
             $form['field_ref_type_of_call']['und']['#options'] = $options;
             break;
+            
         case 'numberspecialrate_node_form' :
             unset($form['field_parent_node']);
             unset($form['field_weight']);
@@ -1957,6 +1959,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             }
             _unset_menu_items($form, $form_id);
             break;
+            
         case 'carrier_mobile_node_form' :
             _unset_menu_items($form, $form_id);
             break;
