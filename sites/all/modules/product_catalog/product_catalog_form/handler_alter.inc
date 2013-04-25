@@ -261,6 +261,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
                 $form['advanced']['notify_success_email']['#type'] = 'hidden';
                 $form['advanced']['notify_failure_enable']['#type'] = 'hidden';
                 $form['advanced']['notify_failure_email']['#type'] = 'hidden';
+                $form['advanced']['#collapsed'] = FALSE;
                 break;
     		case 'devicemodel_node_form':
     				_unset_menu_items($form, $form_id);
