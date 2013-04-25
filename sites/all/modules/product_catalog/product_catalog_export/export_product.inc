@@ -63,7 +63,10 @@ function _product_for_export($exportItemNids = NULL, $isExternalAPI = FALSE) {
         // $nonUsage['threshold_scheme'] = _get_thresdhold_scheme($node);
         $nonUsage['deposit_scheme'] = _get_deposit_scheme($node);
         $nonUsage['recurring_scheme'] = _get_recurring_scheme($node -> nid);
-        $nonUsage['recurring_amount'] = _get_recurring_amount($node->nid);
+        
+        $recurringTypes = array(1 => 'Daily', 3 => '1/3 Monthly', 4 => 'Monthly');
+        $nonUsage['recurring_charge']['period_type'] = $recurringTypes[$nonUsage['recurring_scheme']['charge_scheme']['rcrr_period_type']];;
+        $nonUsage['recurring_charge']['charge_items'] = _get_recurring_amount($node->nid);
         $nonUsage['onetime_charge'] = _get_onetime_charge($node -> nid);
         $nonUsage['onetime_charge_discount_on_main'] = _get_onetime_charge_discount($node -> nid);
 
@@ -215,14 +218,23 @@ function _get_recurring_amount($productNid) {
     $view -> execute();
     
     foreach($view->result as $chargingItem){
-        $chargeAmount = $chargingItem->field_field_price_amount_float[0]['raw']['value'];
+        $charge = array();
+        $charge['amount'] = $chargingItem->field_field_price_amount_float[0]['raw']['value'];
+        $charge['on'] = $chargingItem->field_field_pricing_cycle_type[0]['rendered']['#markup'];
+        $charge['conditions'] = array();
+        
         $conditionSets = get_children($chargingItem->nid);
         foreach($conditionSets['children'] as $set){
+            $conditionSet = array();
             $conditionCount = count($set['children']);
-            for($i=0;$i<$conditionCount;$i++){
-                $retArray[$chargeAmount][$i][] = $set['children'][$i]['data'];
+            
+            foreach($set['children'] as $condition){
+                $conditionSet[] = $condition['data'];
             }
+            $charge['conditions'][] = $conditionSet;
         }
+        
+       $retArray[] = $charge;
     }
     return $retArray;
 }
@@ -237,6 +249,7 @@ function _get_recurring_scheme($productNid) {
     $chargeScheme = node_load(current($records));
 
     $charging_cycle_type = !empty($chargeScheme -> field_charging_cycle_type) ? $chargeScheme -> field_charging_cycle_type['und'][0]['value'] : NULL;
+    
     if (empty($charging_cycle_type)) {
         $retArray['charge_scheme'] = NULL;
     } else {
@@ -463,6 +476,7 @@ function _get_attribute($product) {
                       'customer_group_type' => array('through_common_code' => TRUE, 'field' => 'field_customer_group_type', 'field_value' => "field_customer_group_type['und'][0]['tid']", 'field_value_default' => NULL), 
                       'cug_member_counter' => array('through_common_code' => FALSE, 'field' => 'field_cug_member_counter', 'field_value' => "field_cug_member_counter['und'][0]['value']", 'field_value_default' => NULL, ), 
                       'cug_group_type' => array('through_common_code' => TRUE, 'field' => 'field_cug_group_type', 'field_value' => "field_cug_group_type['und'][0]['tid']", 'field_value_default' => NULL, ), 
+                      'cug_customer_type' => array('through_common_code' => TRUE, 'field' => 'field_cug_customer_type', 'field_value' => "field_cug_customer_type['und'][0]['tid']", 'field_value_default' => NULL, ), 
                       'treatment_day' => array('through_common_code' => FALSE, 'field' => 'field_treatment_day', 'field_value' => "field_treatment_day['und'][0]['value']", 'field_value_default' => NULL), 
                       'treatment_price' => array('through_common_code' => FALSE, 'field' => 'field_treatment_price_amount', 'field_value' => "field_treatment_price_amount['und'][0]['value']", 'field_value_default' => 0), 
                       'contract_period' => array('through_common_code' => FALSE, 'field' => 'field_contract_period‎', 'field_value' => "field_contract_period‎['und'][0]['value']", 'field_value_default' => 0), 
@@ -668,7 +682,7 @@ function _get_attribute_exceptions($product) {
             $numberSavingInfo['saving_period'] = isset($numberSavingNode -> field_saving_period['und'][0]['value']) ? $numberSavingNode -> field_saving_period['und'][0]['value'] : 0;
             $savingPeriodType = taxonomy_term_load($numberSavingNode -> field_period_type['und'][0]['tid']);
             $numberSavingInfo['period_type'] = $savingPeriodType -> name;
-            $numberSavingInfo['deposit_price'] = isset($numberSavingNode -> field_deposit_price['und'][0]['value']) ? $numberSavingNode -> field_deposit_price['und'][0]['value'] : 0;
+            $numberSavingInfo['deposit_price'] = isset($numberSavingNode -> field_price['und'][0]['value']) ? $numberSavingNode -> field_price['und'][0]['value'] : 0;
             $numberSavings[] = $numberSavingInfo;
         }
         $retArray['number_saving'] = $numberSavings;

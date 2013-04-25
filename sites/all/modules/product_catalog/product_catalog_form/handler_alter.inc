@@ -76,8 +76,8 @@ function _add_ajax_submit_callback($form_id, &$form) {
     $changeEachRow = FALSE;
 
     switch($form_id) {
-    		case 'devicemodel_node_form':
-    		case 'conditionwhatcustomfactors_node_form' :
+    	case 'devicemodel_node_form':
+    	case 'conditionwhatcustomfactors_node_form' :
         case 'conditionwhaturlgroupfactors_node_form' :
         case 'conditionwhencustomfactors_node_form' :
         case 'conditionwhendurationfactors_node_form' :
