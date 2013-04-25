@@ -476,6 +476,7 @@ function _get_attribute($product) {
                       'customer_group_type' => array('through_common_code' => TRUE, 'field' => 'field_customer_group_type', 'field_value' => "field_customer_group_type['und'][0]['tid']", 'field_value_default' => NULL), 
                       'cug_member_counter' => array('through_common_code' => FALSE, 'field' => 'field_cug_member_counter', 'field_value' => "field_cug_member_counter['und'][0]['value']", 'field_value_default' => NULL, ), 
                       'cug_group_type' => array('through_common_code' => TRUE, 'field' => 'field_cug_group_type', 'field_value' => "field_cug_group_type['und'][0]['tid']", 'field_value_default' => NULL, ), 
+                      'cug_customer_type' => array('through_common_code' => TRUE, 'field' => 'field_cug_customer_type', 'field_value' => "field_cug_customer_type['und'][0]['tid']", 'field_value_default' => NULL, ), 
                       'treatment_day' => array('through_common_code' => FALSE, 'field' => 'field_treatment_day', 'field_value' => "field_treatment_day['und'][0]['value']", 'field_value_default' => NULL), 
                       'treatment_price' => array('through_common_code' => FALSE, 'field' => 'field_treatment_price_amount', 'field_value' => "field_treatment_price_amount['und'][0]['value']", 'field_value_default' => 0), 
                       'contract_period' => array('through_common_code' => FALSE, 'field' => 'field_contract_period‎', 'field_value' => "field_contract_period‎['und'][0]['value']", 'field_value_default' => 0), 

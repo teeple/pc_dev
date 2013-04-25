@@ -25,7 +25,6 @@ function _array_threshold_scheme($exportItemNids=NULL){
             		$factor = array();
                 $factor['id'] = $item->nid;
                 
-                dsm($item->field_field_limittothreshold, 'limit to threshold');
                 $factor['limit_to_threshold'] = isset($item->field_field_limittothreshold[0]['raw']['value'])? $item->field_field_limittothreshold[0]['raw']['value'] : NULL;
                 
                 $actionSetList = array();
