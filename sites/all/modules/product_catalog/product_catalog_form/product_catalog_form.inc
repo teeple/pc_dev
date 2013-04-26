@@ -2,7 +2,10 @@
 function _backup_and_migrate_manual_file_list() {
     backup_migrate_include('destinations');
     drupal_add_css(drupal_get_path('module', 'backup_migrate') . '/backup_migrate.css');
-
+    ctools_include('ajax');
+    ctools_include('modal');
+    ctools_modal_add_js();
+    
     $destination_id = 'manual';
     
     $rows = $sort = array();
@@ -31,6 +34,13 @@ function _backup_and_migrate_manual_file_list() {
             //dsm($operations,'operations');
             unset($operations['download']);
             unset($operations['delete']);
+            $modalUrl = 'admin/config/system/backup_migrate/destination/restorefile/manual/'.$file -> file_id();
+            $add_class = 'ctools-use-modal ctools-modal-add-item-modal-style';
+            $link_string = '<a href="'.$modalUrl.'" class='.$add_class.'>Restore</a>';
+            $operations['restore'] = $linkString;
+            
+            //drupal_get_form('backup_migrate_ui_destination_restore_file_confirm', $destination_id, $file_id);
+            //http://192.168.1.63/admin/config/system/backup_migrate/destination/restorefile/manual/ProductCatalog-2013-04-26T12-44-19.mysql.gz
             
             $description = '';
             // Add the description as a new row.
