@@ -30,13 +30,13 @@ function _backup_and_migrate_manual_file_list() {
         $ops = 0;
         foreach ((array)$files as $file) {
             $info = $file -> info();
-            $operations = $destination -> get_file_links($file -> file_id());
+            //$operations = $destination -> get_file_links($file -> file_id());
             //dsm($operations,'operations');
-            unset($operations['download']);
-            unset($operations['delete']);
+            //unset($operations['download']);
+            //unset($operations['delete']);
             $modalUrl = 'admin/config/system/backup_migrate/destination/restorefile/manual/'.$file -> file_id();
-            $add_class = 'ctools-use-modal ctools-modal-add-item-modal-style';
-            $link_string = '<a href="'.$modalUrl.'" class='.$add_class.'>Restore</a>';
+            $addClass = 'ctools-use-modal ctools-modal-add-item-modal-style';
+            $linkString = '<a href="'.$modalUrl.'" class='.$addClass.'>Restore</a>';
             $operations['restore'] = $linkString;
             
             //drupal_get_form('backup_migrate_ui_destination_restore_file_confirm', $destination_id, $file_id);
