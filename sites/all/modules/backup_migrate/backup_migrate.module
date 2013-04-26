@@ -557,8 +557,9 @@ function backup_migrate_ui_manual_backup_form_submit($form, &$form_state) {
     backup_migrate_ui_manual_backup_perform($profile);
   }
   $path = current_path();
+  dsm($path,'path');
   if($path[0] == 'lifecycles/backup/advanced'){
-    $form_state['redirect'] = 'lifecycles/backup/restore#quickset-life_cycle=2';
+    $form_state['redirect'] = '/lifecycles/backup/restore#quickset-life_cycle=2';
   }else{
     $form_state['redirect'] = BACKUP_MIGRATE_MENU_PATH . "/export/advanced";
   }
