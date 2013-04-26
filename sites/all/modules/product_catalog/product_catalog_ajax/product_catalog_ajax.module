@@ -168,7 +168,7 @@ function product_catalog_ajax_menu() {
       'access callback' => TRUE,
       'type' => MENU_CALLBACK,
   );
-  $items['product_catalog_ajax/modal_restore_confirm/%'] = array(
+  $items['product_catalog_ajax/%ctools_js/modal_restore_confirm/%'] = array(
       'title' => 'Restore',
       'page callback' => 'product_catalog_modal_restore_confirm',
       'page arguments' => array(2),
@@ -755,7 +755,9 @@ function product_catalog_modal_restore_confirm($js = NULL,$fileId){
     ctools_include('ajax');
     
     $form_state = array();
-    dsm($js,'product_catalog_modal_restore_confirm');
+    dsm($js);
+    dsm($fileId);
+    
     if (!$js) {
         $form = drupal_get_form('backup_migrate_ui_destination_restore_file_confirm', 'manual',$fileId);
         dsm($form,'restore form');
