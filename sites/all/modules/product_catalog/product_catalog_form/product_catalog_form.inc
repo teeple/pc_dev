@@ -21,7 +21,7 @@ function _backup_and_migrate_manual_file_list() {
     
     $rows = $sort = array();
     
-    if ($destination = backup_migrate_get_destination($destination_id)) {
+    if ($destination = _backup_and_migrate_get_file_links($destination_id)) {
         // Refresh the file listing cache if requested.
         if (isset($_GET['refresh'])) {
             $destination -> file_cache_clear();
