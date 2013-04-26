@@ -29,6 +29,9 @@ function _backup_and_migrate_manual_file_list() {
             $info = $file -> info();
             $operations = $destination -> get_file_links($file -> file_id());
             dsm($operations,'operations');
+            unset($operations['download']);
+            unset($operations['delete']);
+            
             $description = '';
             // Add the description as a new row.
             if (!empty($info['description'])) {
