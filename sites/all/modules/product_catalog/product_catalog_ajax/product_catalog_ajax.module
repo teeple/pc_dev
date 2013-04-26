@@ -757,18 +757,20 @@ function product_catalog_modal_restore_confirm($js = NULL,$fileId){
     $form_state = array();
     $form_state['build_info']['args'] = array('manual',$fileId);
     
-    /*
     if (!$js) {
+        dsm('in js check');
         $form = drupal_get_form('backup_migrate_ui_destination_restore_file_confirm', 'manual',$fileId);
         return $form;
     }
-    */
+    
     $form_state['title'] = 'Restore '. $fileName;
     $form_state['ajax'] = 'TRUE';
     
     $formName = 'backup_migrate_ui_destination_restore_file_confirm';
 
     $output = ctools_modal_form_wrapper($formName, $form_state);
+    
+    dsm($output,'output');
     
     if (!empty($form_state['executed'])) {
         $output = array();
