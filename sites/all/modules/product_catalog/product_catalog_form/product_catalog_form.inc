@@ -1,18 +1,4 @@
 <?php
-
-function _backup_and_migrate_get_file_links($file_id) {
-    $out = array('download' => '', 'restore' => '', 'delete' => '');
-
-    // Don't display the download/delete/restore ops if they are not available for this destination.
-    $can_read       = $this->can_read_file($file_id);
-    
-    $destination_id = $this->get_id();
-    if ($can_read && user_access("restore from backup")) {
-      $out['restore'] = l(t("restore"), BACKUP_MIGRATE_MENU_PATH . "/destination/restorefile/". $destination_id .'/'. $file_id);
-    }
-    return $out;
-}
-
 function _backup_and_migrate_manual_file_list() {
     backup_migrate_include('destinations');
     drupal_add_css(drupal_get_path('module', 'backup_migrate') . '/backup_migrate.css');
@@ -21,7 +7,7 @@ function _backup_and_migrate_manual_file_list() {
     
     $rows = $sort = array();
     
-    if ($destination = _backup_and_migrate_get_file_links($destination_id)) {
+    if ($destination = backup_migrate_get_destination($destination_id)) {
         // Refresh the file listing cache if requested.
         if (isset($_GET['refresh'])) {
             $destination -> file_cache_clear();
@@ -41,8 +27,8 @@ function _backup_and_migrate_manual_file_list() {
         $ops = 0;
         foreach ((array)$files as $file) {
             $info = $file -> info();
-            $operations = $destination -> _backup_and_migrate_get_file_links($file -> file_id());
-            
+            $operations = $destination -> get_file_links($file -> file_id());
+            dsm($operations,'operations');
             $description = '';
             // Add the description as a new row.
             if (!empty($info['description'])) {
