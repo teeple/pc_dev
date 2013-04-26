@@ -34,7 +34,7 @@ function _backup_and_migrate_manual_file_list() {
             //dsm($operations,'operations');
             //unset($operations['download']);
             //unset($operations['delete']);
-            $modalUrl = 'admin/config/system/backup_migrate/destination/restorefile/manual/'.$file -> file_id();
+            $modalUrl = '/admin/config/system/backup_migrate/destination/restorefile/manual/'.$file -> file_id();
             $addClass = 'ctools-use-modal ctools-modal-add-item-modal-style';
             $linkString = '<a href="'.$modalUrl.'" class='.$addClass.'>Restore</a>';
             $operations['restore'] = $linkString;
