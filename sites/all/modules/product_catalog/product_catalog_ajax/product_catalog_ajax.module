@@ -755,7 +755,7 @@ function product_catalog_modal_restore_confirm($js = NULL,$fileId){
     ctools_include('ajax');
     
     $form_state = array();
-    dsm('product_catalog_modal_restore_confirm');
+    dsm($js,'product_catalog_modal_restore_confirm');
     if (!$js) {
         $form = drupal_get_form('backup_migrate_ui_destination_restore_file_confirm', 'manual',$fileId);
         dsm($form,'restore form');
