@@ -168,6 +168,13 @@ function product_catalog_ajax_menu() {
       'access callback' => TRUE,
       'type' => MENU_CALLBACK,
   );
+  $items['product_catalog_ajax/modal_restore_confirm/%'] = array(
+      'title' => 'Restore',
+      'page callback' => 'product_catalog_modal_restore_confirm',
+      'page arguments' => array(2),
+      'access callback' => TRUE,
+      'type' => MENU_CALLBACK,
+  );
   return $items;
 
 } 
@@ -741,7 +748,33 @@ function product_catalog_ajax_select_modal_content($js = NULL, $contentType, $ni
 	print $output;
 	exit;
 }
-  
+function product_catalog_modal_restore_confirm($js = NULL,$fileId){
+    global $user;
+    ctools_include('node.pages', 'node', '');
+    ctools_include('modal');
+    ctools_include('ajax');
+    
+    $form_state = array();
+    
+    if (!$js) {
+        return drupal_get_form('backup_migrate_ui_destination_restore_file_confirm', 'manual',$fileId);
+    }
+    $form_state['title'] = 'Restroe '. $fileName;
+    $form_state['ajax'] = 'TRUE';
+    
+    $formName = $contentType . '_node_form';
+
+    $output = ctools_modal_form_wrapper($formName, $form_state);
+    
+    if (!empty($form_state['executed'])) {
+        $output = array();
+        //$output[] = ctools_modal_command_dismiss();
+    }
+    
+    print ajax_render($output);
+    exit;
+}
+
 function product_catalog_ajax_add_modal_content($js = NULL, $contentType, $refNodeNid, $refTreeTid) {
 	global $user;
 	ctools_include('node.pages', 'node', '');
@@ -1662,7 +1695,6 @@ function product_catalog_ajax_load_tree($js = NULL, $rootNid) {
     print json_encode($children); 
     exit;
 }
-
 
 function product_catalog_ajax_add_content($js = NULL) {
 	global $user;
