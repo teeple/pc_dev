@@ -171,7 +171,7 @@ function product_catalog_ajax_menu() {
   $items['product_catalog_ajax/%ctools_js/modal_restore_confirm/%'] = array(
       'title' => 'Restore',
       'page callback' => 'product_catalog_modal_restore_confirm',
-      'page arguments' => array(2),
+      'page arguments' => array(1,3),
       'access callback' => TRUE,
       'type' => MENU_CALLBACK,
   );
