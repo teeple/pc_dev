@@ -126,7 +126,7 @@
 				menus.custom_create._disabled = false;
 				menus.custom_create.submenu = $.fn.getSubMenuAddNode("Charge Item", "actionpricechargeonetime");
 				break;
-			case 'nonusage_fee_recurring':
+			case 'nonusage_fee_recurring_custom':
 			case 'nonusage_recurring_charge':
 				menus.custom_create._disabled = false;
 				menus.custom_create.submenu = $.fn.getSubMenuAddNode("Charge Item", "actionpricechargerecurring");

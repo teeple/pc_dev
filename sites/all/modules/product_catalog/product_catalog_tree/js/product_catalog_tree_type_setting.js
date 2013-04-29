@@ -383,14 +383,26 @@
         	        }
         },
         
-        "nonusage_fee_recurring" : {
+        "nonusage_fee_recurring_custom" : {
         	"valid_children" : ["actionpricechargerecurring"],
+        	"icon" : {
+        	"image" : "/sites/default/files/icons/money.png"
+        	        }
+        },
+        "nonusage_fee_recurring_default" : {
+        	"valid_children" : ["actionpricechargerecurringdefaul"],
         	"icon" : {
         	"image" : "/sites/default/files/icons/money.png"
         	        }
         },
         "actionpricechargerecurring" : {
 		        "valid_children" : ["conditioncommonand_nonusage_recurring"],
+    		    	"icon" : {
+        		"image" : "/sites/default/files/icons/money.png"
+            }
+        },
+        "actionpricechargerecurringdefaul" : {
+		        "valid_children" : [],
     		    	"icon" : {
         		"image" : "/sites/default/files/icons/money.png"
             }

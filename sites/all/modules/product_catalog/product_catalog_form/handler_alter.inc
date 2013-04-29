@@ -124,6 +124,7 @@ function _add_ajax_submit_callback($form_id, &$form) {
         case 'actionpricechargefactors_node_form' :
         case 'actionpricechargeonetime_node_form' :
         case 'actionpricechargerecurring_node_form' :
+        case 'actionpricechargerecurringdefaul_node_form':
         case 'actionpricediscount_node_form' :
         case 'actionpriceallowance_node_form' :
         case 'actionblockfactors_node_form' :
@@ -1590,6 +1591,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
         case 'actionpricediscount_node_form' :
         case 'actionpricechargeonetime_node_form' :
         case 'actionpricechargerecurring_node_form' :
+        case 'actionpricechargerecurringdefaul_node_form':
             $form['field_parent_node']['#type'] = 'hidden';
             $form['field_weight']['#type'] = 'hidden';
             $form['field_ref_product']['#type'] = 'hidden';
@@ -1606,7 +1608,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
                     $product = node_load($form_state['root_nid']);
                     $currencyTid = $product -> field_price_units['und'][0]['tid'];
 
-										$form['field_recurring_charge_id']['#type'] = 'hidden';
+					$form['field_recurring_charge_id']['#type'] = 'hidden';
                     $form['field_recurring_charge_id']['und'][0]['value']['#default_value'] = $product->field_product_id['und'][0]['value'] . '_' . time();
                 }
                 
@@ -1751,7 +1753,6 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             $mergedCounterList = $basicCounterList + $existingCounterList;
             
             $form['field_ref_counter']['und']['#options'] = $mergedCounterList;
-            
             /*
             $form['field_ref_counter']['#ajax'] = 
             	array('callback' => '_ajax_counter_type_validate',
