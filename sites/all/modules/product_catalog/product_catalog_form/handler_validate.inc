@@ -454,7 +454,7 @@ function product_catalog_form_node_validate($node, $form, &$form_state) {
             $voucherCardTypeTerm = taxonomy_term_load($form_state['values']['field_ref_voucher_type']['und'][0]['tid']);
             
             if($voucherCardTypeTerm->name == 'Discount') {
-            	dsm($form_state['values'], 'form state values');
+            	//dsm($form_state['values'], 'form state values');
             	if(empty($form_state['values']['field_ref_product_for_disvoucher']) 
             		|| empty($form_state['values']['field_ref_product_for_disvoucher']['und'])
             		|| empty($form_state['values']['field_ref_product_for_disvoucher']['und'][0])
@@ -506,7 +506,7 @@ function product_catalog_form_node_validate($node, $form, &$form_state) {
                 }
                 
                 foreach($downgradePenaltyViewResult as $item){
-                     dsm($item,'$item');
+                     //dsm($item,'$item');
                     if(in_array($item->field_field_ref_target_product[0]['raw']['nid'],$selectedNids)){
                         $isExist = TRUE;
                         $existName = $item->field_field_ref_target_product[0]['raw']['node']->title;
