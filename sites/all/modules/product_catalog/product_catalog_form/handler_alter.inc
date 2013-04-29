@@ -236,16 +236,36 @@ function edit_pane_callback($form, &$form_state) {
 }
 
 function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
+
+	
 	load_required_js_css_before_ajax_load();
 
-	dsm($form, 'form');
-	dsm($form_state, 'form_state');
-	
     if ((isset($form['#attributes']) && isset($form['#attributes']['class'])) && gettype($form['#attributes']['class']) == 'array') {
         $form['#attributes']['class'][] = 'myform';
     }
     
     switch($form_id) {
+    		case 'views_form_ocs_svc_perm_panel_pane_1':
+				// TODO: state service permission
+    			$lifecycleScheme = node_load($form_state['build_info']['args'][0]->args[0]);
+    			$svcDomainTid = $lifecycleScheme->field_service_domain['und'][0]['tid'];
+    			
+				$view = views_get_view('list_calltype');
+				$view->set_display('panel_pane_2');
+				$view->set_arguments(array('0'=>$svcDomainTid));
+				$view->execute();
+				
+				$options = array();
+				foreach($view->result as $record) {
+					$options[$record->tid] = $record->taxonomy_term_data_name;
+				}
+
+				$index = 0;
+				foreach($form['field_service_permission'] as $key => $value) {
+					$form['field_service_permission'][$key]['field_service_permission']['und']['#options'] = $options;
+				}
+				
+    			break;
             case 'backup_migrate_ui_manual_backup_load_profile_form':
                 $form['profile']['#type'] = 'hidden';
                 break;
@@ -265,7 +285,6 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
                 $form['advanced']['notify_failure_enable']['#type'] = 'hidden';
                 $form['advanced']['notify_failure_email']['#type'] = 'hidden';
                 $form['advanced']['#collapsed'] = FALSE;
-                $path = current_path();
                 break;
     		case 'devicemodel_node_form':
     				_unset_menu_items($form, $form_id);
