@@ -279,6 +279,7 @@
             case 'actionpricechargeonetime':
             case 'actionpriceallowanceonetime':
             case 'actionpricechargerecurring':
+            case 'actionpricechargerecurringdefaul':
             case 'actionpriceallowancerecurring':
             case 'prdnonusagerollover':
             case 'treenodelifecyclescheme':

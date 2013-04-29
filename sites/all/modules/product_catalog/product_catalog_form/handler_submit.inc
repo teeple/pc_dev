@@ -22,6 +22,7 @@ function product_catalog_form_node_submit($node, $form, &$form_state)
 			$node->uid =  $user->uid;
 			break;
 		case 'actionpricechargerecurring_node_form':
+        case 'actionpricechargerecurringdefaul_node_form':
 			if(empty($form_state['values']['nid'])) {
 				$product = node_load($form_state['root_nid']);
 
@@ -219,8 +220,7 @@ function _create_default_items_by_voca($product, $voca_name) {
 					   _create_default_basic_counters($product->nid, $treeTerm->tid);
                     }
 					break;
-					
-				default:
+                default:
 					$node = new StdClass();
 					$node->uid = $user->uid;
 					$node->type = $treeTerm->field_default_contenttype['und'][0]['value'];
@@ -234,16 +234,17 @@ function _create_default_items_by_voca($product, $voca_name) {
 							
 							if($fieldValue == '$productNid'){
 								$fieldValue = $product->nid;
-								
 							} else if($fieldValue == '$refTreeTid') {
 								$fieldValue = $term->tid;
-							}
+							} else if($fieldValue == '$rid') {
+							    $fieldValue = '\''.$product->field_product_id['und'][0]['value'] . '_' . time().'\'';
+                            } 
 							$command = '$node->'.$fieldName.'='.$fieldValue.';';
-							eval($command);
+                            eval($command);
 						}
-						node_save($node);
-						
-					} // foreach 
+					} // foreach
+					node_save($node); 
+                    break;
 				} //if 
 		}
 	}
