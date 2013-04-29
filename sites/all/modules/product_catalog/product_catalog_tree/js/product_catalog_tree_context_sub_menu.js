@@ -218,6 +218,7 @@
 			case 'conditionwhatservicedomain':
 			case 'conditionwhatcontentprice':
 			case 'conditionwhatcalltype':
+			case 'conditionwhenvaliddate':
 				menus.custom_delete._disabled = false;
 				menus.custom_delete.action = function(node) {
 					$.fn.deleteNode(node);
@@ -721,7 +722,8 @@
 			"Holiday" : $.fn.getSubMenuAddNodeWithoutWrapper("Holiday", "conditionwhenholidayfactors"),
 			"Timeslot" : $.fn.getSubMenuAddNodeWithoutWrapper("Timeslot", "conditionwhentimeslotfactors"),
 			"Week" : $.fn.getSubMenuAddNodeWithoutWrapper("Week", "conditionwhenweekfactors"),
-			"Calling Zone Time" : $.fn.getSubMenuAddNodeWithoutWrapper("Calling Zone Time", "conditionwhencallingzonetime")
+			"Calling Zone Time" : $.fn.getSubMenuAddNodeWithoutWrapper("Calling Zone Time", "conditionwhencallingzonetime"),
+			"Valid Date" : $.fn.getSubMenuAddNodeWithoutWrapper("Valid Date", "conditionwhenvaliddate")
 		};
 		return obj;
 	};
@@ -740,6 +742,7 @@
 			"Holiday" : $.fn.getSubMenuAddNodeWithoutWrapper("Holiday", "conditionwhenholidayfactors"),
 			"Timeslot" : $.fn.getSubMenuAddNodeWithoutWrapper("Timeslot", "conditionwhentimeslotfactors"),
 			"Week" : $.fn.getSubMenuAddNodeWithoutWrapper("Week", "conditionwhenweekfactors"),
+			"Valid Date" : $.fn.getSubMenuAddNodeWithoutWrapper("Valid Date", "conditionwhenvaliddate")
 		};
 		return obj;
 	};

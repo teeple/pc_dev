@@ -894,6 +894,12 @@
 						"image" : "/sites/default/files/file.png"
 					}
 				},
+				"conditionwhenvaliddate" : {
+					"valid_children" : "none",
+					"icon" : {
+						"image" : "/sites/default/files/file.png"
+					}
+				},
 				"conditionwherecountryfactors" : {
 					"valid_children" : "none",
 					"icon" : {
