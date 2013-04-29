@@ -247,6 +247,8 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
     
     switch($form_id) {
     		case 'views_form_ocs_svc_perm_panel_pane_1':
+				dpm( $form, 'form ');
+
 				// TODO: state service permission
     			$lifecycleScheme = node_load($form_state['build_info']['args'][0]->args[0]);
     			$svcDomainTid = $lifecycleScheme->field_service_domain['und'][0]['tid'];
@@ -258,12 +260,27 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 				
 				$options = array();
 				foreach($view->result as $record) {
-					$options[$record->tid] = $record->taxonomy_term_data_name;
+					$subgroup = $record->field_field_sub_group1[0]['raw']['value'];
+					$options[$subgroup][$record->tid] = t( '<span class="@class">@svc</span>', 
+							array( '@class' => 'ocs_svc_perm ' . $subgroup,
+								'@svc' => $record->taxonomy_term_data_name));
 				}
 
 				$index = 0;
 				foreach($form['field_service_permission'] as $key => $value) {
+					$form['field_service_permission'][$key]['field_service_permission']['group'] = array(
+						'#type' => 'checkboxes',
+						'#title' => 'Subgroup',
+						'#options' => array( 'Voice'),
+						);
 					$form['field_service_permission'][$key]['field_service_permission']['und']['#options'] = $options;
+					$form['field_service_permission'][$key]['field_service_permission']['und']['#disabled'] = TRUE;
+					$form['field_service_permission'][$key]['field_service_permission']['und']['#states'] = array(
+						'visible' => array(
+							':input[name="field_service_permission[0][field_service_permission][group][0]"]' => array( 'disabled' => FALSE)
+							),
+
+						);
 				}
 				
     			break;

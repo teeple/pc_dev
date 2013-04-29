@@ -2423,6 +2423,7 @@ div.ctools-modal-content .form-item table .form-type-textfield .form-text{
 
 div.div_float_left {
 	float:left;
+	margin-right: 20pt;
 }
 
   
@@ -2505,4 +2506,9 @@ div.exported_data .content {
 	-o-text-overflow: ellipsis;
 	white-space: nowrap;
 	width: 200pt;
+}
+
+/* for service permission tab */
+.ocs_svc_perm.VOICE {
+  color: red;
 }
