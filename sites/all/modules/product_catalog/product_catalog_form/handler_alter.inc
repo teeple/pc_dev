@@ -171,6 +171,7 @@ function _add_ajax_submit_callback($form_id, &$form) {
         case 'conditionwhereroamingcountry_node_form':
         case 'conditionwhereroamingzone_node_form':
         case 'conditionwhatroamingtype_node_form':
+        case 'conditionwhenvaliddate_node_form':
             $change = TRUE;
             break;
 
@@ -402,6 +403,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
         case 'conditionwhatroamingtype_node_form':
         case 'conditionwhererattype_node_form' :
         case 'conditionwheresgsn_node_form' :
+        case 'conditionwhenvaliddate_node_form':
             _unset_menu_items($form, $form_id);
             $form['field_weight']['#type'] = 'hidden';
             $form['field_parent_node']['#type'] = 'hidden';
