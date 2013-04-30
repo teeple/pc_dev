@@ -44,6 +44,10 @@ function _array_lifecycle_scheme($exportItemNids=NULL){
 					foreach($node->field_field_nonusage_permission as  $item) {
 						$perm['nonusage_permission'][ $state_name][] = $item['rendered']['#title'];	
 					}
+				if (!empty( $node->field_field_feature_codes))
+					foreach($node->field_field_feature_codes as  $item) {
+						$perm['feature_code'][ $state_name][] = $item['rendered']['#markup'];	
+					}
 				if ( !empty( $node->field_field_max_duration)) {
 					$state_period[ $state_name] = intval( $node->field_field_max_duration[0]['raw']['value']);
 				}

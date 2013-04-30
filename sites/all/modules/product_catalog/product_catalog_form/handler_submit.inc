@@ -34,6 +34,12 @@ function product_catalog_form_node_submit($node, $form, &$form_state)
 				*/
 				
 			}
+		case 'vouchercardtype_node_form':
+			if($form_state['values']['field_valid_date_ymd_w_enddate']['und'][0]['show_todate'] == 0) {
+				$validEnd = "9999-12-31 23:59:59";
+				$node->field_valid_date_ymd_w_enddate['und'][0]['value2'] = $validEnd;
+				node_save($node);
+			}
 			
 			break;
 	}

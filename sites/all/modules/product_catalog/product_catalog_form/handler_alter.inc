@@ -260,30 +260,57 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 				$view->execute();
 				
 				$options = array();
+				$group = array();
 				foreach($view->result as $record) {
-					$subgroup = $record->field_field_sub_group1[0]['raw']['value'];
-					$options[$subgroup][$record->tid] = t( '<span class="@class">@svc</span>', 
-							array( '@class' => 'ocs_svc_perm ' . $subgroup,
+					$subgroup1 = $record->field_field_sub_group1[0]['raw']['value'];
+					$subgroup2 = $record->field_field_sub_group2[0]['raw']['value'];
+					$options[$record->tid] = t( '<span class="@class">@svc</span>', 
+							array( '@class' => t( 'ocs_svc_perm @1 @2', array( '@1' => $subgroup1, '@2' => $subgroup2)),
+								'@svc' => $record->taxonomy_term_data_name));
+					$group[$subgroup1][$subgroup2] = 1;
+				}
+
+				/*
+				$legend = '';
+				foreach( $group as $key => $values) {
+					foreach( array_keys( $values) as $v) {
+						$legend .= t('<div>@k,@v</div>', array( '@k' => $key, '@v' => $v));
+					}
+				}
+				*/
+
+				foreach( array_keys( $form['field_service_permission']) as $key) {
+					/*
+					foreach( array_keys( $options) as $subgroup) {
+						$form['field_service_permission'][$key]['field_service_permission'][$subgroup] = 
+							$form['field_service_permission'][$key]['field_service_permission']['und'];
+						$form['field_service_permission'][$key]['field_service_permission'][$subgroup]['#options'] = $options[$subgroup];
+					}
+					*/
+					//unset( $form['field_service_permission'][$key]['field_service_permission']['und']);
+					$form['field_service_permission'][$key]['field_service_permission']['und']['#options'] = $options;
+				//	$form['field_service_permission'][$key]['field_service_permission']['#suffix'] .= $legend;
+				}
+
+				// filter feature codes
+				$view = views_get_view('list_service_feature_code');
+				$view->set_display('list_feature_code');
+				$view->set_arguments(array('0'=>$svcDomainTid, '1'=>'Lifecycle'));
+				$view->execute();
+				
+				$options = array();
+				foreach($view->result as $record) {
+					$subgroup1 = $record->field_field_sub_group1[0]['raw']['value'];
+					$subgroup2 = $record->field_field_sub_group2[0]['raw']['value'];
+					$options[$record->tid] = t( '<span class="@class">@svc</span>', 
+							array( '@class' => t( 'ocs_svc_perm @1 @2', array( '@1' => $subgroup1, '@2' => $subgroup2)),
 								'@svc' => $record->taxonomy_term_data_name));
 				}
 
-				$index = 0;
-				foreach($form['field_service_permission'] as $key => $value) {
-					$form['field_service_permission'][$key]['field_service_permission']['group'] = array(
-						'#type' => 'checkboxes',
-						'#title' => 'Subgroup',
-						'#options' => array( 'Voice'),
-						);
-					$form['field_service_permission'][$key]['field_service_permission']['und']['#options'] = $options;
-					$form['field_service_permission'][$key]['field_service_permission']['und']['#disabled'] = TRUE;
-					$form['field_service_permission'][$key]['field_service_permission']['und']['#states'] = array(
-						'visible' => array(
-							':input[name="field_service_permission[0][field_service_permission][group][0]"]' => array( 'disabled' => FALSE)
-							),
-
-						);
+				foreach( array_keys( $form['field_feature_codes']) as $key) {
+					$form['field_feature_codes'][$key]['field_feature_codes']['und']['#options'] = $options;
 				}
-				
+
     			break;
             case 'backup_migrate_ui_manual_backup_load_profile_form':
                 $form['profile']['#type'] = 'hidden';
@@ -499,21 +526,21 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             unset($form['field_active_period']);
             unset($form['field_grace_period']);
 
-						// Create
-						if (!isset($form['nid']['#value'])) {
-							
-							$viewResult = views_get_view_result('query_vouchercardtype_max_id', 'panel_pane_1');
-							if(sizeof($viewResult) > 0) {
-								$maxVoucherId = current($viewResult)->field_field_voucher_id[0]['raw']['value'];
-							} else {
-								$maxVoucherId = 10000;
-							}
-							
-							$form['field_voucher_id']['und'][0]['value']['#default_value'] = $maxVoucherId + 1;
-							$form['field_voucher_id']['und']['#disabled'] = TRUE;
-							
-							$form['actions']['submit']['#submit'][] = '_vouchercardtype_submit_handler';
-              $form['actions']['submit']['#submit'][] = 'product_catalog_form_form_redirect_handler';
+			// Create
+			if (!isset($form['nid']['#value'])) {
+				
+				$viewResult = views_get_view_result('query_vouchercardtype_max_id', 'panel_pane_1');
+				if(sizeof($viewResult) > 0) {
+					$maxVoucherId = current($viewResult)->field_field_voucher_id[0]['raw']['value'];
+				} else {
+					$maxVoucherId = 10000;
+				}
+				
+				$form['field_voucher_id']['und'][0]['value']['#default_value'] = $maxVoucherId + 1;
+				$form['field_voucher_id']['und']['#disabled'] = TRUE;
+				
+				$form['actions']['submit']['#submit'][] = '_vouchercardtype_submit_handler';
+              	$form['actions']['submit']['#submit'][] = 'product_catalog_form_form_redirect_handler';
               
             // Edit  
             } else {
