@@ -750,6 +750,23 @@ function product_catalog_ajax_select_modal_content($js = NULL, $contentType, $ni
 }
 
 function product_catalog_modal_restore_confirm($js = NULL,$fileId){
+/*
+settings =>
+    ... (Array, 10 elements)
+    source_id (String, 2 characters ) db
+    destination_id (String, 6 characters ) manual
+    file_id (String, 43 characters ) ProductCatalog-2013-04-30T12-35-32.mysql.gz
+    confirm (Integer) 1
+    submit (String, 7 characters ) Restore
+    filters (Array, 2 elements)
+    utils_site_offline (Integer) 0
+    utils_site_offline_message (String, 103 characters ) Product Catalog is currently under maintenance....
+    Product Catalog is currently under maintenance. We should be back shortly. Thank you for your patience.
+    form_build_id (String, 48 characters ) form-1zzxwZJs5rIh2ZskcBsRGD_Za4szGjLjxLKPHoRZnS4
+    form_token (String, 43 characters ) 6oSBAdL7RbpZZfkK8stY31NvD7_LgwsPhDp0acz8gjY
+    form_id (String, 50 characters ) backup_migrate_ui_destination_restore_file_confirm | (Callback) backup_migrate_ui_destination_restore_file_confirm();
+    op (String, 7 characters ) Restore
+*/
     ctools_include('node.pages', 'node', '');
     ctools_include('ajax');
         
@@ -761,38 +778,6 @@ function product_catalog_modal_restore_confirm($js = NULL,$fileId){
     $output = ajax_render($output);
     print $output;
     exit;
-    /*
-    global $user;
-    ctools_include('node.pages', 'node', '');
-    ctools_include('modal');
-    ctools_include('ajax');
-    
-    $form_state = array();
-    $form_state['build_info']['args'] = array('manual',$fileId);
-    
-    if (!$js) {
-        dsm('in js check');
-        $form = drupal_get_form('backup_migrate_ui_destination_restore_file_confirm', 'manual',$fileId);
-        return $form;
-    }
-    
-    $form_state['title'] = 'Restore '. $fileName;
-    $form_state['ajax'] = 'TRUE';
-    
-    $formName = 'backup_migrate_ui_destination_restore_file_confirm';
-
-    $output = ctools_modal_form_wrapper($formName, $form_state);
-    
-    dsm($output,'output');
-    
-    if (!empty($form_state['executed'])) {
-        $output = array();
-        //$output[] = ctools_modal_command_dismiss();
-    }
-    
-    print ajax_render($output);
-    exit;
-    */
 }
 
 function product_catalog_ajax_add_modal_content($js = NULL, $contentType, $refNodeNid, $refTreeTid) {

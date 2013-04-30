@@ -29,8 +29,10 @@ function _backup_and_migrate_manual_file_list() {
         foreach ((array)$files as $file) {
             $info = $file -> info();
             $ajaxUrl = '/product_catalog_ajax/nojs/modal_restore_confirm/'.$file -> file_id();
-            $operations['restore'] = l(t('Restore'), $ajaxUrl, array('attributes' => array('class' => array('use-ajax'))));
-           
+            $linkOutput = l(t('Restore'), $ajaxUrl, array('attributes' => array('class' => array('use-ajax'))));
+            $linkString = '<div>'.$linkOutput.'</div>';
+            $operations['restore'] = $linkString;
+            
             $description = '';
             // Add the description as a new row.
             if (!empty($info['description'])) {
