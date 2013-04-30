@@ -769,12 +769,11 @@ settings =>
 */
     ctools_include('node.pages', 'node', '');
     ctools_include('ajax');
-        
+                
     backup_migrate_perform_restore('manual', $fileId, NULL);
     
     $output = array();
-    $renderOutput = '<div>'.'hahahaha'.'</div>';
-    $output[] = $renderOutput;
+    $output[] = ctools_ajax_command_reload();
     $output = ajax_render($output);
     print $output;
     exit;
