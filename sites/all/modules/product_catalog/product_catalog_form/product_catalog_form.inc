@@ -28,10 +28,16 @@ function _backup_and_migrate_manual_file_list() {
         $ops = 0;
         foreach ((array)$files as $file) {
             $info = $file -> info();
+            //$operations = $destination -> get_file_links($file -> file_id());
+            //dsm($operations,'operations');
+            //unset($operations['download']);
+            //unset($operations['delete']);
             $ajaxUrl = '/product_catalog_ajax/nojs/modal_restore_confirm/'.$file -> file_id();
-            $linkOutput = l(t('Restore'), $ajaxUrl, array('attributes' => array('class' => array('use-ajax'))));
-            $linkString = '<div>'.$linkOutput.'</div>';
+            $linkString = '<a href="'.$ajaxUrl.'">Restore</a>';
             $operations['restore'] = $linkString;
+            
+            //drupal_get_form('backup_migrate_ui_destination_restore_file_confirm', $destination_id, $file_id);
+            //http://192.168.1.63/admin/config/system/backup_migrate/destination/restorefile/manual/ProductCatalog-2013-04-26T12-44-19.mysql.gz
             
             $description = '';
             // Add the description as a new row.
