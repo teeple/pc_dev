@@ -772,11 +772,14 @@ settings =>
                 
     backup_migrate_perform_restore('manual', $fileId, NULL);
     
+    /*
     $output = array();
     $output[] = ctools_ajax_command_reload();
     $output = ajax_render($output);
     print $output;
     exit;
+    */
+    drupal_goto();
 }
 
 function product_catalog_ajax_add_modal_content($js = NULL, $contentType, $refNodeNid, $refTreeTid) {
