@@ -726,7 +726,7 @@ function backup_migrate_perform_backup(&$settings) {
  * Restore from a file in the given destination.
  */
 function backup_migrate_perform_restore($destination_id, $file, $settings = array()) {
-  backup_migrate_include('files', 'filters');
+  backup_migrate_include('files', 'filters','crud');
   timer_start('backup_migrate_restore');
   
   // If not in 'safe mode', increase the maximum execution time:
