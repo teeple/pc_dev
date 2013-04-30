@@ -769,8 +769,8 @@ function product_catalog_modal_restore_confirm($js = NULL,$fileId){
     
     $formName = 'backup_migrate_ui_destination_restore_file_confirm';
 
-    $output = ctools_modal_form_wrapper($formName, $form_state);
-    
+    //$output = ctools_modal_form_wrapper($formName, $form_state);
+    $output = backup_migrate_ui_destination_restore_file('manual',$fileId);
     dsm($output,'output');
     
     if (!empty($form_state['executed'])) {

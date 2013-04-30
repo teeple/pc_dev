@@ -384,8 +384,6 @@ function backup_migrate_ui_destination_restore_file_confirm($form, &$form_state,
     $form['advanced']['#collapsed'] = true;
     $form['advanced']['#collapsible'] = true;
   }
-    
-    dsm($form,'confirm form here');
   return $form;
 }
 
