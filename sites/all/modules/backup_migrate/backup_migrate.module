@@ -728,6 +728,7 @@ function backup_migrate_perform_backup(&$settings) {
 function backup_migrate_perform_restore($destination_id, $file, $settings = array()) {
   backup_migrate_include('files', 'filters');
   timer_start('backup_migrate_restore');
+  dsm($settings,'settings');
 
   // If not in 'safe mode', increase the maximum execution time:
   if (!ini_get('safe_mode') && strpos(ini_get('disable_functions'), 'set_time_limit') === FALSE && ini_get('max_execution_time') < variable_get('backup_migrate_backup_max_time', 1200)) {

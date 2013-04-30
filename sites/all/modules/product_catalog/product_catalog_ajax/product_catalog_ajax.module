@@ -750,6 +750,8 @@ function product_catalog_ajax_select_modal_content($js = NULL, $contentType, $ni
 }
 
 function product_catalog_modal_restore_confirm($js = NULL,$fileId){
+    //backup_migrate_perform_restore('manual', $fileId, $form_state['values']);
+    /*
     global $user;
     ctools_include('node.pages', 'node', '');
     ctools_include('modal');
@@ -769,8 +771,8 @@ function product_catalog_modal_restore_confirm($js = NULL,$fileId){
     
     $formName = 'backup_migrate_ui_destination_restore_file_confirm';
 
-    //$output = ctools_modal_form_wrapper($formName, $form_state);
-    $output = backup_migrate_ui_destination_restore_file('manual',$fileId);
+    $output = ctools_modal_form_wrapper($formName, $form_state);
+    
     dsm($output,'output');
     
     if (!empty($form_state['executed'])) {
@@ -780,6 +782,7 @@ function product_catalog_modal_restore_confirm($js = NULL,$fileId){
     
     print ajax_render($output);
     exit;
+    */
 }
 
 function product_catalog_ajax_add_modal_content($js = NULL, $contentType, $refNodeNid, $refTreeTid) {
