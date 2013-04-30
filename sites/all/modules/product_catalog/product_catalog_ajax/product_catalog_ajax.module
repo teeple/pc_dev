@@ -750,7 +750,17 @@ function product_catalog_ajax_select_modal_content($js = NULL, $contentType, $ni
 }
 
 function product_catalog_modal_restore_confirm($js = NULL,$fileId){
-    //backup_migrate_perform_restore('manual', $fileId, $form_state['values']);
+    ctools_include('node.pages', 'node', '');
+    ctools_include('ajax');
+        
+    backup_migrate_perform_restore('manual', $fileId, NULL);
+    
+    $output = array();
+    $renderOutput = '<div>'.'hahahaha'.'</div>';
+    $output[] = $renderOutput;
+    $output = ajax_render($output);
+    print $output;
+    exit;
     /*
     global $user;
     ctools_include('node.pages', 'node', '');
