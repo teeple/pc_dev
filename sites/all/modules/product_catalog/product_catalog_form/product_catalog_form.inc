@@ -3,8 +3,6 @@ function _backup_and_migrate_manual_file_list() {
     backup_migrate_include('destinations');
     drupal_add_css(drupal_get_path('module', 'backup_migrate') . '/backup_migrate.css');
     ctools_include('ajax');
-    ctools_include('modal');
-    ctools_modal_add_js();
     
     $destination_id = 'manual';
     
@@ -30,17 +28,9 @@ function _backup_and_migrate_manual_file_list() {
         $ops = 0;
         foreach ((array)$files as $file) {
             $info = $file -> info();
-            //$operations = $destination -> get_file_links($file -> file_id());
-            //dsm($operations,'operations');
-            //unset($operations['download']);
-            //unset($operations['delete']);
-            $modalUrl = '/product_catalog_ajax/nojs/modal_restore_confirm/'.$file -> file_id();
-            $addClass = 'ctools-use-modal ctools-modal-add-item-modal-style';
-            $linkString = '<a href="'.$modalUrl.'" class='.$addClass.'>Restore</a>';
+            $ajaxUrl = '/product_catalog_ajax/nojs/modal_restore_confirm/'.$file -> file_id();
+            $linkString = '<a href="'.$ajaxUrl.'">Restore</a>';
             $operations['restore'] = $linkString;
-            
-            //drupal_get_form('backup_migrate_ui_destination_restore_file_confirm', $destination_id, $file_id);
-            //http://192.168.1.63/admin/config/system/backup_migrate/destination/restorefile/manual/ProductCatalog-2013-04-26T12-44-19.mysql.gz
             
             $description = '';
             // Add the description as a new row.
