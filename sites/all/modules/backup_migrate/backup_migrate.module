@@ -556,7 +556,13 @@ function backup_migrate_ui_manual_backup_form_submit($form, &$form_state) {
   if ($form_state['values']['op'] == t('Backup now') && user_access('perform backup')) {
     backup_migrate_ui_manual_backup_perform($profile);
   }
-  $form_state['redirect'] = BACKUP_MIGRATE_MENU_PATH . "/export/advanced";
+  $path = current_path();
+  
+  if($path == 'lifecycles/backup/advanced'){
+    $form_state['redirect'] = 'lifecycles/backup/restore#quickset-life_cycle=2';
+  }else{
+    $form_state['redirect'] = BACKUP_MIGRATE_MENU_PATH . "/export/advanced";
+  }
 }
 
 /**
@@ -720,9 +726,9 @@ function backup_migrate_perform_backup(&$settings) {
  * Restore from a file in the given destination.
  */
 function backup_migrate_perform_restore($destination_id, $file, $settings = array()) {
-  backup_migrate_include('files', 'filters');
+  backup_migrate_include('files', 'filters','crud');
   timer_start('backup_migrate_restore');
-
+  
   // If not in 'safe mode', increase the maximum execution time:
   if (!ini_get('safe_mode') && strpos(ini_get('disable_functions'), 'set_time_limit') === FALSE && ini_get('max_execution_time') < variable_get('backup_migrate_backup_max_time', 1200)) {
     set_time_limit(variable_get('backup_migrate_restore_max_time', 1200));

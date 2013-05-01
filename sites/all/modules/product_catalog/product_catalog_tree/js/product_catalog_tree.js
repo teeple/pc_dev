@@ -120,6 +120,7 @@
 					            			|| m.o.attr('rel') == 'tree_node_counter_main_rollover_prepaid' 
 					            			|| m.o.attr('rel') == 'tree_node_counter_main_rollover_postpaid' 
 					            			|| m.o.attr('rel') == 'actionpriceallowanceonetime'
+					            			|| m.o.attr('rel') == 'actionpricechargerecurring'
 					            			) {
 					            			
 						            			if(m.op.attr('rel') == m.np.attr('rel') ) {

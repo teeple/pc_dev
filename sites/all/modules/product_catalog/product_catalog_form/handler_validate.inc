@@ -380,10 +380,10 @@ function product_catalog_form_node_validate($node, $form, &$form_state) {
         				drupal_set_message("Recurring ID should be unique", "error");
         				form_set_error('Recurring ID should be unique');
         			}
-	            if (!is_machine_name($recurringId)) {
-	                drupal_set_message("Only letters and underscore is allowed for recurring id", 'error');
-	                form_set_error("Only letters and underscore is allowed for recurring id");
-	            }
+		            if (!is_machine_name($recurringId)) {
+		                drupal_set_message("Only letters and underscore is allowed for recurring id", 'error');
+		                form_set_error("Only letters and underscore is allowed for recurring id");
+		            }
         		}
         		
         		break;
@@ -406,9 +406,9 @@ function product_catalog_form_node_validate($node, $form, &$form_state) {
              return;
              }
              */
+             
             if (!is_machine_name($form_state['values']['field_counter_id']['und'][0]['value'])) {
-                drupal_set_message("Only letters and underscore is allowed for counter id", 'error');
-                form_set_error("Only letters and underscore is allowed for counter id");
+                form_set_error('field_counter_id', "Only letters and underscore is allowed for counter id");
             }
 
             // counter id range validataion
@@ -431,45 +431,39 @@ function product_catalog_form_node_validate($node, $form, &$form_state) {
                 $counterGroupTerm = taxonomy_term_load($form_state['values']['field_counter_group']['und'][0]['tid']);
                 $counterUnitTerm = taxonomy_term_load($form_state['values']['field_counter_unit_type']['und'][0]['tid']);
                 if (($counterGroupTerm -> name == 'REMAINS') && ($counterUnitTerm -> name != 'Money')) {
-                    drupal_set_message("Only 'Money' type counter can be 'REMAINS' counter group", 'error');
-                    form_set_error("Only 'Money' type counter can be 'REMAINS' counter group");
+                    // drupal_set_message("Only 'Money' type counter can be 'REMAINS' counter group", 'error');
+                    form_set_error('field_counter_group', "Only 'Money' type counter can be 'REMAINS' counter group");
                 }
 
                 if ($counterId >= 1000000) {
-                    drupal_set_message('counter id should be less than 1000000');
-                    form_set_error('counter id should be less than 1000000');
+                    // drupal_set_message('counter id should be less than 1000000');
+                    form_set_error('field_counter_id', 'counter id should be less than 1000000');
                 }
             }
             break;
 
         case 'vouchercardtype_node_form' :
             if (!is_machine_name($form_state['values']['field_voucher_id']['und'][0]['value'])) {
-                drupal_set_message("Only letters and underscore is allowed for voucher card type  id", 'error');
-                form_set_error("Only letters and underscore is allowed for voucher card type id");
+                form_set_error('field_voucher_id', "Only letters and underscore is allowed for voucher card type id");
             }
 
             if (!is_numeric($form_state['values']['field_voucher_id']['und'][0]['value'])) {
-                drupal_set_message("Only Number is allowed for ID", 'error');
-                form_set_error("Only Number is allowed for ID");
+                form_set_error('field_voucher_id', "Only Number is allowed for ID");
             }
             
             $voucherCardTypeTerm = taxonomy_term_load($form_state['values']['field_ref_voucher_type']['und'][0]['tid']);
             
-            dsm($voucherCardTypeTerm, 'voucherCardTypeTerm');
-            
             if($voucherCardTypeTerm->name == 'Discount') {
-            	dsm($form_state['values'], 'form state values');
+            	//dsm($form_state['values'], 'form state values');
             	if(empty($form_state['values']['field_ref_product_for_disvoucher']) 
             		|| empty($form_state['values']['field_ref_product_for_disvoucher']['und'])
             		|| empty($form_state['values']['field_ref_product_for_disvoucher']['und'][0])
             		|| empty($form_state['values']['field_ref_product_for_disvoucher']['und'][0]['nid'])            		
             	) {
-								drupal_set_message("You should select the product mapped by the discount coupon", 'error');
-								form_set_error("You should select the product mapped by the discount coupon");
+						form_set_error('field_ref_product_for_disvoucher', "You should select the product mapped by the discount coupon");
             	} else {
             		if( count($form_state['values']['field_ref_product_for_disvoucher']['und']) > 1 ) {
-	            		drupal_set_message("You should select only one mapping product", 'error');
-	            		form_set_error("You should select only one mapping product");
+	            		form_set_error('field_ref_product_for_disvoucher',"You should select only one mapping product");
             		}
             	}
             	
@@ -478,12 +472,10 @@ function product_catalog_form_node_validate($node, $form, &$form_state) {
 
         case 'simpleproductoffering_node_form' :
             if (!is_machine_name($form_state['values']['field_product_id']['und'][0]['value'])) {
-                //drupal_set_message("Only lowercase letter, number and underscore are allowed for  product id", 'error');
                 form_set_error('field_product_id', "Only lowercase letter, number and underscore are allowed for product id");
             }
             
             if (!is_machine_name($form_state['values']['field_short_code']['und'][0]['value'])) {
-                //drupal_set_message("Only lowercase letter, number and underscore are allowed for short code", 'error');
                 form_set_error('field_short_code', "Only lowercase letter, number and underscore are allowed for short code");
             }
             $prdTypeTerm = taxonomy_term_load($form_state['values']['field_product_type']['und'][0]['tid']);
@@ -493,18 +485,16 @@ function product_catalog_form_node_validate($node, $form, &$form_state) {
 	            	|| empty($form_state['values']['field_cug_group_type']['und'])
 	            	|| empty($form_state['values']['field_cug_group_type']['und'][0])
 	            	|| empty($form_state['values']['field_cug_group_type']['und'][0]['tid'])) {
-									// drupal_set_message("CUG Group Type is required", 'error');
-									form_set_error('field_cug_group_type', "CUG Group Type is required");
+					form_set_error('field_cug_group_type', "CUG Group Type is required");
 	            }
 	
-							if ( empty($form_state['values']['field_cug_customer_type'])
-								|| empty($form_state['values']['field_cug_customer_type']['und'])
-								|| empty($form_state['values']['field_cug_customer_type']['und'][0])
-								|| empty($form_state['values']['field_cug_customer_type']['und'][0]['tid'])) {
-									// drupal_set_message("CUG Customer Type field is required", 'error');
-									form_set_error('field_cug_customer_type', "CUG Customer Type field is required");
-							}
-	          }
+				if ( empty($form_state['values']['field_cug_customer_type'])
+					|| empty($form_state['values']['field_cug_customer_type']['und'])
+					|| empty($form_state['values']['field_cug_customer_type']['und'][0])
+					|| empty($form_state['values']['field_cug_customer_type']['und'][0]['tid'])) {
+					form_set_error('field_cug_customer_type', "CUG Customer Type field is required");
+				}
+			}
 	          
 	          //check exclusivessness and downgrade penalty
             if(isset($form_state['values']['field_exclusiveness']['und'])){
@@ -516,7 +506,7 @@ function product_catalog_form_node_validate($node, $form, &$form_state) {
                 }
                 
                 foreach($downgradePenaltyViewResult as $item){
-                     dsm($item,'$item');
+                     //dsm($item,'$item');
                     if(in_array($item->field_field_ref_target_product[0]['raw']['nid'],$selectedNids)){
                         $isExist = TRUE;
                         $existName = $item->field_field_ref_target_product[0]['raw']['node']->title;
@@ -539,24 +529,17 @@ function product_catalog_form_node_validate($node, $form, &$form_state) {
             switch($bonus_cycle_type) {
                 case 'Weekly' :
                     $charging_day_week = $form_state['values']['field_rcrr_charging_day_week'];
-                    if (empty($charging_day_week)) {
-                        drupal_set_message("Day of week should be selected", 'error');
-                        form_set_error("Day of week should be selected");
-                    } else if (empty($charging_day_week['und'][0]['value'])) {
-                        drupal_set_message("Day of week should be selected", 'error');
-                        form_set_error("Day of week should be selected");
+                    if (empty($charging_day_week) || empty($charging_day_week['und'][0]['value'])) {
+                        // drupal_set_message("Day of week should be selected", 'error');
+                        form_set_error('field_rcrr_charging_day_week', "Day of week should be selected");
                     }
 
                     break;
 
                 case 'Monthly' :
                     $charging_day_month = $form_state['values']['field_rcrr_charging_day_monthly'];
-                    if (empty($charging_day_month)) {
-                        drupal_set_message("Day of Monthl should be selected", 'error');
-                        form_set_error("Day of Monthl should be selected");
-                    } else if (empty($charging_day_month['und'][0]['value'])) {
-                        drupal_set_message("Day of Monthl should be selected", 'error');
-                        form_set_error("Day of Monthl should be selected");
+                    if (empty($charging_day_month) || empty($charging_day_month['und'][0]['value'])) {
+                        form_set_error('field_rcrr_charging_day_monthly', "Day of Monthl should be selected");
                     }
 
                     break;
@@ -582,8 +565,8 @@ function product_catalog_form_node_validate($node, $form, &$form_state) {
             }
             
             if($form_state['values']['field_ref_thres_counter_acc']['und'][0]['nid'] == $form_state['values']['field_ref_thres_counter_limit']['und'][0]['nid']) {
-	            drupal_set_message("Accumulating and Limit Counter should be different");
-	            form_set_error('Accumulating and Limit Counter should be different');
+	            // drupal_set_message("Accumulating and Limit Counter should be different");
+	            form_set_error('field_ref_thres_counter_acc', 'Accumulating and Limit Counter should be different');
             }
             
             break;
@@ -593,10 +576,9 @@ function product_catalog_form_node_validate($node, $form, &$form_state) {
     if (strncmp($form['form_id']['#value'], 'conditionwh', 11) == 0) {
 
         // counter 관련 조건은 중복 추가 가능함.
-        if ($form['form_id']['#value'] == 'conditionwhatcounter_node_form')
-            return;
+        if ($form['form_id']['#value'] == 'conditionwhatcounter_node_form') return;
 
-        // create일 때마 체크하도록 함
+        // create일 때, 중복 체크
         if (!isset($form['nid']['#value'])) {
 
             if (!empty($form_state['build_info']['args'][0] -> field_parent_node)) {

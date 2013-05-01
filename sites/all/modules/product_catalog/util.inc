@@ -396,17 +396,18 @@ function generate_jstree() {
 	$smarty->fetch('index.tpl');
 }
 
-function build_navigation_bar()
-{
+function build_navigation_bar() {
+	global $user;
+	
 	$path = current_path();
 	//dpm( $path, 'current path');
 	// test, test
-	
 	$menu = array(
 			'dash' => array( 'href' => '/', 'icon' => 'dash', 
 					'prefix' => 'node', 'title' => 'Home'),
 			'product' => array( 'href' => '/product_designer/Mobile', 'icon' => 'gal', 
 					'prefix' => 'product_designer', 'title' => 'Product Designer',
+					'role' => 'product designer',
                     'sub' => array( array( '/product_designer/Mobile', 'Mobile'), 
                         array( '/product_designer/IPTV', 'IPTV'),
                         array( '/product_designer/Broadband', 'Broadband'),
@@ -415,11 +416,14 @@ function build_navigation_bar()
                         array( '/product_designer/Dummy', 'Dummy'),
                         array( '/product_designer/Cross', 'Bundle'))),
 			'relation' => array( 'href' => '/relation/product/hierarchy/Mobile', 'icon' => 'widgets', 
-					'prefix' => 'relation', 'title' => 'Relation Manager'),
+					'prefix' => 'relation', 'title' => 'Relation Manager',
+					'role' => 'relation manager',),
 			'lifecycle' => array( 'href' => '/lifecycles/deploy/PRODUCT', 'icon' => 'anlt', 
-					'prefix' => 'lifecycles', 'title' => 'Lifecycle'),
+					'prefix' => 'lifecycles', 'title' => 'Lifecycle',
+					'role' => 'lifecycle manager'),
 			'common' => array( 'href' => '/common/numberingplan/domestic/list', 'icon' => 'typ', 
 					'prefix' => 'common', 'title' => 'Common Data',
+					'role' => 'common data manager',
 					'sub' => array( 
 						array( '/common/counter/list', 'Counters'),
 						array( '/common/numberingplan/domestic/list', 'Numbering Plan'),
@@ -428,14 +432,22 @@ function build_navigation_bar()
 					    array( '/common/vouchercardtype', 'ETC'),
                         )),
             'simulator' => array( 'href' => '/simulator/test/voice', 'icon' => 'grid', 
-					'prefix' => 'simulator/', 'title' => 'Simulator'),
+					'prefix' => 'simulator/', 'title' => 'Simulator',
+					'role' => 'simulator',
+					),
 			'ocs' => array( 'href' => '/config/ocs', 'icon' => 'tb', 
-					'prefix' => 'config/ocs', 'title' => 'OCS'),
+					'prefix' => 'config/ocs', 'title' => 'OCS',
+					'role' => 'ocs manager' ),
 			);
-
-	$output = '';
 	
+	$output = '';
 	foreach( $menu as $item) {
+		
+		if(!in_array('administrator', $user->roles)) {
+			if( isset($item['role']) && !in_array($item['role'], $user->roles) ) break;
+		}
+		
+				
 		$image = '/sites/default/files/images/nav/' . $item['icon'];
 		//dpm( $item['prefix']);
 		if ( strpos( $path, $item['prefix'], 0) === 0)

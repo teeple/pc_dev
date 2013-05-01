@@ -736,6 +736,9 @@ function user_admin_permissions($form, $form_state, $rid = NULL) {
  * @see user_admin_permissions()
  */
 function user_admin_permissions_submit($form, &$form_state) {
+	dsm($form, 'form_in_permissions_submit');
+	dsm($form_state, 'form_state_in_permissions_submit');
+	
   foreach ($form_state['values']['role_names'] as $rid => $name) {
     user_role_change_permissions($rid, $form_state['values'][$rid]);
   }

@@ -124,6 +124,7 @@ function _add_ajax_submit_callback($form_id, &$form) {
         case 'actionpricechargefactors_node_form' :
         case 'actionpricechargeonetime_node_form' :
         case 'actionpricechargerecurring_node_form' :
+        case 'actionpricechargerecurringdefaul_node_form':
         case 'actionpricediscount_node_form' :
         case 'actionpriceallowance_node_form' :
         case 'actionblockfactors_node_form' :
@@ -170,6 +171,7 @@ function _add_ajax_submit_callback($form_id, &$form) {
         case 'conditionwhereroamingcountry_node_form':
         case 'conditionwhereroamingzone_node_form':
         case 'conditionwhatroamingtype_node_form':
+        case 'conditionwhenvaliddate_node_form':
             $change = TRUE;
             break;
 
@@ -236,13 +238,80 @@ function edit_pane_callback($form, &$form_state) {
 }
 
 function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
-    load_required_js_css_before_ajax_load();
+
+	
+	load_required_js_css_before_ajax_load();
 
     if ((isset($form['#attributes']) && isset($form['#attributes']['class'])) && gettype($form['#attributes']['class']) == 'array') {
         $form['#attributes']['class'][] = 'myform';
     }
     
     switch($form_id) {
+    		case 'views_form_ocs_svc_perm_panel_pane_1':
+				dpm( $form, 'form ');
+
+				// TODO: state service permission
+    			$lifecycleScheme = node_load($form_state['build_info']['args'][0]->args[0]);
+    			$svcDomainTid = $lifecycleScheme->field_service_domain['und'][0]['tid'];
+    			
+				$view = views_get_view('list_calltype');
+				$view->set_display('panel_pane_2');
+				$view->set_arguments(array('0'=>$svcDomainTid));
+				$view->execute();
+				
+				$options = array();
+				$group = array();
+				foreach($view->result as $record) {
+					$subgroup1 = $record->field_field_sub_group1[0]['raw']['value'];
+					$subgroup2 = $record->field_field_sub_group2[0]['raw']['value'];
+					$options[$record->tid] = t( '<span class="@class">@svc</span>', 
+							array( '@class' => t( 'ocs_svc_perm @1 @2', array( '@1' => $subgroup1, '@2' => $subgroup2)),
+								'@svc' => $record->taxonomy_term_data_name));
+					$group[$subgroup1][$subgroup2] = 1;
+				}
+
+				/*
+				$legend = '';
+				foreach( $group as $key => $values) {
+					foreach( array_keys( $values) as $v) {
+						$legend .= t('<div>@k,@v</div>', array( '@k' => $key, '@v' => $v));
+					}
+				}
+				*/
+
+				foreach( array_keys( $form['field_service_permission']) as $key) {
+					/*
+					foreach( array_keys( $options) as $subgroup) {
+						$form['field_service_permission'][$key]['field_service_permission'][$subgroup] = 
+							$form['field_service_permission'][$key]['field_service_permission']['und'];
+						$form['field_service_permission'][$key]['field_service_permission'][$subgroup]['#options'] = $options[$subgroup];
+					}
+					*/
+					//unset( $form['field_service_permission'][$key]['field_service_permission']['und']);
+					$form['field_service_permission'][$key]['field_service_permission']['und']['#options'] = $options;
+				//	$form['field_service_permission'][$key]['field_service_permission']['#suffix'] .= $legend;
+				}
+
+				// filter feature codes
+				$view = views_get_view('list_service_feature_code');
+				$view->set_display('list_feature_code');
+				$view->set_arguments(array('0'=>$svcDomainTid, '1'=>'Lifecycle'));
+				$view->execute();
+				
+				$options = array();
+				foreach($view->result as $record) {
+					$subgroup1 = $record->field_field_sub_group1[0]['raw']['value'];
+					$subgroup2 = $record->field_field_sub_group2[0]['raw']['value'];
+					$options[$record->tid] = t( '<span class="@class">@svc</span>', 
+							array( '@class' => t( 'ocs_svc_perm @1 @2', array( '@1' => $subgroup1, '@2' => $subgroup2)),
+								'@svc' => $record->taxonomy_term_data_name));
+				}
+
+				foreach( array_keys( $form['field_feature_codes']) as $key) {
+					$form['field_feature_codes'][$key]['field_feature_codes']['und']['#options'] = $options;
+				}
+
+    			break;
             case 'backup_migrate_ui_manual_backup_load_profile_form':
                 $form['profile']['#type'] = 'hidden';
                 break;
@@ -261,6 +330,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
                 $form['advanced']['notify_success_email']['#type'] = 'hidden';
                 $form['advanced']['notify_failure_enable']['#type'] = 'hidden';
                 $form['advanced']['notify_failure_email']['#type'] = 'hidden';
+                $form['advanced']['#collapsed'] = FALSE;
                 break;
     		case 'devicemodel_node_form':
     				_unset_menu_items($form, $form_id);
@@ -360,6 +430,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
         case 'conditionwhatroamingtype_node_form':
         case 'conditionwhererattype_node_form' :
         case 'conditionwheresgsn_node_form' :
+        case 'conditionwhenvaliddate_node_form':
             _unset_menu_items($form, $form_id);
             $form['field_weight']['#type'] = 'hidden';
             $form['field_parent_node']['#type'] = 'hidden';
@@ -455,21 +526,21 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             unset($form['field_active_period']);
             unset($form['field_grace_period']);
 
-						// Create
-						if (!isset($form['nid']['#value'])) {
-							
-							$viewResult = views_get_view_result('query_vouchercardtype_max_id', 'panel_pane_1');
-							if(sizeof($viewResult) > 0) {
-								$maxVoucherId = current($viewResult)->field_field_voucher_id[0]['raw']['value'];
-							} else {
-								$maxVoucherId = 10000;
-							}
-							
-							$form['field_voucher_id']['und'][0]['value']['#default_value'] = $maxVoucherId + 1;
-							$form['field_voucher_id']['und']['#disabled'] = TRUE;
-							
-							$form['actions']['submit']['#submit'][] = '_vouchercardtype_submit_handler';
-              $form['actions']['submit']['#submit'][] = 'product_catalog_form_form_redirect_handler';
+			// Create
+			if (!isset($form['nid']['#value'])) {
+				
+				$viewResult = views_get_view_result('query_vouchercardtype_max_id', 'panel_pane_1');
+				if(sizeof($viewResult) > 0) {
+					$maxVoucherId = current($viewResult)->field_field_voucher_id[0]['raw']['value'];
+				} else {
+					$maxVoucherId = 10000;
+				}
+				
+				$form['field_voucher_id']['und'][0]['value']['#default_value'] = $maxVoucherId + 1;
+				$form['field_voucher_id']['und']['#disabled'] = TRUE;
+				
+				$form['actions']['submit']['#submit'][] = '_vouchercardtype_submit_handler';
+              	$form['actions']['submit']['#submit'][] = 'product_catalog_form_form_redirect_handler';
               
             // Edit  
             } else {
@@ -687,7 +758,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
           	  );
             	
             } else {
-	            $disabledFields = array('field_scale', 
+	            $disabledFields = array(// 'field_scale', 
 	            												'field_counter_type',
 	            												'field_service_domain',
 	            												'field_billing_type_counter',
@@ -797,7 +868,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 																'field_parent_node_for_rp',
 																'field_weight_for_ratingpriority',
 																'field_weight',
-																'field_ref_product',
+															'field_ref_product',
 																'field_parent_node',
 																'field_tpl_voca_machine_name',
 																'field_parent_node_for_hr',
@@ -899,30 +970,30 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
                 $form['title']['#type'] = 'hidden';
                 
                 $unsetItems = array_merge($unsetItems,
-                									array('field_description',
-                										'field_offering_status',
-                										'field_version',
-                										'field_billing_type',
-                										'field_validfor_product',
-                										'field_service_operator',
-                										'field_billing_cycle',
-                										'field_product_id',
-                										'field_customer_type',
-                										'field_customer_group_type',
-                										'field_is_bundle',
-                										'field_deferred_subscription_flag',
-                										'field_price_units',
-                										'field_treatment_price_amount',
-                										'field_treatment_day',
-                										'field_contract_period',
-                										'field_roaming_allowed',
-                										'field_cug_member_counter',
-                										'field_short_code',
-                										'field_next_join_product',
-                										'field_expire_date_type',
-                										'field_expire_date',
-                										'field_field_deferred_subscriptio',
-                										'field_hlr_template_id'));
+												array('field_description',
+													'field_offering_status',
+													'field_version',
+													'field_billing_type',
+													'field_validfor_product',
+													'field_service_operator',
+													'field_billing_cycle',
+													'field_product_id',
+													'field_customer_type',
+													'field_customer_group_type',
+													'field_is_bundle',
+													'field_deferred_subscription_flag',
+													'field_price_units',
+													'field_treatment_price_amount',
+													'field_treatment_day',
+													'field_contract_period',
+													'field_roaming_allowed',
+													'field_cug_member_counter',
+													'field_short_code',
+													'field_next_join_product',
+													'field_expire_date_type',
+													'field_expire_date',
+													'field_field_deferred_subscriptio',
+													'field_hlr_template_id'));
                 
                 $options = _get_product_exclusive_list($form['nid']['#value']);
                 $form['field_exclusiveness']['und']['#options'] = $options['list'];
@@ -1588,6 +1659,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
         case 'actionpricediscount_node_form' :
         case 'actionpricechargeonetime_node_form' :
         case 'actionpricechargerecurring_node_form' :
+        case 'actionpricechargerecurringdefaul_node_form':
             $form['field_parent_node']['#type'] = 'hidden';
             $form['field_weight']['#type'] = 'hidden';
             $form['field_ref_product']['#type'] = 'hidden';
@@ -1604,7 +1676,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
                     $product = node_load($form_state['root_nid']);
                     $currencyTid = $product -> field_price_units['und'][0]['tid'];
 
-										$form['field_recurring_charge_id']['#type'] = 'hidden';
+					$form['field_recurring_charge_id']['#type'] = 'hidden';
                     $form['field_recurring_charge_id']['und'][0]['value']['#default_value'] = $product->field_product_id['und'][0]['value'] . '_' . time();
                 }
                 
@@ -1749,7 +1821,6 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             $mergedCounterList = $basicCounterList + $existingCounterList;
             
             $form['field_ref_counter']['und']['#options'] = $mergedCounterList;
-            
             /*
             $form['field_ref_counter']['#ajax'] = 
             	array('callback' => '_ajax_counter_type_validate',
@@ -1815,6 +1886,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 
             $form_state['ajax_actions'][] = '_node_save_handler_for_add_js_settings_after_node_save';
             break;
+            
         case 'numberspecialfactors_node_form' :
             unset($form['field_parent_node']);
             unset($form['field_weight']);
@@ -1839,6 +1911,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             $options = _get_call_type_options();
             $form['field_ref_type_of_call']['und']['#options'] = $options;
             break;
+            
         case 'numberspecialrate_node_form' :
             unset($form['field_parent_node']);
             unset($form['field_weight']);
@@ -1957,6 +2030,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             }
             _unset_menu_items($form, $form_id);
             break;
+            
         case 'carrier_mobile_node_form' :
             _unset_menu_items($form, $form_id);
             break;

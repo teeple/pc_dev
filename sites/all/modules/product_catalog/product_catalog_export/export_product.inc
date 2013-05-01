@@ -211,7 +211,19 @@ function _get_thresdhold_scheme($product) {
 
 function _get_recurring_amount($productNid) {
     $retArray = array();
-
+    
+    $view = views_get_view('list_actionpricechargerecurring');
+    $view -> set_display('panel_pane_4');
+    $view -> set_arguments(array('0' => $productNid));
+    $view -> execute();
+    
+    foreach($view->result as $chargingItem){
+        $charge = array();
+        $charge['amount'] = $chargingItem->field_field_price_amount_float[0]['raw']['value'];
+        $charge['on'] = $chargingItem->field_field_pricing_cycle_type[0]['rendered']['#markup'];
+        $retArray['default'] = $charge;
+    }
+    
     $view = views_get_view('list_actionpricechargerecurring');
     $view -> set_display('panel_pane_3');
     $view -> set_arguments(array('0' => $productNid));
@@ -234,7 +246,7 @@ function _get_recurring_amount($productNid) {
             $charge['conditions'][] = $conditionSet;
         }
         
-       $retArray[] = $charge;
+       $retArray['custom'][] = $charge;
     }
     return $retArray;
 }

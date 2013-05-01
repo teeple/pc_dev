@@ -34,12 +34,16 @@ function _array_voucher_cardtype($exportItemNids = NULL, $isExternalAPI = FALSE)
 
         $jsonRecord['service_operator'] = _add_commoncode($record -> field_field_service_operator);
         $jsonRecord['use_area'] = !empty($record -> field_field_use_area) ? $record -> field_field_use_area[0]['rendered']['#markup'] : null;
-
+        
+        dsm($record, 'record');
+        $node = node_load($record->nid);
+        dsm($node, 'node');
+        
         $validStart = isset($record -> field_field_valid_date_ymd_w_enddate[0]['raw']['value']) ? $record -> field_field_valid_date_ymd_w_enddate[0]['raw']['value'] : '0001-01-01 00:00:00';
-        $validStart = isset($record -> field_field_valid_date_ymd_w_enddate[0]['raw']['value2']) ? $record -> field_field_valid_date_ymd_w_enddate[0]['raw']['value2'] : '9999-12-31 23:59:59';
-
-        if (!empty($record -> field_field_valid_date_ymd_w_enddate)) {
-            $tempArr = explode(' ', $record -> field_field_valid_date_ymd_w_enddate[0]['raw']['value']);
+        $validEnd = isset($record -> field_field_valid_date_ymd_w_enddate[0]['raw']['value2']) ? $record -> field_field_valid_date_ymd_w_enddate[0]['raw']['value2'] : '9999-12-31 23:59:59';
+        
+        if (!empty($validEnd)) {
+            $tempArr = explode(' ', $validEnd);
             $validEnd = $tempArr[0] . ' 23:59:59';
 
         } else {
