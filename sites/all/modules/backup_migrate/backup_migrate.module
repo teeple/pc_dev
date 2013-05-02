@@ -703,6 +703,8 @@ function backup_migrate_perform_backup(&$settings) {
     backup_migrate_backup_fail("Could not run backup because the file could not be saved to the destination.", array(), $settings);
     return FALSE;
   }
+  
+  dsm($settings,'settings');
 
   // Backup succeeded, 
   $time = timer_stop('backup_migrate_backup');
