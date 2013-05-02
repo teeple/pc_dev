@@ -661,7 +661,7 @@ class backup_migrate_destination extends backup_migrate_item {
    */
   function load_files_info($files) {
     foreach ($files as $key => $file) {
-      if(strpos($file->name, '-sources') !== false){
+      if(strpos($file->name, '-sources.tar.gz') !== false){
           continue;
       }
       if (isset($files[$key . '.info'])) {
