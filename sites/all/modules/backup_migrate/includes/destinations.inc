@@ -661,8 +661,9 @@ class backup_migrate_destination extends backup_migrate_item {
    */
   function load_files_info($files) {
     foreach ($files as $key => $file) {
+      //unset sourcefile archive
       if(strpos($file->name, '-sources') !== false){
-          continue;
+          unset($files[$key.'tar.gz']);
       }
       if (isset($files[$key . '.info'])) {
         // See if there is an info file with the same name as the backup.
