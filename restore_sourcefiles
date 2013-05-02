@@ -14,8 +14,9 @@ fi
 BACKUP_FOLDER="/var/www/backup_migrate/"$1
 
 cp $BACKUP_FOLDER/$2-sources.tar.gz $BASE_FOLDER
+cd $BASE_FOLDER
 rm -rf pc_dev
 tar xvzf $2-sources.tar.gz
-rm $2-sources.tar.gz
+rm -rf $2-sources.tar.gz
 
 exit 0

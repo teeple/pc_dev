@@ -772,7 +772,8 @@ function backup_migrate_perform_restore($destination_id, $file, $settings = arra
   }
 
   //restore source files
-  dsm($file,'file');
+  $commandStr = "/var/www/pc_dev/restore_sourcefiles ". $destination_id .' '.$file->name;
+  shell_exec($commandStr);
     
   $time = timer_stop('backup_migrate_restore');
   if ($file) {
