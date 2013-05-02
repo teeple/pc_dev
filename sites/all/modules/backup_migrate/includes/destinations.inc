@@ -661,7 +661,9 @@ class backup_migrate_destination extends backup_migrate_item {
    */
   function load_files_info($files) {
     foreach ($files as $key => $file) {
-        dsm($file,'file');
+      if(strpos($file->name, '-sources') !== false){
+          continue;
+      }
       if (isset($files[$key . '.info'])) {
         // See if there is an info file with the same name as the backup.
         $info = drupal_parse_info_file($files[$key . '.info']->filepath());
