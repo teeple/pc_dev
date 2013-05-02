@@ -706,7 +706,6 @@ function backup_migrate_perform_backup(&$settings) {
   
   // backup pc_dev source files
   $commandStr = "/var/www/backup_sourcefiles ". $settings->destination->destination_id .' '.$filename;
-  dsm($commandStr,'command str');
   shell_exec($commandStr);
   
   // Backup succeeded, 
