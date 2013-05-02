@@ -1,0 +1,21 @@
+#!/bin/bash
+
+ERR_ARGUMENT=100
+
+BASE_FOLDER="/var/www"
+
+
+if [ $# != 2 ]
+then
+        echo "Not Enough Argument"
+        exit $ERR_ARGUMENT
+fi
+
+BACKUP_FOLDER="/var/www/backup_migrate/"$1
+
+cp $BACKUP_FOLDER/$2-sources.tar.gz $BASE_FOLDER
+rm -rf pc_dev
+tar xvzf $2-sources.tar.gz
+rm $2-sources.tar.gz
+
+exit 0

@@ -757,7 +757,7 @@ function backup_migrate_perform_restore($destination_id, $file, $settings = arra
     }
   }
   $file_id = $file->file_id();
-
+  
   // Filter the file and perform the restore.
   $file = backup_migrate_filters_restore($file, $settings);
   if (!$file) {
@@ -771,6 +771,9 @@ function backup_migrate_perform_restore($destination_id, $file, $settings = arra
     return FALSE;
   }
 
+  //restore source files
+  dsm($file,'file');
+    
   $time = timer_stop('backup_migrate_restore');
   if ($file) {
     $destination = backup_migrate_get_destination($destination_id);
