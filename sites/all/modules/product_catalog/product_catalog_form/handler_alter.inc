@@ -172,6 +172,8 @@ function _add_ajax_submit_callback($form_id, &$form) {
         case 'conditionwhereroamingzone_node_form':
         case 'conditionwhatroamingtype_node_form':
         case 'conditionwhenvaliddate_node_form':
+        case 'backupandmigrateconfiguration_node_form':
+        case 'ocs_global_config_node_form':
             $change = TRUE;
             break;
 
@@ -509,6 +511,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             break;
 
         case 'thresholdscheme_node_form' :
+        case 'backupandmigrateconfiguration_node_form':
             _unset_menu_items($form, $form_id);
             break;
 
