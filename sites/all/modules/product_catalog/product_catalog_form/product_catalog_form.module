@@ -36,7 +36,6 @@ function product_catalog_form_cronapi($op, $function = NULL) {
 }
 
 function _product_catalog_delete_backupfiles(){
-    watchdog('product_catalog','backup function fired');
     // load config node
     $query = new EntityFieldQuery();
     $result = $query->entityCondition('entity_type', 'node')
