@@ -761,7 +761,14 @@ function generate_condition_string_by_condition_node($nid, &$factor_list )
 						 */
 						if(count($value)==1)
 						{
-							return $factor_name . ' ' . $op . " $value[0] , $value[0]";
+							if($op == 'between')
+							{
+								return $factor_name . ' >= ' . $value[0];
+							}
+							else
+							{
+								return $factor_name . ' ' . $op . " $value[0] , $value[0]";
+							}
 						}
 						else if(count($value) == 2)
 						{
@@ -1093,8 +1100,8 @@ function view_get_field_value($view , $field_name , $record)
 	}
 	else
 	{
-        $value = $field_handler->render($record);
-        return $value;
+		$value = $field_handler->render($record);
+		return $value;
 	}
 }
 
@@ -1204,8 +1211,8 @@ function rating_rules_export_from_view($title, $view_name, $display_name, $nid=N
         }
         $jsonMeta = array();
         $field_name_map = array();
-        $factor_meta_map = array();
-        $view->execute();
+		$factor_meta_map = array();
+		$view->execute();
         foreach($view->field as $field_name => $field_handler)
         {
             $field = $field_handler->options;
