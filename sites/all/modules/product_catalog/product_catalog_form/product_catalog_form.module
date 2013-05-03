@@ -48,24 +48,34 @@ function _product_catalog_delete_backupfiles(){
         $configNode = node_load($nids[0]);
         $days = $configNode->field_valid_days['und'][0]['value'];
         
-        _delete_old_files('/var/www/backup_migrate/manual',$days);
-        _delete_old_files('/var/www/backup_migrate/scheduled',$days);
+        _delete_old_files('/var/www/backup_migrate/manual/',$days);
+        _delete_old_files('/var/www/backup_migrate/scheduled/',$days);
     }
 
 }
 
 function _delete_old_files($location,$days){
-    $files = array();
-    if (is_dir($location)) {
-        if ($dh = opendir($location)) {
-            while (($file = readdir($dh)) !== false) {
-                $files[] = $file;
-            }
-            closedir($dh);
-        }
-    }
+    $location = '/var/www/backup_migrate/manual/';
+    $time = time();
+    $pivot = strtotime("-".$days." day", $time);
     
-    dsm($files);
+    $files = array();
+        if (is_dir($location)) {
+            if ($dh = opendir($location)) {
+                while (($file = readdir($dh)) !== false) {
+                    if ($file == "." || $file == "..") continue; 
+                    $files[] = $file;
+                }
+                closedir($dh);
+            }
+        }
+    
+    foreach($files as $file){
+      $fileTime = filemtime($location.$file);
+      if($fileTime < $pivot){
+          unlink($location.$file);
+      }
+    }
 }
 
 function product_catalog_form_init() {
