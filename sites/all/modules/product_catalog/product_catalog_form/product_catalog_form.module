@@ -17,26 +17,26 @@ function product_catalog_form_cronapi($op, $function = NULL) {
   switch($op) {
     case 'list':
       return array(
-        'product_catalog_cron_daily_backup' => 'Product Catalog Daily Backup',
+        'product_catalog_cron_daily_delete_backupfiles' => 'Product Catalog Daily Delete Backupfiles',
       );
 
     case 'rule':
       switch($function) {
-        case 'product_catalog_cron_daily_backup': return '* * * * *';
+        case 'product_catalog_cron_daily_delete_backupfiles': return '* * * * *';
       }
       break;
     case 'execute':
       switch($function) {
-        case 'product_catalog_cron_daily_backup':
-          _product_catalog_daily_backup();
+        case 'product_catalog_cron_daily_delete_backupfiles':
+          _product_catalog_delete_backupfiles();
           break;
       }
       break;
   }
 }
 
-function _product_catalog_daily_backup(){
-    watchdog('product_catalog','backup function fired');
+function _product_catalog_delete_backupfiles(){
+    //watchdog('product_catalog','backup function fired');
 }
 
 function product_catalog_form_init() {
