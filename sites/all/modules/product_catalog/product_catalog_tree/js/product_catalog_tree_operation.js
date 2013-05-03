@@ -453,8 +453,8 @@
 		var data = event.data;		
 		
 		switch(data.type){
-		case 'select_numberingplan_domestic':			
-		case 'select_numberingplan_idd':			
+		case 'select_numberingplan_domestic':
+		case 'select_numberingplan_idd':
 		case 'select_timetable_domestic':
 		case 'select_timetable_idd':
 		case 'select_roamingplan':
@@ -463,7 +463,7 @@
 		}
 		
 		if(isSelect){
-			var findStr = '\'.' + data.type + '_rows > div > input[name^=views_bulk_operations]:checked\'';			
+			var findStr = '\'.' + data.type + '_rows > div > input[name^=views_bulk_operations]:checked\'';
 			var inputItems = $(findStr);
 			
 			if(inputItems.length == 0){
@@ -476,16 +476,15 @@
 					selectedItemNid[i] = inputItems[i].value;
 				}
 				
-				var customSubmitUrl = '/product_catalog_ajax/custom_submit';				
+				var customSubmitUrl = '/product_catalog_ajax/custom_submit';
 				$.ajax({
 					url : customSubmitUrl,
 					type: "post",
 			        data: {'type': data.type, 'tariffplanNid': data.tariffplanNid, 'refTreeTid': data.refTreeTid, 'selected_nid': selectedItemNid},
 					success : function(result) {
-						$.fn.reloadTreeContentDiv(data.node);			
+						$.fn.reloadTreeContentDiv(data.node);
 					}
 				});
-				
 			}
 		}
 		
