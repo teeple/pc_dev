@@ -36,7 +36,36 @@ function product_catalog_form_cronapi($op, $function = NULL) {
 }
 
 function _product_catalog_delete_backupfiles(){
-    //watchdog('product_catalog','backup function fired');
+    watchdog('product_catalog','backup function fired');
+    // load config node
+    $query = new EntityFieldQuery();
+    $result = $query->entityCondition('entity_type', 'node')
+        ->entityCondition('bundle', 'backupandmigrateconfiguration')
+        ->execute();
+
+    if (count($result) > 0) {
+        $nids = array_keys( $result['node']);
+        $configNode = node_load($nids[0]);
+        $days = $configNode->field_valid_days['und'][0]['value'];
+        
+        _delete_old_files('/var/www/backup_migrate/manual',$days);
+        _delete_old_files('/var/www/backup_migrate/scheduled',$days);
+    }
+
+}
+
+function _delete_old_files($location,$days){
+    $files = array();
+    if (is_dir($location)) {
+        if ($dh = opendir($location)) {
+            while (($file = readdir($dh)) !== false) {
+                $files[] = $file;
+            }
+            closedir($dh);
+        }
+    }
+    
+    dsm($files);
 }
 
 function product_catalog_form_init() {
