@@ -1,0 +1,325 @@
+diff --git a/patch1 b/patch1
+index 7bbafce..e69de29 100644
+--- a/patch1
++++ b/patch1
+@@ -1,228 +0,0 @@
+-diff --git a/sites/all/modules/product_catalog/product_catalog_ajax/product_catalog_ajax.module b/sites/all/modules/product_catalog/product_catalog_ajax/product_catalog_ajax.module
+-index 1512d55..0f274c2 100755
+---- a/sites/all/modules/product_catalog/product_catalog_ajax/product_catalog_ajax.module
+-+++ b/sites/all/modules/product_catalog/product_catalog_ajax/product_catalog_ajax.module
+-@@ -1045,19 +1045,47 @@ function product_catalog_ajax_select_submit() {
+-         break;
+- 		
+-       case 'available_product':
+--  		$child->type = 'prdattributepackaged';
+--  		$child->field_weight['und'][0]['value'] = $weight;
+--  		$child->field_ref_product['und'][0]['nid'] = $tmpProductNid[1];
+--  		$child->field_ref_connected_product['und'][0]['nid'] = $childNid;
+--		
+--  		// $term = taxonomy_term_load($tmpParentNid[1]);
+--  		$term = taxonomy_get_term_by_name('Mandatory_MarketOpen','prdrelationtype');
+--  		$child->field_ref_prdrelationtype['und'][0]['tid'] = current($term)->tid;
+--  	
+--  		node_save($child);
+--  		$js_data['append_to'] = 'inside';
+--  	  	break;
+-+	  		$child->type = 'prdattributepackaged';
+-+	  		$child->field_weight['und'][0]['value'] = $weight;
+-+	  		$child->field_ref_product['und'][0]['nid'] = $tmpProductNid[1];
+-+	  		$child->field_ref_connected_product['und'][0]['nid'] = $childNid;
+- 			
+-+	  		// $term = taxonomy_term_load($tmpParentNid[1]);
+-+	  		$term = taxonomy_get_term_by_name('Mandatory_MarketOpen','prdrelationtype');
+-+	  		$child->field_ref_prdrelationtype['und'][0]['tid'] = current($term)->tid;
+-+	  	
+-+	  		node_save($child);
+-+	  		$js_data['append_to'] = 'inside';
+-+  	  	break;
+-+  	  
+-+  	  case 'discount_voucher_product_specific':
+-+      	$voucharcardtype = node_load($tmpProductNid[1]);
+-+
+-+      	$child->type = 'treenodeproductfordisvoucher';
+-+      	$child->field_weight['und'][0]['value'] = $weight;
+-+      	$child->field_ref_vouchercardtype['und'][0]['nid'] = $tmpProductNid[1];
+-+      	$child->field_ref_product['und'][0]['nid'] = $childNid;
+-+      	node_save($child);
+-+      	
+-+      	// _create_treenodecounterforvoucherprd($child, $childNid);
+-+      	
+-+      	$js_data['append_to'] = 'inside';
+-+      	
+-+				$js_data['replace_or_append'] = 'replace';
+-+				
+-+				// delete existing .. 
+-+				$view = views_get_view('list_treenodeproductforvoucher');
+-+				$view->set_display('panel_pane_1');
+-+				$view->set_arguments(array('0' => $tmpProductNid[1]));
+-+				$view->execute();
+-+				
+-+				foreach($view->result as $record) {
+-+					if($child->nid != $record->nid) {
+-+						node_delete($record->nid);
+-+					}
+-+				}
+-+      	break;
+-+  	  
+-       case 'voucher_product_specific':
+-       	$voucharcardtype = node_load($tmpProductNid[1]);
+-       	$voucherTypeTerm = taxonomy_term_load($voucharcardtype->field_ref_voucher_type['und'][0]['tid']);
+-diff --git a/sites/all/modules/product_catalog/product_catalog_export/export_voucher_cardtype.inc b/sites/all/modules/product_catalog/product_catalog_export/export_voucher_cardtype.inc
+-index 41c0dd6..87b06f0 100755
+---- a/sites/all/modules/product_catalog/product_catalog_export/export_voucher_cardtype.inc
+-+++ b/sites/all/modules/product_catalog/product_catalog_export/export_voucher_cardtype.inc
+-@@ -36,22 +36,52 @@ function _array_voucher_cardtype($exportItemNids=NULL){
+- 				$validFor = $validStart . ' ~ '. $validEnd;
+- 				$jsonRecord['valid_for'] = $validFor;
+- 				
+--        $listProduct = views_get_view_result('list_treenodeproductforvoucher', 'panel_pane_1', $record->nid);
+-+				if($record->field_field_ref_voucher_type[0]['rendered']['#title'] == 'Discount') {
+- 				
+--				$ret_product = array();
+--				foreach($listProduct as $product) {
+--		      $originalProductNode = node_load($product->node_field_data_field_ref_product_nid);
+--		      
+--		      if(!empty($originalProductNode)) {
+--			      $tmpProduct['product_id'] = $originalProductNode->field_product_id['und'][0]['safe_value'];
+--			      $tmpProduct['product_name'] = $product->node_title;
+--						$tmpProduct['active_period'] = !empty($product->field_field_active_period)? $product->field_field_active_period[0]['raw']['value'] : null;
+--						$tmpProduct['grace_period'] = !empty($product->field_field_grace_period)? $product->field_field_grace_period[0]['raw']['value'] : null;
+-+					dsm($record, 'record');
+-+					$jsonRecord['mapping_product'] = !empty($record->field_field_product_id) ? $record->field_field_product_id[0]['raw']['value']: null;
+-+					
+-+					$saleTypeArr = array();
+-+					if(!empty($record->field_field_sale_type)) {
+-+						foreach($record->field_field_sale_type as $saleType) {
+-+							$saleTypeArr[] = $saleType['rendered']['#title'];
+-+						}
+-+						$jsonRecord['sale_type'] = $saleTypeArr;
+- 						
+--						$ret_product[] = $tmpProduct;
+-+					} else {
+-+						$jsonRecord['sale_type'] = null;
+- 					}
+-+					
+-+					$listProduct = views_get_view_result('list_treenodeproductfordisvoucher', 'panel_pane_1', $record->nid);
+-+					$ret_product = array();
+-+					foreach($listProduct as $product) {
+-+					  $originalProductNode = node_load($product->node_field_data_field_ref_product_nid);
+-+					  
+-+					  if(!empty($originalProductNode)) {
+-+					    $tmpProduct['product_id'] = $originalProductNode->field_product_id['und'][0]['safe_value'];
+-+					    $tmpProduct['product_name'] = $product->node_title;
+-+							$ret_product[] = $tmpProduct;
+-+						}
+-+					}
+-+				
+-+				} else {
+-+					$listProduct = views_get_view_result('list_treenodeproductforvoucher', 'panel_pane_1', $record->nid);
+-+					$ret_product = array();
+-+					foreach($listProduct as $product) {
+-+			      $originalProductNode = node_load($product->node_field_data_field_ref_product_nid);
+-+			      
+-+			      if(!empty($originalProductNode)) {
+-+				      $tmpProduct['product_id'] = $originalProductNode->field_product_id['und'][0]['safe_value'];
+-+				      $tmpProduct['product_name'] = $product->node_title;
+-+							$tmpProduct['active_period'] = !empty($product->field_field_active_period)? $product->field_field_active_period[0]['raw']['value'] : null;
+-+							$tmpProduct['grace_period'] = !empty($product->field_field_grace_period)? $product->field_field_grace_period[0]['raw']['value'] : null;
+-+							
+-+							$ret_product[] = $tmpProduct;
+-+						}
+-+					}
+-+					
+- 				}
+--		
+-+				
+- 				if(empty($ret_product)) {
+- 					$jsonRecord['products'] = null;
+- 		
+-diff --git a/sites/all/modules/product_catalog/product_catalog_form/handler_validate.inc b/sites/all/modules/product_catalog/product_catalog_form/handler_validate.inc
+-index d6c66a5..9b33750 100755
+---- a/sites/all/modules/product_catalog/product_catalog_form/handler_validate.inc
+-+++ b/sites/all/modules/product_catalog/product_catalog_form/handler_validate.inc
+-@@ -419,7 +419,29 @@ function product_catalog_form_node_validate($node, $form, &$form_state) {
+-                 drupal_set_message("Only Number is allowed for ID", 'error');
+-                 form_set_error("Only Number is allowed for ID");
+-             }
+--
+-+            
+-+            $voucherCardTypeTerm = taxonomy_term_load($form_state['values']['field_ref_voucher_type']['und'][0]['tid']);
+-+            
+-+            dsm($voucherCardTypeTerm, 'voucherCardTypeTerm');
+-+            
+-+            if($voucherCardTypeTerm->name == 'Discount') {
+-+            	dsm($form_state['values'], 'form state values');
+-+            	if(empty($form_state['values']['field_ref_product_for_disvoucher']) 
+-+            		|| empty($form_state['values']['field_ref_product_for_disvoucher']['und'])
+-+            		|| empty($form_state['values']['field_ref_product_for_disvoucher']['und'][0])
+-+            		|| empty($form_state['values']['field_ref_product_for_disvoucher']['und'][0]['nid'])            		
+-+            	) {
+-+								drupal_set_message("You should select the product mapped by the discount coupon", 'error');
+-+								form_set_error("You should select the product mapped by the discount coupon");
+-+            	} else {
+-+            		if( count($form_state['values']['field_ref_product_for_disvoucher']['und']) > 1 ) {
+-+	            		drupal_set_message("You should select only one mapping product", 'error');
+-+	            		form_set_error("You should select only one mapping product");
+-+            		}
+-+            	}
+-+            	
+-+            }
+-+            
+-             break;
+- 
+-         case 'simpleproductoffering_node_form' :
+-diff --git a/sites/all/modules/product_catalog/product_catalog_tree/js/product_catalog_tree_context_menu_setting_Common.js b/sites/all/modules/product_catalog/product_catalog_tree/js/product_catalog_tree_context_menu_setting_Common.js
+-index c647453..dac42f6 100644
+---- a/sites/all/modules/product_catalog/product_catalog_tree/js/product_catalog_tree_context_menu_setting_Common.js
+-+++ b/sites/all/modules/product_catalog/product_catalog_tree/js/product_catalog_tree_context_menu_setting_Common.js
+-@@ -138,12 +138,23 @@
+- 							"voucher_product_specific" : {
+- 								"label" : "Select Product",
+- 								action : function(node) {
+--									console.log('here');
+- 									$.fn.loadSelectForm(node);
+- 								}
+- 							},
+- 						};
+- 						break;
+-+					case "discount_voucher_product_specific":
+-+						menus.custom_create._disabled = false;
+-+						menus.custom_create.submenu = {
+-+							"discount_voucher_product_specific" : {
+-+								"label" : "Select Product",
+-+								action : function(node) {
+-+									$.fn.loadSelectForm(node);
+-+								}
+-+							},
+-+						};
+-+						break;
+-+					case "treenodeproductfordisvoucher":
+- 					case "treenodeproductforvoucher":
+- 						menus.custom_delete._disabled = false;
+- 						menus.custom_delete.action = function(node) {
+-diff --git a/sites/all/modules/product_catalog/product_catalog_tree/js/product_catalog_tree_operation.js b/sites/all/modules/product_catalog/product_catalog_tree/js/product_catalog_tree_operation.js
+-index 1f344c6..4cd7917 100644
+---- a/sites/all/modules/product_catalog/product_catalog_tree/js/product_catalog_tree_operation.js
+-+++ b/sites/all/modules/product_catalog/product_catalog_tree/js/product_catalog_tree_operation.js
+-@@ -274,6 +274,7 @@
+-             case 'treenodevouchercardforproduct':
+-             case 'prdattributepackaged':
+-             case "treenodeproductforvoucher":
+-+            case "treenodeproductfordisvoucher":
+-             case 'treenodeunittransferscheme':
+-             case 'actionpricechargeonetime':
+-             case 'actionpriceallowanceonetime':
+-diff --git a/sites/all/modules/product_catalog/product_catalog_tree/js/product_catalog_tree_type_setting.js b/sites/all/modules/product_catalog/product_catalog_tree/js/product_catalog_tree_type_setting.js
+-index 3c038c4..f8d0551 100755
+---- a/sites/all/modules/product_catalog/product_catalog_tree/js/product_catalog_tree_type_setting.js
+-+++ b/sites/all/modules/product_catalog/product_catalog_tree/js/product_catalog_tree_type_setting.js
+-@@ -942,7 +942,13 @@
+- 					"icon" : {
+- 						"image" : "/sites/default/files/folder.png"
+- 					},
+--				},
+-+				},
+-+				"discount_voucher_product_specific": {
+-+					"valid_children" : ["treenodeproductfordisvoucher"],
+-+					"icon" : {
+-+						"image" : "/sites/default/files/folder.png"
+-+					},
+-+				},
+- 				"voucher_loyalty_point": {
+- 					"valid_children" : ["none"],
+- 					"icon" : {
+diff --git a/sites/all/modules/product_catalog/product_catalog_ajax/product_catalog_ajax.module b/sites/all/modules/product_catalog/product_catalog_ajax/product_catalog_ajax.module
+index 5eb0825..0f3a2f8 100755
+--- a/sites/all/modules/product_catalog/product_catalog_ajax/product_catalog_ajax.module
++++ b/sites/all/modules/product_catalog/product_catalog_ajax/product_catalog_ajax.module
+@@ -937,6 +937,8 @@ function product_catalog_ajax_select_submit() {
+   $min_weight = $_POST['min_weight'];
+   $rel_type = $_POST['rel_type'];
+   
++  dsm($rel_type, 'rel_type');
++  
+   $weightStep = -100;
+   $weight = $min_weight;
+   
+@@ -1111,7 +1113,7 @@ function product_catalog_ajax_select_submit() {
+ 	  		$child->field_ref_connected_product['und'][0]['nid'] = $childNid;
+ 			
+ 	  		// $term = taxonomy_term_load($tmpParentNid[1]);
+-	  		$term = taxonomy_get_term_by_name('Mandatory_MarketOpen','prdrelationtype');
++	  		$term = taxonomy_get_term_by_name('Bundled','prdrelationtype');
+ 	  		$child->field_ref_prdrelationtype['und'][0]['tid'] = current($term)->tid;
+ 	  	
+ 	  		node_save($child);
+diff --git a/sites/all/modules/product_catalog/product_catalog_form/handler_alter.inc b/sites/all/modules/product_catalog/product_catalog_form/handler_alter.inc
+index 296f11b..50dd17b 100755
+--- a/sites/all/modules/product_catalog/product_catalog_form/handler_alter.inc
++++ b/sites/all/modules/product_catalog/product_catalog_form/handler_alter.inc
+@@ -936,6 +936,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
+ 
+ 					if($productTypeName != 'Main') {
+ 
++						/*
+ 						$args = array('0' => $svcDomainTid, 
+ 									'1' => $productTypeTid,
+ 									'2' => $billingTypeTid,
+@@ -953,9 +954,11 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
+ 						foreach($viewResult as $item) {
+ 							$options[$item->nid] = view_get_field_value_by_label($view, 'PHP', $item);
+ 						}
+-							$form['field_next_join_product']['und']['#options'] = $options;
+-						}
+-          }
++						$form['field_next_join_product']['und']['#options'] = $options;
++						*/
++						
++					}
++            }
+ 
+             $productTypeTid = $form['field_product_type']['und']['#default_value'][0];
+ 
+diff --git a/sites/all/modules/product_catalog/product_catalog_tree/js/product_catalog_tree_operation.js b/sites/all/modules/product_catalog/product_catalog_tree/js/product_catalog_tree_operation.js
+index 776a50b..c735a89 100644
+--- a/sites/all/modules/product_catalog/product_catalog_tree/js/product_catalog_tree_operation.js
++++ b/sites/all/modules/product_catalog/product_catalog_tree/js/product_catalog_tree_operation.js
+@@ -453,8 +453,8 @@
+ 		var data = event.data;		
+ 		
+ 		switch(data.type){
+-		case 'select_numberingplan_domestic':			
+-		case 'select_numberingplan_idd':			
++		case 'select_numberingplan_domestic':
++		case 'select_numberingplan_idd':
+ 		case 'select_timetable_domestic':
+ 		case 'select_timetable_idd':
+ 		case 'select_roamingplan':
+@@ -463,7 +463,7 @@
+ 		}
+ 		
+ 		if(isSelect){
+-			var findStr = '\'.' + data.type + '_rows > div > input[name^=views_bulk_operations]:checked\'';			
++			var findStr = '\'.' + data.type + '_rows > div > input[name^=views_bulk_operations]:checked\'';
+ 			var inputItems = $(findStr);
+ 			
+ 			if(inputItems.length == 0){
+@@ -476,16 +476,15 @@
+ 					selectedItemNid[i] = inputItems[i].value;
+ 				}
+ 				
+-				var customSubmitUrl = '/product_catalog_ajax/custom_submit';				
++				var customSubmitUrl = '/product_catalog_ajax/custom_submit';
+ 				$.ajax({
+ 					url : customSubmitUrl,
+ 					type: "post",
+ 			        data: {'type': data.type, 'tariffplanNid': data.tariffplanNid, 'refTreeTid': data.refTreeTid, 'selected_nid': selectedItemNid},
+ 					success : function(result) {
+-						$.fn.reloadTreeContentDiv(data.node);			
++						$.fn.reloadTreeContentDiv(data.node);
+ 					}
+ 				});
+-				
+ 			}
+ 		}
+ 		
