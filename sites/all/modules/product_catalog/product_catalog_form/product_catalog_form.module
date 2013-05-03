@@ -13,7 +13,7 @@ function product_catalog_form_cron() {
   _cleanup_defered_delete();
 }
 
-function product_catalog_form_cornapi($op, $job = NULL) {
+function product_catalog_form_cornapi($op, $function = NULL) {
   switch($op) {
     case 'list':
       return array(
