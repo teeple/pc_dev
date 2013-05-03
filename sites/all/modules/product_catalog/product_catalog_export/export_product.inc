@@ -673,8 +673,17 @@ function _get_attribute_exceptions($product) {
             $requiredDeviceInfo = array();
             $deviceClassTerm = taxonomy_term_load($requiredDeviceNode -> field_ref_device_class['und'][0]['tid']);
             $requiredDeviceInfo['device'] = _get_common_code($deviceClassTerm);
-            $requiredDeviceInfo['amount'] = isset($requiredDeviceNode -> field_amount['und'][0]['value']) ? $requiredDeviceNode -> field_amount['und'][0]['value'] : 0;
-            $requiredDeviceInfo['deposit_price'] = isset($requiredDeviceNode -> field_deposit_price['und'][0]['value']) ? $requiredDeviceNode -> field_deposit_price['und'][0]['value'] : 0;
+            if(isset($requiredDeviceNode->field_required_device['und'])){
+                $amount = array();
+                foreach($requiredDeviceNode->field_required_device['und'] as $item){
+                    $collectionInfo = field_collection_item_load($item['value']);
+                    $amount[] = array(
+                        'amount' => $collectionInfo->field_amount['und'][0]['value'],
+                        'price' => $collectionInfo->field_deposit_price['und'][0]['value']
+                    );
+                }
+                $requiredDeviceInfo['deposit'] = $amount;
+            }
             $requiredDevice[] = $requiredDeviceInfo;
         }
         $retArray['required_device'] = $requiredDevice;
