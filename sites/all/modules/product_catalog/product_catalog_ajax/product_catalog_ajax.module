@@ -2064,6 +2064,7 @@ function product_catalog_ajax_delete_from_view($nodeNid, $refNodeNid, $additiona
 		case 'holidaylist_repeatable':
 		case 'holidaylist_specific':
         case 'prddowngradepenalty':
+        case 'timetable':
 			$output[] = ctools_ajax_command_reload();
 			break;
 		case 'actionsetcounter':
