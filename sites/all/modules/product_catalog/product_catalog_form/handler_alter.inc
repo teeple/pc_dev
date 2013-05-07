@@ -1982,6 +1982,9 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             $form['field_enddate_option4']['#type'] = 'hidden';
             $form['field_enddate_option2']['#type'] = 'hidden';
             
+            $availableProductsArray = $form['field_available_product_for_ut']['und']['#options'];
+            $availableProductsArray = array_filter($availableProductsArray, 'strlen');
+            $form['field_available_product_for_ut']['und']['#options'] = $availableProductsArray;
             break;
         case 'rate_node_form' :
             unset($form['field_ref_tariffplan']);
