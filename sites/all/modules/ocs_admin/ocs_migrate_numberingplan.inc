@@ -1,6 +1,6 @@
 <?php
 
-define( 'TID_MOBILE', 406);
+//define( 'TID_MOBILE', 406);
 
 function ocs_migrate_fce_numberingplan($form, &$form_state, $domestic_or_intl, $call_type)
 {
@@ -165,6 +165,8 @@ function ocs_migrate_fce_numberingplan($form, &$form_state, $domestic_or_intl, $
 
 function ocs_migrate_fce_numberingplan_submit($form, &$form_state)
 {
+	$service_domain = ocs_get_terms_tid( 'SvcDomain');
+
 	$values = $form_state['values'];
 	dpm($values, 'values');
 
@@ -388,6 +390,8 @@ function _ocs_migrate_type_of_call( $service_type, $carrier)
 
 function _update_numberingplan_for_domestic_sms( $carrier_info, $target_nid, $rule_list, $check_only)
 {
+	$service_domain = ocs_get_terms_tid( 'SvcDomain');
+
     dpm( $carrier_info, 'carrier info');
 
 	// load numbering plan
@@ -397,6 +401,7 @@ function _update_numberingplan_for_domestic_sms( $carrier_info, $target_nid, $ru
     $rating_group_list = _load_all_rating_group( $target_nid, 'domestic:sms');	
 
     $type_of_call_terms = _load_all_call_type_terms();
+	dpm( $type_of_call_terms, 'call types');
 
 	foreach ($rule_list as $rule) {
 
@@ -430,7 +435,7 @@ function _update_numberingplan_for_domestic_sms( $carrier_info, $target_nid, $ru
                     '@ra' => $rule['ruleName'], 
                     '@f' => $rating_group_name)));
             
-            _set_domestic_ratinggroup( $carrier_info, $r, $np, $rule, null, $rating_group_name, $type_of_call);
+            _set_domestic_ratinggroup( $carrier_info, $r, $np, $rule, null, $rating_group_name, $type_of_call, $service_domain['Mobile']);
 
             if ( ! $check_only) {
 				//dpm( $r, $r->title);
@@ -450,7 +455,7 @@ function _update_numberingplan_for_domestic_sms( $carrier_info, $target_nid, $ru
             // make new rating group
             $r = ocs_admin_get_new_node('domestic_ratinggroup');
 
-            _set_domestic_ratinggroup( $carrier_info, $r, $np, $rule, null, $rating_group_name, $type_of_call);
+            _set_domestic_ratinggroup( $carrier_info, $r, $np, $rule, null, $rating_group_name, $type_of_call, $service_domain['Mobile']);
 
             if ( ! $check_only) {
                 node_save( $r);
@@ -501,6 +506,7 @@ function _update_numberingplan_for_domestic_voice( $carrier_info, $target_nid, $
 
     $rating_group_list = _load_all_rating_group( $target_nid, 'domestic:voice');	
 
+	$service_domain = ocs_get_terms_tid( 'SvcDomain');
     $type_of_call_terms = _load_all_call_type_terms();
 	dpm( $type_of_call_terms, 'call types');
 			
@@ -645,7 +651,7 @@ function _update_numberingplan_for_domestic_voice( $carrier_info, $target_nid, $
                         '@a' => implode( ',', $area_code),
 						'@f' => $rating_group_name)));
 				
-				_set_domestic_ratinggroup( $carrier_info, $r, $np, $rule, $need_area_code ? $area_code[$i++] : null, $rating_group_name, $type_of_call);
+				_set_domestic_ratinggroup( $carrier_info, $r, $np, $rule, $need_area_code ? $area_code[$i++] : null, $rating_group_name, $type_of_call, $service_domain['Mobile']);
 
 				if ( ! $check_only) {
 					//dpm( $r, $r->title);
@@ -669,7 +675,7 @@ function _update_numberingplan_for_domestic_voice( $carrier_info, $target_nid, $
 				// make new rating group
 				$r = ocs_admin_get_new_node('domestic_ratinggroup');
 
-				_set_domestic_ratinggroup( $carrier_info, $r, $np, $rule, $code, $rating_group_name, $type_of_call);
+				_set_domestic_ratinggroup( $carrier_info, $r, $np, $rule, $code, $rating_group_name, $type_of_call, $service_domain['Mobile']);
 
 				if ( ! $check_only) {
 					node_save( $r);
@@ -684,7 +690,7 @@ function _update_numberingplan_for_domestic_voice( $carrier_info, $target_nid, $
 	}
 }
 
-function _set_domestic_ratinggroup( $carrier_info, &$r, $np, $rule, $area_code, $name, $type_of_call)
+function _set_domestic_ratinggroup( $carrier_info, &$r, $np, $rule, $area_code, $name, $type_of_call, $mobile_tid)
 {
 	$carrier_name = $rule['called_carrier'];
 
@@ -699,7 +705,7 @@ function _set_domestic_ratinggroup( $carrier_info, &$r, $np, $rule, $area_code, 
 		
 	$r->title = 'domestic_ratinggroup';
 	$r->field_ref_numberingplan_domestic['und'][0]['nid'] = $np->nid;
-	$r->field_service_type_of_provider['und'][0]['tid'] = TID_MOBILE;		// Mobile
+	$r->field_service_type_of_provider['und'][0]['tid'] = $mobile_tid;		// Mobile
 	$r->field_ref_carrier_mobile['und'][0]['nid'] = $carrier_info[$carrier_name]['nid'];
     $r->field_ref_type_of_call['und'][0]['tid'] = $type_of_call;
 	
@@ -729,6 +735,10 @@ function _need_area_code( $carrier_info, $name)
 
 function _update_numberingplan_for_intl_voice( $carrier_info, $target_nid, $records, $check_only)
 {
+	$service_domain = ocs_get_terms_tid('SvcDomain');
+	dpm( $service_domain, 'service domain');
+	$type_of_call = ocs_get_terms_tid('CallType');
+
     // get country code
    	db_set_active('fce');
 
@@ -745,7 +755,8 @@ function _update_numberingplan_for_intl_voice( $carrier_info, $target_nid, $reco
 	db_set_active('default');
 
     $terms = _load_all_call_type_terms();
-	$idd_type_of_acll = $terms['MOBILE_IDD'];
+	dpm( $terms, 'Call Types');
+	$idd_type_of_call = $terms['MOBILE_IDD'];
 
 	// read numbering plan
 	$np = node_load( $target_nid);
@@ -784,7 +795,7 @@ function _update_numberingplan_for_intl_voice( $carrier_info, $target_nid, $reco
 
             $nid = $rating_group_list[$prefix];
             $c = node_load( $nid);
-            _set_idd_ratinggroup( $carrier_info, $c, $np, $r, $prefix, $idd_type_of_call);
+            _set_idd_ratinggroup( $carrier_info, $c, $np, $r, $prefix, $idd_type_of_call, $service_domain['Mobile']);
             dpm( 'idd_ratinggroup nid='.$nid. ' rg='.$c->field_rating_group['und'][0]['value']);
 
             if ( ! $check_only) {
@@ -796,7 +807,7 @@ function _update_numberingplan_for_intl_voice( $carrier_info, $target_nid, $reco
                 '@p' => $prefix, '!n' => $r['ruleName'])));
 
             $c = ocs_admin_get_new_node('idd_ratinggroup');
-            _set_idd_ratinggroup( $carrier_info, $c, $np, $r, $prefix, $idd_type_of_call);
+            _set_idd_ratinggroup( $carrier_info, $c, $np, $r, $prefix, $idd_type_of_call, $service_domain['Mobile']);
             //dpm( $c, 'idd_ratinggroup');
 
             if ( ! $check_only) {
@@ -809,13 +820,13 @@ function _update_numberingplan_for_intl_voice( $carrier_info, $target_nid, $reco
 	if ( ! $check_only) node_save($np);
 }
 
-function _set_idd_ratinggroup( $carrier_info, &$r, $np, $rule, $prefix, $type_of_call)
+function _set_idd_ratinggroup( $carrier_info, &$r, $np, $rule, $prefix, $type_of_call, $tid_mobile)
 {
 	$carrier_name = $rule['intl_carrier'];
 
 	$r->title = 'idd_ratinggroup';
 	$r->field_ref_numberingplan_idd['und'][0]['nid'] = $np->nid;
-	$r->field_service_type_of_provider['und'][0]['tid'] = TID_MOBILE;		// Mobile
+	$r->field_service_type_of_provider['und'][0]['tid'] = $tid_mobile;		// Mobile
 	$r->field_ref_carrier_mobile['und'][0]['nid'] = $carrier_info[$carrier_name]['nid'];
 	$r->field_prefix['und'][0]['value'] = $prefix;
 	$r->field_area_name['und'][0]['value'] = $rule['ruleName'];
