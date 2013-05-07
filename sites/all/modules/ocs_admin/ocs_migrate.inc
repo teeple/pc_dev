@@ -103,6 +103,13 @@ function _load_all_products()
 	if ( count( $result) > 0) {
 		foreach( array_keys( $result['node']) as $nid) {
 			$node = node_load( $nid);
+
+			/*
+			if ( substr( $node->title, 0, 7) == 'Old_E2E') {
+				$node->title = substr( $node->title, 4);
+				node_save( $node);
+			}
+			*/
 			$list[$node->title] = $nid;
 		}
 	}
@@ -131,7 +138,7 @@ function ocs_migrate_fce_product_submit($form, &$form_state)
 			if ( empty( $r['user_category'])) continue;
 
             $category = $r['user_category'];
-			$product_name = 'Prepaid ' . $category;
+			$product_name = 'Old_Prepaid_' . $category;
 
 			if ( isset( $product_list[$product_name])) {
 				dpm( t( 'existing product=@p ', array( '@p' => $product_name)));
@@ -156,8 +163,8 @@ function ocs_migrate_fce_product_submit($form, &$form_state)
 			}
 
 			$tariffplan_list = array( 
-					array( 'name' => 'voice_plan_'.$category, 'tid' => 3631, 'voca' => 'tpl_tariffplan_voice'),
-					array( 'name' => 'sms_plan_'.$category, 'tid' => 3632, 'voca' => 'tpl_tariffplan_sms'));
+					array( 'name' => 'voice_plan_'.$category, 'tid' => 6565, 'voca' => 'tpl_tariffplan_voice'),
+					array( 'name' => 'sms_plan_'.$category, 'tid' => 6566, 'voca' => 'tpl_tariffplan_sms'));
 
 			// check if it has tariff plan
 			foreach( $tariffplan_list as $plan) {
