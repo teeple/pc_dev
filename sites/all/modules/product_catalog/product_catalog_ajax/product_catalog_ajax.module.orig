@@ -937,6 +937,8 @@ function product_catalog_ajax_select_submit() {
   $min_weight = $_POST['min_weight'];
   $rel_type = $_POST['rel_type'];
   
+  dsm($rel_type, 'rel_type');
+  
   $weightStep = -100;
   $weight = $min_weight;
   
@@ -1111,7 +1113,7 @@ function product_catalog_ajax_select_submit() {
 	  		$child->field_ref_connected_product['und'][0]['nid'] = $childNid;
 			
 	  		// $term = taxonomy_term_load($tmpParentNid[1]);
-	  		$term = taxonomy_get_term_by_name('Mandatory_MarketOpen','prdrelationtype');
+	  		$term = taxonomy_get_term_by_name('Bundled','prdrelationtype');
 	  		$child->field_ref_prdrelationtype['und'][0]['tid'] = current($term)->tid;
 	  	
 	  		node_save($child);
