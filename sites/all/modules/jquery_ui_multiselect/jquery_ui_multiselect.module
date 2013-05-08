@@ -162,6 +162,9 @@ function jquery_ui_multiselect_field_widget_options_select_form_alter(&$element,
       }
     }
     $element['#options'] = $options + $element['#options'];
+    
+    //unset none option
+    unset($element['#options']['_none']);
 
     // Prepare settings to pass on to JS.
     $settings = $context['instance']['settings']['jquery_ui_multiselect'];

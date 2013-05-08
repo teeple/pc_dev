@@ -241,7 +241,7 @@ function edit_pane_callback($form, &$form_state) {
 
 function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 
-	
+	//dsm($form_id);
 	load_required_js_css_before_ajax_load();
 
     if ((isset($form['#attributes']) && isset($form['#attributes']['class'])) && gettype($form['#attributes']['class']) == 'array') {
@@ -250,7 +250,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
     
     switch($form_id) {
     		case 'views_form_ocs_svc_perm_panel_pane_1':
-				dpm( $form, 'form ');
+				//dpm( $form, 'form ');
 
 				// TODO: state service permission
     			$lifecycleScheme = node_load($form_state['build_info']['args'][0]->args[0]);
@@ -518,6 +518,12 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
         case 'thresholdschemefactors_node_form' :
             $form['field_ref_thresholdscheme']['#type'] = 'hidden';
             _unset_menu_items($form, $form_id);
+            if(isset($form['field_threshold_action_set']['und'])){
+                $count = count($form['field_threshold_action_set']['und']);
+                for($i=0;$i<$count;$i++){
+                    unset($form['field_threshold_action_set']['und'][$i]['field_ref_messages']['und']['#options']['_none']);
+                }
+            }
             break;
 
         case 'vouchercardtype_node_form' :
@@ -1996,6 +2002,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             
             $availableProductsArray = $form['field_available_product_for_ut']['und']['#options'];
             $availableProductsArray = array_filter($availableProductsArray, 'strlen');
+            unset($availableProductsArray['_none']);
             $form['field_available_product_for_ut']['und']['#options'] = $availableProductsArray;
             break;
         case 'rate_node_form' :
