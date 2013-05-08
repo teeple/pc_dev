@@ -1969,9 +1969,9 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
         case 'unittransfer_node_form' :
             _unset_menu_items($form, $form_id);
             unset($form['field_ref_unittransferfactors']);
-            //if (!isset($form['nid']['#value'])) {
-            //    $form['actions']['submit']['#submit'][] = '_unittransfer_submit_handler';
-            //}
+            if (!isset($form['nid']['#value'])) {
+                $form['actions']['submit']['#submit'][] = '_unittransfer_submit_handler';
+            }
             break;
         case 'unittransferfactor_node_form' :
             _unset_menu_items($form, $form_id);
@@ -1997,6 +1997,9 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             $form['field_enddate_option4']['#type'] = 'hidden';
             $form['field_enddate_option2']['#type'] = 'hidden';
             
+            $availableProductsArray = $form['field_available_product_for_ut']['und']['#options'];
+            $availableProductsArray = array_filter($availableProductsArray, 'strlen');
+            $form['field_available_product_for_ut']['und']['#options'] = $availableProductsArray;
             break;
         case 'rate_node_form' :
             unset($form['field_ref_tariffplan']);

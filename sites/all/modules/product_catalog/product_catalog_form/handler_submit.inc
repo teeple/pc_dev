@@ -838,6 +838,7 @@ function _unittransfer_submit_handler($form,$form_state){
         $node->type = 'unittransferfactor';
         $node->language = 'und';
         $node->field_counter_group['und'][0]['tid'] = $item->tid;
+        $node->field_parent_node['und'][0]['nid'] = $unitTransferNode->nid;
         node_save($node);
         $unitTransferNode->field_ref_unittransferfactors['und'][] = array('nid' => $node->nid);
     }
