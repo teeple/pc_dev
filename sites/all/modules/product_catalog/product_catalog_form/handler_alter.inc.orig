@@ -939,6 +939,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 
 					if($productTypeName != 'Main') {
 
+						/*
 						$args = array('0' => $svcDomainTid, 
 									'1' => $productTypeTid,
 									'2' => $billingTypeTid,
@@ -956,9 +957,11 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 						foreach($viewResult as $item) {
 							$options[$item->nid] = view_get_field_value_by_label($view, 'PHP', $item);
 						}
-							$form['field_next_join_product']['und']['#options'] = $options;
-						}
-          }
+						$form['field_next_join_product']['und']['#options'] = $options;
+						*/
+						
+					}
+            }
 
             $productTypeTid = $form['field_product_type']['und']['#default_value'][0];
 
@@ -1951,9 +1954,9 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
         case 'unittransfer_node_form' :
             _unset_menu_items($form, $form_id);
             unset($form['field_ref_unittransferfactors']);
-            //if (!isset($form['nid']['#value'])) {
-            //    $form['actions']['submit']['#submit'][] = '_unittransfer_submit_handler';
-            //}
+            if (!isset($form['nid']['#value'])) {
+                $form['actions']['submit']['#submit'][] = '_unittransfer_submit_handler';
+            }
             break;
         case 'unittransferfactor_node_form' :
             _unset_menu_items($form, $form_id);
@@ -1979,6 +1982,9 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             $form['field_enddate_option4']['#type'] = 'hidden';
             $form['field_enddate_option2']['#type'] = 'hidden';
             
+            $availableProductsArray = $form['field_available_product_for_ut']['und']['#options'];
+            $availableProductsArray = array_filter($availableProductsArray, 'strlen');
+            $form['field_available_product_for_ut']['und']['#options'] = $availableProductsArray;
             break;
         case 'rate_node_form' :
             unset($form['field_ref_tariffplan']);
