@@ -556,21 +556,23 @@ function _get_result($reqArray, $product) {
 function _get_attribute_exceptions($product) {
 
     $retArray = array();
-
+    
     $validStart = isset($product -> field_validfor_product['und'][0]['value']) ? $product -> field_validfor_product['und'][0]['value'] : '0001-01-01 00:00:00';
 
     $validEnd = isset($product -> field_validfor_product['und'][0]['value2']) ? $product -> field_validfor_product['und'][0]['value2'] : '0001-01-01 00:00:00';
-
-    if ($validStart == $validEnd) {
-        $validEnd = '9999-12-31 23:59:59';
+    
+    if ($validStart === $validEnd) {
+    	dsm('here');
+    	$validEnd = '9999-12-31 23:59:59';
     } else {
-        if (!empty($record -> field_validfor_product)) {
-            $tempArr = explode(' ', $record -> field_validfor_product['und'][0]['value2']);
+        if (!empty($product -> field_validfor_product)) {
+            $tempArr = explode(' ', $product -> field_validfor_product['und'][0]['value2']);
             $validEnd = $tempArr[0] . ' 23:59:59';
         } else {
             $validEnd = '9999-12-31 23:59:59';
         }
     }
+    
     $validForStr = $validStart . ' ~ ' . $validEnd;
 
     $retArray['valid_for'] = $validForStr;

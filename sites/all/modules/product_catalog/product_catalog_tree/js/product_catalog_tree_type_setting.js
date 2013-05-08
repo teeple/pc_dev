@@ -396,7 +396,8 @@
         	        }
         },
         "actionpricechargerecurring" : {
-		        "valid_children" : ["conditioncommonand_nonusage_recurring"],
+		        "valid_children" : [ "conditioncommonand",
+		                             "conditioncommonand_nonusage_recurring"],
     		    	"icon" : {
         		"image" : "/sites/default/files/icons/money.png"
             }

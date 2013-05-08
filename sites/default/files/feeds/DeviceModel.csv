@@ -1,0 +1,61 @@
+name,code,model_class_code,model_class
+MDU,POTS-MDU,GW,Home GW
+None,Without G/W,GW,Home GW
+TET,TEST,GW,Home GW
+HG256,Huawei HG256,GW,Home GW
+ONT,HuawaiONT,GW,Home GW
+E4202G,P.RG E4202G,GW,Home GW
+TEHomeGW,Test HomeG/W,GW,Home GW
+MX12,Panasonic-MX12,GW,Home GW
+SAMPLE-HOMEGW,SAMPLE-HOMEGW,GW,Home GW
+E2E-HOMEGW,E2E-HOMEGW,GW,Home GW
+V999,Vissan,HP,Mobile Phone
+T-MDL-20121218,T-MODEL-20121218,HP,Mobile Phone
+iPhone5,iPhone5,HP,Mobile Phone
+MS100,MS100,HP,Mobile Phone
+MS150,MS150,HP,Mobile Phone
+MS150L,MS150L,HP,Mobile Phone
+MS200,MS200,HP,Mobile Phone
+MS230,MS230,HP,Mobile Phone
+MS250,MS250,HP,Mobile Phone
+MS250R,MS250R,HP,Mobile Phone
+MS280,MS280,HP,Mobile Phone
+MS280M,MS280M,HP,Mobile Phone
+MS300,MS300,HP,Mobile Phone
+MS330,MS330,HP,Mobile Phone
+MS340,MS340,HP,Mobile Phone
+MS350,MS350,HP,Mobile Phone
+MS400,MS400,HP,Mobile Phone
+MS500,MS500,HP,Mobile Phone
+MS550,MS550,HP,Mobile Phone
+MS600,MS600,HP,Mobile Phone
+MS700,MS700,HP,Mobile Phone
+MS700T,MS700T,HP,Mobile Phone
+MS800,MS800,HP,Mobile Phone
+MS900,MS900,HP,Mobile Phone
+SHV-E120L,GalaxySII HD LTE,HP,Mobile Phone
+SHV-E120LS,GalaxySII HD LTE(silver),HP,Mobile Phone
+SHV-E120LW,GalaxySII HD LTE(white),HP,Mobile Phone
+SHV-E140L,Galaxy Tab 8.9 LTE,HP,Mobile Phone
+SHV-E160L,Galaxy Note 32G,HP,Mobile Phone
+SHV-E160L16,Galaxy Note 16G,HP,Mobile Phone
+SHV-E160LW,Galaxy Note (white),HP,Mobile Phone
+SHV-E170L,Galaxy R Style,HP,Mobile Phone
+SHV-E210L,Galaxy S III,HP,Mobile Phone
+SHV-E210L16,Galaxy S III 16G,HP,Mobile Phone
+SHV-E250L,SHV-E250L,HP,Mobile Phone
+SHV-E210S,Galaxy S Three,HP,Mobile Phone
+SAMPLE-MOBILE,SAMPLE-MOBILE,HP,Mobile Phone
+SAMPLE-TEST,TEST REGISTER,HP,Mobile Phone
+E2E-MOBILE,E2E_MOBILE,HP,Mobile Phone
+Gy:P,Gy:P,HP,Mobile Phone
+MotorollaSTB,MotorollaSTB,SB,Settop Box
+SAMPLE-SETTOP,SAMPLE-SETTOP,SB,Settop Box
+E2E-SETTOP,E2E-SETTOP,SB,Settop Box
+nokia,nokia,SB,Settop Box
+TG1311,Panasonic TG 1311,SI,IP Phone
+500MX,Panasonic 500MX,SI,IP Phone
+SAMPLE-IPPHONE,SAMPLE-IPPHONE,SI,IP Phone
+E2E-IPPHONE,E2E-IPPHONE,SI,IP Phone
+E2E-MODEM,E2E-MODEM,UM,USB Modem
+E2E-UNITEL-HP,Unitel New Phone,UM,USB Modem

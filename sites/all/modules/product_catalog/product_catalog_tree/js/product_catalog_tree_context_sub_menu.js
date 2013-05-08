@@ -219,6 +219,7 @@
 			case 'conditionwhatcontentprice':
 			case 'conditionwhatcalltype':
 			case 'conditionwhenvaliddate':
+			case 'treenodeotheronetimechargediscou':
 				menus.custom_delete._disabled = false;
 				menus.custom_delete.action = function(node) {
 					$.fn.deleteNode(node);

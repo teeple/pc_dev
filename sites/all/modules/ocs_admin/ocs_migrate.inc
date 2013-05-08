@@ -303,16 +303,12 @@ function ocs_migrate_fce_carrier_submit($form, &$form_state)
 		// add entities
 		foreach ($form['#carrier'] as $r) {
             $carrier_name = $r['ruleName'];
-			if ( isset( $carrier_info[$carrier_name])) {
+			if ( isset( $carrier_info[$carrier_name]['nid'])) {
 				dpm( t( 'existing carrier=@c prefix=@p', array( '@c' => $carrier_name, '@p' => $r['prefix'])));
-				if ( ! isset( $carrier_info[$carrier_name]['nid'])) {
-					dpm( t( 'carrier info not exist for "@c" prefix=@p', array( '@c' => $carrier_name, '@p' => $r['prefix'])));
-					continue;
-				}
 				$node = node_load( $carrier_info[$carrier_name]['nid']);
 			}
 			else {
-				dpm( t( '>>> new carrier=@c prefix=@p', array( '@c' => $arrier_name, '@p' => $r['prefix'])));
+				dpm( t( '>>> new carrier=@c prefix=@p', array( '@c' => $carrier_name, '@p' => $r['prefix'])));
 				$node = ocs_admin_get_new_node('carrier_mobile');
 			}
 
@@ -481,57 +477,80 @@ function ocs_migrate_fce_area_submit($form, &$form_state)
 function _update_area_code_for_domestic_voice( $carrier_info, $records, $check_only)
 {
 	// add entities
+	$codes = array();
 	foreach ($records as $r) {
+		$codes[$r['carrier']][$r['region_code']][$r['ruleName']][] = array( 'value' => $r['second_prefix']);
+	}
 
-		if ( ! isset( $carrier_info[$r['carrier']])) {
-			dpm('Carrier not found: ' . $r['carrier']);
-			continue;
-		}
+	foreach( $codes as $carrier => $regions) {
+		foreach( $regions as $region_code => $records) {
+			dpm( t('Carrier:@c  Region:@r', array( '@c' => $carrier, '@r' => $region_code)));
 
-		if ( !isset( $carrier_info[$r['carrier']]['nid'])) {
-			dpm('Carrier nid not found: ' . $r['carrier']);
-			continue;
-		}
-		$carrier_nid = $carrier_info[$r['carrier']]['nid'];
-		
-		$query = new EntityFieldQuery();
-		$result = $query->entityCondition('entity_type', 'node')
-			->entityCondition('bundle', 'area_code')
-			->propertyCondition( 'title', $r['ruleName'])
-			->fieldCondition( 'field_ref_carrier_mobile', 'nid', $carrier_nid)
-			->fieldCondition( 'field_prefix', 'value', $r['second_prefix'])
-			->execute();
+			if ( $carrier == 'UNITEL_new') $carrier = 'UNITEL';
 
-		if ( count( $result) > 0) {
-			foreach( array_keys( $result['node']) as $nid) {
-				$node = node_load( $nid);
-				if ( $node->field_area_code['und'][0]['value'] != $r['region_code'] ) {
-					dpm( t('Area code is updated for @carrier prefix:@prefix. Region code: @a=>@b', 
-						array( '@carrier' => $r['carrier'], '@prefix' => $r['second_prefix'],
-							'@a' => $node->field_area_code['und'][0]['value'], '@b' => $r['region_code'])));
-						
-					$node->field_area_code['und'][0]['value'] = $r['region_code'];
+			if ( ! isset( $carrier_info[$carrier])) {
+				dpm('Carrier not found: ' . $carrier);
+				continue;
+			}
+
+			if ( !isset( $carrier_info[$carrier]['nid'])) {
+				dpm('Carrier nid not found: ' . $carrier);
+				continue;
+			}
+
+			$carrier_nid = $carrier_info[$carrier]['nid'];
+	
+			foreach( $records as $ruleName => $prefixes) {
+
+				//dpm( $prefixes, $ruleName);
+				$prefix = array_get_value( $prefixes, FALSE);
+				sort( $prefix);
+
+				$query = new EntityFieldQuery();
+				$result = $query->entityCondition('entity_type', 'node')
+					->entityCondition('bundle', 'area_code')
+					->propertyCondition( 'title', $ruleName)
+					->fieldCondition( 'field_ref_carrier_mobile', 'nid', $carrier_nid)
+					->fieldCondition( 'field_area_code', 'value', $region_code)
+					->execute();
+
+				if ( count( $result) > 0) {
+					$count = 0; 
+					foreach( array_keys( $result['node']) as $nid) {
+
+						if ( $count == 0) {
+							$node = node_load( $nid);
+							$node->field_prefix['und'] = $prefixes;
+
+							dpm( t('Area code is updated for @carrier @rule prefix:@prefix. Region code:@r', 
+								array( '@carrier' => $carrier, '@rule' => $ruleName, '@prefix' => implode( ',', $prefix), '@r' => $region_code)));
+							if ( ! $check_only) node_save($node);
+						}
+						else {
+							// remove all other area codes
+							dpm( t('Remove Area code of @carrier Region code: @a', 
+								array( '@carrier' => $carrier, '@a' => $region_code)));
+							if ( ! $check_only) node_delete( $nid);
+						}
+
+						$count ++;
+					}
 				}
 				else {
-					dpm( t('Existing Area code of @carrier prefix:@prefix. Region code: @a', 
-						array( '@carrier' => $r['carrier'], '@prefix' => $r['second_prefix'],
-							'@a' => $node->field_area_code['und'][0]['value'] )));
+					$node = ocs_admin_get_new_node('area_code');
+					$node->title = $ruleName;
+					$node->field_area_code['und'][0]['value'] = $region_code;
+					$node->field_ref_carrier_mobile['und'][0]['nid'] = $carrier_nid;
+					$node->field_prefix['und'] = $prefixes;
+
+					dpm( t('Add New area code for @carrier @rule prefix:@prefix. Region code: @b', 
+						array( '@carrier' => $carrier, '@rule' => $ruleName, '@prefix' => implode( ',', $prefix), '@b' => $region_code)));
+
+					if ( ! $check_only) node_save($node);
 				}
+			
 			}
 		}
-		else {
-			$node = ocs_admin_get_new_node('area_code');
-			$node->title = $r['ruleName'];
-			$node->field_prefix['und'][0]['value'] = $r['second_prefix'];
-			$node->field_area_code['und'][0]['value'] = $r['region_code'];
-			$node->field_ref_carrier_mobile['und'][0]['nid'] = $carrier_nid;
-
-			dpm( t('Add New area code for @carrier prefix:@prefix. Region code: @b', 
-				array( '@carrier' => $r['carrier'], '@prefix' => $r['second_prefix'],
-					'@b' => $r['region_code'])));
-		}
-		
-		if ( ! $check_only) node_save($node);
 	}
 
 }

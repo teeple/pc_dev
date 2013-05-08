@@ -410,6 +410,7 @@ function _update_numberingplan_for_domestic_sms( $carrier_info, $target_nid, $ru
         }
 
 		$carrier_name = $rule['called_carrier'];
+		if ( $carrier_name == 'UNITEL_new') $carrier_name = 'UNITEL';	// same carrier
 		$rating_group_name = $carrier_name . ':' . $rule['ruleName'];
 
         if ( ! isset( $carrier_info[$carrier_name]['nid'])) {
