@@ -172,7 +172,7 @@ function jquery_ui_multiselect_field_widget_options_select_form_alter(&$element,
     unset($settings['enabled']);
     // Make sure that boolean values are typed as boolean.
     foreach (array('sortable', 'dragToAdd', 'searchable', 'doubleClickable', 'includeRemoveAll', 'includeAddAll', 'selectedContainerOnLeft','single') as $key) {
-      $settings[$key] = (bool)$settings[$key];
+      $settings[$key] = isset($settings[$key])?(bool)$settings[$key]:FALSE;
     }
     // Store settings in a data- attribute for convenient retrieval.
     $element['#attributes']['data-jquery-ui-multiselect'] = drupal_json_encode($settings);
