@@ -659,27 +659,11 @@ index 5d9f3cc..e69de29 100644
 --     		    	"icon" : {
 --         		"image" : "/sites/default/files/icons/money.png"
 --             }
-diff --git a/sites/all/modules/product_catalog/product_catalog_export/export_deposit_scheme.inc b/sites/all/modules/product_catalog/product_catalog_export/export_deposit_scheme.inc
-index 7c0c4cd..ec59ca7 100644
---- a/sites/all/modules/product_catalog/product_catalog_export/export_deposit_scheme.inc
-+++ b/sites/all/modules/product_catalog/product_catalog_export/export_deposit_scheme.inc
-@@ -32,9 +32,8 @@ function _array_deposit_scheme($exportItemNids=NULL){
-                 //toc
-                 if(!empty($item->field_field_ref_type_of_call_mul)){
-                     foreach($item->field_field_ref_type_of_call_mul as $toc){
--												$tempArray = array($toc);
--												dsm($tempArray, 'tempArray');
--												$factor['type_of_call'][] = _add_commoncode($tempArray);
-+					$tempArray = array($toc);
-+					$factor['type_of_call'][] = _add_commoncode($tempArray);
-                     }   
-                 }else{
-                     $factor['type_of_call'] = NULL;
 diff --git a/sites/all/modules/product_catalog/product_catalog_export/export_product.inc b/sites/all/modules/product_catalog/product_catalog_export/export_product.inc
-index f621ccc..025df23 100755
+index f621ccc..f501ea6 100755
 --- a/sites/all/modules/product_catalog/product_catalog_export/export_product.inc
 +++ b/sites/all/modules/product_catalog/product_catalog_export/export_product.inc
-@@ -562,12 +562,13 @@ function _get_attribute_exceptions($product) {
+@@ -562,12 +562,12 @@ function _get_attribute_exceptions($product) {
      $validEnd = isset($product -> field_validfor_product['und'][0]['value2']) ? $product -> field_validfor_product['und'][0]['value2'] : '0001-01-01 00:00:00';
      
      if ($validStart === $validEnd) {
@@ -691,7 +675,6 @@ index f621ccc..025df23 100755
 -            $validEnd = $tempArr[0] . ' 23:59:59';
 +            // $validEnd = $tempArr[0] . ' 23:59:59';
 +            $validEnd = $tempArr[0] . ' ' . $tempArr[1];
-+            // $validEnd = $tempArr;
          } else {
              $validEnd = '9999-12-31 23:59:59';
          }
