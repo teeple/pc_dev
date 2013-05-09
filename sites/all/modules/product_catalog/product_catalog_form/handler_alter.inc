@@ -959,7 +959,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 					$customerTypeTid = $form['field_customer_type']['und']['#default_value'];
 
 					if($productTypeName != 'Main') {
-
+						/*
 						$args = array('0' => $svcDomainTid, 
 									'1' => $productTypeTid,
 									'2' => $billingTypeTid,
@@ -978,6 +978,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 							$options[$item->nid] = view_get_field_value_by_label($view, 'PHP', $item);
 						}
 							$form['field_next_join_product']['und']['#options'] = $options;
+							*/
 						}
           }
 
