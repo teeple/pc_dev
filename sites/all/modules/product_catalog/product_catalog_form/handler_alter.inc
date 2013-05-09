@@ -1350,8 +1350,8 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
               $serviceDomainTid = $depositSchemeNode -> field_service_domain['und'][0]['tid'];
               $form['field_thismonth_accu_counter']['#type'] = 'hidden';
 
-							$options = array();
-							$options['_none'] = '- None -';
+			  $options = array();
+			  $options['_none'] = '- None -';
 							              
               $counterUnitType = $form_state['values']['field_counter_unit_type']['und'][0]['tid'];
               if(!empty($counterUnitType)) {
@@ -1370,10 +1370,8 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
               $form['field_ref_thres_counter_acc']['und']['#options'] = $options;
               $form['field_ref_thres_counter_limit']['und']['#options'] = $options;
               
-              
-
             } else {// edit
-			  			$depositSchemeNode = node_load($depositSchemeFactorNode->field_ref_depositscheme['und'][0]['nid']);
+              $depositSchemeNode = node_load($depositSchemeFactorNode->field_ref_depositscheme['und'][0]['nid']);
               $serviceDomainTid = $depositSchemeNode->field_service_domain['und'][0]['tid'];
               
               $isDefaultFactor = $form_state['build_info']['args'][0]->field_is_default_factor['und'][0]['value'];
@@ -1399,8 +1397,11 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
               }
 
               $counterUnitType = $form_state['values']['field_counter_unit_type']['und'][0]['tid'];
+              
               if(empty($counterUnitType)) {
-              	$counterUnitType = $form_state['build_info']['args'][0]->field_counter_unit_type['und'][0]['tid'];
+                  if(isset($form_state['build_info']['args'][0]->field_counter_unit_type['und'][0]['tid'])){
+                      $counterUnitType = $form_state['build_info']['args'][0]->field_counter_unit_type['und'][0]['tid'];
+                  }
               }
               
               $view = views_get_view('list_counter');
