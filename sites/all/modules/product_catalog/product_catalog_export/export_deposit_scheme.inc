@@ -32,9 +32,8 @@ function _array_deposit_scheme($exportItemNids=NULL){
                 //toc
                 if(!empty($item->field_field_ref_type_of_call_mul)){
                     foreach($item->field_field_ref_type_of_call_mul as $toc){
-												$tempArray = array($toc);
-												dsm($tempArray, 'tempArray');
-												$factor['type_of_call'][] = _add_commoncode($tempArray);
+					$tempArray = array($toc);
+					$factor['type_of_call'][] = _add_commoncode($tempArray);
                     }   
                 }else{
                     $factor['type_of_call'] = NULL;
