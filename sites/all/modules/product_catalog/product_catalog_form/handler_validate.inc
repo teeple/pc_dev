@@ -214,6 +214,7 @@ function product_catalog_form_node_validate($node, $form, &$form_state) {
             break;
         case 'carrier_mobile_node_form':
             $isDuplicated = FALSE;
+            $failReason = '';
             //check duplicated in the form
             $prefixs = array();
             foreach($form_state['input']['field_prefix_multiple']['und'] as $item){
@@ -227,6 +228,7 @@ function product_catalog_form_node_validate($node, $form, &$form_state) {
             foreach($countPrefixs as $item){
                 if($item > 1){
                     $isDuplicated = TRUE;
+                    $failReason = 'Duplicated Prefix found';
                     break;
                 }
             }
@@ -242,15 +244,22 @@ function product_catalog_form_node_validate($node, $form, &$form_state) {
                 }
                 $view->set_arguments($args);
                 $view->execute();
-                //dsm($view,'view result');
+               
                 if(count($view->result) > 0){
                     $isDuplicated = TRUE;
+                    
+                    $otherCarrierPrefix = array();
+                    foreach($view->result[0]->field_field_prefix_multiple as $item){
+                        $otherCarrierPrefix [] = $item['raw']['safe_value'];
+                    }
+                    $duplicatedPrefix = array_intersect($prefixs,$otherCarrierPrefix);
+                    $failReason = 'Duplicated Prefix '.current($duplicatedPrefix).' found on another carrier '.$view->result[0]->node_title;
                 }
             }
             
             //set error msg to form if duplicated found.
             if($isDuplicated){
-                form_set_error('field_prefix_multiple', 'Duplicated Prefix found!');
+                form_set_error('field_prefix_multiple', $failReason);
             }
             break;
         case 'packetdynamicl4_node_form' :
