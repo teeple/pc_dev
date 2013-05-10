@@ -454,8 +454,8 @@ function _get_default_basic_counters($productNid) {
 	  
 	$product = node_load($productNid);
 
-  $term_service_domain_tid = $product->field_service_type_of_provider['und'][0]['tid'];
-  $term_counter_type = taxonomy_get_term_by_name('Basic', 'countertype');
+    $term_service_domain_tid = $product->field_service_type_of_provider['und'][0]['tid'];
+    $term_counter_type = taxonomy_get_term_by_name('Basic', 'countertype');
 	$term_bill_type_product = taxonomy_term_load($product->field_billing_type['und'][0]['tid']);
 	
 	$args = array();
@@ -470,16 +470,16 @@ function _get_default_basic_counters($productNid) {
 		$args[2] = $billTypeCounter->tid;
 	}
 
-  // 예) POSTPAID/MOBILE로 view검색
-  $view = views_get_view('query_list_counter');
-  $view->set_display('panel_pane_1');
-  $view->set_arguments($args);
+    // 예) POSTPAID/MOBILE로 view검색
+    $view = views_get_view('query_list_counter');
+    $view->set_display('panel_pane_1');
+    $view->set_arguments($args);
 	$view->execute();
 	
 	$retArray = array();
-	foreach ($view->result as $record) {
+    foreach ($view->result as $record) {
 		$retArray[$record -> nid] = view_get_field_value_by_label($view, 'PHP', $record);
-	}
+    }
 	
 	return $retArray;
 	// return $view->result;

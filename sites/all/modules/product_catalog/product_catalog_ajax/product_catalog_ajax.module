@@ -1155,7 +1155,7 @@ function product_catalog_ajax_select_submit() {
       	$child->field_ref_vouchercardtype['und'][0]['nid'] = $tmpProductNid[1];
       	$child->field_ref_product['und'][0]['nid'] = $childNid;
       	node_save($child);
-      	      	
+      	
       	_create_treenodecounterforvoucherprd($child, $childNid);
       	
       	$js_data['append_to'] = 'inside';
@@ -1383,12 +1383,11 @@ function _create_treenodecounterforvoucherprd($treenodeproductforvoucher, $produ
 	// 해당 상품의 basic counter를 가져옴.
 	// $product = node_load($productNid);
 	$counter_list = _get_default_basic_counters($productNid);
-	foreach($counter_list as $record) {
-		$counterList[] = $record->nid;
+    foreach($counter_list as $key => $value) {
+		$counterList[] = $key;
 	}
 	
 	foreach($counterList as $record) {
-		
 		$treenodecounterforvoucherprd = new StdClass();
 		$treenodecounterforvoucherprd->type = 'treenodecounterforvoucherprd';
 		$treenodecounterforvoucherprd->uid = $user->uid;
