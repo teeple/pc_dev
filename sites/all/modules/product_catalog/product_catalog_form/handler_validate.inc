@@ -43,574 +43,578 @@ function is_machine_name($argStr) {
 }
 
 function product_catalog_form_node_validate($node, $form, &$form_state) {
-
-    switch($form['form_id']['#value']) {
-        case 'roaming_zone_node_form':
-            $isValid = TRUE;
-            $targetElement = 'field_roaming_countries';
-            
-            $selectedCountries = array();
-            foreach($form_state['values']['field_roaming_countries']['und'] as $item){
-                if(isset($item['nid'])) $selectedCountries[] = $item['nid'];
-            }
-            if(empty($selectedCountries)){
-                $failReason = 'Country is required information';
-                $isValid = FALSE;
-            }else{
-                //check duplicated in other zone
-                $view = views_get_view('list_roaming_zone');
-                $view->set_display('panel_pane_1');
-                $selectedCountries = join('+',$selectedCountries);
-                $args = array('0' => $selectedCountries);
+    if($form_state['values']['op'] == 'Delete'){
+        
+    }else{
+        switch($form['form_id']['#value']) {
+            case 'roaming_zone_node_form':
+                $isValid = TRUE;
+                $targetElement = 'field_roaming_countries';
                 
-                if (isset($form['nid']['#value'])) {
-                    $args['1'] = $form['nid']['#value'];
+                $selectedCountries = array();
+                foreach($form_state['values']['field_roaming_countries']['und'] as $item){
+                    if(isset($item['nid'])) $selectedCountries[] = $item['nid'];
                 }
-                $view->set_arguments($args);
-                $view->execute();
-                if(count($view->result) > 0){
-                    $failReason = 'Selected countries is already taken by another zone';
+                if(empty($selectedCountries)){
+                    $failReason = 'Country is required information';
                     $isValid = FALSE;
-                }
-            }
-            
-            if(!$isValid){
-                form_set_error($targetElement,$failReason);
-            }
-            break;
-        case 'prdattributeprefixrangeallowed_node_form':
-            //dsm($form,'form');
-            //dsm($form_state,'form_state');
-           
-            $isValid = TRUE;
-            $targetElement = 'field_prefix_range][und][';
-            $failReason = 'Only Number value is allowed for prefix';
-            $totalRow = count($form_state['input']['field_prefix_range']['und']);
-            for($i=0;$i<$totalRow;$i++){
-                $base = $form_state['input']['field_prefix_range']['und'][$i]['field_allowed_prefix_base']['und'][0]['value'];
-                $start = $form_state['input']['field_prefix_range']['und'][$i]['field_allowed_prefix_start']['und'][0]['value'];
-                $end = $form_state['input']['field_prefix_range']['und'][$i]['field_allowed_prefix_end']['und'][0]['value'];
-                
-                if(strlen($base) == 0 && strlen($start) == 0 && strlen($end) == 0){
-                    continue;
-                }
-                if(!is_numeric($base)){
-                    $targetElement .= $i.'][field_allowed_prefix_base';
-                    $isValid = FALSE;
-                    break;
-                }
-                if(!is_numeric($start)){
-                    $targetElement .= $i.'][field_allowed_prefix_start';
-                    $isValid = FALSE;
-                    break;
-                }
-                if(!is_numeric($end)){
-                    $targetElement .= $i.'][field_allowed_prefix_end';
-                    $isValid = FALSE;
-                    break;
-                }
-                $start = intval($start);
-                $end = intval($end);
-                if($start > $end){
-                    $targetElement .= $i.'][field_allowed_prefix_end';
-                    $failReason = 'End should be bigger than Start';
-                    $isValid = FALSE;
-                    break;
-                }
-            }
-            if(!$isValid ){
-                form_set_error($targetElement, $failReason);
-            }
-            break;
-        case 'numberspecialfactors_node_form':
-            $isDuplicatedPrefix = FALSE;
-            //check duplicated in the form
-            $prefixs = array();
-            foreach($form_state['input']['field_prefix']['und'] as $item){
-                if(strlen($item['value'] > 0)){
-                    $prefixs [] = $item['value'];
-                }
-            }
-            
-            $countPrefixs = array_count_values($prefixs);
-            //dsm($countPrefixs,'countprefixs');
-            foreach($countPrefixs as $item){
-                if($item > 1){
-                    $isDuplicatedPrefix = TRUE;
-                    break;
-                }
-            }
-            
-            //check duplicated in other carrier
-            if(!$isDuplicatedPrefix){
-                $view = views_get_view('list_numberspecial_child_node');
-                $view->set_display('panel_pane_8');
-                $prefixArgs = join('+',$prefixs);
-                $args = array('0' => $form['#node']->field_ref_numberspecial['und'][0]['nid'],
-                              '1' => $prefixArgs
-                );
-                
-                if (isset($form['nid']['#value'])) {
-                    $args['2'] = $form['nid']['#value'];
-                }
-                $view->set_arguments($args);
-                $view->execute();
-                //dsm($view,'view result');
-                if(count($view->result) > 0){
-                    $isDuplicatedPrefix = TRUE;
-                }
-                //dsm($form,'form');
-            }
-            
-            //set error msg to form if duplicated prefix found.
-            if($isDuplicatedPrefix){
-                form_set_error('field_prefix', 'Duplicated Prefix found!');
-            }
-            break;
-        case 'idd_ratinggroup_node_form':
-            $isDuplicatedPrefix = FALSE;
-            //check duplicated in the form
-            $prefixs = array();
-            foreach($form_state['input']['field_prefix']['und'] as $item){
-                if(strlen($item['value'] > 0)){
-                    $prefixs [] = $item['value'];
-                }
-            }
-            
-            $countPrefixs = array_count_values($prefixs);
-            //dsm($countPrefixs,'countprefixs');
-            foreach($countPrefixs as $item){
-                if($item > 1){
-                    $isDuplicatedPrefix = TRUE;
-                    break;
-                }
-            }
-            
-            //check duplicated in other carrier
-            if(!$isDuplicatedPrefix){
-                $view = views_get_view('list_numberingplan_idd_ratinggroup');
-                $view->set_display('panel_pane_4');
-                $prefixArgs = join('+',$prefixs);
-                $args = array('0' => $form['#node']->field_ref_numberingplan_idd['und'][0]['nid'],
-                              '1' => $prefixArgs
-                );
-                
-                if (isset($form['nid']['#value'])) {
-                    $args['2'] = $form['nid']['#value'];
-                }
-                $view->set_arguments($args);
-                $view->execute();
-                //dsm($view,'view result');
-                if(count($view->result) > 0){
-                    $isDuplicatedPrefix = TRUE;
-                }
-                //dsm($form,'form');
-            }
-            
-            //set error msg to form if duplicated prefix found.
-            if($isDuplicatedPrefix){
-                form_set_error('field_prefix', 'Duplicated Prefix found!');
-            }
-            break;
-        case 'carrier_mobile_node_form':
-            $isDuplicated = FALSE;
-            $failReason = '';
-            //check duplicated in the form
-            $prefixs = array();
-            foreach($form_state['input']['field_prefix_multiple']['und'] as $item){
-                if(strlen($item['value'] > 0)){
-                    $prefixs [] = $item['value'];
-                }
-            }
-            
-            $countPrefixs = array_count_values($prefixs);
-            //dsm($countPrefixs,'countprefixs');
-            foreach($countPrefixs as $item){
-                if($item > 1){
-                    $isDuplicated = TRUE;
-                    $failReason = 'Duplicated Prefix found';
-                    break;
-                }
-            }
-            
-            //check duplicated in other carrier
-            if(!$isDuplicated){
-                $view = views_get_view('list_carrier_mobile');
-                $view->set_display('panel_pane_4');
-                $prefixArgs = join('+',$prefixs);
-                $args = array('0' => $prefixArgs);
-                if (isset($form['nid']['#value'])) {
-                    $args['1'] = $form['nid']['#value'];
-                }
-                $view->set_arguments($args);
-                $view->execute();
-               
-                if(count($view->result) > 0){
-                    $isDuplicated = TRUE;
+                }else{
+                    //check duplicated in other zone
+                    $view = views_get_view('list_roaming_zone');
+                    $view->set_display('panel_pane_1');
+                    $selectedCountries = join('+',$selectedCountries);
+                    $args = array('0' => $selectedCountries);
                     
-                    $otherCarrierPrefix = array();
-                    foreach($view->result[0]->field_field_prefix_multiple as $item){
-                        $otherCarrierPrefix [] = $item['raw']['safe_value'];
+                    if (isset($form['nid']['#value'])) {
+                        $args['1'] = $form['nid']['#value'];
                     }
-                    $duplicatedPrefix = array_intersect($prefixs,$otherCarrierPrefix);
-                    $failReason = 'Duplicated Prefix '.current($duplicatedPrefix).' found on another carrier '.$view->result[0]->node_title;
+                    $view->set_arguments($args);
+                    $view->execute();
+                    if(count($view->result) > 0){
+                        $failReason = 'Selected countries is already taken by another zone';
+                        $isValid = FALSE;
+                    }
                 }
-            }
-            
-            //set error msg to form if duplicated found.
-            if($isDuplicated){
-                form_set_error('field_prefix_multiple', $failReason);
-            }
-            break;
-        case 'packetdynamicl4_node_form' :
-            //dsm($node,'$node');
-            //check ip address is valid or not.
-            $ipValues = $node -> field_ip['und'];
-            unset($ipValues['add_more']);
-            $isInvalidIP = FALSE;
-            $isInvalidPort = FALSE;
-
-            foreach ($ipValues as $item) {
-                $ipStr = $item['value'];
-                if (strlen($ipStr) > 0) {
-                    //check '/'
-                    $ipStr = explode('/', $ipStr);
-                    if (count($ipStr) != 2) {
-                        $isInvalidIP = TRUE;
+                
+                if(!$isValid){
+                    form_set_error($targetElement,$failReason);
+                }
+                break;
+            case 'prdattributeprefixrangeallowed_node_form':
+                //dsm($form,'form');
+                //dsm($form_state,'form_state');
+               
+                $isValid = TRUE;
+                $targetElement = 'field_prefix_range][und][';
+                $failReason = 'Only Number value is allowed for prefix';
+                $totalRow = count($form_state['input']['field_prefix_range']['und']);
+                for($i=0;$i<$totalRow;$i++){
+                    $base = $form_state['input']['field_prefix_range']['und'][$i]['field_allowed_prefix_base']['und'][0]['value'];
+                    $start = $form_state['input']['field_prefix_range']['und'][$i]['field_allowed_prefix_start']['und'][0]['value'];
+                    $end = $form_state['input']['field_prefix_range']['und'][$i]['field_allowed_prefix_end']['und'][0]['value'];
+                    
+                    if(strlen($base) == 0 && strlen($start) == 0 && strlen($end) == 0){
+                        continue;
+                    }
+                    if(!is_numeric($base)){
+                        $targetElement .= $i.'][field_allowed_prefix_base';
+                        $isValid = FALSE;
                         break;
                     }
-                    //check .
-                    $ip = explode('.', $ipStr[0]);
-                    if (count($ip) != 4) {
-                        $isInvalidIP = TRUE;
+                    if(!is_numeric($start)){
+                        $targetElement .= $i.'][field_allowed_prefix_start';
+                        $isValid = FALSE;
                         break;
                     }
-                    //check ip numeric
-                    foreach ($ip as $digit) {
+                    if(!is_numeric($end)){
+                        $targetElement .= $i.'][field_allowed_prefix_end';
+                        $isValid = FALSE;
+                        break;
+                    }
+                    $start = intval($start);
+                    $end = intval($end);
+                    if($start > $end){
+                        $targetElement .= $i.'][field_allowed_prefix_end';
+                        $failReason = 'End should be bigger than Start';
+                        $isValid = FALSE;
+                        break;
+                    }
+                }
+                if(!$isValid ){
+                    form_set_error($targetElement, $failReason);
+                }
+                break;
+            case 'numberspecialfactors_node_form':
+                $isDuplicatedPrefix = FALSE;
+                //check duplicated in the form
+                $prefixs = array();
+                foreach($form_state['input']['field_prefix']['und'] as $item){
+                    if(strlen($item['value'] > 0)){
+                        $prefixs [] = $item['value'];
+                    }
+                }
+                
+                $countPrefixs = array_count_values($prefixs);
+                //dsm($countPrefixs,'countprefixs');
+                foreach($countPrefixs as $item){
+                    if($item > 1){
+                        $isDuplicatedPrefix = TRUE;
+                        break;
+                    }
+                }
+                
+                //check duplicated in other carrier
+                if(!$isDuplicatedPrefix){
+                    $view = views_get_view('list_numberspecial_child_node');
+                    $view->set_display('panel_pane_8');
+                    $prefixArgs = join('+',$prefixs);
+                    $args = array('0' => $form['#node']->field_ref_numberspecial['und'][0]['nid'],
+                                  '1' => $prefixArgs
+                    );
+                    
+                    if (isset($form['nid']['#value'])) {
+                        $args['2'] = $form['nid']['#value'];
+                    }
+                    $view->set_arguments($args);
+                    $view->execute();
+                    //dsm($view,'view result');
+                    if(count($view->result) > 0){
+                        $isDuplicatedPrefix = TRUE;
+                    }
+                    //dsm($form,'form');
+                }
+                
+                //set error msg to form if duplicated prefix found.
+                if($isDuplicatedPrefix){
+                    form_set_error('field_prefix', 'Duplicated Prefix found!');
+                }
+                break;
+            case 'idd_ratinggroup_node_form':
+                $isDuplicatedPrefix = FALSE;
+                //check duplicated in the form
+                $prefixs = array();
+                foreach($form_state['input']['field_prefix']['und'] as $item){
+                    if(strlen($item['value'] > 0)){
+                        $prefixs [] = $item['value'];
+                    }
+                }
+                
+                $countPrefixs = array_count_values($prefixs);
+                //dsm($countPrefixs,'countprefixs');
+                foreach($countPrefixs as $item){
+                    if($item > 1){
+                        $isDuplicatedPrefix = TRUE;
+                        break;
+                    }
+                }
+                
+                //check duplicated in other carrier
+                if(!$isDuplicatedPrefix){
+                    $view = views_get_view('list_numberingplan_idd_ratinggroup');
+                    $view->set_display('panel_pane_4');
+                    $prefixArgs = join('+',$prefixs);
+                    $args = array('0' => $form['#node']->field_ref_numberingplan_idd['und'][0]['nid'],
+                                  '1' => $prefixArgs
+                    );
+                    
+                    if (isset($form['nid']['#value'])) {
+                        $args['2'] = $form['nid']['#value'];
+                    }
+                    $view->set_arguments($args);
+                    $view->execute();
+                    //dsm($view,'view result');
+                    if(count($view->result) > 0){
+                        $isDuplicatedPrefix = TRUE;
+                    }
+                    //dsm($form,'form');
+                }
+                
+                //set error msg to form if duplicated prefix found.
+                if($isDuplicatedPrefix){
+                    form_set_error('field_prefix', 'Duplicated Prefix found!');
+                }
+                break;
+            case 'carrier_mobile_node_form':
+                $isDuplicated = FALSE;
+                $failReason = '';
+                //check duplicated in the form
+                $prefixs = array();
+                foreach($form_state['input']['field_prefix_multiple']['und'] as $item){
+                    if(strlen($item['value'] > 0)){
+                        $prefixs [] = $item['value'];
+                    }
+                }
+                
+                $countPrefixs = array_count_values($prefixs);
+                //dsm($countPrefixs,'countprefixs');
+                foreach($countPrefixs as $item){
+                    if($item > 1){
+                        $isDuplicated = TRUE;
+                        $failReason = 'Duplicated Prefix found';
+                        break;
+                    }
+                }
+                
+                //check duplicated in other carrier
+                if(!$isDuplicated){
+                    $view = views_get_view('list_carrier_mobile');
+                    $view->set_display('panel_pane_4');
+                    $prefixArgs = join('+',$prefixs);
+                    $args = array('0' => $prefixArgs);
+                    if (isset($form['nid']['#value'])) {
+                        $args['1'] = $form['nid']['#value'];
+                    }
+                    $view->set_arguments($args);
+                    $view->execute();
+                   
+                    if(count($view->result) > 0){
+                        $isDuplicated = TRUE;
+                        
+                        $otherCarrierPrefix = array();
+                        foreach($view->result[0]->field_field_prefix_multiple as $item){
+                            $otherCarrierPrefix [] = $item['raw']['safe_value'];
+                        }
+                        $duplicatedPrefix = array_intersect($prefixs,$otherCarrierPrefix);
+                        $failReason = 'Duplicated Prefix '.current($duplicatedPrefix).' found on another carrier '.$view->result[0]->node_title;
+                    }
+                }
+                
+                //set error msg to form if duplicated found.
+                if($isDuplicated){
+                    form_set_error('field_prefix_multiple', $failReason);
+                }
+                break;
+            case 'packetdynamicl4_node_form' :
+                //dsm($node,'$node');
+                //check ip address is valid or not.
+                $ipValues = $node -> field_ip['und'];
+                unset($ipValues['add_more']);
+                $isInvalidIP = FALSE;
+                $isInvalidPort = FALSE;
+    
+                foreach ($ipValues as $item) {
+                    $ipStr = $item['value'];
+                    if (strlen($ipStr) > 0) {
+                        //check '/'
+                        $ipStr = explode('/', $ipStr);
+                        if (count($ipStr) != 2) {
+                            $isInvalidIP = TRUE;
+                            break;
+                        }
+                        //check .
+                        $ip = explode('.', $ipStr[0]);
+                        if (count($ip) != 4) {
+                            $isInvalidIP = TRUE;
+                            break;
+                        }
+                        //check ip numeric
+                        foreach ($ip as $digit) {
+                            //check digit
+                            if (!is_numeric($digit)) {
+                                $isInvalidIP = TRUE;
+                                break 2;
+                            }
+                            //check ip range
+                            if ($digit < 0 || $digit > 255) {
+                                $isInvalidIP = TRUE;
+                                break 2;
+                            }
+                        }
+                        //check network mask
+                        if (!is_numeric($ipStr[1])) {
+                            $isInvalidIP = TRUE;
+                            break;
+                        }
+                        //check network mask range
+                        if ($ipStr[1] < 0 || $ipStr[1] > 25) {
+                            $isInvalidIP = TRUE;
+                            break;
+                        }
+                    }
+                }
+    
+                $portValues = $node -> field_port['und'];
+                unset($portValues['add_more']);
+                foreach ($portValues as $item) {
+                    $portStr = $item['value'];
+                    if (strlen($portStr)) {
                         //check digit
-                        if (!is_numeric($digit)) {
-                            $isInvalidIP = TRUE;
-                            break 2;
+                        if (!is_numeric($portStr)) {
+                            $isInvalidPort = TRUE;
+                            break;
                         }
-                        //check ip range
-                        if ($digit < 0 || $digit > 255) {
-                            $isInvalidIP = TRUE;
-                            break 2;
+                        if ($portStr < 0) {
+                            $isInvalidPort = TRUE;
+                            break;
                         }
-                    }
-                    //check network mask
-                    if (!is_numeric($ipStr[1])) {
-                        $isInvalidIP = TRUE;
-                        break;
-                    }
-                    //check network mask range
-                    if ($ipStr[1] < 0 || $ipStr[1] > 25) {
-                        $isInvalidIP = TRUE;
-                        break;
                     }
                 }
-            }
-
-            $portValues = $node -> field_port['und'];
-            unset($portValues['add_more']);
-            foreach ($portValues as $item) {
-                $portStr = $item['value'];
-                if (strlen($portStr)) {
-                    //check digit
-                    if (!is_numeric($portStr)) {
-                        $isInvalidPort = TRUE;
-                        break;
-                    }
-                    if ($portStr < 0) {
-                        $isInvalidPort = TRUE;
-                        break;
-                    }
+    
+                if ($isInvalidIP) {
+                    form_set_error('field_ip', 'Invalid IP format');
                 }
-            }
-
-            if ($isInvalidIP) {
-                form_set_error('field_ip', 'Invalid IP format');
-            }
-            if ($isInvalidPort) {
-                form_set_error('field_port', 'Invalid Port');
-            }
-            break;
-        case 'conditionwheremacaddress_node_form' :
-            if (is_macaddress($form_state['values']['field_mac_address']['und'][0]['value']) == FALSE) {
-                drupal_set_message("Only 3 bytes of Mac Address Format is allowed", 'error');
-                form_set_error('Only 3 bytes of Mac Address Format is allowed');
-            }
-            break;
-        case 'conditionwheremacaddress_node_form' :
-            break;
-        case 'timetablefactors_node_form' :
-            if ($form_state['values']['field_timeslot_from_hour']['und'][0]['value'] > $form_state['values']['field_timeslot_to_hour']['und'][0]['value']) {
-                form_set_error('Reference', 'FROM is greater than TO');
-            } else if ($form_state['values']['field_timeslot_from_hour']['und'][0]['value'] == $form_state['values']['field_timeslot_to_hour']['und'][0]['value']) {
-                if ($form_state['values']['field_timeslot_from_minutes']['und'][0]['value'] > $form_state['values']['field_timeslot_to_minutes']['und'][0]['value']) {
+                if ($isInvalidPort) {
+                    form_set_error('field_port', 'Invalid Port');
+                }
+                break;
+            case 'conditionwheremacaddress_node_form' :
+                if (is_macaddress($form_state['values']['field_mac_address']['und'][0]['value']) == FALSE) {
+                    drupal_set_message("Only 3 bytes of Mac Address Format is allowed", 'error');
+                    form_set_error('Only 3 bytes of Mac Address Format is allowed');
+                }
+                break;
+            case 'conditionwheremacaddress_node_form' :
+                break;
+            case 'timetablefactors_node_form' :
+                if ($form_state['values']['field_timeslot_from_hour']['und'][0]['value'] > $form_state['values']['field_timeslot_to_hour']['und'][0]['value']) {
                     form_set_error('Reference', 'FROM is greater than TO');
+                } else if ($form_state['values']['field_timeslot_from_hour']['und'][0]['value'] == $form_state['values']['field_timeslot_to_hour']['und'][0]['value']) {
+                    if ($form_state['values']['field_timeslot_from_minutes']['und'][0]['value'] > $form_state['values']['field_timeslot_to_minutes']['und'][0]['value']) {
+                        form_set_error('Reference', 'FROM is greater than TO');
+                    }
+                    if ($form_state['values']['field_timeslot_from_minutes']['und'][0]['value'] == $form_state['values']['field_timeslot_to_minutes']['und'][0]['value']) {
+                        form_set_error('Reference', 'FROM and TO has same value');
+                    }
+                } else if ($form_state['values']['field_timeslot_to_hour']['und'][0]['value'] === '24' && $form_state['values']['field_timeslot_to_minutes']['und'][0]['value'] > 0) {
+                    form_set_error('Reference', 'TO Hour(24) should have minute value 0');
+                } else if ($form_state['values']['field_timeslot_from_hour']['und'][0]['value'] === '24') {
+                    form_set_error('Reference', 'FROM Hour(24) is not allowed');
                 }
-                if ($form_state['values']['field_timeslot_from_minutes']['und'][0]['value'] == $form_state['values']['field_timeslot_to_minutes']['und'][0]['value']) {
-                    form_set_error('Reference', 'FROM and TO has same value');
+                break;
+            case 'conditionwhensubscriptionday_node_form' :
+                $operationTerm = taxonomy_term_load($form_state['values']['field_rating_operation_for_date']['und'][0]['tid']);
+                if ($operationTerm -> name == 'Is between' && ($form_state['values']['field_start_date']['und'][0]['value'] > $form_state['values']['field_end_date']['und'][0]['value'])) {
+                    drupal_set_message("Start date should be less than End Date", "error");
+                    form_set_error('Start date should be less than End Date');
                 }
-            } else if ($form_state['values']['field_timeslot_to_hour']['und'][0]['value'] === '24' && $form_state['values']['field_timeslot_to_minutes']['und'][0]['value'] > 0) {
-                form_set_error('Reference', 'TO Hour(24) should have minute value 0');
-            } else if ($form_state['values']['field_timeslot_from_hour']['und'][0]['value'] === '24') {
-                form_set_error('Reference', 'FROM Hour(24) is not allowed');
-            }
-            break;
-        case 'conditionwhensubscriptionday_node_form' :
-            $operationTerm = taxonomy_term_load($form_state['values']['field_rating_operation_for_date']['und'][0]['tid']);
-            if ($operationTerm -> name == 'Is between' && ($form_state['values']['field_start_date']['und'][0]['value'] > $form_state['values']['field_end_date']['und'][0]['value'])) {
-                drupal_set_message("Start date should be less than End Date", "error");
-                form_set_error('Start date should be less than End Date');
-            }
-            break;
-        case 'conditionwhenactivedays_node_form' :
-            $operationTerm = taxonomy_term_load($form_state['values']['field_rating_operation_for_date']['und'][0]['tid']);
-            if ($operationTerm -> name == 'Is between' && $form_state['values']['field_activedays_start']['und'][0]['value'] > $form_state['values']['field_activedays_end']['und'][0]['value']) {
-                drupal_set_message("Start days should be less than End days", "error");
-                form_set_error('Start days should be less than End days');
-            }
-            break;
-        
-        case 'actionpricechargerecurring_node_form':
-        
-        		// Create일 경우,  time_t로 unique를 체크.
-        		// Edit일 경우, 기존에 존재하는 것이 있는지를 확인하여 unique체크 
-        		if(isset($form['nid']['#value'])) {
-        			$nodeNid = $form['nid']['#value'];
-        			$recurringId = $form_state['values']['field_recurring_charge_id']['und'][0]['value'];
-        			
-        			$params = array('0' => $nodeNid, '1' => $recurringId);
-        			$viewResult = views_get_view_result('list_actionpricechargerecurring', 'panel_pane_2', $params);
-        			
-        			if(!empty($viewResult)) {
-        				drupal_set_message("Recurring ID should be unique", "error");
-        				form_set_error('Recurring ID should be unique');
-        			}
-		            if (!is_machine_name($recurringId)) {
-		                drupal_set_message("Only letters and underscore is allowed for recurring id", 'error');
-		                form_set_error("Only letters and underscore is allowed for recurring id");
-		            }
-        		}
-        		
-        		break;
-        		
-        case 'counter_node_form' :
-            // In case Delete Confirmation
-            //
-            /*
-             if($form_state['values']['op'] == 'Delete') {
-             $view = views_get_view('list_reverse_reference_items');
-             $view->set_display('panel_pane_1');
-             $view->set_arguments(array('0' => $form['nid']['#value']));
-             $view->execute();
-
-             if(!empty($view->result)) {
-             drupal_set_message("You should remove the items referencing this counter FIRST! ",'error');
-             form_set_error("You should remove the items referencing this counter FIRST!");
-             drupal_goto('Common/counter/edit/Optional/53409');
-             }
-             return;
-             }
-             */
-             
-            if (!is_machine_name($form_state['values']['field_counter_id']['und'][0]['value'])) {
-                form_set_error('field_counter_id', "Only letters and underscore is allowed for counter id");
-            }
-
-            // counter id range validataion
-            $counterType = taxonomy_term_load($form_state['values']['field_counter_type']['und'][0]['tid']);
-            $counterId = $form_state['values']['field_counter_id']['und'][0]['value'];
-            if ($counterType -> name == 'Rollover') {
-                if ($counterId < 1000000 && $counterId > 2000000) {
-                    drupal_set_message("rollover counter id should be between 1000000 and 2000000", 'error');
-                    form_set_error('rollover counter id should be between 1000000 and 2000000');
+                break;
+            case 'conditionwhenactivedays_node_form' :
+                $operationTerm = taxonomy_term_load($form_state['values']['field_rating_operation_for_date']['und'][0]['tid']);
+                if ($operationTerm -> name == 'Is between' && $form_state['values']['field_activedays_start']['und'][0]['value'] > $form_state['values']['field_activedays_end']['und'][0]['value']) {
+                    drupal_set_message("Start days should be less than End days", "error");
+                    form_set_error('Start days should be less than End days');
                 }
-                $counterGroupTerm = taxonomy_term_load($form_state['values']['field_counter_group']['und'][0]['tid']);
+                break;
+            
+            case 'actionpricechargerecurring_node_form':
+            
+            		// Create일 경우,  time_t로 unique를 체크.
+            		// Edit일 경우, 기존에 존재하는 것이 있는지를 확인하여 unique체크 
+            		if(isset($form['nid']['#value'])) {
+            			$nodeNid = $form['nid']['#value'];
+            			$recurringId = $form_state['values']['field_recurring_charge_id']['und'][0]['value'];
+            			
+            			$params = array('0' => $nodeNid, '1' => $recurringId);
+            			$viewResult = views_get_view_result('list_actionpricechargerecurring', 'panel_pane_2', $params);
+            			
+            			if(!empty($viewResult)) {
+            				drupal_set_message("Recurring ID should be unique", "error");
+            				form_set_error('Recurring ID should be unique');
+            			}
+    		            if (!is_machine_name($recurringId)) {
+    		                drupal_set_message("Only letters and underscore is allowed for recurring id", 'error');
+    		                form_set_error("Only letters and underscore is allowed for recurring id");
+    		            }
+            		}
+            		
+            		break;
+            		
+            case 'counter_node_form' :
+                // In case Delete Confirmation
+                //
                 /*
-                 if($counterGroupTerm->name == 'REMAINS') {
-                 drupal_set_message("Rollover Counter cannot be the 'REMAINS' counter group",'error');
-                 form_set_error("Rollover Counter cannot be the 'REMAINS' counter group");
+                 if($form_state['values']['op'] == 'Delete') {
+                 $view = views_get_view('list_reverse_reference_items');
+                 $view->set_display('panel_pane_1');
+                 $view->set_arguments(array('0' => $form['nid']['#value']));
+                 $view->execute();
+    
+                 if(!empty($view->result)) {
+                 drupal_set_message("You should remove the items referencing this counter FIRST! ",'error');
+                 form_set_error("You should remove the items referencing this counter FIRST!");
+                 drupal_goto('Common/counter/edit/Optional/53409');
+                 }
+                 return;
                  }
                  */
-
-            } else {
-                $counterGroupTerm = taxonomy_term_load($form_state['values']['field_counter_group']['und'][0]['tid']);
-                $counterUnitTerm = taxonomy_term_load($form_state['values']['field_counter_unit_type']['und'][0]['tid']);
-                if (($counterGroupTerm -> name == 'REMAINS') && ($counterUnitTerm -> name != 'Money')) {
-                    // drupal_set_message("Only 'Money' type counter can be 'REMAINS' counter group", 'error');
-                    form_set_error('field_counter_group', "Only 'Money' type counter can be 'REMAINS' counter group");
+                 
+                if (!is_machine_name($form_state['values']['field_counter_id']['und'][0]['value'])) {
+                    form_set_error('field_counter_id', "Only letters and underscore is allowed for counter id");
                 }
-
-                if ($counterId >= 1000000) {
-                    // drupal_set_message('counter id should be less than 1000000');
-                    form_set_error('field_counter_id', 'counter id should be less than 1000000');
+    
+                // counter id range validataion
+                $counterType = taxonomy_term_load($form_state['values']['field_counter_type']['und'][0]['tid']);
+                $counterId = $form_state['values']['field_counter_id']['und'][0]['value'];
+                if ($counterType -> name == 'Rollover') {
+                    if ($counterId < 1000000 && $counterId > 2000000) {
+                        drupal_set_message("rollover counter id should be between 1000000 and 2000000", 'error');
+                        form_set_error('rollover counter id should be between 1000000 and 2000000');
+                    }
+                    $counterGroupTerm = taxonomy_term_load($form_state['values']['field_counter_group']['und'][0]['tid']);
+                    /*
+                     if($counterGroupTerm->name == 'REMAINS') {
+                     drupal_set_message("Rollover Counter cannot be the 'REMAINS' counter group",'error');
+                     form_set_error("Rollover Counter cannot be the 'REMAINS' counter group");
+                     }
+                     */
+    
+                } else {
+                    $counterGroupTerm = taxonomy_term_load($form_state['values']['field_counter_group']['und'][0]['tid']);
+                    $counterUnitTerm = taxonomy_term_load($form_state['values']['field_counter_unit_type']['und'][0]['tid']);
+                    if (($counterGroupTerm -> name == 'REMAINS') && ($counterUnitTerm -> name != 'Money')) {
+                        // drupal_set_message("Only 'Money' type counter can be 'REMAINS' counter group", 'error');
+                        form_set_error('field_counter_group', "Only 'Money' type counter can be 'REMAINS' counter group");
+                    }
+    
+                    if ($counterId >= 1000000) {
+                        // drupal_set_message('counter id should be less than 1000000');
+                        form_set_error('field_counter_id', 'counter id should be less than 1000000');
+                    }
                 }
-            }
-            break;
-
-        case 'vouchercardtype_node_form' :
-            if (!is_machine_name($form_state['values']['field_voucher_id']['und'][0]['value'])) {
-                form_set_error('field_voucher_id', "Only letters and underscore is allowed for voucher card type id");
-            }
-
-            if (!is_numeric($form_state['values']['field_voucher_id']['und'][0]['value'])) {
-                form_set_error('field_voucher_id', "Only Number is allowed for ID");
-            }
-            
-            $voucherCardTypeTerm = taxonomy_term_load($form_state['values']['field_ref_voucher_type']['und'][0]['tid']);
-            
-            if($voucherCardTypeTerm->name == 'Discount') {
-            	//dsm($form_state['values'], 'form state values');
-            	if(empty($form_state['values']['field_ref_product_for_disvoucher']) 
-            		|| empty($form_state['values']['field_ref_product_for_disvoucher']['und'])
-            		|| empty($form_state['values']['field_ref_product_for_disvoucher']['und'][0])
-            		|| empty($form_state['values']['field_ref_product_for_disvoucher']['und'][0]['nid'])            		
-            	) {
-						form_set_error('field_ref_product_for_disvoucher', "You should select the product mapped by the discount coupon");
-            	} else {
-            		if( count($form_state['values']['field_ref_product_for_disvoucher']['und']) > 1 ) {
-	            		form_set_error('field_ref_product_for_disvoucher',"You should select only one mapping product");
-            		}
-            	}
-            	
-            }
-            break;
-
-        case 'simpleproductoffering_node_form' :
-            if (!is_machine_name($form_state['values']['field_product_id']['und'][0]['value'])) {
-                form_set_error('field_product_id', "Only lowercase letter, number and underscore are allowed for product id");
-            }
-            
-            if (!is_machine_name($form_state['values']['field_short_code']['und'][0]['value'])) {
-                form_set_error('field_short_code', "Only lowercase letter, number and underscore are allowed for short code");
-            }
-            $prdTypeTerm = taxonomy_term_load($form_state['values']['field_product_type']['und'][0]['tid']);
-            
-            if($prdTypeTerm->name == 'CUG') {
-	            if ( empty($form_state['values']['field_cug_group_type'])
-	            	|| empty($form_state['values']['field_cug_group_type']['und'])
-	            	|| empty($form_state['values']['field_cug_group_type']['und'][0])
-	            	|| empty($form_state['values']['field_cug_group_type']['und'][0]['tid'])) {
-					form_set_error('field_cug_group_type', "CUG Group Type is required");
-	            }
-	
-				if ( empty($form_state['values']['field_cug_customer_type'])
-					|| empty($form_state['values']['field_cug_customer_type']['und'])
-					|| empty($form_state['values']['field_cug_customer_type']['und'][0])
-					|| empty($form_state['values']['field_cug_customer_type']['und'][0]['tid'])) {
-					form_set_error('field_cug_customer_type', "CUG Customer Type field is required");
-				}
-			}
-	          
-	          //check exclusivessness and downgrade penalty
-            if(isset($form_state['values']['field_exclusiveness']['und'])){
-                $isExist = FALSE;
-                $downgradePenaltyViewResult = views_get_view_result('list_product_downgrade_penalty', 'panel_pane_2', $form['#node']->nid);
-                
-                foreach($form_state['values']['field_exclusiveness']['und'] as $item){
-                    $selectedNids[] = $item['nid'];
+                break;
+    
+            case 'vouchercardtype_node_form' :
+                if (!is_machine_name($form_state['values']['field_voucher_id']['und'][0]['value'])) {
+                    form_set_error('field_voucher_id', "Only letters and underscore is allowed for voucher card type id");
+                }
+    
+                if (!is_numeric($form_state['values']['field_voucher_id']['und'][0]['value'])) {
+                    form_set_error('field_voucher_id', "Only Number is allowed for ID");
                 }
                 
-                foreach($downgradePenaltyViewResult as $item){
-                     //dsm($item,'$item');
-                    if(in_array($item->field_field_ref_target_product[0]['raw']['nid'],$selectedNids)){
-                        $isExist = TRUE;
-                        $existName = $item->field_field_ref_target_product[0]['raw']['node']->title;
+                $voucherCardTypeTerm = taxonomy_term_load($form_state['values']['field_ref_voucher_type']['und'][0]['tid']);
+                
+                if($voucherCardTypeTerm->name == 'Discount') {
+                	//dsm($form_state['values'], 'form state values');
+                	if(empty($form_state['values']['field_ref_product_for_disvoucher']) 
+                		|| empty($form_state['values']['field_ref_product_for_disvoucher']['und'])
+                		|| empty($form_state['values']['field_ref_product_for_disvoucher']['und'][0])
+                		|| empty($form_state['values']['field_ref_product_for_disvoucher']['und'][0]['nid'])            		
+                	) {
+    						form_set_error('field_ref_product_for_disvoucher', "You should select the product mapped by the discount coupon");
+                	} else {
+                		if( count($form_state['values']['field_ref_product_for_disvoucher']['und']) > 1 ) {
+    	            		form_set_error('field_ref_product_for_disvoucher',"You should select only one mapping product");
+                		}
+                	}
+                	
+                }
+                break;
+    
+            case 'simpleproductoffering_node_form' :
+                if (!is_machine_name($form_state['values']['field_product_id']['und'][0]['value'])) {
+                    form_set_error('field_product_id', "Only lowercase letter, number and underscore are allowed for product id");
+                }
+                
+                if (!is_machine_name($form_state['values']['field_short_code']['und'][0]['value'])) {
+                    form_set_error('field_short_code', "Only lowercase letter, number and underscore are allowed for short code");
+                }
+                $prdTypeTerm = taxonomy_term_load($form_state['values']['field_product_type']['und'][0]['tid']);
+                
+                if($prdTypeTerm->name == 'CUG') {
+    	            if ( empty($form_state['values']['field_cug_group_type'])
+    	            	|| empty($form_state['values']['field_cug_group_type']['und'])
+    	            	|| empty($form_state['values']['field_cug_group_type']['und'][0])
+    	            	|| empty($form_state['values']['field_cug_group_type']['und'][0]['tid'])) {
+    					form_set_error('field_cug_group_type', "CUG Group Type is required");
+    	            }
+    	
+    				if ( empty($form_state['values']['field_cug_customer_type'])
+    					|| empty($form_state['values']['field_cug_customer_type']['und'])
+    					|| empty($form_state['values']['field_cug_customer_type']['und'][0])
+    					|| empty($form_state['values']['field_cug_customer_type']['und'][0]['tid'])) {
+    					form_set_error('field_cug_customer_type', "CUG Customer Type field is required");
+    				}
+    			}
+    	          
+    	          //check exclusivessness and downgrade penalty
+                if(isset($form_state['values']['field_exclusiveness']['und'])){
+                    $isExist = FALSE;
+                    $downgradePenaltyViewResult = views_get_view_result('list_product_downgrade_penalty', 'panel_pane_2', $form['#node']->nid);
+                    
+                    foreach($form_state['values']['field_exclusiveness']['und'] as $item){
+                        $selectedNids[] = $item['nid'];
+                    }
+                    
+                    foreach($downgradePenaltyViewResult as $item){
+                         //dsm($item,'$item');
+                        if(in_array($item->field_field_ref_target_product[0]['raw']['nid'],$selectedNids)){
+                            $isExist = TRUE;
+                            $existName = $item->field_field_ref_target_product[0]['raw']['node']->title;
+                            break;
+                        }
+                    }
+                    
+                    if($isExist){
+                        drupal_set_message($existName . " is defined in Product Downgrade Penlaty", 'error');
+                        form_set_error("hhh");
+                    }
+                }
+                
+                break;
+            case 'prdnonusagerecurringbonusscheme_node_form' :
+                $bonus_cycle_types = array('0' => 'None', '1' => 'Daily', '2' => 'Weekly', '4' => 'Monthly');
+    
+                $bonus_cycle_type = $bonus_cycle_types[$form_state['values']['field_bonus_cycle_type']['und'][0]['value']];
+    
+                switch($bonus_cycle_type) {
+                    case 'Weekly' :
+                        $charging_day_week = $form_state['values']['field_rcrr_charging_day_week'];
+                        if (empty($charging_day_week) || empty($charging_day_week['und'][0]['value'])) {
+                            // drupal_set_message("Day of week should be selected", 'error');
+                            form_set_error('field_rcrr_charging_day_week', "Day of week should be selected");
+                        }
+    
                         break;
+    
+                    case 'Monthly' :
+                        $charging_day_month = $form_state['values']['field_rcrr_charging_day_monthly'];
+                        if (empty($charging_day_month) || empty($charging_day_month['und'][0]['value'])) {
+                            form_set_error('field_rcrr_charging_day_monthly', "Day of Monthl should be selected");
+                        }
+    
+                        break;
+                }
+                break;
+    
+            case 'depositschemefactors_node_form' :
+            
+                // create
+                if (!isset($form['nid']['#value'])) {
+                    $ref_depositscheme = $form_state['build_info']['args'][0] -> field_ref_depositscheme['und'][0]['nid'];
+                    $title = $form_state['input']['title'];
+    
+                    $view = views_get_view('list_depositschemefactors');
+                    $view -> set_display('panel_pane_6');
+                    $view -> set_arguments(array('0' => $ref_depositscheme, '1' => $title));
+                    $view -> execute();
+    
+                    if (!empty($view -> result)) {
+                        drupal_set_message("Deposit factors name should be unique");
+                        form_set_error('Deposit factors name should be unique');
                     }
                 }
                 
-                if($isExist){
-                    drupal_set_message($existName . " is defined in Product Downgrade Penlaty", 'error');
-                    form_set_error("hhh");
+                if($form_state['values']['field_ref_thres_counter_acc']['und'][0]['nid'] == $form_state['values']['field_ref_thres_counter_limit']['und'][0]['nid']) {
+    	            // drupal_set_message("Accumulating and Limit Counter should be different");
+    	            form_set_error('field_ref_thres_counter_acc', 'Accumulating and Limit Counter should be different');
                 }
-            }
-            
-            break;
-        case 'prdnonusagerecurringbonusscheme_node_form' :
-            $bonus_cycle_types = array('0' => 'None', '1' => 'Daily', '2' => 'Weekly', '4' => 'Monthly');
-
-            $bonus_cycle_type = $bonus_cycle_types[$form_state['values']['field_bonus_cycle_type']['und'][0]['value']];
-
-            switch($bonus_cycle_type) {
-                case 'Weekly' :
-                    $charging_day_week = $form_state['values']['field_rcrr_charging_day_week'];
-                    if (empty($charging_day_week) || empty($charging_day_week['und'][0]['value'])) {
-                        // drupal_set_message("Day of week should be selected", 'error');
-                        form_set_error('field_rcrr_charging_day_week', "Day of week should be selected");
-                    }
-
-                    break;
-
-                case 'Monthly' :
-                    $charging_day_month = $form_state['values']['field_rcrr_charging_day_monthly'];
-                    if (empty($charging_day_month) || empty($charging_day_month['und'][0]['value'])) {
-                        form_set_error('field_rcrr_charging_day_monthly', "Day of Monthl should be selected");
-                    }
-
-                    break;
-            }
-            break;
-
-        case 'depositschemefactors_node_form' :
-        
-            // create
+                
+                $counterUnitTypeTid = $form_state['values']['field_counter_unit_type']['und'][0]['tid'];
+                $accCounterNode = node_load($form_state['values']['field_ref_thres_counter_acc']['und'][0]['nid']);
+                $limitCounterNode = node_load($form_state['values']['field_ref_thres_counter_limit']['und'][0]['nid']);
+                
+                if($counterUnitTypeTid != $accCounterNode->field_counter_unit_type['und'][0]['tid']){
+                    form_set_error('field_ref_thres_counter_acc', 'Accumulated Counter Unit is different');
+                }
+                if($counterUnitTypeTid != $limitCounterNode->field_counter_unit_type['und'][0]['tid']){
+                    form_set_error('field_ref_thres_counter_limit', 'Limit Counter Unit is different');
+                }
+                break;
+        }
+    
+        // condition 중복 체크. 동일한 condition set에 같은 type의 condition이 있는지를 확인하여 봄.
+        if (strncmp($form['form_id']['#value'], 'conditionwh', 11) == 0) {
+    
+            // counter 관련 조건은 중복 추가 가능함.
+            if ($form['form_id']['#value'] == 'conditionwhatcounter_node_form') return;
+    
+            // create일 때, 중복 체크
             if (!isset($form['nid']['#value'])) {
-                $ref_depositscheme = $form_state['build_info']['args'][0] -> field_ref_depositscheme['und'][0]['nid'];
-                $title = $form_state['input']['title'];
-
-                $view = views_get_view('list_depositschemefactors');
-                $view -> set_display('panel_pane_6');
-                $view -> set_arguments(array('0' => $ref_depositscheme, '1' => $title));
-                $view -> execute();
-
-                if (!empty($view -> result)) {
-                    drupal_set_message("Deposit factors name should be unique");
-                    form_set_error('Deposit factors name should be unique');
+    
+                if (!empty($form_state['build_info']['args'][0] -> field_parent_node)) {
+                    $args = array('0' => $form_state['build_info']['args'][0] -> type, '1' => $form_state['build_info']['args'][0] -> field_parent_node['und'][0]['nid']);
+                    // $args = array('0' => $form_state['build_info']['args'][0]->
+                    $isDuplicated = _is_condition_duplicated($args);
+    
+                    if ($isDuplicated > 0) {
+                        drupal_set_message("Same condition type exists in condition set", "error");
+                        form_set_error('Same condition type exists in condition set');
+                    }
                 }
-            }
-            
-            if($form_state['values']['field_ref_thres_counter_acc']['und'][0]['nid'] == $form_state['values']['field_ref_thres_counter_limit']['und'][0]['nid']) {
-	            // drupal_set_message("Accumulating and Limit Counter should be different");
-	            form_set_error('field_ref_thres_counter_acc', 'Accumulating and Limit Counter should be different');
-            }
-            
-            $counterUnitTypeTid = $form_state['values']['field_counter_unit_type']['und'][0]['tid'];
-            $accCounterNode = node_load($form_state['values']['field_ref_thres_counter_acc']['und'][0]['nid']);
-            $limitCounterNode = node_load($form_state['values']['field_ref_thres_counter_limit']['und'][0]['nid']);
-            
-            if($counterUnitTypeTid != $accCounterNode->field_counter_unit_type['und'][0]['tid']){
-                form_set_error('field_ref_thres_counter_acc', 'Accumulated Counter Unit is different');
-            }
-            if($counterUnitTypeTid != $limitCounterNode->field_counter_unit_type['und'][0]['tid']){
-                form_set_error('field_ref_thres_counter_limit', 'Limit Counter Unit is different');
-            }
-            break;
-    }
-
-    // condition 중복 체크. 동일한 condition set에 같은 type의 condition이 있는지를 확인하여 봄.
-    if (strncmp($form['form_id']['#value'], 'conditionwh', 11) == 0) {
-
-        // counter 관련 조건은 중복 추가 가능함.
-        if ($form['form_id']['#value'] == 'conditionwhatcounter_node_form') return;
-
-        // create일 때, 중복 체크
-        if (!isset($form['nid']['#value'])) {
-
-            if (!empty($form_state['build_info']['args'][0] -> field_parent_node)) {
-                $args = array('0' => $form_state['build_info']['args'][0] -> type, '1' => $form_state['build_info']['args'][0] -> field_parent_node['und'][0]['nid']);
-                // $args = array('0' => $form_state['build_info']['args'][0]->
-                $isDuplicated = _is_condition_duplicated($args);
-
-                if ($isDuplicated > 0) {
-                    drupal_set_message("Same condition type exists in condition set", "error");
-                    form_set_error('Same condition type exists in condition set');
-                }
-            }
-        } // only in create
+            } // only in create
+        }
+    
     }
     //dsm($form_state,'node validate formstate');
 }
