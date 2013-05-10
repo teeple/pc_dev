@@ -578,6 +578,16 @@ function product_catalog_form_node_validate($node, $form, &$form_state) {
 	            form_set_error('field_ref_thres_counter_acc', 'Accumulating and Limit Counter should be different');
             }
             
+            $counterUnitTypeTid = $form_state['values']['field_counter_unit_type']['und'][0]['tid'];
+            $accCounterNode = node_load($form_state['values']['field_ref_thres_counter_acc']['und'][0]['nid']);
+            $limitCounterNode = node_load($form_state['values']['field_ref_thres_counter_limit']['und'][0]['nid']);
+            
+            if($counterUnitTypeTid != $accCounterNode->field_counter_unit_type['und'][0]['tid']){
+                form_set_error('field_ref_thres_counter_acc', 'Accumulated Counter Unit is different');
+            }
+            if($counterUnitTypeTid != $limitCounterNode->field_counter_unit_type['und'][0]['tid']){
+                form_set_error('field_ref_thres_counter_limit', 'Limit Counter Unit is different');
+            }
             break;
     }
 
