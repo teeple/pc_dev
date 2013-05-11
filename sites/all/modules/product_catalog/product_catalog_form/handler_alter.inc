@@ -1110,7 +1110,9 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             // Edit
             if (!empty($form['nid']['#value'])) {
 
-            } else {// Create
+            } 
+            	/*
+            	else {// Create
                 $productNid = $form_state['root_nid'];
                 $view = views_get_view('list_lifecycle_scheme');
                 $view -> set_display('panel_pane_5');
@@ -1131,8 +1133,10 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 
                     }
                     $form['field_subscriber_status']['und']['#options'] = $options;
-                }
+               }
+
             }
+            */
             _unset_menu_items($form, $form_id);
             unset($form['field_weight']);
             unset($form['field_parent_node']);
