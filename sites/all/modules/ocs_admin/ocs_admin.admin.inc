@@ -4,9 +4,9 @@ define( 'OCS_DEFAULT_GETOPENITEM_URL', 'http://0.0.0.0/ocs/openitem');
 define( 'OCS_DEFAULT_GETOPENITEM_METHOD', 'GET');
 
 define( 'OCS_DEFAULT_ROAMING_API_METHOD', 'GET');
-define( 'OCS_DEFAULT_URL_ROAMING_COUNTRY', 'http://0.0.0.0/roaming/country');
-define( 'OCS_DEFAULT_URL_ROAMING_PARTNER', 'http://0.0.0.0/roaming/partner');
-define( 'OCS_DEFAULT_URL_ROAMING_TARIFF', 'http://0.0.0.0/roaming/tariff');
+define( 'OCS_DEFAULT_URL_ROAMING_COUNTRY', 'http://0.0.0.0/openapi/roaming/carrier');
+define( 'OCS_DEFAULT_URL_ROAMING_PARTNER', 'http://0.0.0.0/openapi/roaming/partner');
+define( 'OCS_DEFAULT_URL_ROAMING_TARIFF', 'http://0.0.0.0/openapi/roaming/tariff');
 
 /*
 define( 'OCS_DEFAULT_USER_ACCOUNT', 'uocs');
