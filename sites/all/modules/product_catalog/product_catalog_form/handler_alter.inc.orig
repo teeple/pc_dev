@@ -241,7 +241,7 @@ function edit_pane_callback($form, &$form_state) {
 
 function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 
-	//dsm($form_id);
+	// dsm($form_id);
 	load_required_js_css_before_ajax_load();
 
     if ((isset($form['#attributes']) && isset($form['#attributes']['class'])) && gettype($form['#attributes']['class']) == 'array') {
@@ -249,6 +249,9 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
     }
     
     switch($form_id) {
+    		case 'views_form_ocs_svc_perm_panel_pane_4':
+    			unset($form['actions']);
+    			break;
     		case 'views_form_ocs_svc_perm_panel_pane_1':
 				//dpm( $form, 'form ');
 
@@ -1333,8 +1336,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
               $depositSchemeNode = node_load($form_state['build_info']['args'][0] -> field_ref_depositscheme['und'][0]['nid']);
               $serviceDomainTid = $depositSchemeNode -> field_service_domain['und'][0]['tid'];
               $form['field_thismonth_accu_counter']['#type'] = 'hidden';
-              
-              /*
+
 			  $options = array();
 			  $options['_none'] = '- None -';
 							              
@@ -1354,7 +1356,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 	            
               $form['field_ref_thres_counter_acc']['und']['#options'] = $options;
               $form['field_ref_thres_counter_limit']['und']['#options'] = $options;
-              */ 
+              
             } else {// edit
               $depositSchemeNode = node_load($depositSchemeFactorNode->field_ref_depositscheme['und'][0]['nid']);
               $serviceDomainTid = $depositSchemeNode->field_service_domain['und'][0]['tid'];
@@ -1389,7 +1391,6 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
                   }
               }
               
-              /*
               $view = views_get_view('list_counter');
               $view -> set_display('panel_pane_10');
               $view -> set_arguments(array('0' => $serviceDomainTid,
@@ -1405,29 +1406,13 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
               
               $form['field_ref_thres_counter_acc']['und']['#options'] = $options;
               $form['field_ref_thres_counter_limit']['und']['#options'] = $options;
-              */
-              
               
             }
             
             //calltype
             $options = _get_call_type_options();
             $form['field_ref_type_of_call_mul']['und']['#options'] = $options;
-            
-            $options = array();
-                                      
-            $view = views_get_view('list_counter');
-            $view -> set_display('panel_pane_10');
-            $view -> set_arguments(array('0' => $serviceDomainTid));
-            $view -> execute();
-              
-            foreach ($view->result as $item) {
-              $options[$item->nid] = view_get_field_value_by_label($view, 'PHP', $item);
-            }
              
-            $form['field_ref_thres_counter_acc']['und']['#options'] = $options;
-            $form['field_ref_thres_counter_limit']['und']['#options'] = $options;
-            /*
             $form['field_ref_thres_counter_acc']['#prefix'] = '<div id="deposit_counter_set">';
             $form['field_ref_thresholdscheme']['#prefix'] = '</div>';
             
@@ -1435,11 +1420,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
                 'callback' => 'deposit_counter_callback',
                 'wrapper' => 'deposit_counter_set',
             );
-            */
-            //dsm($form_state,'form state');
-            //$form['field_ref_thres_counter_acc']['und']['#validated'] = TRUE;
-            //$form['field_ref_thres_counter_limit']['und']['#validated'] = TRUE;
-            //dsm($form,'form');
+            
             break;
             
         case 'depositschemeadjustment_node_form' :
@@ -2298,7 +2279,7 @@ function actionsetcounter_ajax_callback($form, &$form_state){
     return $returnStr;
 }
 
-function deposit_counter_callback($form,&$form_state) {
+function deposit_counter_callback($form,$form_state) {
 
   $depositSchemeNode = node_load($form_state['build_info']['args'][0] -> field_ref_depositscheme['und'][0]['nid']);
   $serviceDomainTid = $depositSchemeNode -> field_service_domain['und'][0]['tid'];
@@ -2320,14 +2301,12 @@ function deposit_counter_callback($form,&$form_state) {
 	$form['field_ref_thres_counter_acc']['und']['#options'] = $options;
 	$form['field_ref_thres_counter_limit']['und']['#options'] = $options;
 	
-              
 //	$renderStr = '<div id="deposit_counter_set">';
 	$renderStr .= drupal_render($form['field_ref_thres_counter_acc']);
 	$renderStr .= drupal_render($form['field_ref_thres_counter_limit']);
 //	$renderStr .= '</div>';
 
-	//$form_state['rebuild'] = TRUE;
-	//$form_state['counter_filtered'] = TRUE;
+	$form_state['rebuild'] = TRUE;
 	
 	return $renderStr;
 }
