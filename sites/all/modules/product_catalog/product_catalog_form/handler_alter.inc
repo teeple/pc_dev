@@ -241,7 +241,6 @@ function edit_pane_callback($form, &$form_state) {
 
 function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 
-	// dsm($form_id);
 	load_required_js_css_before_ajax_load();
 
     if ((isset($form['#attributes']) && isset($form['#attributes']['class'])) && gettype($form['#attributes']['class']) == 'array') {
@@ -253,8 +252,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
     			unset($form['actions']);
     			break;
     		case 'views_form_ocs_svc_perm_panel_pane_1':
-				//dpm( $form, 'form ');
-
+    			unset($form['actions']);    			
 				// TODO: state service permission
     			$lifecycleScheme = node_load($form_state['build_info']['args'][0]->args[0]);
     			$svcDomainTid = $lifecycleScheme->field_service_domain['und'][0]['tid'];
@@ -1343,7 +1341,13 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             break;
             
         case 'depositschemefactors_node_form' :
-            _unset_menu_items($form, $form_id);
+        	
+        	// in case 'TOTAL', unset type of call and provisioning
+        	if($form['title']['#default_value'] == 'TOTAL') {
+        		unset($form['field_ref_type_of_call_mul']);
+        	}
+        	
+        	_unset_menu_items($form, $form_id);
             $form['field_ref_depositscheme']['#type'] = 'hidden';
             $form['field_is_default_factor']['#type'] = 'hidden';
             

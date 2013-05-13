@@ -200,7 +200,7 @@
 			case 'conditionwhatmainproduct':
 			case 'conditionwhensubscriptionday':
 			case 'conditionwhenactivationday':
-			case 'conditionwhencompanybirthday':
+			// case 'conditionwhencompanybirthday':
 			case 'conditionwhencustomerbirthday':
 			case 'conditionwhenstatechangedate':
 			case 'conditionwhenbillingdate':
@@ -218,7 +218,7 @@
 			case 'conditionwhatservicedomain':
 			case 'conditionwhatcontentprice':
 			case 'conditionwhatcalltype':
-			case 'conditionwhenvaliddate':
+			// case 'conditionwhenvaliddate':
 			case 'treenodeotheronetimechargediscou':
 				menus.custom_delete._disabled = false;
 				menus.custom_delete.action = function(node) {
@@ -719,13 +719,13 @@
 			"Activation Date" : $.fn.getSubMenuAddNodeWithoutWrapper("Activation Date", "conditionwhenactivationday"),
 			"Active Days" : $.fn.getSubMenuAddNodeWithoutWrapper("Active Days", "conditionwhenactivedays"),
 			"Customer Birthday" : $.fn.getSubMenuAddNodeWithoutWrapper("Customer Birthday", "conditionwhencustomerbirthday"),
-			"Company Anniversary" : $.fn.getSubMenuAddNodeWithoutWrapper("Company Anniversary", "conditionwhencompanybirthday"),
+			// "Company Anniversary" : $.fn.getSubMenuAddNodeWithoutWrapper("Company Anniversary", "conditionwhencompanybirthday"),
 			"Duration" : $.fn.getSubMenuAddNodeWithoutWrapper("Duration", "conditionwhendurationfactors"),
 			"Holiday" : $.fn.getSubMenuAddNodeWithoutWrapper("Holiday", "conditionwhenholidayfactors"),
 			"Timeslot" : $.fn.getSubMenuAddNodeWithoutWrapper("Timeslot", "conditionwhentimeslotfactors"),
 			"Week" : $.fn.getSubMenuAddNodeWithoutWrapper("Week", "conditionwhenweekfactors"),
 			"Calling Zone Time" : $.fn.getSubMenuAddNodeWithoutWrapper("Calling Zone Time", "conditionwhencallingzonetime"),
-			"Valid Date" : $.fn.getSubMenuAddNodeWithoutWrapper("Valid Date", "conditionwhenvaliddate")
+			// "Valid Date" : $.fn.getSubMenuAddNodeWithoutWrapper("Valid Date", "conditionwhenvaliddate")
 		};
 		return obj;
 	};
@@ -739,12 +739,12 @@
 			"Activation Date" : $.fn.getSubMenuAddNodeWithoutWrapper("Activation Date", "conditionwhenactivationday"),
 			"Active Days" : $.fn.getSubMenuAddNodeWithoutWrapper("Active Days", "conditionwhenactivedays"),
 			"Customer Birthday" : $.fn.getSubMenuAddNodeWithoutWrapper("Customer Birthday", "conditionwhencustomerbirthday"),
-			"Company Anniversary" : $.fn.getSubMenuAddNodeWithoutWrapper("Company Anniversary", "conditionwhencompanybirthday"),
+			// "Company Anniversary" : $.fn.getSubMenuAddNodeWithoutWrapper("Company Anniversary", "conditionwhencompanybirthday"),
 			"Duration" : $.fn.getSubMenuAddNodeWithoutWrapper("Duration", "conditionwhendurationfactors"),
 			"Holiday" : $.fn.getSubMenuAddNodeWithoutWrapper("Holiday", "conditionwhenholidayfactors"),
 			"Timeslot" : $.fn.getSubMenuAddNodeWithoutWrapper("Timeslot", "conditionwhentimeslotfactors"),
 			"Week" : $.fn.getSubMenuAddNodeWithoutWrapper("Week", "conditionwhenweekfactors"),
-			"Valid Date" : $.fn.getSubMenuAddNodeWithoutWrapper("Valid Date", "conditionwhenvaliddate")
+			// "Valid Date" : $.fn.getSubMenuAddNodeWithoutWrapper("Valid Date", "conditionwhenvaliddate")
 		};
 		return obj;
 	};
