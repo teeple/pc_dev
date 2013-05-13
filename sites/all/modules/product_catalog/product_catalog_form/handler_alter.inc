@@ -1782,7 +1782,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
                        $form['field_roaming_zone']['und']['#options'] = $zoneOptions;
                        break;
                    default:
-                       unset($form['field_roaming_zone']);
+                       $form['field_roaming_zone']['#type'] = 'hidden';
                        break;
                 }
             } 
@@ -2328,7 +2328,7 @@ function roaming_options_callback_carrier($form,$form_state){
     $renderStr = '<div id="custom_roaming_ratinggroup_carrier">';
     $renderStr .= drupal_render($form['field_ref_roaming_carrier']);
     $renderStr .= '</div>';
-    
+    //dsm($renderStr);
     return $renderStr;
     //$commands[] = ajax_command_replace("#custom_roaming_ratinggroup_carrier", $renderStr);
     //return array('#type' => 'ajax', '#commands' => $commands);
@@ -2353,14 +2353,13 @@ function roaming_options_callback_zone($form,$form_state){
            $form['field_roaming_zone']['und']['#options'] = $options;
            break;
        default:
-           unset($form['field_roaming_zone']);
+           $form['field_roaming_zone']['#type'] = 'hidden';
            break;
     }
     
     $renderStr = '<div id="custom_roaming_ratinggroup_zone">';
     $renderStr .= drupal_render($form['field_roaming_zone']);
     $renderStr .= '</div>'; 
-   
     return $renderStr;
     //$commands[] = ajax_command_replace("#custom_roaming_ratinggroup", $renderStr);
     //return array('#type' => 'ajax', '#commands' => $commands);
