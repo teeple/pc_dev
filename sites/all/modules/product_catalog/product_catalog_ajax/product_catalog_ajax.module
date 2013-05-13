@@ -309,6 +309,8 @@ function _paste_tariffplan($targetNode,$productNid,$baseTid,$weight){
                 $output['reason'] = 'tariffplan of '. $targetRefTermVocaName[3]. ' service domain can not be pasted to '. $baseTermVocaName[3] .' service domain';
             }else if($targetRefTermVocaName[5] != $baseTermVocaName[5]){// billing type
                 $output['reason'] = 'tariffplan of '. $targetRefTermVocaName[5]. ' billtype can not be pasted to '. $baseTermVocaName[5] .' billtype';
+            }else{
+                $output['reason'] = 'Different Service Domain';
             }
         }                
     }else{
