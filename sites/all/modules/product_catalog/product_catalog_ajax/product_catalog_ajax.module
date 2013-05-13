@@ -293,7 +293,7 @@ function product_catalog_ajax_clone_product($targetProductId){
 function _paste_tariffplan($targetNode,$productNid,$baseTid,$weight){
     global $user;
     $targetRefTreeTid = $targetNode->field_ref_tree_tid['und'][0]['value'];
-    if($targetRefTreeTid != $baseTid){//error
+    if($targetRefTreeTid != $baseTid){//error diffrent voca
         $output['success'] = FALSE;
         $targetRefTreeTerm = taxonomy_term_load($targetRefTreeTid);
         $baseIdTerm = taxonomy_term_load($baseTid);
@@ -311,101 +311,111 @@ function _paste_tariffplan($targetNode,$productNid,$baseTid,$weight){
                 $output['reason'] = 'tariffplan of '. $targetRefTermVocaName[5]. ' billtype can not be pasted to '. $baseTermVocaName[5] .' billtype';
             }
         }                
-    }else{//success
-        //create tariffplan node
-        $tariffplanNode = clone $targetNode;
-        $tariffplanNode->uid = $user->uid;
-        $tariffplanNode->field_weight['und'][0]['value'] = $weight;
-        $tariffplanNode->field_ref_product['und'][0]['nid'] = $productNid;
-        _unset_unused_field_of_cloned_node($tariffplanNode);        
-        $tariiffplanNode->title = _create_tariffplan_title($tariiffplanNode);
-        node_save($tariffplanNode);        
-        //create children for the new tariffplan
-        //covers for basicrate_domestic, basicrate_idd, basicrate_data,basicrate_roaming,tariffplan_idd_carrier,rate content type        
-        $view = views_get_view('query_tariffplan_children');
-        $view->set_display('panel_pane_1');
-        $view->set_arguments(array('0' => $targetNode->nid));
-        $view->execute(); 
-        
-        $basicRates = array();
-        $newTariffplanIddCarriers = array();
-        $newRates = array();
-        
-        foreach($view->result as $record){
-            $targetChildNid = $record->nid;
-            $targetChildNode = node_load($targetChildNid);
+    }else{
+        //check bill type
+        $oldProductNode = node_load($targetNode->field_ref_product['und'][0]['nid']);
+        $newProductNode = node_load($productNid);
+        if($oldProductNode->field_billing_type['und'][0]['tid'] != $newProductNode->field_billing_type['und'][0]['tid']){
+            $output['success'] = FALSE;
+            $oldBillType = taxonomy_term_load($oldProductNode->field_billing_type['und'][0]['tid']);
+            $newBillType = taxonomy_term_load($newProductNode->field_billing_type['und'][0]['tid']);
+            $output['reason'] = 'tariffplan of '. $oldBillType->name. ' billtype can not be pasted to '. $newBillType->name .' billtype';
+        }else{//success
+            //create tariffplan node
+            $tariffplanNode = clone $targetNode;
+            $tariffplanNode->uid = $user->uid;
+            $tariffplanNode->field_weight['und'][0]['value'] = $weight;
+            $tariffplanNode->field_ref_product['und'][0]['nid'] = $productNid;
+            _unset_unused_field_of_cloned_node($tariffplanNode);        
+            $tariiffplanNode->title = _create_tariffplan_title($tariiffplanNode);
+            node_save($tariffplanNode);        
+            //create children for the new tariffplan
+            //covers for basicrate_domestic, basicrate_idd, basicrate_data,basicrate_roaming,tariffplan_idd_carrier,rate content type        
+            $view = views_get_view('query_tariffplan_children');
+            $view->set_display('panel_pane_1');
+            $view->set_arguments(array('0' => $targetNode->nid));
+            $view->execute(); 
             
-            $childNode = clone $targetChildNode;
-            $childNode->uid = $user->uid;
-            $childNode->field_ref_product['und'][0]['nid'] = $productNid;
-            $childNode->field_ref_tariffplan['und'][0]['nid'] = $tariffplanNode->nid;
-            $childNode->field_ref_tree_nid['und'][0]['nid'] = $tariffplanNode->nid;
-            _unset_unused_field_of_cloned_node($childNode);
+            $basicRates = array();
+            $newTariffplanIddCarriers = array();
+            $newRates = array();
             
-            switch($childNode->type){
-                case 'basicrate_idd':                   
-                case 'basicrate_domestic':
-                case 'basicrate_roaming':
-                    $basicRates[] = $childNode;
+            foreach($view->result as $record){
+                $targetChildNid = $record->nid;
+                $targetChildNode = node_load($targetChildNid);
+                
+                $childNode = clone $targetChildNode;
+                $childNode->uid = $user->uid;
+                $childNode->field_ref_product['und'][0]['nid'] = $productNid;
+                $childNode->field_ref_tariffplan['und'][0]['nid'] = $tariffplanNode->nid;
+                $childNode->field_ref_tree_nid['und'][0]['nid'] = $tariffplanNode->nid;
+                _unset_unused_field_of_cloned_node($childNode);
+                
+                switch($childNode->type){
+                    case 'basicrate_idd':                   
+                    case 'basicrate_domestic':
+                    case 'basicrate_roaming':
+                        $basicRates[] = $childNode;
+                        break;
+                    case 'tariffplan_idd_carrier':
+                        node_save($childNode);
+                        $newTariffplanIddCarriers[$targetChildNode->nid] = $childNode->nid;
+                        $tariffplan_idd_carriers[] = array('nid' => $childNode->nid);
+                        break;
+                    case 'rate':
+                        node_save($childNode);
+                        _clone_field_collection('node',$targetChildNode,$childNode,'field_charge_collection');
+                        $newRates[$targetChildNode->nid] = $childNode->nid;
+                        break;                
+                }
+            }
+    
+            foreach($basicRates as $newBasicRateNode){
+                switch($newBasicRateNode->type){
+                    case 'basicrate_idd':
+                        $newBasicRateNode->field_ref_tariffplan_idd_carrier['und'][0]['nid'] = $newTariffplanIddCarriers[$newBasicRateNode->field_ref_tariffplan_idd_carrier['und'][0]['nid']];
                     break;
-                case 'tariffplan_idd_carrier':
-                    node_save($childNode);
-                    $newTariffplanIddCarriers[$targetChildNode->nid] = $childNode->nid;
-                    $tariffplan_idd_carriers[] = array('nid' => $childNode->nid);
-                    break;
-                case 'rate':
-                    node_save($childNode);
+                }
+                $newBasicRateNode->field_ref_rate['und'][0]['nid'] = $newRates[$newBasicRateNode->field_ref_rate['und'][0]['nid']];            
+                node_save($newBasicRateNode);
+            }
+            
+            //covers for actionpricechargefactors, actionpricediscountfactors, treenodespecialnumberscheme,
+            //treenodepacketpredefined,treenodepacketdynamic,actionblockfactors, basicrate_data content type
+            $view = views_get_view('query_tariffplan_children');
+            $view->set_display('panel_pane_2');
+            $view->set_arguments(array('0' => $targetNode->nid));
+            $view->execute(); 
+            foreach($view->result as $record){
+               $targetChildNid = $record->nid;
+               $targetChildNode = node_load($targetChildNid);
+                
+               $childNode = clone $targetChildNode;
+               $childNode->uid = $user->uid;
+               $childNode->field_ref_product['und'][0]['nid'] = $productNid;
+               $childNode->field_ref_tree_nid['und'][0]['nid'] = $tariffplanNode->nid;
+               
+               _unset_unused_field_of_cloned_node($childNode);
+               node_save($childNode);
+               if(isset($targetChildNode->field_charge_collection)){
                     _clone_field_collection('node',$targetChildNode,$childNode,'field_charge_collection');
-                    $newRates[$targetChildNode->nid] = $childNode->nid;
-                    break;                
+               }
+               if(isset($targetChildNode->field_discount_collection)){
+                    _clone_field_collection('node',$targetChildNode,$childNode,'field_discount_collection');
+               }
+               _clone_nested_child_node($targetChildNode,$childNode);
             }
-        }
-
-        foreach($basicRates as $newBasicRateNode){
-            switch($newBasicRateNode->type){
-                case 'basicrate_idd':
-                    $newBasicRateNode->field_ref_tariffplan_idd_carrier['und'][0]['nid'] = $newTariffplanIddCarriers[$newBasicRateNode->field_ref_tariffplan_idd_carrier['und'][0]['nid']];
-                break;
-            }
-            $newBasicRateNode->field_ref_rate['und'][0]['nid'] = $newRates[$newBasicRateNode->field_ref_rate['und'][0]['nid']];            
-            node_save($newBasicRateNode);
-        }
-        
-        //covers for actionpricechargefactors, actionpricediscountfactors, treenodespecialnumberscheme,
-        //treenodepacketpredefined,treenodepacketdynamic,actionblockfactors, basicrate_data content type
-        $view = views_get_view('query_tariffplan_children');
-        $view->set_display('panel_pane_2');
-        $view->set_arguments(array('0' => $targetNode->nid));
-        $view->execute(); 
-        foreach($view->result as $record){
-           $targetChildNid = $record->nid;
-           $targetChildNode = node_load($targetChildNid);
             
-           $childNode = clone $targetChildNode;
-           $childNode->uid = $user->uid;
-           $childNode->field_ref_product['und'][0]['nid'] = $productNid;
-           $childNode->field_ref_tree_nid['und'][0]['nid'] = $tariffplanNode->nid;
-           
-           _unset_unused_field_of_cloned_node($childNode);
-           node_save($childNode);
-           if(isset($targetChildNode->field_charge_collection)){
-                _clone_field_collection('node',$targetChildNode,$childNode,'field_charge_collection');
-           }
-           if(isset($targetChildNode->field_discount_collection)){
-                _clone_field_collection('node',$targetChildNode,$childNode,'field_discount_collection');
-           }
-           _clone_nested_child_node($targetChildNode,$childNode);
+            //save new tariffplan
+            $tariffplanNode = node_load($tariffplanNode->nid);
+            $tariffplanNode->field_ref_tariffplan_idd_carrier['und'] = $tariffplan_idd_carriers;
+            node_save($tariffplanNode);    
+            $output['success'] = TRUE;   
+            
+            //add new tariffplan json object in order to display in JS
+            //$output['product_catalog_ajax_result'] = add_js_settings_after_node_save($tariffplanNode);
+            $output['product_catalog_ajax_result_node'] = $tariffplanNode;
         }
-        
-        //save new tariffplan
-        $tariffplanNode = node_load($tariffplanNode->nid);
-        $tariffplanNode->field_ref_tariffplan_idd_carrier['und'] = $tariffplan_idd_carriers;
-        node_save($tariffplanNode);    
-        $output['success'] = TRUE;   
-        
-        //add new tariffplan json object in order to display in JS
-        //$output['product_catalog_ajax_result'] = add_js_settings_after_node_save($tariffplanNode);
-        $output['product_catalog_ajax_result_node'] = $tariffplanNode;
     }  
 
     return $output;
