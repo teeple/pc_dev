@@ -1361,19 +1361,20 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			  $options = array();
 			  $options['_none'] = '- None -';
 							              
-              $counterUnitType = $form_state['values']['field_counter_unit_type']['und'][0]['tid'];
-              if(!empty($counterUnitType)) {
+              // $counterUnitType = $form_state['values']['field_counter_unit_type']['und'][0]['tid'];
+              //if(!empty($counterUnitType)) {
 	              $view = views_get_view('list_counter');
 	              $view -> set_display('panel_pane_10');
 	              $view -> set_arguments(array('0' => $serviceDomainTid,
-	              														'1' => $counterUnitType)
-	              											);
+	              														//'1' => $counterUnitType
+	              														)
+	              );
 	              $view -> execute();
 	              
 	              foreach ($view->result as $item) {
 	              		$options[$item->nid] = view_get_field_value_by_label($view, 'PHP', $item);
 	              }
-	            }
+	            //}
 	            
               $form['field_ref_thres_counter_acc']['und']['#options'] = $options;
               $form['field_ref_thres_counter_limit']['und']['#options'] = $options;
@@ -1404,6 +1405,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
                   $form['field_thismonth_accu_counter']['#type'] = 'hidden';
               }
 
+			  /*
               $counterUnitType = $form_state['values']['field_counter_unit_type']['und'][0]['tid'];
               
               if(empty($counterUnitType)) {
@@ -1411,12 +1413,14 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
                       $counterUnitType = $form_state['build_info']['args'][0]->field_counter_unit_type['und'][0]['tid'];
                   }
               }
+              */
               
               $view = views_get_view('list_counter');
               $view -> set_display('panel_pane_10');
               $view -> set_arguments(array('0' => $serviceDomainTid,
-              														'1' => $counterUnitType)
-              											);
+							// '1' => $counterUnitType
+							)
+				);
               $view -> execute();
               
               $options = array();
@@ -1437,10 +1441,12 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             $form['field_ref_thres_counter_acc']['#prefix'] = '<div id="deposit_counter_set">';
             $form['field_ref_thresholdscheme']['#prefix'] = '</div>';
             
+			/*
             $form['field_counter_unit_type']['und']['#ajax'] = array(
                 'callback' => 'deposit_counter_callback',
                 'wrapper' => 'deposit_counter_set',
             );
+			*/
             
             break;
             
@@ -1799,7 +1805,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
                        $form['field_roaming_zone']['und']['#options'] = $zoneOptions;
                        break;
                    default:
-                       $form['field_roaming_zone']['#type'] = 'hidden';
+                       unset($form['field_roaming_zone']);
                        break;
                 }
             } 
@@ -2345,7 +2351,7 @@ function roaming_options_callback_carrier($form,$form_state){
     $renderStr = '<div id="custom_roaming_ratinggroup_carrier">';
     $renderStr .= drupal_render($form['field_ref_roaming_carrier']);
     $renderStr .= '</div>';
-    //dsm($renderStr);
+    
     return $renderStr;
     //$commands[] = ajax_command_replace("#custom_roaming_ratinggroup_carrier", $renderStr);
     //return array('#type' => 'ajax', '#commands' => $commands);
@@ -2370,13 +2376,14 @@ function roaming_options_callback_zone($form,$form_state){
            $form['field_roaming_zone']['und']['#options'] = $options;
            break;
        default:
-           $form['field_roaming_zone']['#type'] = 'hidden';
+           unset($form['field_roaming_zone']);
            break;
     }
     
     $renderStr = '<div id="custom_roaming_ratinggroup_zone">';
     $renderStr .= drupal_render($form['field_roaming_zone']);
     $renderStr .= '</div>'; 
+   
     return $renderStr;
     //$commands[] = ajax_command_replace("#custom_roaming_ratinggroup", $renderStr);
     //return array('#type' => 'ajax', '#commands' => $commands);
