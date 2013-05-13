@@ -321,6 +321,7 @@ function _paste_tariffplan($targetNode,$productNid,$baseTid,$weight){
             $newBillType = taxonomy_term_load($newProductNode->field_billing_type['und'][0]['tid']);
             $output['reason'] = 'tariffplan of '. $oldBillType->name. ' billtype can not be pasted to '. $newBillType->name .' billtype';
         }else if($oldProductNode->field_product_type['und'][0]['tid'] != $newProductNode->field_product_type['und'][0]['tid']){//check product type
+            $output['success'] = FALSE;
             $oldProductType = taxonomy_term_load($oldProductNode->field_product_type['und'][0]['tid']);
             $newProductType = taxonomy_term_load($newProductNode->field_product_type['und'][0]['tid']);
             $output['reason'] = 'tariffplan of '. $oldProductType->name. ' product type can not be pasted to '. $newProductType->name .' product type';
