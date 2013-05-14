@@ -495,7 +495,9 @@ function _get_attribute($product) {
                       'expire_date' => array('through_common_code' => FALSE, 'field' => 'field_expire_date', 'field_value' => "field_expire_date['und'][0]['value']", 'field_value_default' => 0), 
                       'expire_date_type' => array('through_common_code' => TRUE, 'field' => 'field_expire_date_type', 'field_value' => "field_expire_date_type['und'][0]['tid']", 'field_value_default' => NULL), 
                       'currency' => array('through_common_code' => TRUE, 'field' => 'field_price_units', 'field_value' => "field_price_units['und'][0]['tid']", 'field_value_default' => NULL), 
+                      /*
                       'hlr_template_id' => array('through_common_code' => TRUE, 'field' => 'field_hlr_template_id', 'field_value' => "field_hlr_template_id['und'][0]['tid']", 'field_value_default' => NULL), 
+                      */
                 );
 
     $result_attribute_general = _get_result($reqArray, $product);

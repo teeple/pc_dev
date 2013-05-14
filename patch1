@@ -1,0 +1,101 @@
+diff --git a/sites/all/modules/product_catalog/product_catalog_export/export_deposit_scheme.inc b/sites/all/modules/product_catalog/product_catalog_export/export_deposit_scheme.inc
+index ec59ca7..05caaf1 100644
+--- a/sites/all/modules/product_catalog/product_catalog_export/export_deposit_scheme.inc
++++ b/sites/all/modules/product_catalog/product_catalog_export/export_deposit_scheme.inc
+@@ -29,6 +29,15 @@ function _array_deposit_scheme($exportItemNids=NULL){
+                 // threshold unit type
+                 $factor['threshold_unit_type'] = _add_commoncode($item->field_field_counter_unit_type);
+                 
++                if(!empty($item->field_field_provisioning_featurecode_)) {
++                	foreach($item->field_field_provisioning_featurecode_ as $subitem) {
++                		$tempArray = array($subitem);
++                		$factor['feature_code'][] = _add_commoncode($tempArray);
++                	}
++                } else {
++                	$factor['feature_code'] = NULL;
++                }
++                
+                 //toc
+                 if(!empty($item->field_field_ref_type_of_call_mul)){
+                     foreach($item->field_field_ref_type_of_call_mul as $toc){
+diff --git a/sites/all/modules/product_catalog/product_catalog_export/export_product.inc b/sites/all/modules/product_catalog/product_catalog_export/export_product.inc
+index f501ea6..c72d530 100755
+--- a/sites/all/modules/product_catalog/product_catalog_export/export_product.inc
++++ b/sites/all/modules/product_catalog/product_catalog_export/export_product.inc
+@@ -495,7 +495,9 @@ function _get_attribute($product) {
+                       'expire_date' => array('through_common_code' => FALSE, 'field' => 'field_expire_date', 'field_value' => "field_expire_date['und'][0]['value']", 'field_value_default' => 0), 
+                       'expire_date_type' => array('through_common_code' => TRUE, 'field' => 'field_expire_date_type', 'field_value' => "field_expire_date_type['und'][0]['tid']", 'field_value_default' => NULL), 
+                       'currency' => array('through_common_code' => TRUE, 'field' => 'field_price_units', 'field_value' => "field_price_units['und'][0]['tid']", 'field_value_default' => NULL), 
++                      /*
+                       'hlr_template_id' => array('through_common_code' => TRUE, 'field' => 'field_hlr_template_id', 'field_value' => "field_hlr_template_id['und'][0]['tid']", 'field_value_default' => NULL), 
++                      */
+                 );
+ 
+     $result_attribute_general = _get_result($reqArray, $product);
+diff --git a/sites/all/modules/product_catalog/product_catalog_form/handler_alter.inc b/sites/all/modules/product_catalog/product_catalog_form/handler_alter.inc
+index 9e64daa..bdd8c0f 100755
+--- a/sites/all/modules/product_catalog/product_catalog_form/handler_alter.inc
++++ b/sites/all/modules/product_catalog/product_catalog_form/handler_alter.inc
+@@ -1406,16 +1406,6 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
+                   $form['field_thismonth_accu_counter']['#type'] = 'hidden';
+               }
+ 
+-			  /*
+-              $counterUnitType = $form_state['values']['field_counter_unit_type']['und'][0]['tid'];
+-              
+-              if(empty($counterUnitType)) {
+-                  if(isset($form_state['build_info']['args'][0]->field_counter_unit_type['und'][0]['tid'])){
+-                      $counterUnitType = $form_state['build_info']['args'][0]->field_counter_unit_type['und'][0]['tid'];
+-                  }
+-              }
+-              */
+-              
+               $view = views_get_view('list_counter');
+               $view -> set_display('panel_pane_10');
+               $view -> set_arguments(array('0' => $serviceDomainTid,
+@@ -1434,7 +1424,18 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
+               $form['field_ref_thres_counter_limit']['und']['#options'] = $options;
+               
+             }
+-            
++            $view = views_get_view('list_featurecode');
++            $view->set_display('panel_pane_1');
++            $view->execute();
++            
++            $options = array();
++            $options['_none'] = '- None -';
++	        foreach ($view->result as $item) {
++	        	$options[$item->tid] = $item->taxonomy_term_data_name;
++	        	// $options[$item->nid] = view_get_field_value_by_label($view, 'PHP', $item);
++	        }
++            $form['field_provisioning_featurecode_']['und']['#options'] = $options;
++            
+             //calltype
+             $options = _get_call_type_options();
+             $form['field_ref_type_of_call_mul']['und']['#options'] = $options;
+@@ -1442,13 +1443,6 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
+             $form['field_ref_thres_counter_acc']['#prefix'] = '<div id="deposit_counter_set">';
+             $form['field_ref_thresholdscheme']['#prefix'] = '</div>';
+             
+-			/*
+-            $form['field_counter_unit_type']['und']['#ajax'] = array(
+-                'callback' => 'deposit_counter_callback',
+-                'wrapper' => 'deposit_counter_set',
+-            );
+-			*/
+-            
+             break;
+             
+         case 'depositschemeadjustment_node_form' :
+diff --git a/sites/all/modules/product_catalog/util.inc b/sites/all/modules/product_catalog/util.inc
+index 9616d92..a4eb5f0 100755
+--- a/sites/all/modules/product_catalog/util.inc
++++ b/sites/all/modules/product_catalog/util.inc
+@@ -447,7 +447,6 @@ function build_navigation_bar() {
+ 			if( isset($item['role']) && !in_array($item['role'], $user->roles) ) break;
+ 		}
+ 		
+-				
+ 		$image = '/sites/default/files/images/nav/' . $item['icon'];
+ 		//dpm( $item['prefix']);
+ 		if ( strpos( $path, $item['prefix'], 0) === 0)

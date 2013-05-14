@@ -447,7 +447,6 @@ function build_navigation_bar() {
 			if( isset($item['role']) && !in_array($item['role'], $user->roles) ) break;
 		}
 		
-				
 		$image = '/sites/default/files/images/nav/' . $item['icon'];
 		//dpm( $item['prefix']);
 		if ( strpos( $path, $item['prefix'], 0) === 0)

@@ -29,6 +29,15 @@ function _array_deposit_scheme($exportItemNids=NULL){
                 // threshold unit type
                 $factor['threshold_unit_type'] = _add_commoncode($item->field_field_counter_unit_type);
                 
+                if(!empty($item->field_field_provisioning_featurecode_)) {
+                	foreach($item->field_field_provisioning_featurecode_ as $subitem) {
+                		$tempArray = array($subitem);
+                		$factor['feature_code'][] = _add_commoncode($tempArray);
+                	}
+                } else {
+                	$factor['feature_code'] = NULL;
+                }
+                
                 //toc
                 if(!empty($item->field_field_ref_type_of_call_mul)){
                     foreach($item->field_field_ref_type_of_call_mul as $toc){
