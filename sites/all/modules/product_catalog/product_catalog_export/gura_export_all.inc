@@ -403,10 +403,10 @@ function get_rating_factor_values_from_drupal_field($obj , $field_name_arr, $use
 					{
 						if(property_exists($taxo , 'field_common_code'))
 						{
-							dsm($taxo);
+							//dsm($taxo);
 							$temp = get_drupal_field_values($taxo , 'field_common_code');
 							$value = $temp[0];
-							dsm($value);
+							//dsm($value);
 						}
 						if(property_exists($taxo , 'field_rating_operation_code'))
 						{
