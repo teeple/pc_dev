@@ -249,6 +249,27 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
     }
     
     switch($form_id) {
+    		case 'user_register_form':
+    			unset($form['account']['notify']);
+    			unset($form['account']['roles']['#options'][3]);
+   				break;
+   			case 'user_profile_form':
+   				global $user;
+   				$form['account']['current_pass']['#description'] = 'Enter your current password to change the <em class="placeholder">E-mail address</em> or <em class="placeholder">Password</em>';
+   				unset($form['account']['mail']['#description']);
+   				unset($form['account']['notify']);
+   				unset($form['account']['roles']['#options'][3]);
+   				unset($form['actions']['cancel']);
+   				
+   				$allowedAccountRoles = array('administrator', 'account manager');
+   				
+   				$tempArray = array_intersect($user->roles, $allowedAccountRoles);
+   				if(sizeof($tempArray) == 0) { 
+   					$form['account']['roles']['#disabled'] = TRUE;
+   					$form['account']['status']['#disabled'] = TRUE;
+   				}
+   				
+	   			break;
     		case 'views_form_ocs_svc_perm_panel_pane_4':
     			unset($form['actions']);
     			break;
