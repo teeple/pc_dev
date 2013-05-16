@@ -1,0 +1,17 @@
+***************
+*** 16,22 ****
+  
+  	$form_id = $form['form_id']['#value'];
+  	
+- 	switch($form_id){
+  		case 'prodoffernonusagesubitem_node_form':
+  		case 'actionpricefactors_node_form':
+  			$node->uid =  $user->uid;
+--- 16,22 ----
+  
+  	$form_id = $form['form_id']['#value'];
+  	
++ 	switch($form_id){
+  		case 'prodoffernonusagesubitem_node_form':
+  		case 'actionpricefactors_node_form':
+  			$node->uid =  $user->uid;

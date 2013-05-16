@@ -161,7 +161,7 @@
 			case "conditionwhenbillingdate":
 			case "conditionwhenactivedays":
 			case "conditionwhentimeslotfactors":
-			case "conditionwhencallingzonetime":
+			// case "conditionwhencallingzonetime":
 			case "conditionwhenweekfactors":
 			case "conditionwherecountryfactors":
 			case "conditionwherenetworkfactors":
@@ -724,7 +724,7 @@
 			"Holiday" : $.fn.getSubMenuAddNodeWithoutWrapper("Holiday", "conditionwhenholidayfactors"),
 			"Timeslot" : $.fn.getSubMenuAddNodeWithoutWrapper("Timeslot", "conditionwhentimeslotfactors"),
 			"Week" : $.fn.getSubMenuAddNodeWithoutWrapper("Week", "conditionwhenweekfactors"),
-			"Calling Zone Time" : $.fn.getSubMenuAddNodeWithoutWrapper("Calling Zone Time", "conditionwhencallingzonetime"),
+			// "Calling Zone Time" : $.fn.getSubMenuAddNodeWithoutWrapper("Calling Zone Time", "conditionwhencallingzonetime"),
 			// "Valid Date" : $.fn.getSubMenuAddNodeWithoutWrapper("Valid Date", "conditionwhenvaliddate")
 		};
 		return obj;

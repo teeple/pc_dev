@@ -1,0 +1,35 @@
+***************
+*** 444,450 ****
+  	foreach( $menu as $item) {
+  		
+  		if(!in_array('administrator', $user->roles)) {
+- 			if( isset($item['role']) && !in_array($item['role'], $user->roles) ) break;
+  		}
+  		
+  		$image = '/sites/default/files/images/nav/' . $item['icon'];
+--- 444,450 ----
+  	foreach( $menu as $item) {
+  		
+  		if(!in_array('administrator', $user->roles)) {
++ 			if( isset($item['role']) && !in_array($item['role'], $user->roles) )continue;
+  		}
+  		
+  		$image = '/sites/default/files/images/nav/' . $item['icon'];
+***************
+*** 932,934 ****
+  	return $url;
+  }
+  
+--- 932,943 ----
+  	return $url;
+  }
+  
++ function set_permissions_all_checked(){
++ 	$allRoles = array('product designer', 'relation manager', 'lifecycle manager', 'common data manager', 'simulator', 'ocs manager', 'account manager');
++ 	
++ 	foreach($allRoles as $role) {
++ 		$user = user_role_load_by_name($role);
++ 		user_role_grant_permissions($user->rid, array_keys(module_invoke_all('permission')));
++ 	}
++ 	
++ }

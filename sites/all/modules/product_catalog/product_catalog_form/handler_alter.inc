@@ -2111,10 +2111,14 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
         case 'packetdynamicl4_node_form' :
         case 'packetsgsn_node_form':
         case 'packetpredefinedchargingrule_node_form' :
-        case 'roaming_country_node_form' :
         case 'roaming_carrier_node_form' :
             _unset_menu_items($form, $form_id);
             break;
+        case 'roaming_country_node_form' :
+        	unset($form['field_time_zone']);
+        	_unset_menu_items($form, $form_id);
+            break;
+            
         case 'roaming_zone_node_form':
             unset($form['field_roaming_carrier']);
             _unset_menu_items($form, $form_id);

@@ -1,4 +1,5 @@
 <?php
+// youngmin
 function _unset_menu_items(&$form, $formId) {
     unset($form['menu']);
     unset($form['path']);
@@ -241,7 +242,6 @@ function edit_pane_callback($form, &$form_state) {
 
 function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 
-	// dsm($form_id);
 	load_required_js_css_before_ajax_load();
 
     if ((isset($form['#attributes']) && isset($form['#attributes']['class'])) && gettype($form['#attributes']['class']) == 'array') {
@@ -249,12 +249,32 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
     }
     
     switch($form_id) {
+    		case 'user_register_form':
+    			unset($form['account']['notify']);
+    			unset($form['account']['roles']['#options'][3]);
+   				break;
+   			case 'user_profile_form':
+   				global $user;
+   				$form['account']['current_pass']['#description'] = 'Enter your current password to change the <em class="placeholder">E-mail address</em> or <em class="placeholder">Password</em>';
+   				unset($form['account']['mail']['#description']);
+   				unset($form['account']['notify']);
+   				unset($form['account']['roles']['#options'][3]);
+   				unset($form['actions']['cancel']);
+   				
+   				$allowedAccountRoles = array('administrator', 'account manager');
+   				
+   				$tempArray = array_intersect($user->roles, $allowedAccountRoles);
+   				if(sizeof($tempArray) == 0) { 
+   					$form['account']['roles']['#disabled'] = TRUE;
+   					$form['account']['status']['#disabled'] = TRUE;
+   				}
+   				
+	   			break;
     		case 'views_form_ocs_svc_perm_panel_pane_4':
     			unset($form['actions']);
     			break;
     		case 'views_form_ocs_svc_perm_panel_pane_1':
-				//dpm( $form, 'form ');
-
+    			unset($form['actions']);    			
 				// TODO: state service permission
     			$lifecycleScheme = node_load($form_state['build_info']['args'][0]->args[0]);
     			$svcDomainTid = $lifecycleScheme->field_service_domain['und'][0]['tid'];
@@ -863,29 +883,28 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             $form['field_ref_target_product']['und']['#options'] = $options['list'];
             break;
         case 'simpleproductoffering_node_form' :
-        		
         		$disabledItems = array();
-						$hiddenItems = array();
+				$hiddenItems = array();
 						/*
         		$hiddenItems = array('field_next_join_product', 'field_next_join_confirm');
 						*/
-						$unsetItems = array('field_r_prodofferingrel', 
-        												'field_r_productspecification',
-        												'field_r_prodspeccharvalueuse',
-        												'field_r_productofferingprice',
-        												'field_version',
-        												'field_is_bundle',
-        												'field_roaming_allowed',
-																'field_offering_status',
-																'field_parent_node_for_rp',
-																'field_weight_for_ratingpriority',
-																'field_weight',
-															'field_ref_product',
-																'field_parent_node',
-																'field_tpl_voca_machine_name',
-																'field_parent_node_for_hr',
-																'field_weight_for_hierarchy');
-					  // in case Create
+				$unsetItems = array('field_r_prodofferingrel', 
+									'field_r_productspecification',
+									'field_r_prodspeccharvalueuse',
+									'field_r_productofferingprice',
+									'field_version',
+									'field_is_bundle',
+									'field_roaming_allowed',
+											'field_offering_status',
+											'field_parent_node_for_rp',
+											'field_weight_for_ratingpriority',
+											'field_weight',
+										'field_ref_product',
+											'field_parent_node',
+											'field_tpl_voca_machine_name',
+											'field_parent_node_for_hr',
+											'field_weight_for_hierarchy');
+		  // in case Create
             if (!isset($form['nid']['#value'])) {
             
                 $paths = explode('/', current_path());
@@ -916,15 +935,28 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 	                }
                 }
                 
+                //calltype
+                $options = _get_call_type_options();
+                $form['field_ref_type_of_call_mul']['und']['#options'] = $options;
+                 
+                $form['field_ref_thres_counter_acc']['#prefix'] = '<div id="deposit_counter_set">';
+                $form['field_ref_thresholdscheme']['#prefix'] = '</div>';
+                
+                $form['field_counter_unit_type']['und']['#ajax'] = array(
+                    'callback' => 'deposit_counter_callback',
+                    'wrapper' => 'deposit_counter_set',
+                );
                 
             // in case Edit
             } else {
             		$hiddenItems = array_merge($hiddenItems, array('field_product_type',
             													'field_service_type_of_provider'));
             													
-            		$disabledItems = array_merge($disabledItems, array( //'field_billing_type',
+            		$disabledItems = array_merge($disabledItems, array( 'field_billing_type',
             														'field_price_units',
-            														'field_product_id'));
+            														'field_product_id',
+            														'field_customer_type',
+            														'field_customer_group_type'));
              		
              		$productTypeTid = $form['field_product_type']['und']['#default_value'][0];
              		$productTypeName = $form['field_product_type']['und']['#options'][$productTypeTid];
@@ -933,8 +965,8 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
              			$hiddenItems[] = 'field_cug_member_counter';
              			$unsetItems[] = 'field_cug_group_type';
              			$unsetItems[] = 'field_cug_customer_type';
-	              	unset($form['#groups']['group_cug']);
-									unset($form['#fieldgroups']['group_cug']);
+	              		unset($form['#groups']['group_cug']);
+						unset($form['#fieldgroups']['group_cug']);
              		} else {
              			$disabledItems[] = 'field_cug_customer_type';
              			$disabledItems[] = 'field_cug_group_type';
@@ -947,7 +979,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 					$customerTypeTid = $form['field_customer_type']['und']['#default_value'];
 
 					if($productTypeName != 'Main') {
-
+						/*
 						$args = array('0' => $svcDomainTid, 
 									'1' => $productTypeTid,
 									'2' => $billingTypeTid,
@@ -966,6 +998,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 							$options[$item->nid] = view_get_field_value_by_label($view, 'PHP', $item);
 						}
 							$form['field_next_join_product']['und']['#options'] = $options;
+							*/
 						}
           }
 
@@ -1097,7 +1130,9 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             // Edit
             if (!empty($form['nid']['#value'])) {
 
-            } else {// Create
+            } 
+            	/*
+            	else {// Create
                 $productNid = $form_state['root_nid'];
                 $view = views_get_view('list_lifecycle_scheme');
                 $view -> set_display('panel_pane_5');
@@ -1118,8 +1153,10 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 
                     }
                     $form['field_subscriber_status']['und']['#options'] = $options;
-                }
+               }
+
             }
+            */
             _unset_menu_items($form, $form_id);
             unset($form['field_weight']);
             unset($form['field_parent_node']);
@@ -1326,7 +1363,13 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             break;
             
         case 'depositschemefactors_node_form' :
-            _unset_menu_items($form, $form_id);
+        	
+        	// in case 'TOTAL', unset type of call and provisioning
+        	if($form['title']['#default_value'] == 'TOTAL') {
+        		unset($form['field_ref_type_of_call_mul']);
+        	}
+        	
+        	_unset_menu_items($form, $form_id);
             $form['field_ref_depositscheme']['#type'] = 'hidden';
             $form['field_is_default_factor']['#type'] = 'hidden';
             
@@ -1340,19 +1383,20 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			  $options = array();
 			  $options['_none'] = '- None -';
 							              
-              $counterUnitType = $form_state['values']['field_counter_unit_type']['und'][0]['tid'];
-              if(!empty($counterUnitType)) {
+              // $counterUnitType = $form_state['values']['field_counter_unit_type']['und'][0]['tid'];
+              //if(!empty($counterUnitType)) {
 	              $view = views_get_view('list_counter');
 	              $view -> set_display('panel_pane_10');
 	              $view -> set_arguments(array('0' => $serviceDomainTid,
-	              														'1' => $counterUnitType)
-	              											);
+	              														//'1' => $counterUnitType
+	              														)
+	              );
 	              $view -> execute();
 	              
 	              foreach ($view->result as $item) {
 	              		$options[$item->nid] = view_get_field_value_by_label($view, 'PHP', $item);
 	              }
-	            }
+	            //}
 	            
               $form['field_ref_thres_counter_acc']['und']['#options'] = $options;
               $form['field_ref_thres_counter_limit']['und']['#options'] = $options;
@@ -1383,19 +1427,12 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
                   $form['field_thismonth_accu_counter']['#type'] = 'hidden';
               }
 
-              $counterUnitType = $form_state['values']['field_counter_unit_type']['und'][0]['tid'];
-              
-              if(empty($counterUnitType)) {
-                  if(isset($form_state['build_info']['args'][0]->field_counter_unit_type['und'][0]['tid'])){
-                      $counterUnitType = $form_state['build_info']['args'][0]->field_counter_unit_type['und'][0]['tid'];
-                  }
-              }
-              
               $view = views_get_view('list_counter');
               $view -> set_display('panel_pane_10');
               $view -> set_arguments(array('0' => $serviceDomainTid,
-              														'1' => $counterUnitType)
-              											);
+							// '1' => $counterUnitType
+							)
+				);
               $view -> execute();
               
               $options = array();
@@ -1408,6 +1445,17 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
               $form['field_ref_thres_counter_limit']['und']['#options'] = $options;
               
             }
+            $view = views_get_view('list_featurecode');
+            $view->set_display('panel_pane_1');
+            $view->execute();
+            
+            $options = array();
+            $options['_none'] = '- None -';
+	        foreach ($view->result as $item) {
+	        	$options[$item->tid] = $item->taxonomy_term_data_name;
+	        	// $options[$item->nid] = view_get_field_value_by_label($view, 'PHP', $item);
+	        }
+            $form['field_provisioning_featurecode_']['und']['#options'] = $options;
             
             //calltype
             $options = _get_call_type_options();
@@ -1415,11 +1463,6 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
              
             $form['field_ref_thres_counter_acc']['#prefix'] = '<div id="deposit_counter_set">';
             $form['field_ref_thresholdscheme']['#prefix'] = '</div>';
-            
-            $form['field_counter_unit_type']['und']['#ajax'] = array(
-                'callback' => 'deposit_counter_callback',
-                'wrapper' => 'deposit_counter_set',
-            );
             
             break;
             
@@ -1816,8 +1859,8 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             $form['field_ref_source_action']['#type'] = 'hidden';
             $productNid = $form_state['product_nid'];
 
-						$basicCounterList = array();
-						$existingCounterList = array();
+			$basicCounterList = array();
+			$existingCounterList = array();
 						
             $product = node_load($productNid);
             
@@ -1847,7 +1890,10 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
         	
             $form['field_ref_source_action']['#type'] = 'hidden';
             $productNid = $form_state['product_nid'];
-
+            
+            $basicCounterList = array();
+            $existingCounterList = array();
+            
             $product = node_load($productNid);
             $billingTypeTerm = taxonomy_term_load($product -> field_billing_type['und'][0]['tid']);
             if ($billingTypeTerm -> name == 'Postpaid') {
@@ -1855,11 +1901,8 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
                 $existingCounterList = _get_existing_counter_list($productNid,  current($tempTerm) -> tid);
 
             } else {
-                $basicCounterList = array();
                 $basicCounterList = _get_default_basic_counters($productNid);
-                
-                $existingCounterList = _get_existing_counter_list($productNid);
-
+               	$existingCounterList = _get_existing_counter_list($productNid);
             }
             
             $mergedCounterList = $basicCounterList + $existingCounterList;

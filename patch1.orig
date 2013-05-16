@@ -105,7 +105,7 @@ index 1f817d3..e69de29 100644
 - 		//dpm( $item['prefix']);
 - 		if ( strpos( $path, $item['prefix'], 0) === 0)
 diff --git a/sites/all/modules/product_catalog/product_catalog_form/handler_alter.inc b/sites/all/modules/product_catalog/product_catalog_form/handler_alter.inc
-index bdd8c0f..afaced3 100755
+index bdd8c0f..93f608e 100755
 --- a/sites/all/modules/product_catalog/product_catalog_form/handler_alter.inc
 +++ b/sites/all/modules/product_catalog/product_catalog_form/handler_alter.inc
 @@ -249,6 +249,27 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
@@ -136,6 +136,23 @@ index bdd8c0f..afaced3 100755
      		case 'views_form_ocs_svc_perm_panel_pane_4':
      			unset($form['actions']);
      			break;
+@@ -2090,10 +2111,14 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
+         case 'packetdynamicl4_node_form' :
+         case 'packetsgsn_node_form':
+         case 'packetpredefinedchargingrule_node_form' :
+-        case 'roaming_country_node_form' :
+         case 'roaming_carrier_node_form' :
+             _unset_menu_items($form, $form_id);
+-            break;
++            break;
++        case 'roaming_country_node_form' :
++        	unset($form['field_time_zone']);
++        	_unset_menu_items($form, $form_id);
++            break;
++            
+         case 'roaming_zone_node_form':
+             unset($form['field_roaming_carrier']);
+             _unset_menu_items($form, $form_id);
 diff --git a/sites/all/modules/product_catalog/product_catalog_form/handler_submit.inc b/sites/all/modules/product_catalog/product_catalog_form/handler_submit.inc
 index ea08155..a51f2a3 100755
 --- a/sites/all/modules/product_catalog/product_catalog_form/handler_submit.inc
@@ -149,6 +166,28 @@ index ea08155..a51f2a3 100755
  		case 'prodoffernonusagesubitem_node_form':
  		case 'actionpricefactors_node_form':
  			$node->uid =  $user->uid;
+diff --git a/sites/all/modules/product_catalog/product_catalog_tree/js/product_catalog_tree_context_sub_menu.js b/sites/all/modules/product_catalog/product_catalog_tree/js/product_catalog_tree_context_sub_menu.js
+index 21c36e7..c7dccf5 100644
+--- a/sites/all/modules/product_catalog/product_catalog_tree/js/product_catalog_tree_context_sub_menu.js
++++ b/sites/all/modules/product_catalog/product_catalog_tree/js/product_catalog_tree_context_sub_menu.js
+@@ -161,7 +161,7 @@
+ 			case "conditionwhenbillingdate":
+ 			case "conditionwhenactivedays":
+ 			case "conditionwhentimeslotfactors":
+-			case "conditionwhencallingzonetime":
++			// case "conditionwhencallingzonetime":
+ 			case "conditionwhenweekfactors":
+ 			case "conditionwherecountryfactors":
+ 			case "conditionwherenetworkfactors":
+@@ -724,7 +724,7 @@
+ 			"Holiday" : $.fn.getSubMenuAddNodeWithoutWrapper("Holiday", "conditionwhenholidayfactors"),
+ 			"Timeslot" : $.fn.getSubMenuAddNodeWithoutWrapper("Timeslot", "conditionwhentimeslotfactors"),
+ 			"Week" : $.fn.getSubMenuAddNodeWithoutWrapper("Week", "conditionwhenweekfactors"),
+-			"Calling Zone Time" : $.fn.getSubMenuAddNodeWithoutWrapper("Calling Zone Time", "conditionwhencallingzonetime"),
++			// "Calling Zone Time" : $.fn.getSubMenuAddNodeWithoutWrapper("Calling Zone Time", "conditionwhencallingzonetime"),
+ 			// "Valid Date" : $.fn.getSubMenuAddNodeWithoutWrapper("Valid Date", "conditionwhenvaliddate")
+ 		};
+ 		return obj;
 diff --git a/sites/all/modules/product_catalog/util.inc b/sites/all/modules/product_catalog/util.inc
 index a4eb5f0..86e7b6c 100755
 --- a/sites/all/modules/product_catalog/util.inc
