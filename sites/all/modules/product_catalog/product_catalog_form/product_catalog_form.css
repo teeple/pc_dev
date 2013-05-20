@@ -131,6 +131,11 @@
 }
 
 /* field collection charge item width */
+/*
 #field-charge-collection-values > tbody > tr > td > div> div>div>input{
+  width:100px;
+}
+*/
+.field-multiple-table.sticky-enabled.tabledrag-processed.tableheader-processed.sticky-table > tbody > tr > td > div> div>div>input{
   width:100px;
 }

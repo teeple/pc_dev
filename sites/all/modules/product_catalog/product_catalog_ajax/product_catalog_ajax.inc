@@ -1007,6 +1007,8 @@ function _edit_node_form_in_tree($nid, $additionalParams){
 		
 		$form = drupal_build_form($node->type . '_node_form', $form_state);
 	}
+  
+  //form_set_cache($form["#build_id"], $form, $form_state);
 	
 	$formRender = drupal_render($form);
 	
