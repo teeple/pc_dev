@@ -752,6 +752,24 @@ function _get_redirect_url_in_view_n_delete($viewOrDel, $node) {
 		$url['fragment'] = 'quickset-numbering_plan=5';
 		break;
 	
+	case 'productgroup':
+		if ($viewOrDel == 'view') {
+			$url['path'] = 'relation/'.$node->type. '/edit/' .$node->nid . '/0';
+		} else {
+			$url['path'] = 'relation/'.$node->type. '/list';
+		}
+		$url['fragment'] = 'quickset-relation_manager=4';
+		break;
+
+	case 'productchange':
+		if ($viewOrDel == 'view') {
+			$url['path'] = 'relation/'.$node->type. '/edit/' .$node->nid . '/0';
+		} else {
+			$url['path'] = 'relation/'.$node->type. '/list';
+		}
+		$url['fragment'] = 'quickset-relation_manager=5';
+		break;
+	
 	case 'roaming_country':
     case 'roaming_carrier':
 	case 'roaming_plan':
@@ -907,6 +925,18 @@ function _get_redirect_url_in_create_n_list($addOrList, $content_type, $params) 
 					
 		$tempArr = explode('_', $content_type);
 		$url['path'] = 'common/'. join('/', $tempArr) .'/'. $addOrList;
+		$url['fragment'] = $fragments[$content_type];
+		break;
+	
+	case 'productgroup':
+		$fragments = array('productgroup' => 'quickset-relation_manager=4');
+		$url['path'] = 'relation/'. $content_type. '/'. $addOrList;
+		$url['fragment'] = $fragments[$content_type];
+		break;
+
+	case 'productchange':
+		$fragments = array('productchange' => 'quickset-relation_manager=5');
+		$url['path'] = 'relation/'. $content_type. '/'. $addOrList;
 		$url['fragment'] = $fragments[$content_type];
 		break;
 		

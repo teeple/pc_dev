@@ -378,26 +378,37 @@ function product_catalog_form_node_validate($node, $form, &$form_state) {
             
             case 'actionpricechargerecurring_node_form':
             
-            		// Create일 경우,  time_t로 unique를 체크.
-            		// Edit일 경우, 기존에 존재하는 것이 있는지를 확인하여 unique체크 
-            		if(isset($form['nid']['#value'])) {
-            			$nodeNid = $form['nid']['#value'];
-            			$recurringId = $form_state['values']['field_recurring_charge_id']['und'][0]['value'];
-            			
-            			$params = array('0' => $nodeNid, '1' => $recurringId);
-            			$viewResult = views_get_view_result('list_actionpricechargerecurring', 'panel_pane_2', $params);
-            			
-            			if(!empty($viewResult)) {
-            				drupal_set_message("Recurring ID should be unique", "error");
-            				form_set_error('Recurring ID should be unique');
-            			}
-    		            if (!is_machine_name($recurringId)) {
-    		                drupal_set_message("Only letters and underscore is allowed for recurring id", 'error');
-    		                form_set_error("Only letters and underscore is allowed for recurring id");
-    		            }
-            		}
-            		
-            		break;
+        		// Create일 경우,  time_t로 unique를 체크.
+        		// Edit일 경우, 기존에 존재하는 것이 있는지를 확인하여 unique체크 
+        		if(isset($form['nid']['#value'])) {
+        			$nodeNid = $form['nid']['#value'];
+        			$recurringId = $form_state['values']['field_recurring_charge_id']['und'][0]['value'];
+        			
+        			$params = array('0' => $nodeNid, '1' => $recurringId);
+        			$viewResult = views_get_view_result('list_actionpricechargerecurring', 'panel_pane_2', $params);
+        			
+        			if(!empty($viewResult)) {
+        				drupal_set_message("Recurring ID should be unique", "error");
+        				form_set_error('Recurring ID should be unique');
+        			}
+		            if (!is_machine_name($recurringId)) {
+		                drupal_set_message("Only letters and underscore is allowed for recurring id", 'error');
+		                form_set_error("Only letters and underscore is allowed for recurring id");
+		            }
+        		}
+        		break;
+        		
+            case 'productgroup_node_form':
+            	$productGroupId = $form_state['values']['field_product_group_id']['und'][0]['value'];
+            	
+            	// Create
+            	if(!isset($form['nid']['#value'])) {
+	            	if (!is_machine_name($productGroupId)) {
+	                    form_set_error('field_product_group_id', "Only letters and underscore is allowed for product group id");
+	                }
+	            }
+	            
+            	break;
             		
             case 'counter_node_form' :
                 // In case Delete Confirmation

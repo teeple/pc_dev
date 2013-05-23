@@ -222,7 +222,10 @@ class OcsParam
 				$options[$v] = 'Duration of ' . $v;
 			}
 
-			return array_merge( $options, array( 'Voucher.ACTIVE' => 'Active Days of the Voucher', 'Voucher.GRACE' => 'Grace Days of the Voucher'));
+			return array_merge( $options, array( 'Voucher.ACTIVE' => 'Active Days of the Voucher', 'Voucher.GRACE' => 'Grace Days of the Voucher',
+					'Period.SERVICE_SAVING' => 'Period of SERVICE_SAVING',
+				   	'MAX(RemainedDays.ACTIVE,Voucher.ACTIVE)' => 'Max( Remained Days of ACTIVE, Active Days of the Voucher)' ));
+
 		}
 
 		return $options;
