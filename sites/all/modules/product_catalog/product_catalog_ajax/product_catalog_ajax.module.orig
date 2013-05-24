@@ -918,10 +918,7 @@ function product_catalog_ajax_add_modal_content($js = NULL, $contentType, $refNo
 			$output[] = ajax_command_invoke(NULL, 'drawFlotLinkInit');
 		}
 	}
-	
-//	if($contentType != 'article') {
-	  $output[] = ajax_command_invoke(NULL,'bindCollectionItemRemoveButton');
-	//}
+
 	print ajax_render($output);
 	exit;
 }
@@ -2035,7 +2032,6 @@ function product_catalog_modal_form_edit_modal_content($js = NULL, $contentType,
     	}
     }
     
-    $output[] = ajax_command_invoke(NULL,'bindCollectionItemRemoveButton');
     print ajax_render($output);
     exit;
 }

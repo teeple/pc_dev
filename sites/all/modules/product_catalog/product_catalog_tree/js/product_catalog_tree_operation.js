@@ -115,38 +115,7 @@
 		
 		// $('#node_actionsetcounter_form_group_end_date').hide();
 	};
-	
-	$.fn.bindCollectionItemRemoveButton = function(){
-		$('input[id^=remove_collection_item_]').bind('click',$.fn.collectionItemRemoveHandler);
-		// $('#edit-field-ref-counter-und').bind('change', $.fn.counterTypeChangeHandler);
-	};
-	
-	$.fn.collectionItemRemoveHandler = function(event){
 		
-		itemDomID = event.currentTarget.id;
-		var removeButton = $('#'+itemDomID);
-		var parentTd = removeButton.parent();
-		var parentTr = parentTd.parent();
-		parentTr.find('input:text').val('');
-		parentTr.find('select').val('');
-		/*
-		itemDomID = event.currentTarget.id;
-		var removeButton = $('#'+itemDomID);
-		
-		var removeLink = '/product_catalog_ajax/remove_field_collection_item/' + itemDomID;
-		$.fn.masking("Deleting...");
-		//console.log(loadLink);
-		$.ajax({
-			url : removeLink,
-			success : function(data) {
-				var output = $.parseJSON(data);
-				$('#'+itemDomID).parent().parent().replaceWith('');
-				$.fn.unmasking();
-			}
-		});
-		*/
-	};
-	
 	$.fn.selectMessageItemHandler = function(event) {
 		var loadLink = '/product_catalog_ajax/select_modal_item/actionsetnotification';
 		
@@ -582,8 +551,7 @@
     //Drupal.behaviors.jquery_ui_multiselect_widget.attach(document,settings);
     //Drupal.behaviors.qt_accordion.attach($('#tree_content_div'),settings);
     //Drupal.behaviors.qt_ui_tabs.attach(document,settings);
-        
-    $.fn.bindCollectionItemRemoveButton();
+    
     //$.fn.drawFlotLinkInit();
     
     //resizable
