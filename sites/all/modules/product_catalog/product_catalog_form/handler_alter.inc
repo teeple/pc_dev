@@ -31,6 +31,8 @@ function _unset_menu_items(&$form, $formId) {
         case 'servicefeaturecode_node_form' :
         case 'servicefeaturecodescheme_node_form':
         case 'unittransfer_node_form':
+        case 'productgroup_node_form':
+        case 'productchange_node_form':
             $unsetDeleteButton = FALSE;
             break;
     }
@@ -240,6 +242,7 @@ function edit_pane_callback($form, &$form_state) {
     return $form;
 }
 
+
 function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 
 	load_required_js_css_before_ajax_load();
@@ -249,6 +252,51 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
     }
     
     switch($form_id) {
+    		case 'productgroup_node_form':
+    			_unset_menu_items($form, $form_id);
+    			if(isset($form['nid']['#value'])) {
+    				$form['field_service_domain']['#disabled'] = TRUE;
+    				$form['field_product_group_id']['#disabled'] = TRUE;
+    				$form['field_billing_type']['#disabled'] = TRUE;
+    			}
+    			break;
+    			
+    		case 'productchange_node_form':
+				_unset_menu_items($form, $form_id);
+				
+				// Edit
+				if(isset($form['nid']['#value'])) {
+
+					// $form['field_product_change_id']['#disabled'] = TRUE;
+					$form['field_service_domain']['#disabled'] = TRUE;
+					$form['field_billing_type']['#disabled'] = TRUE;
+					
+					$serviceDomainTid = $form['field_service_domain']['und']['#default_value'][0];
+					$billTypeTid = $form['field_billing_type']['und']['#default_value'][0];
+					$viewResult = views_get_view_result('list_product_group', 'panel_pane_3', $serviceDomainTid, $billTypeTid);
+					
+					foreach($viewResult as $item) {
+						$options[$item->nid] = $item->node_title;
+					}
+					
+					$form['field_from_product_group']['und']['#options'] = $options;
+					$form['field_to_product_group']['und']['#options'] = $options;
+				}
+				
+				$form['field_from_product_group']['#prefix'] = '<div id="product_group_change_div">';
+				$form['field_to_product_group']['#suffix'] = '</div>';
+
+				$form['field_service_domain']['und']['#ajax'] = array(
+				    'callback' => 'product_group_change_ajax_callback',
+				    'wrapper' => 'product_group_change_div'  
+				);
+				
+				$form['field_billing_type']['und']['#ajax'] = array(
+				    'callback' => 'product_group_change_ajax_callback',
+				    'wrapper' => 'product_group_change_div'  
+				);
+				break;
+    			
     		case 'user_register_form':
     			unset($form['account']['notify']);
     			unset($form['account']['roles']['#options'][3]);
@@ -2301,6 +2349,25 @@ function counter_bill_type_change_callback($form,$form_state){
     $returnStr .= '</div>';
     
     return $returnStr;
+}
+
+function product_group_change_ajax_callback($form, &$form_state) {
+
+	$serviceDomainTid = isset($form_state['values']['field_service_domain']) ? $form_state['values']['field_service_domain']['und'][0]['tid'] : NULL;
+	$billTypeTid = isset($form_state['values']['field_billing_type']) ? $form_state['values']['field_billing_type']['und'][0]['tid'] : NULL;
+	
+	$viewResult = views_get_view_result('list_product_group', 'panel_pane_3', $serviceDomainTid, $billTypeTid);
+	
+	foreach($viewResult as $item) {
+		$options[$item->nid] = $item->node_title;
+	}
+	$form['field_from_product_group']['und']['#options'] = $options;
+	$form['field_to_product_group']['und']['#options'] = $options;
+	
+	$renderStr = drupal_render($form['field_from_product_group']);
+	$renderStr .= drupal_render($form['field_to_product_group']);
+	
+	return $renderStr;
 }
 
 function actionsetcounter_ajax_callback($form, &$form_state){

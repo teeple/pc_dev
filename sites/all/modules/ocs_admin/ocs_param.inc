@@ -222,9 +222,10 @@ class OcsParam
 				$options[$v] = 'Duration of ' . $v;
 			}
 
-			// UCBS-251 : max ( remaining active days, voucher active days) 
 			return array_merge( $options, array( 'Voucher.ACTIVE' => 'Active Days of the Voucher', 'Voucher.GRACE' => 'Grace Days of the Voucher',
-				      'MAX(RemainedDays.ACTIVE,Voucher.ACTIVE)' => 'Max( Remained Days of ACTIVE, Active Days of the Voucher)' ));	
+					'Period.SERVICE_SAVING' => 'Period of SERVICE_SAVING',
+				   	'MAX(RemainedDays.ACTIVE,Voucher.ACTIVE)' => 'Max( Remained Days of ACTIVE, Active Days of the Voucher)' ));
+
 		}
 
 		return $options;

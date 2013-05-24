@@ -206,14 +206,12 @@ function product_catalog_ajax_check_rollover_type($counterId) {
 	$output = FALSE;
 	$counter = node_load($counterId);
 	
-	//dsm($counter, 'counter');
 	if(!empty($counter)) {
 		$counterGroupTypeTerm = taxonomy_term_load($counter->field_counter_type['und'][0]['tid']);
 		
 		if($counterGroupTypeTerm->name == 'Rollover') {
 			$output = 'TRUE';
 		}
-		//dsm($output, 'output');
 	}
 	print json_encode($output);
 	exit;
@@ -1671,6 +1669,70 @@ function product_catalog_ajax_load_select_form($nid,$eventType,$rootNid,$relType
     
     print $output;
     exit;
+}
+
+function product_catalog_ajax_load_product_relations($termName, $nid, $defaultTabIndex=0){
+
+	$termInTree = taxonomy_get_term_by_name($termName, 'tpl_relations_qtabs');
+	$targetCollection = 'field_qtabs_default';
+	$qtabConfigs = _qtabconfig_loading($targetCollection, current($termInTree));
+	
+	$qtabs = array();
+    $weight = 0;
+    
+    $index = 0;
+	$qtabIndex = 0;
+	
+	foreach($qtabConfigs[$targetCollection] as $qtabConfig) {
+	
+	
+		switch($qtabConfig['type']) {
+            case 'node':
+            	break;
+            	
+            case 'block':
+            	break;
+            	
+            case 'callback':
+            	$replacedContent = str_replace('$nid', $nid, $qtabConfig['content']);
+            	
+            	$qtabs[] = array(
+            		'title' => $qtabConfig['title'],
+            		'type' => 'callback',
+            		'path' => $replacedContent,
+            		'weight' => $weight,
+            	);
+            	break;
+            case 'view':
+		    	$qtabs[] = array(
+                    'title' => $qtabConfig['title'],
+                    'type' => 'view',
+                    'vid' => $qtabConfig['content'],
+                    'display' => $qtabConfig['display'],
+                	'args' => $newArgs,
+                	'weight' => $weight
+                );
+            	break;
+        }
+        $weight = $weight + 1;
+        $qtabIndex = $qtabIndex + 1;
+    }
+	
+    $qtoptions = array(
+    	'ajax' => FALSE,
+    	'style' => 'zen',
+    	//'renderer' => 'ui_tabs'
+    );
+	
+	if(isset($defaultTabIndex)) {
+		$qtoptions['default_tab'] = $defaultTabIndex;
+    }
+	
+    $quicktabs = quicktabs_build_quicktabs('qtab_dummy',$qtoptions,$qtabs);
+    $qtRender =  drupal_render($quicktabs['content']);
+
+    $renderOutput = '<div id="relation_product_group_div" style="overflow:scroll;height:700px;">'.$qtRender.'</div>';
+    return $renderOutput;
 }
 
 function product_catalog_ajax_move_node($js = NULL ) {
