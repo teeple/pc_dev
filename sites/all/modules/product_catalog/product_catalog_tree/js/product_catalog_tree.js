@@ -13,11 +13,15 @@
 			$(document).ajaxSuccess(function(event,request, settings) {	
 				if(settings.url === '/system/ajax'){
 					var triggeringElement = settings.extraData._triggering_element_name;
+					//console.log(triggeringElement);
 					if(triggeringElement.match('submit-field_ref_timetable_idd') != null){
 						//refresh if tariffplan_idd_carrier has changed its timetable.
 						var nodeId = $('.product_catalog_tree').jstree('get_selected').attr('id');
 						var node = $('#'+nodeId);
 						$.fn.reloadTreeContentDiv(node, 0);						
+					}else if(triggeringElement.match('field_charge_collection_add_more') != null){
+						//console.log('here!');
+						$.fn.bindCollectionItemRemoveButton();
 					}
 					else if(triggeringElement === 'op' && 
 							settings.extraData._triggering_element_value === 'Save'){

@@ -83,5 +83,5 @@ function template_preprocess_panels_add_content_link(&$vars) {
   $vars['image_button'] = ctools_ajax_image_button($vars['icon'], $vars['url'], $vars['description'], 'panels-modal-add-config');
   $vars['text_button'] = ctools_ajax_text_button($vars['title'], $vars['url'], $vars['description'], 'panels-modal-add-config');
 
-  error_log('test');
+  //error_log('test');
 }

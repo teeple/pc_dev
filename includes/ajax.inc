@@ -318,7 +318,7 @@ function ajax_get_form() {
   $form_state = form_state_defaults();
 
   $form_build_id = $_POST['form_build_id'];
-
+//error_log($form_build_id);
   // Get the form from the cache.
   $form = form_get_cache($form_build_id, $form_state);
   if (!$form) {
