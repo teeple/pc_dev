@@ -6,9 +6,11 @@ function validate_product($productNid){
     );
     $productNode = node_load($productNid);
     
-    //main 상품일 경우에만 lifecycle scheme check
+    //main 상품일 경우에만 lifecycle scheme check, Bundle은 제외 
     $productTypeTerm = taxonomy_term_load($productNode->field_product_type['und'][0]['tid']);
-    if($productTypeTerm->name == 'Main'){
+    $serviceDomainTerm = taxonomy_term_load($productNode->field_service_type_of_provider['und'][0]['tid']);
+    
+    if($productTypeTerm->name == 'Main' && $serviceDomainTerm->name != 'Cross'){
         $lifecycleSchemeNid = _get_lifecyclescheme($productNid);
         if(!isset($lifecycleSchemeNid)){
             $result['is_valid'] = FALSE;    
