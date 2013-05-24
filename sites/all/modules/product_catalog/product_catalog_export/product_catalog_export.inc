@@ -27,11 +27,21 @@ function _make_json_string($termName,$exportItemNids = NULL){
 		case 'COUNTER':
 			$jsonString = export_counter($exportItemNids);
 			break;
+			
+		case 'PRODUCT_GROUP':
+			$jsonString = export_product_group($exportItemNids);
+			break;
+			
+		case 'PRODUCT_CHANGE_SCHEME':
+			$jsonString = export_product_change_scheme($exportItemNids);
+			break;
+			
 		case 'PRODUCT':
 		case 'ARCHIVE':
 		case 'AUDIT':
 			$jsonString = export_product($exportItemNids);
 			break;
+			
 		case 'VOUCHER':
 			$jsonString = export_voucher_cardtype($exportItemNids);
 			break;
@@ -214,7 +224,9 @@ function _get_export_type_by_content_type($content_type) {
 												'ocs_messages'					=> 'MESSAGES',
 												'ocs_message_group'			=> 'MESSAGES',
 												'tvchannel'							=> 'TV_CHANNEL',
-												'contentrateid'					=> 'CONTENT'
+												'contentrateid'					=> 'CONTENT',
+												'productgroup'					=> 'PRODUCT_GROUP',
+												'productchange'					=> 'PRODUCT_CHANGE_SCHEME'
 	);
 	
 	return $export_types[$content_type];
