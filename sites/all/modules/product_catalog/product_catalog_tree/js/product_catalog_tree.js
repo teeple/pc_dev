@@ -1,8 +1,6 @@
 (function($) {
 	Drupal.behaviors.ProductCatalogTreeBehavior = {
 		attach : function(context, settings) {
-			$.fn.bindCollectionItemRemoveButton();
-			
 			$('#dummy-link').hide();
 			$.jstree._themes = settings.themes_dir;
 			//console.log(context);
@@ -19,11 +17,7 @@
 						var nodeId = $('.product_catalog_tree').jstree('get_selected').attr('id');
 						var node = $('#'+nodeId);
 						$.fn.reloadTreeContentDiv(node, 0);						
-					}else if(triggeringElement.match('field_charge_collection_add_more') != null){
-						//console.log('here!');
-						$.fn.bindCollectionItemRemoveButton();
-					}
-					else if(triggeringElement === 'op' && 
+					}else if(triggeringElement === 'op' && 
 							settings.extraData._triggering_element_value === 'Save'){
 						var op = $("#tree_node_op").val();
 						
@@ -31,7 +25,7 @@
 						var responseJson = $.parseJSON(responseText);
 						var product_catalog_ajax_result = responseJson[0].settings.product_catalog_ajax_result;
 					
-						console.log(product_catalog_ajax_result);
+						//console.log(product_catalog_ajax_result);
 						//console.log(responseJson);
 						if(typeof product_catalog_ajax_result != 'undefined'){
 							if(op === 'edit'){				
