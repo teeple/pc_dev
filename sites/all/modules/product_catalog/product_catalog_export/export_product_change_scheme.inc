@@ -5,86 +5,80 @@ function _product_change_scheme_for_export($exportItemNids = NULL, $isExternalAP
     $retDataTmp = array();
     $productNids = array();
 
-    /*
-     if(!empty($exportItemNids) && count($exportItemNids) > 1) {
-     $exportItemNids = join('+', $exportItemNids);
-     }
-
-     $productView = views_get_view('query_product_export');
-     $productView->set_arguments(array('0'=>$export_item_list));
-     $productView->execute();
-     $products = $productView->result;
-     $productsCount = count($products);
-
-     $viewResult = views_get_view_result('query_product_export', 'panel_pane_5', $exportItemNids);
-
-     foreach($viewResult as $record) {
-     */
-
     if (count($exportItemNids) == 1) {
         $exportItemNids = array($exportItemNids);
     }
 
-    foreach ($exportItemNids as $nid) {
-        $node = node_load($nid);
-
-        //Basic Attributes
-        $product = array();
-        $product['type'] = 'product';
-
-        $product['attribute'] = _get_attribute($node);
-
-        //Packaged Products
-        $packagedProducts = Array();
-        $view = views_get_view('list_product_child_node');
-        $view -> set_display('panel_pane_2');
-        $view -> set_arguments(array('0' => $node -> nid, '1' => 'prdattributepackaged'));
-        $view -> execute();
-        foreach ($view->result as $item) {
-            $packageProduct = Array();
-            $packageNode = node_load($item -> nid);
-            $connectedProduct = node_load($packageNode -> field_ref_connected_product['und'][0]['nid']);
-            $packageProduct['package_product_id'] = $connectedProduct -> field_product_id['und'][0]['value'];
-            $packageTypeTerm = taxonomy_term_load($packageNode -> field_ref_prdrelationtype['und'][0]['tid']);
-            $packageProduct['relation_type'] = _get_common_code($packageTypeTerm);
-            $packagedProducts[] = $packageProduct;
-        }
-        // $product['package_product'] = $packagedProducts;
-        $product['auto_join_product'] = $packagedProducts;
-
-        // Counter
-        // 상품에서 사용하는 counter list만 정의함. Charging용인지 Accumulating용인지는 구분할 필요 없음.
-        //
-        $product['counters'] = _get_counter_list($node);
-
-        //nonusage
-        $nonUsage = array();
-
-        // $nonUsage['threshold_scheme'] = _get_thresdhold_scheme($node);
-        $nonUsage['deposit_scheme'] = _get_deposit_scheme($node);
-        $nonUsage['recurring_scheme'] = _get_recurring_scheme($node -> nid);
-        
-        $recurringTypes = array(1 => 'Daily', 3 => '1/3 Monthly', 4 => 'Monthly');
-        $nonUsage['recurring_charge']['period_type'] = $recurringTypes[$nonUsage['recurring_scheme']['charge_scheme']['rcrr_period_type']];;
-        $nonUsage['recurring_charge']['charge_items'] = _get_recurring_amount($node->nid);
-        $nonUsage['onetime_charge'] = _get_onetime_charge($node -> nid);
-        $nonUsage['onetime_charge_discount_on_main'] = _get_onetime_charge_discount($node -> nid);
-
-        $product['nonusage'] = $nonUsage;
-        $product['usage'] = array();
-
-        //relationship
-        $product['relationship'] = _get_product_relationship($nid);
-        
-        // $product['rating_rules'] = rating_rules_export_by_content_type('rating_rule_export_product' ,  $products[$i]->nid);
-        if(!$isExternalAPI) {
-           $product['rating_rules'] = rating_rules_export_by_content_type('rating_rule_export_product', $node -> nid);
-        }
-        
-        $productNids[] = $node -> field_product_id['und'][0]['value'];
-
-        $retDataTmp[] = $product;
-    }
+	$viewResult = views_get_view_result('list_product_change', 'panel_pane_3', join(',', $exportItemNids));
+	
+	foreach ($viewResult as $record) {
+		$productChange = array();
+		
+		$productChange['product_change_scheme_id'] = $record->field_field_product_change_id[0]['raw']['value'];
+		$productChange['product_change_scheme_name'] = $record->node_title;
+		$productChange['service_domain'] = _get_common_code($record->field_field_service_domain[0]['raw']['taxonomy_term']);
+		$productChange['billing_type'] = _get_common_code($record->field_field_billing_type[0]['raw']['taxonomy_term']);
+		
+		foreach($record->field_field_from_product_group as $fromProductGroup) {
+			$productChange['from_product_groups'][] = array('product_group_id' => $fromProductGroup['rendered']['#options']['entity']->field_product_group_id['und'][0]['value']);
+		}
+		
+		foreach($record->field_field_to_product_group as $toProductGroup) {
+			$productChange['to_product_groups'][] = array('product_group_id' => $toProductGroup['rendered']['#options']['entity']->field_product_group_id['und'][0]['value']);
+		}
+		
+		$productChange['product_change_fee'] = isset($record->field_field_product_change_fee[0]['raw']['value']) ? $record->field_field_product_change_fee[0]['raw']['value'] : NULL;
+		
+		if($record->field_field_first_change_fee_free_[0]['raw']['value'] == 0) {
+			$productChange['first_change_fee_free'] = FALSE;
+		} else {
+			$productChange['first_change_fee_free'] = TRUE;		
+		}
+		
+		// Grace Date Setting
+		$graceDate = array();
+		$graceDate['options'] = isset($record->field_field_gracedate_options[0]['rendered']['#title'])? $record->field_field_gracedate_options[0]['rendered']['#title']: NULL;
+		
+		if($record->field_field_gracedate_options[0]['rendered']['#options']['entity']->tid != 7768) {
+			$graceDate['ndays'] = isset($record->field_field_gracedate_ndays[0]['raw']['value'])? $record->field_field_gracedate_ndays[0]['raw']['value']: NULL;
+			$graceDate['fixed_date'] = NULL;
+		} else {
+			$graceDate['ndays'] = NULL;
+			$graceDate['fixed_date'] = isset($record->field_field_gracedate_fixeddate[0]['raw']['value'])? $record->field_field_gracedate_fixeddate[0]['raw']['value']: NULL;
+		}
+		
+		// Expire Date Setting
+		$expireDate = array();
+		$expireDate['options'] = isset($record->field_field_expiredate_options[0]['rendered']['#title'])? $record->field_field_expiredate_options[0]['rendered']['#title']: NULL;
+		
+		if($record->field_field_expiredate_options[0]['rendered']['#options']['entity']->tid != 7768) {
+			$expireDate['ndays'] = isset($record->field_field_expiredate_ndays[0]['raw']['value'])? $record->field_field_expiredate_ndays[0]['raw']['value']: NULL;
+			$expireDate['fixed_date'] = NULL;			
+		} else {
+			$expireDate['ndays'] = NULL;		
+			$expireDate['fixed_date'] = isset($record->field_field_expiredate_fixeddate[0]['raw']['value'])? $record->field_field_expiredate_fixeddate[0]['raw']['value']: NULL;
+		}
+		
+		$productChange['grace_date'] = $graceDate;
+		$productChange['expire_date'] = $expireDate;
+		
+		$viewResultSubSelected = views_get_view_result('list_product_change_sub_selected', 'panel_pane_4', $record->nid);
+		$subProducts = array();
+		foreach($viewResultSubSelected as $item) {
+			$subProducts[] = array('product_id' => $item->field_field_product_id[0]['raw']['value']);
+		}
+		$productChange['transferable_sub_products'] = $subProducts;
+		
+		$viewResultCounterSelected = views_get_view_result('list_product_change_counter_selected', 'panel_pane_4', $record->nid);
+		
+		$selctedCounters = array();
+		foreach($viewResultCounterSelected as $item) {
+			$selctedCounters[] = array('counter_id' => $item->field_field_counter_id[0]['raw']['value']);
+		}
+		$productChange['transferable_counters'] = $selctedCounters;
+		
+	    $retDataTmp[] = $productChange;
+	}
     
     if(!$isExternalAPI) {
 	    if (!empty($productNids)) {

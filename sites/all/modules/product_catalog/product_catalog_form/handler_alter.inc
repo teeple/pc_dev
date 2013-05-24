@@ -267,7 +267,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 				// Edit
 				if(isset($form['nid']['#value'])) {
 
-					$form['field_product_change_id']['#disabled'] = TRUE;
+					// $form['field_product_change_id']['#disabled'] = TRUE;
 					$form['field_service_domain']['#disabled'] = TRUE;
 					$form['field_billing_type']['#disabled'] = TRUE;
 					

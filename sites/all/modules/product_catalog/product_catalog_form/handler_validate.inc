@@ -407,8 +407,18 @@ function product_catalog_form_node_validate($node, $form, &$form_state) {
 	                    form_set_error('field_product_group_id', "Only letters and underscore is allowed for product group id");
 	                }
 	            }
-	            
             	break;
+
+			case 'productchange_node_form':
+				$productChangeId = $form_state['values']['field_product_change_id']['und'][0]['value'];
+				
+				// Create
+				if(!isset($form['nid']['#value'])) {
+			    	if (!is_machine_name($productChangeId)) {
+			            form_set_error('field_product_change_id', "Only letters and underscore is allowed for product change scheme id");
+			        }
+			    }
+				break;
             		
             case 'counter_node_form' :
                 // In case Delete Confirmation
