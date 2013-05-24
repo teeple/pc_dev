@@ -86,21 +86,12 @@ function product_catalog_form_node_validate($node, $form, &$form_state) {
                
                 $isValid = TRUE;
                 $targetElement = 'field_prefix_range][und][';
-                $failReason = 'Only Number value is allowed for prefix';
                 $totalRow = count($form_state['input']['field_prefix_range']['und']);
+                
                 for($i=0;$i<$totalRow;$i++){
-                    $base = $form_state['input']['field_prefix_range']['und'][$i]['field_allowed_prefix_base']['und'][0]['value'];
-                    $start = $form_state['input']['field_prefix_range']['und'][$i]['field_allowed_prefix_start']['und'][0]['value'];
-                    $end = $form_state['input']['field_prefix_range']['und'][$i]['field_allowed_prefix_end']['und'][0]['value'];
+                    $start = $form_state['input']['field_prefix_range']['und'][$i]['field_prefix_range_start']['und'][0]['value'];
+                    $end = $form_state['input']['field_prefix_range']['und'][$i]['field_prefix_range_end']['und'][0]['value'];
                     
-                    if(strlen($base) == 0 && strlen($start) == 0 && strlen($end) == 0){
-                        continue;
-                    }
-                    if(!is_numeric($base)){
-                        $targetElement .= $i.'][field_allowed_prefix_base';
-                        $isValid = FALSE;
-                        break;
-                    }
                     if(!is_numeric($start)){
                         $targetElement .= $i.'][field_allowed_prefix_start';
                         $isValid = FALSE;

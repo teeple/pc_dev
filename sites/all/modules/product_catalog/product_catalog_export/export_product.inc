@@ -598,13 +598,15 @@ function _get_attribute_exceptions($product) {
             foreach($allowedPrefixNode->field_prefix_range['und'] as $item){
             $rangeCollection = field_collection_item_load($item['value']);
             
+            /*
             $base = $rangeCollection->field_allowed_prefix_base['und'][0]['value'];
+            */
             $start = $rangeCollection->field_allowed_prefix_start['und'][0]['value'];
             $end = $rangeCollection->field_allowed_prefix_end['und'][0]['value'];
             
             $allowedPrefix[] = array(
-                'base_prefix' => $base,
-                'range_start' => $start,
+                // 'base_prefix' => $base,
+                'range_start' => $start,ㅌ
                 'range_end' => $end
             );
         }
