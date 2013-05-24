@@ -425,7 +425,7 @@ function get_children($nid) {
     $node = node_load($nid);
     $loadChildren = TRUE;
 
-    error_log('nid: '.$nid. ' type: '.$node->type);
+    //error_log('nid: '.$nid. ' type: '.$node->type);
     
     switch($node->type){
     	case 'defaulttreenode':

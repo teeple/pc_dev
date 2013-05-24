@@ -1248,7 +1248,7 @@ function product_catalog_ajax_select_submit() {
       	break;
       
       case 'nonusage_otheronetimecharge_discount_on_main':
-      		error_log('here');
+      		//error_log('here');
       		$child->type = 'treenodeotheronetimechargediscou';
           $child->field_weight['und'][0]['value'] = $weight;
           $child->field_ref_product['und'][0]['nid'] = $tmpProductNid[1];

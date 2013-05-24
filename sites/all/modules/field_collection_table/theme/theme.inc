@@ -85,17 +85,17 @@ function theme_field_collection_table_multiple_value_fields($variables) {
             'class' => array('field-label'),
           );
         }
-        if($field_name == 'remove_button'){
-            $markupStr = '<input type="button" value="remove" id="remove_collection_item_'.$item['#entity']->item_id.'"/>';
-            $removeItem = array(
-                '#type' => 'markup',
-                '#markup' => $markupStr
-            );
+        //if($field_name == 'remove_button'){
+        //    $markupStr = '<input type="button" value="remove" id="remove_collection_item_'.$item['#entity']->item_id.'"/>';
+        //    $removeItem = array(
+        //        '#type' => 'markup',
+        //        '#markup' => $markupStr
+        //    );
             
-            $cells[] = array('data' => $removeItem);
-        }else{
+        //    $cells[] = array('data' => $removeItem);
+        //}else{
             $cells[] = array('data' => $item[$field_name]);
-        }
+        //}
       }
       $rows[] = array(
         'data' => $cells,

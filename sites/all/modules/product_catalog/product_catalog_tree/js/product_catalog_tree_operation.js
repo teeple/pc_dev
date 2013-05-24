@@ -122,7 +122,16 @@
 	};
 	
 	$.fn.collectionItemRemoveHandler = function(event){
+		
 		itemDomID = event.currentTarget.id;
+		var removeButton = $('#'+itemDomID);
+		var parentTd = removeButton.parent();
+		var parentTr = parentTd.parent();
+		parentTr.find('input:text').val('');
+		parentTr.find('select').val('');
+		/*
+		itemDomID = event.currentTarget.id;
+		var removeButton = $('#'+itemDomID);
 		
 		var removeLink = '/product_catalog_ajax/remove_field_collection_item/' + itemDomID;
 		$.fn.masking("Deleting...");
@@ -135,6 +144,7 @@
 				$.fn.unmasking();
 			}
 		});
+		*/
 	};
 	
 	$.fn.selectMessageItemHandler = function(event) {

@@ -114,15 +114,15 @@ function _commoncode_update_or_create($code_list, $code_group) {
 
             // dsm($term, 'term');
             //dsm($code, 'code');
-            error_log('code before: ' . $code -> code);
-            error_log('term common code before: ' . json_encode($term));
+            //error_log('code before: ' . $code -> code);
+            // error_log('term common code before: ' . json_encode($term));
 
             // Update existing field if Found
             //
             if (!empty($term -> field_common_code) && ($term -> field_common_code['und'][0]['value'] === $code -> code)) {
-                error_log('code is same');
-                error_log('code : ' . $code -> code);
-                error_log('term common code : ' . $term -> field_common_code['und'][0]['value']);
+                //error_log('code is same');
+                //error_log('code : ' . $code -> code);
+                //error_log('term common code : ' . $term -> field_common_code['und'][0]['value']);
 
                 $term -> name = $code -> meaning;
                 $svcDomainTidIndex = intval($code->svcDomain); 
@@ -144,7 +144,7 @@ function _commoncode_update_or_create($code_list, $code_group) {
 
                 // Update existing field code if Found
             } else if ($term -> name === $code -> meaning) {
-                error_log('Matched');
+                //error_log('Matched');
                 $term -> field_common_code = array('und' => array('0' => array('value' => $code -> code)));
                 $svcDomainTidIndex = intval($code->svcDomain);
                 if($svcDomainTidIndex > 0){
@@ -159,7 +159,7 @@ function _commoncode_update_or_create($code_list, $code_group) {
                     $term -> field_sub_group2['und'][0]['safe_value'] = $code->subGrp2;
                 }
                 
-                error_log('meaning is same');
+                //error_log('meaning is same');
 
                 taxonomy_term_save($term);
                 $foundFlag = TRUE;
