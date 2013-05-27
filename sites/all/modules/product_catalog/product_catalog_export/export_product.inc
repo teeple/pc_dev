@@ -606,7 +606,7 @@ function _get_attribute_exceptions($product) {
             
             $allowedPrefix[] = array(
                 // 'base_prefix' => $base,
-                'range_start' => $start,ㅌ
+                'range_start' => $start,
                 'range_end' => $end
             );
         }

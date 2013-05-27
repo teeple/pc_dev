@@ -943,15 +943,16 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 									'field_version',
 									'field_is_bundle',
 									'field_roaming_allowed',
-											'field_offering_status',
-											'field_parent_node_for_rp',
-											'field_weight_for_ratingpriority',
-											'field_weight',
-										'field_ref_product',
-											'field_parent_node',
-											'field_tpl_voca_machine_name',
-											'field_parent_node_for_hr',
-											'field_weight_for_hierarchy');
+									'field_offering_status',
+									'field_parent_node_for_rp',
+									'field_weight_for_ratingpriority',
+									'field_weight',
+									'field_ref_product',
+									'field_parent_node',
+									'field_customer_group_type',
+									'field_tpl_voca_machine_name',
+									'field_parent_node_for_hr',
+									'field_weight_for_hierarchy');
 		  // in case Create
             if (!isset($form['nid']['#value'])) {
             
@@ -995,12 +996,14 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
                     'wrapper' => 'deposit_counter_set',
                 );
                 
+                
             // in case Edit
             } else {
             		$hiddenItems = array_merge($hiddenItems, array('field_product_type',
             													'field_service_type_of_provider'));
             													
             		$disabledItems = array_merge($disabledItems, array( 'field_billing_type',
+            														'field_service_operator',
             														'field_price_units',
             														'field_product_id',
             														'field_customer_type',
@@ -1021,34 +1024,18 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
              		}
              		
 					$svcDomainTid = $form['field_service_type_of_provider']['und']['#default_value'][0];
-
 					$billingTypeTid = $form['field_billing_type']['und']['#default_value'];
 					$svcOperatorTid = $form['field_service_operator']['und']['#default_value'];
-					$customerTypeTid = $form['field_customer_type']['und']['#default_value'];
+					$customerTypeTid = $form['field_customer_type']['und']['#default_value'][0];
 
-					if($productTypeName != 'Main') {
-						/*
-						$args = array('0' => $svcDomainTid, 
-									'1' => $productTypeTid,
-									'2' => $billingTypeTid,
-									'3' => $svcOperatorTid,
-									'4' => $customerTypeTid);
-
-						$view = views_get_view('list_product_for_nextjoin');
-						$view->set_display('panel_pane_2');
-						$view->set_arguments($args);
-						$view->execute();
-
-						$viewResult = $view->result;
-
-						$options = array();
-						foreach($viewResult as $item) {
-							$options[$item->nid] = view_get_field_value_by_label($view, 'PHP', $item);
-						}
-							$form['field_next_join_product']['und']['#options'] = $options;
-							*/
-						}
-          }
+					$viewResult = views_get_view_result('list_product_for_nextjoin', 'panel_pane_2', $svcDomainTid, $productTypeTid, $billingTypeTid, $svcOperatorTid, $customerTypeTid);
+					
+					$options = array();
+					foreach($viewResult as $item) {
+						$options[$item->nid] = $item->node_title;
+					}
+					$form['field_next_join_product']['und']['#options'] = $options;
+			}
 
             $productTypeTid = $form['field_product_type']['und']['#default_value'][0];
 
@@ -1113,12 +1100,15 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             
             switch($productTypeName){
                 case 'Main':
+                		/*
                 		unset($form['#groups']['group_next_join']);
                 		unset($form['#fieldgroups']['group_next_join']);
+                		*/
+                		
                     break;
                 default :
-										$form['field_cug_group_type']['#type'] = 'container';
-                		break;
+					$form['field_cug_group_type']['#type'] = 'container';
+                	break;
             }
             
             _unset_form_elements($form, $unsetItems);

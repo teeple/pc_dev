@@ -94,28 +94,17 @@ function product_catalog_form_node_validate($node, $form, &$form_state) {
                     $start = $form_state['input']['field_prefix_range']['und'][$i]['field_prefix_range_start']['und'][0]['value'];
                     $end = $form_state['input']['field_prefix_range']['und'][$i]['field_prefix_range_end']['und'][0]['value'];
                     
-                    if(!is_numeric($start)){
-                        $targetElement .= $i.'][field_allowed_prefix_start';
-                        $isValid = FALSE;
-                        break;
-                    }
-                    if(!is_numeric($end)){
-                        $targetElement .= $i.'][field_allowed_prefix_end';
-                        $isValid = FALSE;
-                        break;
-                    }
-                    $start = intval($start);
-                    $end = intval($end);
-                    if($start > $end){
-                        $targetElement .= $i.'][field_allowed_prefix_end';
-                        $failReason = 'End should be bigger than Start';
-                        $isValid = FALSE;
-                        break;
+                    if($start >= $end) {
+                    	$targetElement .= $i.'][field_prefix_range_start';
+	                    $isValid = FALSE;
+	                    $failReason = 'Rang Start should be smaller than Range End';
+	                    break;
                     }
                 }
                 if(!$isValid ){
                     form_set_error($targetElement, $failReason);
                 }
+                
                 break;
             case 'numberspecialfactors_node_form':
                 $isDuplicatedPrefix = FALSE;
