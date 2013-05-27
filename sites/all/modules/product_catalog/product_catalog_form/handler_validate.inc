@@ -45,6 +45,7 @@ function is_machine_name($argStr) {
 }
 
 function product_catalog_form_node_validate($node, $form, &$form_state) {
+
     if($form_state['values']['op'] == 'Delete'){
         
     }else{
@@ -83,9 +84,7 @@ function product_catalog_form_node_validate($node, $form, &$form_state) {
                 }
                 break;
             case 'prdattributeprefixrangeallowed_node_form':
-                //dsm($form,'form');
-                //dsm($form_state,'form_state');
-               
+            
                 $isValid = TRUE;
                 $targetElement = 'field_prefix_range][und][';
                 $totalRow = count($form_state['input']['field_prefix_range']['und']);
@@ -93,6 +92,8 @@ function product_catalog_form_node_validate($node, $form, &$form_state) {
                 for($i=0;$i<$totalRow;$i++){
                     $start = $form_state['input']['field_prefix_range']['und'][$i]['field_prefix_range_start']['und'][0]['value'];
                     $end = $form_state['input']['field_prefix_range']['und'][$i]['field_prefix_range_end']['und'][0]['value'];
+                    
+                    if( empty($start) && empty($end) ) { continue; }
                     
                     if($start >= $end) {
                     	$targetElement .= $i.'][field_prefix_range_start';
@@ -492,7 +493,13 @@ function product_catalog_form_node_validate($node, $form, &$form_state) {
                 if (!is_machine_name($form_state['values']['field_short_code']['und'][0]['value'])) {
                     form_set_error('field_short_code', "Only lowercase letter, number and underscore are allowed for short code");
                 }
+                
                 $prdTypeTerm = taxonomy_term_load($form_state['values']['field_product_type']['und'][0]['tid']);
+                
+                if(empty($prdTypeTerm)) {
+	                $paths = explode('/', $_SERVER['HTTP_REFERER']);
+	                $prdTypeTerm = current(taxonomy_get_term_by_name($paths[5], 'prdtype'));
+                }
                 
                 if($prdTypeTerm->name == 'CUG') {
     	            if ( empty($form_state['values']['field_cug_group_type'])

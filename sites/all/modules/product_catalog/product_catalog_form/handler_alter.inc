@@ -931,36 +931,49 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             $form['field_ref_target_product']['und']['#options'] = $options['list'];
             break;
         case 'simpleproductoffering_node_form' :
-        		$disabledItems = array();
-				$hiddenItems = array();
-						/*
-        		$hiddenItems = array('field_next_join_product', 'field_next_join_confirm');
-						*/
-				$unsetItems = array('field_r_prodofferingrel', 
-									'field_r_productspecification',
-									'field_r_prodspeccharvalueuse',
-									'field_r_productofferingprice',
-									'field_version',
-									'field_is_bundle',
-									'field_roaming_allowed',
-									'field_offering_status',
-									'field_parent_node_for_rp',
-									'field_weight_for_ratingpriority',
-									'field_weight',
-									'field_ref_product',
-									'field_parent_node',
-									'field_customer_group_type',
-									'field_tpl_voca_machine_name',
-									'field_parent_node_for_hr',
-									'field_weight_for_hierarchy');
-		  // in case Create
+    		$disabledItems = array();
+			$hiddenItems = array();
+			// $hiddenItems = array('field_next_join_product', 'field_next_join_confirm');
+			$unsetItems = array('field_r_prodofferingrel', 
+								'field_r_productspecification',
+								'field_r_prodspeccharvalueuse',
+								'field_r_productofferingprice',
+								'field_version',
+								'field_is_bundle',
+								'field_roaming_allowed',
+								'field_offering_status',
+								'field_parent_node_for_rp',
+								'field_weight_for_ratingpriority',
+								'field_weight',
+								'field_ref_product',
+								'field_parent_node',
+								'field_customer_group_type',
+								'field_tpl_voca_machine_name',
+								'field_parent_node_for_hr',
+								'field_weight_for_hierarchy');
+		  	// in case Create
             if (!isset($form['nid']['#value'])) {
             
                 $paths = explode('/', current_path());
+                
                 $productTypeTerm = current(taxonomy_get_term_by_name($paths[2], 'prdtype'));
+                
+                if(empty($productTypeTerm)) {
+                    $paths = explode('/', $_SERVER['HTTP_REFERER']);
+                    $productTypeTerm = current(taxonomy_get_term_by_name($paths[5], 'prdtype'));
+                }
+                
                 $form['field_product_type']['und']['#default_value'][0] =  $productTypeTerm -> tid;
-                $serviceTypeTerm = taxonomy_get_term_by_name($paths[1], 'svcdomain');
-                $form['field_service_type_of_provider']['und']['#default_value'][0] =  current($serviceTypeTerm) -> tid;
+                $serviceTypeTerm = current(taxonomy_get_term_by_name($paths[1], 'svcdomain'));
+                
+                if(empty($serviceTypeTerm)) {
+                	$paths = explode('/', $_SERVER['HTTP_REFERER']);
+                    $serviceTypeTerm = current(taxonomy_get_term_by_name($paths[4], 'svcdomain'));
+                    
+                    dsm($serviceTypeTerm, 'serviceTypeTerm');
+                }
+                
+                $form['field_service_type_of_provider']['und']['#default_value'][0] =  $serviceTypeTerm->tid;
                 
                 $hiddenItems = array_merge($hiddenItems, array('field_product_type', 'field_service_type_of_provider'));
                 
@@ -974,7 +987,6 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
                 }
                 
                 if($productTypeTerm->name != 'Main') {
-                
                 	if($productTypeTerm->name == 'CUG') {
                 		$form['field_billing_type']['und']['#default_value'] = 680;
                 		$disabledItems[] = 'field_billing_type';
@@ -984,6 +996,20 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 	                }
                 }
                 
+				$serviceDomainTid = $form['field_service_type_of_provider']['und']['#default_value'][0];
+				$productTypeTid = $form['field_product_type']['und']['#default_value'][0];
+				$billingTypeTid = $form['field_billing_type']['und']['#default_value'];
+				$svcOperatorTid = $form['field_service_operator']['und']['#default_value'];
+				$customerTypeTid = $form['field_customer_type']['und']['#default_value'][0];
+				
+				$viewResult = views_get_view_result('list_product_for_nextjoin', 'panel_pane_2', $serviceDomainTid, $productTypeTid, $billingTypeTid, $svcOperatorTid, $customerTypeTid);
+				
+				$options = array();
+				foreach($viewResult as $item) {
+					$options[$item->nid] = $item->node_title;
+				}
+				$form['field_next_join_product']['und']['#options'] = $options;
+				
                 //calltype
                 $options = _get_call_type_options();
                 $form['field_ref_type_of_call_mul']['und']['#options'] = $options;
@@ -996,6 +1022,21 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
                     'wrapper' => 'deposit_counter_set',
                 );
                 
+                $form['field_next_join_product']['#prefix'] = '<div id="next_join_product_div">';
+                $form['field_next_join_product']['#suffix'] = '</div>';
+                
+                $form['field_billing_type']['und']['#ajax'] = array(
+                    'callback' => 'nextjoin_product_ajax_callback',
+                    'wrapper' => 'next_join_product_div'  
+                );
+                $form['field_service_operator']['und']['#ajax'] = array(
+                    'callback' => 'nextjoin_product_ajax_callback',
+                    'wrapper' => 'next_join_product_div'  
+                );
+                $form['field_customer_type']['und']['#ajax'] = array(
+                    'callback' => 'nextjoin_product_ajax_callback',
+                    'wrapper' => 'next_join_product_div'  
+                );
                 
             // in case Edit
             } else {
@@ -1039,60 +1080,60 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 
             $productTypeTid = $form['field_product_type']['und']['#default_value'][0];
 
-            if($form['field_product_type']['und']['#options'][$productTypeTid] == 'Main') {
-            		$unsetItems[] = 'field_product_sub_type';
-            }
-            
+            //if($form['field_product_type']['und']['#options'][$productTypeTid] == 'Main') {
+            $unsetItems[] = 'field_product_sub_type';
+            //}
             _unset_menu_items($form, $form_id);
 
             $firstPathName = current(explode('/', current_path()));
+            
             if ($firstPathName == 'relation') {
                 $form['title']['#type'] = 'hidden';
                 
                 $unsetItems = array_merge($unsetItems,
-												array('field_description',
-													'field_offering_status',
-													'field_version',
-													'field_billing_type',
-													'field_validfor_product',
-													'field_service_operator',
-													'field_billing_cycle',
-													'field_product_id',
-													'field_customer_type',
-													'field_customer_group_type',
-													'field_is_bundle',
-													'field_deferred_subscription_flag',
-													'field_price_units',
-													'field_treatment_price_amount',
-													'field_treatment_day',
-													'field_contract_period',
-													'field_roaming_allowed',
-													'field_cug_member_counter',
-													'field_short_code',
-													'field_next_join_product',
-													'field_expire_date_type',
-													'field_expire_date',
-													'field_field_deferred_subscriptio',
-													'field_hlr_template_id'));
+											array('field_description',
+												'field_offering_status',
+												'field_version',
+												'field_billing_type',
+												'field_validfor_product',
+												'field_service_operator',
+												'field_billing_cycle',
+												'field_product_id',
+												'field_customer_type',
+												'field_customer_group_type',
+												'field_is_bundle',
+												'field_deferred_subscription_flag',
+												'field_price_units',
+												'field_treatment_price_amount',
+												'field_treatment_day',
+												'field_contract_period',
+												'field_roaming_allowed',
+												'field_cug_member_counter',
+												'field_short_code',
+												'field_next_join_product',
+												'field_expire_date_type',
+												'field_expire_date',
+												'field_field_deferred_subscriptio',
+												'field_hlr_template_id'));
                 
                 $options = _get_product_exclusive_list($form['nid']['#value']);
                 $form['field_exclusiveness']['und']['#options'] = $options['list'];
 				
                 $view = views_get_view('list_product_in_exclusive');
-								$view->set_display('panel_pane_3');
-								$view->set_arguments($options['args']);
-								$view->execute();
-								
-								$viewResult = $view->result;
-								
-								// $options = array('- None -');
-								$options = array();
-								foreach($viewResult as $item) {
-										$options[$item->nid] = view_get_field_value_by_label($view, 'PHP', $item);
-								}
+				$view->set_display('panel_pane_3');
+				$view->set_arguments($options['args']);
+				$view->execute();
 				
-								$form['field_exclusiveness_others']['und']['#options'] = $options;
-                
+				$viewResult = $view->result;
+				
+				// $options = array('- None -');
+				$options = array();
+				foreach($viewResult as $item) {
+						$options[$item->nid] = view_get_field_value_by_label($view, 'PHP', $item);
+				}
+
+				$form['field_exclusiveness_others']['und']['#options'] = $options;
+
             } else {
             		$unsetItems = array_merge($unsetItems, array('field_exclusiveness',
             												'field_exclusiveness_others'));
@@ -2339,6 +2380,36 @@ function counter_bill_type_change_callback($form,$form_state){
     $returnStr .= '</div>';
     
     return $returnStr;
+}
+
+function nextjoin_product_ajax_callback($form, &$form_state) {
+
+	$paths = explode('/', $_SERVER['HTTP_REFERER']);
+	
+	$serviceDomainName = $paths[4];
+	$productTypeName = $paths[5];
+	
+	$svcDomainTid = current(taxonomy_get_term_by_name($serviceDomainName, 'svcdomain'))->tid;
+	$productTypeTid = current(taxonomy_get_term_by_name($productTypeName, 'prdtype'))->tid; 
+	$billingTypeTid = isset($form_state['values']['field_billing_type'])? $form_state['values']['field_billing_type']['und'][0]['tid'] : NULL;
+	$svcOperatorTid = isset($form_state['values']['field_service_operator'])? $form_state['values']['field_service_operator']['und'][0]['tid'] : NULL;
+	$customerTypeTid = isset($form_state['values']['field_customer_type'])? $form_state['values']['field_customer_type']['und'][0]['tid'] : NULL;
+	
+	$viewResult = views_get_view_result('list_product_for_nextjoin', 'panel_pane_2', $svcDomainTid, $productTypeTid, $billingTypeTid, $svcOperatorTid, $customerTypeTid);
+	
+	$options = array();
+	foreach($viewResult as $item) {
+		$options[$item->nid] = $item->node_title;
+	}
+	$form['field_next_join_product']['und']['#options'] = $options;
+	
+	$returnStr = '<div id="nextjoin_product_div">';
+	$returnStr .= drupal_render($form['field_next_join_product']);
+	$returnStr .= '</div>';
+	
+	$form_state['rebuild'] = TRUE;
+	
+	return $returnStr;
 }
 
 function product_group_change_ajax_callback($form, &$form_state) {
