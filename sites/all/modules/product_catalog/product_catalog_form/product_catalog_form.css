@@ -139,3 +139,11 @@
 .field-multiple-table.sticky-enabled.tabledrag-processed.tableheader-processed.sticky-table > tbody > tr > td > div> div>div>input{
   width:100px;
 }
+
+/*ocs global config*/
+#ocs-global-config-node-form > div > div> div> div> label {
+  width:250px;
+}
+#ocs-global-config-node-form > div > div> div> label {
+  width:250px;
+}
