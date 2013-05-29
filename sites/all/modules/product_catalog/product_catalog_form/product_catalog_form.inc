@@ -1,4 +1,9 @@
 <?php
+
+function basicrate_table_in_tariff_plan($type,$tariffplanNid){
+  return 'test';
+}
+
 function _backup_and_migrate_manual_file_list() {
     backup_migrate_include('destinations');
     drupal_add_css(drupal_get_path('module', 'backup_migrate') . '/backup_migrate.css');
