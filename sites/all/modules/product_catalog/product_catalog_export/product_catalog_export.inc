@@ -110,7 +110,7 @@ function _get_export_base_url($target){
     return $baseURL;
 }
 
-function export_deploy($export_type,$export_item_list = NULL, $target){
+function export_deploy($export_type, $export_item_list = NULL, $target) {
 	global $user;
 	$baseURL = _get_export_base_url($target);
    
@@ -132,10 +132,14 @@ function export_deploy($export_type,$export_item_list = NULL, $target){
     if($failedValidation == TRUE){
         $message = $checkValid['base_type'] . ' '. $checkValid['title'] . ':' . $checkValid['reason'];
         drupal_set_message($message, 'error');
+        
     }else{
-        $exportTypeTerm = current(taxonomy_get_term_by_name($export_type));
+    
+    	dsm($export_type, 'export_type');
+    	$exportTypeTerm = current(taxonomy_get_term_by_name($export_type));
+        
         $jsonString = _make_json_string($export_type,$exportItemNids);
-    	
+        
     	// Create History Record
     	$historyNode = new StdClass();
         $historyNode->uid = $user->uid;

@@ -933,7 +933,6 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
         case 'simpleproductoffering_node_form' :
     		$disabledItems = array();
 			$hiddenItems = array();
-			// $hiddenItems = array('field_next_join_product', 'field_next_join_confirm');
 			$unsetItems = array('field_r_prodofferingrel', 
 								'field_r_productspecification',
 								'field_r_prodspeccharvalueuse',
@@ -953,9 +952,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 								'field_weight_for_hierarchy');
 		  	// in case Create
             if (!isset($form['nid']['#value'])) {
-            
-                $paths = explode('/', current_path());
-                
+            	$paths = explode('/', current_path());
                 $productTypeTerm = current(taxonomy_get_term_by_name($paths[2], 'prdtype'));
                 
                 if(empty($productTypeTerm)) {
@@ -969,8 +966,6 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
                 if(empty($serviceTypeTerm)) {
                 	$paths = explode('/', $_SERVER['HTTP_REFERER']);
                     $serviceTypeTerm = current(taxonomy_get_term_by_name($paths[4], 'svcdomain'));
-                    
-                    dsm($serviceTypeTerm, 'serviceTypeTerm');
                 }
                 
                 $form['field_service_type_of_provider']['und']['#default_value'][0] =  $serviceTypeTerm->tid;
@@ -1079,6 +1074,14 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			}
 
             $productTypeTid = $form['field_product_type']['und']['#default_value'][0];
+            
+            $billingType = taxonomy_term_load($form['field_billing_type']['und']['#default_value']);
+            if ($billingType->name == 'Prepaid') {
+            	dsm($form, 'form');
+            	unset($form['#groups']['group_contraints']);
+            	unset($form['#fieldgroups']['group_contraints']);
+            }
+            
 
             //if($form['field_product_type']['und']['#options'][$productTypeTid] == 'Main') {
             $unsetItems[] = 'field_product_sub_type';

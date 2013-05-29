@@ -81,14 +81,14 @@ function _product_change_scheme_for_export($exportItemNids = NULL, $isExternalAP
 	}
     
     if(!$isExternalAPI) {
-	    if (!empty($productNids)) {
-	        $retData['ifvalues']['resources'] = array_values($productNids);
+	    if (!empty($exportItemNids)) {
+	        $retData['ifvalues']['resources'] = array_values($exportItemNids);
 	    } else {
 	        $retData['ifvalues']['resources'] = '';
 	    }
 	  }
 	  
-    $retData['products'] = $retDataTmp;
+    $retData['product_change_scheme'] = $retDataTmp;
 
     return $retData;
 }
