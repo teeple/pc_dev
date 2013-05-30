@@ -2,13 +2,13 @@
 global $update_flag;
 global $buffer, $line;
 global $dst_term, $src_term;
-global $field_list_to_update;
+global $tid_field_list;
 
 
 // get global variables
 $buffer = '';
 $dst_term = ocs_get_all_terms();
-$field_list_to_update = array( 'field_ref_service_feature_code');
+$tid_field_list = array( 'field_ref_service_feature_code' => 'featurecode');
 
 // check argument
 $fname = NULL;
@@ -42,11 +42,15 @@ while( ($data = get_content($fp)) !== NULL) {
 
 	$obj = unserialize( $data[1]);
 
-	if ( $type == 'term') {
+	if ( $type == 'taxonomy') {
 		$src_term = $obj;
 
 		foreach( $src_term as $key => $data) {
-			$src_term[$key]['reverse'] = array_flip( $data);
+			$list = array();
+			foreach( $data as $tid => $obj) {
+				$list[ $tid] = ( isset( $obj->field_rel_type)) ?  $obj->field_rel_type['und'][0]['value'] : $obj->name;
+			}
+			$src_term[$key]['reverse'] = $list;
 		}
 	}
 	else if ( $obj->type === 'simpleproductoffering') {
@@ -142,7 +146,7 @@ function add_product( $src, $child)
 
 		$childNode = get_attribute( $key, $productNode->nid, $src);
 		node_save($childNode);
-		printf( ">>  %s %s\n", $childNode->type, $chlidNode->title);
+		printf( "    %s %s\n", $childNode->type, $chlidNode->title);
 
 		/*
 		if(isset($targetChildNode->field_charge_collection)){
@@ -162,7 +166,7 @@ function add_product( $src, $child)
 				_unset_unused_field_of_cloned_node($actionSetNode);
 				node_save($actionSetNode);
 
-				printf( ">>>>  %s:%s %s\n", $childNode->type, $actionSetNode->type, $actionSetNode->title);
+				printf( "    %s:%s %s\n", $childNode->type, $actionSetNode->type, $actionSetNode->title);
 			}
 		}
 		//if ( $idx ++ == 1) break;
@@ -179,7 +183,7 @@ function println( $str = '')
 
 function get_attribute( $type, $nid, $src)
 {
-	global $field_list_to_update;
+	global $tid_field_list;
 
 	// actionpriceallowanceonetime
 	$query = new EntityFieldQuery();
@@ -188,7 +192,7 @@ function get_attribute( $type, $nid, $src)
 		->fieldCondition('field_ref_product', 'nid', $nid);
 
 	if ( isset( $src->field_ref_tree_tid)) {
-		$tid = get_target_tid( $src->field_ref_tree_tid['und'][0]['value']);
+		$tid = get_target_tid( 'tpl_default_tree_mobile', $src->field_ref_tree_tid['und'][0]['value']);
 		$query->fieldCondition('field_ref_tree_tid', 'value', $tid);
 	}
 
@@ -202,45 +206,45 @@ function get_attribute( $type, $nid, $src)
 		$p->field_ref_tree_tid['und'][0]['value'] = $tid;
 		_unset_unused_field_of_cloned_node($p);
 
-		/*
-		$p = ocs_admin_get_new_node( $type);
+		foreach( $tid_field_list as $field_name => $voca ) {
+			if ( isset( $p->$field_name)) {
+				$field = $p->$field_name;
+				$tid = get_target_tid( $voca, $field['und'][0]['tid']);
+				$p->$field_name = array( 'und' => array( 0 => array( 'tid' => $tid)));
 
-		// set ref product 
-		$p->field_ref_product['und'][0]['nid'] = $nid;
-
-		// set tree tid
-		$p->field_ref_tree_tid['und'][0]['value'] = $tid;
-
-		$field = field_info_instances( 'node', $type);
-		$diff = _compare_content( $field, $src, $p);
-		if ( !empty( $diff)) {
-			//print_r( $diff);
-			foreach( $diff as $label => $attr) {
-				if ( array_search( $attr[2], $field_list_to_update) !== FALSE) {
-					println( '  Update ' . $label . ' : ' . $attr[0]);
-					$p->$attr[2] = $src->$attr[2];
-				}
+				if ( $field['und'][0]['tid'] != $tid)
+					printf( ">> WARNING: Change field %s %d=>%d\n", $field_name, $field['und'][0]['tid'], $tid);
 			}
 		}
-		*/
 	}
 	else {
 		$nid = array_pop( array_keys( $result['node']));
 		$p = node_load( $nid);
 
-		printf( "found type=%s %s nid=%d \n", $type, $p->title, $p->nid);
+		//printf( "found type=%s %s nid=%d \n", $type, $p->title, $p->nid);
 	}
 	return $p;
 }
 
-function get_target_tid( $srcTid)
+function get_target_tid( $voca, $srcTid)
 {
 	global $src_term, $dst_term;
 
 	// first get term name
-	$name = $src_term['tpl_default_tree_mobile']['reverse'][$srcTid];
-	$tid = $dst_term['tpl_default_tree_mobile'][$name];
-	printf( "%s:%d => %d\n", $name, $srcTid, $tid);
+	$name = $src_term[$voca]['reverse'][$srcTid];
+	if ( empty( $name)) {
+		printf(">> ERROR: term not found tid=%d\n", $srcTid);
+	}
+	else {
+		if ( !isset( $dst_term[$voca])) {
+			$dst_term[$voca] = ocs_get_terms_tid( $voca);
+		}
+
+		$tid = $dst_term[$voca][$name];
+
+		if ( $srcTid != $tid) 
+			printf( ">> WARNING: term id changed %s:%d => %d\n", $name, $srcTid, $tid);
+	}
 
 	return $tid;
 }

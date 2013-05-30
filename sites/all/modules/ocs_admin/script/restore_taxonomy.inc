@@ -39,14 +39,14 @@ foreach( $voca as $key => $term_list) {
 		$t = $term[$tid];
 
 		if ( $t->name !== $obj->name) {
-			printf( "Term mismatch voce=%s name=%s src=%d this=%d\n", $key, $obj->name, $obj->tid, $term[$obj->name]);
+			printf( "Term mismatch voca=%s name=%s src=%d this=%d\n", $key, $obj->name, $obj->tid, $term[$obj->name]);
 		}
 		unset( $term[$tid]);
 	}
 
 	if ( ! empty( $term)) {
 		foreach( $term as $tid => $t) {
-			printf( "Term not found voce=%s name=%s this=%d\n", $key, $t->name, $t->tid);
+			printf( "Term not found voca=%s name=%s this=%d\n", $key, $t->name, $t->tid);
 		}
 	}
 }
