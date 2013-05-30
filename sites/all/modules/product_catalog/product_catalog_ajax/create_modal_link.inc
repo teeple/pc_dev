@@ -1,4 +1,20 @@
 <?php 
+function _create_modal_mapping_link($contentType,$params){
+  ctools_include('ajax');
+  ctools_include('modal');
+  ctools_modal_add_js();
+  
+  $add_url = '/product_catalog_ajax/nojs/add_modal/'.$contentType;
+  foreach($params as $param){
+    $add_url .= '/'.$param;
+  }
+  
+  $add_class_2 = 'ctools-use-modal ctools-modal-add-item-modal-style';
+  
+  $link_string = '<div><a href="'.$add_url.'" class='.$add_class_2.'>Mapping Rates</a></div>';
+  
+  return $link_string;
+}
 
 function _create_modal_add_link($contentType,$params){
 	ctools_include('ajax');

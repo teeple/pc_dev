@@ -874,6 +874,14 @@ function product_catalog_ajax_add_modal_content($js = NULL, $contentType, $refNo
 	$form_state['ajax'] = 'TRUE';
 	
 	$form_state['build_info']['args'] = array($node);
+  
+  switch($contentType){
+    case 'mapbasicratedomestic':
+      $form_state['build_info']['args'][] = $refNodeNid;
+      $form_state['build_info']['args'][] = $refTreeTid;
+      break;
+  }
+
 	$formName = $contentType . '_node_form';
 
 	$output = ctools_modal_form_wrapper($formName, $form_state);

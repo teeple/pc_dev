@@ -1,4 +1,58 @@
 <?php 
+
+function _create_mapped_basicrate_node_domestic($form,$form_state){
+  global $user;
+  $target_content_type = 'basicrate_domestic';
+  
+  //get requried info from form  
+  $tariffplan_nid = $form_state['build_info']['args'][1];
+  $ref_tree_tid = $form_state['build_info']['args'][2];
+  $rate_nid = $form_state['values']['field_ref_rate']['und'][0]['nid'];
+    
+  $rating_groups = array();
+  $timetable_factors = array();
+  
+  foreach($form_state['values']['field_map_rating_group']['und'] as $item){
+    $rating_groups[] = $item['value'];
+  }
+  
+  foreach($form_state['values']['field_ref_timetablefactors']['und'] as $item){
+    $timetable_factors[] = $item['nid'];
+  }
+  
+  //get basicrate node already exist
+  $already_exist_basic_rate_node = array();
+  
+  $view_result = views_get_view_result('list_basicrate', 'panel_pane_2', $target_content_type, $tariffplan_nid);
+  foreach($view_result as $item){
+    $item_rating_group = $item->field_data_field_rating_group_field_rating_group_value;
+    $item_timetable_factor =$item->_field_data['nid']['entity']->field_ref_timetablefactors['und'][0]['nid'];
+    $already_exist_basic_rate_node[$item_rating_group][$item_timetable_factor] = $item->nid;
+  }
+ 
+  //create new node or update
+  foreach($rating_groups as $rating_group){
+    foreach($timetable_factors as $timetable_factor){
+      if(isset($already_exist_basic_rate_node[$rating_group][$timetable_factor])){//update
+        $node = node_load($already_exist_basic_rate_node[$rating_group][$timetable_factor]);
+        $node->field_ref_rate['und'][0]['nid'] = $rate_nid; 
+        node_save($node);  
+      }else{//create
+        $node = new StdClass();
+        $node->uid = $user->uid;
+        $node->language = 'und';
+        $node->type = $target_content_type;
+        $node->field_ref_tariffplan['und'][0]['nid'] = $tariffplan_nid;
+        $node->field_ref_timetablefactors['und'][0]['nid'] = $timetable_factor;
+        $node->field_rating_group['und'][0]['value'] = $rating_group;
+        $node->field_rating_group['und'][0]['safe_value'] = $rating_group;
+        $node->field_ref_rate['und'][0]['nid'] = $rate_nid;
+        node_save($node);  
+      }       
+    }
+  }
+}
+
 function product_catalog_ajax_custom_submit() {
 	global $user;
 
@@ -176,35 +230,35 @@ function _create_domestic_basicrate_node($type,$tariffplanNode){
 		case 'select_timetable_domestic':
 		case 'select_numberingplan_domestic':
 			$targetTimetableFieldName = 'field_ref_timetable_domestic';
-            $targetCreatedContentType = 'basicrate_domestic';
+      $targetCreatedContentType = 'basicrate_domestic';
 			$targetQueryArgNid = array('0' => $tariffplanNode->field_ref_numberingplan_domestic['und'][0]['nid']);
-            $targetQueryNumberingPlanType = 'numberingplan_domestic';
-            $targetQueryJoinNumberingPlanTableName = 'field_data_field_ref_numberingplan_domestic';
-            $targetQueryJoinNumberingPlanFieldName = 'field_ref_numberingplan_domestic_nid';
-            $targetQueryRatingGroupType = 'domestic_ratinggroup';
+      $targetQueryNumberingPlanType = 'numberingplan_domestic';
+      $targetQueryJoinNumberingPlanTableName = 'field_data_field_ref_numberingplan_domestic';
+      $targetQueryJoinNumberingPlanFieldName = 'field_ref_numberingplan_domestic_nid';
+      $targetQueryRatingGroupType = 'domestic_ratinggroup';
 			break;        
 	}
 	
 	//delete old children	
 	_delete_all_basicrate_in_tariffplan_by_type($targetCreatedContentType,$tariffplanNode->nid);
-	
+	/*
 	//add new children
 	//1. search used rating group
 	$query = db_select('node', 'n');
-    $query->condition('n.type', $targetQueryNumberingPlanType,'=');
-    $query->condition('n.nid',$targetQueryArgNid,'=');
-    $query->join($targetQueryJoinNumberingPlanTableName,'plan','n.nid = plan.'.$targetQueryJoinNumberingPlanFieldName);
-    $query->condition('plan.bundle',$targetQueryRatingGroupType,'=');
-    $query->join('field_data_field_rating_group','rg','plan.entity_id = rg.entity_id');
-    $query->fields('rg',array('field_rating_group_value'));
-    $query->distinct();
-    $query->orderBy('rg.field_rating_group_value', 'ASC');
-    
-    $result = $query->execute();
-    $ratingGroups = array();
-    while($record = $result->fetchAssoc()) {
-            $ratingGroups[] = current($record);
-    } 
+  $query->condition('n.type', $targetQueryNumberingPlanType,'=');
+  $query->condition('n.nid',$targetQueryArgNid,'=');
+  $query->join($targetQueryJoinNumberingPlanTableName,'plan','n.nid = plan.'.$targetQueryJoinNumberingPlanFieldName);
+  $query->condition('plan.bundle',$targetQueryRatingGroupType,'=');
+  $query->join('field_data_field_rating_group','rg','plan.entity_id = rg.entity_id');
+  $query->fields('rg',array('field_rating_group_value'));
+  $query->distinct();
+  $query->orderBy('rg.field_rating_group_value', 'ASC');
+  
+  $result = $query->execute();
+  $ratingGroups = array();
+  while($record = $result->fetchAssoc()) {
+          $ratingGroups[] = current($record);
+  } 
     
 	//2. search timetablefactors
 	$evalStr = '$timetableNode = node_load($tariffplanNode->'.$targetTimetableFieldName.'[\'und\'][0][\'nid\']);';
@@ -220,10 +274,11 @@ function _create_domestic_basicrate_node($type,$tariffplanNode){
 			$node->field_ref_tariffplan['und'][0]['nid'] = $tariffplanNode->nid;
 			$node->field_ref_timetablefactors['und'][0]['nid'] = $timetableFactor['nid'];
 			$node->field_rating_group['und'][0]['value'] = $ratingGroup;
-            $node->field_rating_group['und'][0]['safe_value'] = $ratingGroup;
+      $node->field_rating_group['und'][0]['safe_value'] = $ratingGroup;
 			node_save($node);				
 		}
 	}    
+ */
 }
 
 function _delete_all_basicrate_in_tariffplan_by_type($targetCreatedContentType,$tariffplanNodeNid){
