@@ -88,6 +88,8 @@ function ocs_admin_table_theme( $form, $header)
 // get new content node
 function ocs_admin_get_new_node( $type)
 {
+	global $user;
+
     $node = new stdClass();
     $node->type = $type;
     $node->uid = 0;
@@ -99,6 +101,8 @@ function ocs_admin_get_new_node( $type)
     $node->moderate = 0;
     $node->sticky = 0;
     $node->language = LANGUAGE_NONE;
+
+	$node->uid = $user->uid;
 
     node_object_prepare($node);
 
@@ -417,13 +421,13 @@ function _compare_content( $field, $before, $after)
 				$vv1 = _get_field_value( $v1, $i);
 				$vv2 = _get_field_value( $v2, $i);
 				if ( $vv1 !== $vv2) {
-					$diff[$label] = array( $vv1, $vv2);
+					$diff[$label] = array( $vv1, $vv2, $key);
 				}
 			}
 		}
 		else {
 			if ( $v1 !== $v2) {
-				$diff[$label] = array( $v1, $v2);
+				$diff[$label] = array( $v1, $v2, $key);
 			}
 		}
 	}
@@ -456,4 +460,22 @@ function ocs_get_terms_tid( $term_name)
 	}
 
 	return $result;
+}
+
+function ocs_get_all_terms()
+{
+// get voca terms
+	$term = array();
+	foreach( array( 'PrdType', 'BillType', 'PrdSubType', 'CustKdCd', 'PrdExpireDate', 
+				'tpl_default_tree_mobile', 'counterset_addorreplace') as $voca) {
+		$term[$voca] = ocs_get_terms_tid( $voca);
+	}
+
+	$term['day_option'] = array(
+			'start' => ocs_get_terms_tid( 'specialdateoptions'),
+			'end' => ocs_get_terms_tid( 'specialenddateoptions'),
+			'unit' => ocs_get_terms_tid( 'unitofmeasure_enddate'));
+
+	//print_r( $term_day_option);
+	return $term;
 }
