@@ -452,6 +452,7 @@ function ocs_get_terms_tid( $term_name)
 	$terms = ocs_get_terms( $term_name);
 	foreach( $terms as $tid => $term) {
 		$result[$term->name] = $tid;
+		$result[$term->field_rel_type['und'][0]['value']] = $tid;
 	}
 
 	return $result;

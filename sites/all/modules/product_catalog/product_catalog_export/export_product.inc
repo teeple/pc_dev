@@ -5,22 +5,6 @@ function _product_for_export($exportItemNids = NULL, $isExternalAPI = FALSE) {
     $retDataTmp = array();
     $productNids = array();
 
-    /*
-     if(!empty($exportItemNids) && count($exportItemNids) > 1) {
-     $exportItemNids = join('+', $exportItemNids);
-     }
-
-     $productView = views_get_view('query_product_export');
-     $productView->set_arguments(array('0'=>$export_item_list));
-     $productView->execute();
-     $products = $productView->result;
-     $productsCount = count($products);
-
-     $viewResult = views_get_view_result('query_product_export', 'panel_pane_5', $exportItemNids);
-
-     foreach($viewResult as $record) {
-     */
-
     if (count($exportItemNids) == 1) {
         $exportItemNids = array($exportItemNids);
     }
@@ -49,12 +33,11 @@ function _product_for_export($exportItemNids = NULL, $isExternalAPI = FALSE) {
             $packageProduct['relation_type'] = _get_common_code($packageTypeTerm);
             $packagedProducts[] = $packageProduct;
         }
+        
         // $product['package_product'] = $packagedProducts;
         $product['auto_join_product'] = $packagedProducts;
 
         // Counter
-        // 상품에서 사용하는 counter list만 정의함. Charging용인지 Accumulating용인지는 구분할 필요 없음.
-        //
         $product['counters'] = _get_counter_list($node);
 
         //nonusage
@@ -65,7 +48,13 @@ function _product_for_export($exportItemNids = NULL, $isExternalAPI = FALSE) {
         $nonUsage['recurring_scheme'] = _get_recurring_scheme($node -> nid);
         
         $recurringTypes = array(1 => 'Daily', 3 => '1/3 Monthly', 4 => 'Monthly');
-        $nonUsage['recurring_charge']['period_type'] = $recurringTypes[$nonUsage['recurring_scheme']['charge_scheme']['rcrr_period_type']];;
+        
+        if(isset($$nonUsage['recurring_scheme']['charge_scheme']['rcrr_period_type'])) {
+        	$nonUsage['recurring_charge']['period_type'] = $recurringTypes[$nonUsage['recurring_scheme']['charge_scheme']['rcrr_period_type']];
+        } else {
+ 	       $nonUsage['recurring_charge']['period_type'] = NULL;
+        }
+        
         $nonUsage['recurring_charge']['charge_items'] = _get_recurring_amount($node->nid);
         $nonUsage['onetime_charge'] = _get_onetime_charge($node -> nid);
         $nonUsage['onetime_charge_discount_on_main'] = _get_onetime_charge_discount($node -> nid);
@@ -491,9 +480,11 @@ function _get_attribute($product) {
                       'cug_customer_type' => array('through_common_code' => TRUE, 'field' => 'field_cug_customer_type', 'field_value' => "field_cug_customer_type['und'][0]['tid']", 'field_value_default' => NULL, ), 
                       'treatment_day' => array('through_common_code' => FALSE, 'field' => 'field_treatment_day', 'field_value' => "field_treatment_day['und'][0]['value']", 'field_value_default' => NULL), 
                       'treatment_price' => array('through_common_code' => FALSE, 'field' => 'field_treatment_price_amount', 'field_value' => "field_treatment_price_amount['und'][0]['value']", 'field_value_default' => 0), 
+                      'loyalty_point_for_subscription' => array('through_common_code' => FALSE, 'field' => 'field_loyalty_point_for_subscrip', 'field_value' => "field_loyalty_point_for_subscrip['und'][0]['value']", 'field_value_default' => 0), 
                       'contract_period' => array('through_common_code' => FALSE, 'field' => 'field_contract_period‎', 'field_value' => "field_contract_period‎['und'][0]['value']", 'field_value_default' => 0), 
                       'expire_date' => array('through_common_code' => FALSE, 'field' => 'field_expire_date', 'field_value' => "field_expire_date['und'][0]['value']", 'field_value_default' => 0), 
                       'expire_date_type' => array('through_common_code' => TRUE, 'field' => 'field_expire_date_type', 'field_value' => "field_expire_date_type['und'][0]['tid']", 'field_value_default' => NULL), 
+                      'resubscription_flag' => array('through_common_code' => FALSE, 'field' => 'field_resubscription_flag', 'field_value' => "field_resubscription_flag['und'][0]['value']", 'field_value_default' => 0), 
                       'currency' => array('through_common_code' => TRUE, 'field' => 'field_price_units', 'field_value' => "field_price_units['und'][0]['tid']", 'field_value_default' => NULL), 
                       /*
                       'hlr_template_id' => array('through_common_code' => TRUE, 'field' => 'field_hlr_template_id', 'field_value' => "field_hlr_template_id['und'][0]['tid']", 'field_value_default' => NULL), 
@@ -502,6 +493,7 @@ function _get_attribute($product) {
 
     $result_attribute_general = _get_result($reqArray, $product);
     $result_attrbitue_exception = _get_attribute_exceptions($product);
+    
     //$result_attribute_exception = null;
 
     $result = array_merge($result_attribute_general, $result_attrbitue_exception);
@@ -590,28 +582,26 @@ function _get_attribute_exceptions($product) {
     $view -> set_display('panel_pane_2');
     $view -> set_arguments(array('0' => $product -> nid, '1' => 'prdattributeprefixrangeallowed'));
     $view -> execute();
+    
     if (count($view -> result) > 0) {
         $allowedPrefixNode = node_load(current($view -> result) -> nid);
         
         $allowedPrefix = array();
         if(isset($allowedPrefixNode->field_prefix_range['und'])){
             foreach($allowedPrefixNode->field_prefix_range['und'] as $item){
-            $rangeCollection = field_collection_item_load($item['value']);
-            
-            /*
-            $base = $rangeCollection->field_allowed_prefix_base['und'][0]['value'];
-            */
-            $start = $rangeCollection->field_allowed_prefix_start['und'][0]['value'];
-            $end = $rangeCollection->field_allowed_prefix_end['und'][0]['value'];
-            
-            $allowedPrefix[] = array(
-                // 'base_prefix' => $base,
-                'range_start' => $start,
-                'range_end' => $end
-            );
-        }
-        
-        $retArray['prefix_allowed'] = $allowedPrefix;
+	            $rangeCollection = field_collection_item_load($item['value']);
+	            
+	            $base = $rangeCollection->field_base_prefix['und'][0]['value'];
+	            $start = $rangeCollection->field_prefix_range_start['und'][0]['value'];
+	            $end = $rangeCollection->field_prefix_range_end['und'][0]['value'];
+	            
+        		$allowedPrefix[] = array(
+        		    'base_prefix' => $base,
+        		    'range_start' => $start,
+        		    'range_end' => $end
+        		);
+        	}
+           $retArray['prefix_allowed'] = $allowedPrefix;
         }
     }
 
@@ -754,7 +744,8 @@ function _get_attribute_exceptions($product) {
     	
      ) {
      	$nextJoinProduct = node_load($product->field_next_join_product['und'][0]['nid']);
-     	$retArray['next_join_product'] = $nextJoinProduct->field_product_id['und'][0]['value'];
+		$retArray['next_join_product'] = $nextJoinProduct->field_product_id['und'][0]['value'];
+		
         if(isset($product->field_next_join_confirm['und'][0]['value'])){
             $retArray['next_join_confirm'] = 1;
         }else{

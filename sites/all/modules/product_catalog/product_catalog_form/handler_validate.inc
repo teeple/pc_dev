@@ -21,6 +21,25 @@ function validate_product($productNid){
             $result['reason'] = 'Lifecycle Scheme is not defined yet';
         }
     }
+    
+    if( ($serviceDomainTerm->name == 'Mobile' || $serviceDomainTerm->name == 'VoIP') && $productTypeTerm->name == 'Main') {
+    
+        $viewResult = views_get_view_result('list_product_child_node', 'panel_pane_2', $productNid, 'prdattributeprefixrangeallowed');
+        
+        if (count($viewResult) > 0) {
+	        $allowedPrefixNode = node_load(current($viewResult) -> nid);
+	        
+	        if( empty($allowedPrefixNode->field_prefix_range) ||  (count($allowedPrefixNode->field_prefix_range['und']) == 0) ) {
+		        $result['is_valid'] = FALSE;    
+		        
+		        $result['base_type'] = 'PRODUCT';
+		        $result['id'] = $productNode->nid;
+		        $result['title'] = $productNode->title;
+		        $result['reason'] = 'Allowed Prefix should be defined before deploy';
+	        };
+	    }
+	}
+	
     return $result;
     
 }
@@ -89,19 +108,67 @@ function product_catalog_form_node_validate($node, $form, &$form_state) {
                 $targetElement = 'field_prefix_range][und][';
                 $totalRow = count($form_state['input']['field_prefix_range']['und']);
                 
+				$allowedPrefix = array();
                 for($i=0;$i<$totalRow;$i++){
+                    $base = $form_state['input']['field_prefix_range']['und'][$i]['field_base_prefix']['und'][0]['value'];
                     $start = $form_state['input']['field_prefix_range']['und'][$i]['field_prefix_range_start']['und'][0]['value'];
                     $end = $form_state['input']['field_prefix_range']['und'][$i]['field_prefix_range_end']['und'][0]['value'];
                     
                     if( empty($start) && empty($end) ) { continue; }
                     
-                    if($start >= $end) {
+                    if(strlen($start) < 6){
+                    	$targetElement .= $i.'][field_prefix_range_start';
+                        $isValid = FALSE;
+                        $failReason = 'Rang Start should be 6 digits';
+                        break;
+                    }
+                    
+                    if(strlen($end) < 6) {
+                    	$targetElement .= $i.'][field_prefix_range_end';
+                        $isValid = FALSE;
+                        $failReason = 'Rang End should be 6 digits';
+                        break;
+                    }
+                    
+                    if(intval($start) >= intval($end)) {
                     	$targetElement .= $i.'][field_prefix_range_start';
 	                    $isValid = FALSE;
 	                    $failReason = 'Rang Start should be smaller than Range End';
 	                    break;
                     }
+                    $allowedPrefix[$i] = array('start' => (string)$base . $start,
+                    						'end' => (string)$base . $end);
                 }
+                
+                if($isValid) {
+   	                $targetElement = 'field_prefix_range][und][';
+                	
+	                for ($i=0;$i<$totalRow;$i++) {
+	                	$start = $allowedPrefix[$i]['start'];
+	                	$end = $allowedPrefix[$i]['end'];
+	                	
+	                	for($j=0;$j<$totalRow;$j++) {
+	                		
+	                		if($i == $j) continue;
+	                		
+	                		if( $start >= $allowedPrefix[$j]['start'] && $start <= $allowedPrefix[$j]['end'] ) {
+		                		$targetElement .= $i.'][field_prefix_range_start';
+		                		$isValid = FALSE;
+		                		$failReason = 'Range Start should not be on other prefix record range';
+		                		break;
+	                		}
+	                		
+	                		if( $end >= $allowedPrefix[$j]['start'] && $end <= $allowedPrefix[$j]['end'] ) {
+								$targetElement .= $i.'][field_prefix_range_end';
+								$isValid = FALSE;
+								$failReason = 'Range End should not be on other prefix record range';
+								break;
+							}
+	                	}
+   		                if(!$isValid) break;
+	                }
+	            }
+	            
                 if(!$isValid ){
                     form_set_error($targetElement, $failReason);
                 }
@@ -118,7 +185,6 @@ function product_catalog_form_node_validate($node, $form, &$form_state) {
                 }
                 
                 $countPrefixs = array_count_values($prefixs);
-                //dsm($countPrefixs,'countprefixs');
                 foreach($countPrefixs as $item){
                     if($item > 1){
                         $isDuplicatedPrefix = TRUE;
@@ -140,11 +206,9 @@ function product_catalog_form_node_validate($node, $form, &$form_state) {
                     }
                     $view->set_arguments($args);
                     $view->execute();
-                    //dsm($view,'view result');
                     if(count($view->result) > 0){
                         $isDuplicatedPrefix = TRUE;
                     }
-                    //dsm($form,'form');
                 }
                 
                 //set error msg to form if duplicated prefix found.
@@ -163,7 +227,6 @@ function product_catalog_form_node_validate($node, $form, &$form_state) {
                 }
                 
                 $countPrefixs = array_count_values($prefixs);
-                //dsm($countPrefixs,'countprefixs');
                 foreach($countPrefixs as $item){
                     if($item > 1){
                         $isDuplicatedPrefix = TRUE;
@@ -185,11 +248,9 @@ function product_catalog_form_node_validate($node, $form, &$form_state) {
                     }
                     $view->set_arguments($args);
                     $view->execute();
-                    //dsm($view,'view result');
                     if(count($view->result) > 0){
                         $isDuplicatedPrefix = TRUE;
                     }
-                    //dsm($form,'form');
                 }
                 
                 //set error msg to form if duplicated prefix found.
@@ -209,7 +270,6 @@ function product_catalog_form_node_validate($node, $form, &$form_state) {
                 }
                 
                 $countPrefixs = array_count_values($prefixs);
-                //dsm($countPrefixs,'countprefixs');
                 foreach($countPrefixs as $item){
                     if($item > 1){
                         $isDuplicated = TRUE;
@@ -248,7 +308,6 @@ function product_catalog_form_node_validate($node, $form, &$form_state) {
                 }
                 break;
             case 'packetdynamicl4_node_form' :
-                //dsm($node,'$node');
                 //check ip address is valid or not.
                 $ipValues = $node -> field_ip['und'];
                 unset($ipValues['add_more']);
@@ -469,7 +528,6 @@ function product_catalog_form_node_validate($node, $form, &$form_state) {
                 $voucherCardTypeTerm = taxonomy_term_load($form_state['values']['field_ref_voucher_type']['und'][0]['tid']);
                 
                 if($voucherCardTypeTerm->name == 'Discount') {
-                	//dsm($form_state['values'], 'form state values');
                 	if(empty($form_state['values']['field_ref_product_for_disvoucher']) 
                 		|| empty($form_state['values']['field_ref_product_for_disvoucher']['und'])
                 		|| empty($form_state['values']['field_ref_product_for_disvoucher']['und'][0])
@@ -527,7 +585,6 @@ function product_catalog_form_node_validate($node, $form, &$form_state) {
                     }
                     
                     foreach($downgradePenaltyViewResult as $item){
-                         //dsm($item,'$item');
                         if(in_array($item->field_field_ref_target_product[0]['raw']['nid'],$selectedNids)){
                             $isExist = TRUE;
                             $existName = $item->field_field_ref_target_product[0]['raw']['node']->title;
@@ -626,12 +683,9 @@ function product_catalog_form_node_validate($node, $form, &$form_state) {
         }
     
     }
-    //dsm($form_state,'node validate formstate');
 }
 
 function check_same_type_of_call_exist($form, $form_state) {
-    //dsm($form);
-    //dsm($form_state);
     $nodeType = $form['type']['#value'];
     $value = $form['field_new_type_of_call']['und'][0]['value']['#default_value'];
 
@@ -767,7 +821,6 @@ function _make_timeslot_for_validate_timetable($nid, $dayDelimiter, $hourRange, 
             }
         }
     }
-    //dsm($timeslot);
     return $timeslot;
 }
 
@@ -800,7 +853,6 @@ function validate_timetable_form($form, &$form_state) {
     $minuteScale = 10;
 
     $timeslot = _make_timeslot_for_validate_timetable($form_state['build_info']['args'][0], $dayDelimiter, $hourRange, $minuteRange, $minuteScale);
-    //dsm($timeslot);
 
     $form['duplicated'] = array('#type' => 'fieldset', '#title' => 'Duplicated', '#weight' => 1, '#collapsible' => TRUE, '#collapsed' => FALSE, );
     $form['empty'] = array('#type' => 'fieldset', '#title' => 'Not Defined', '#weight' => 2, '#collapsible' => TRUE, '#collapsed' => FALSE, );
@@ -812,7 +864,6 @@ function validate_timetable_form($form, &$form_state) {
 
     $countDays = count($dayDelimiter);
 
-    //dsm($timeslot);
     for ($i = 0; $i < $countDays; $i++) {
         for ($j = 0; $j < $hourRange; $j++) {
             for ($k = 0; $k < $minuteRange; $k = $k + $minuteScale) {
@@ -824,9 +875,6 @@ function validate_timetable_form($form, &$form_state) {
             }
         }
     }
-    //dsm($duplicatedRows);
-    //dsm($duplicatedRows,'dup');
-    //dsm($emptyRows,'emp');
     $duplicatedTableArgs = array('header' => $header, 'rows' => $duplicatedRows, 'sticky' => 'sticky', 'empty' => 'There are no duplicated', 'attributes' => array(), 'colgroups' => array(), 'caption' => NULL, );
     $duplicatedTableThemeResult = theme_table($duplicatedTableArgs);
 
