@@ -199,6 +199,7 @@
 			case 'conditionwhatincomingcall':
 			case 'conditionwhatmainproduct':
 			case 'conditionwhensubscriptionday':
+			case 'conditionwhentodaysubscriptionda':
 			case 'conditionwhenactivationday':
 			// case 'conditionwhencompanybirthday':
 			case 'conditionwhencustomerbirthday':
@@ -716,6 +717,7 @@
 			"Day of Month" : $.fn.getSubMenuAddNodeWithoutWrapper("Day of Month", "conditionwhendayofmonth"),
 			"Bill Date" : $.fn.getSubMenuAddNodeWithoutWrapper("Bill Date", "conditionwhenbillingdate"),
 			"Subscription Date" : $.fn.getSubMenuAddNodeWithoutWrapper("Subscription Date", "conditionwhensubscriptionday"),
+			"Today Is Subscription Day" : $.fn.getSubMenuAddNodeWithoutWrapper("Today is SubscriptionDay", "conditionwhentodaysubscriptionda"),
 			"Activation Date" : $.fn.getSubMenuAddNodeWithoutWrapper("Activation Date", "conditionwhenactivationday"),
 			"Active Days" : $.fn.getSubMenuAddNodeWithoutWrapper("Active Days", "conditionwhenactivedays"),
 			"Customer Birthday" : $.fn.getSubMenuAddNodeWithoutWrapper("Customer Birthday", "conditionwhencustomerbirthday"),
@@ -736,6 +738,7 @@
 			"Day of Month" : $.fn.getSubMenuAddNodeWithoutWrapper("Day of Month", "conditionwhendayofmonth"),
 			"Bill Date" : $.fn.getSubMenuAddNodeWithoutWrapper("Bill Date", "conditionwhenbillingdate"),
 			"Subscription Date" : $.fn.getSubMenuAddNodeWithoutWrapper("Subscription Date", "conditionwhensubscriptionday"),
+			"Today Is Subscription Day" : $.fn.getSubMenuAddNodeWithoutWrapper("Today is SubscriptionDay", "conditionwhentodaysubscriptionda"),
 			"Activation Date" : $.fn.getSubMenuAddNodeWithoutWrapper("Activation Date", "conditionwhenactivationday"),
 			"Active Days" : $.fn.getSubMenuAddNodeWithoutWrapper("Active Days", "conditionwhenactivedays"),
 			"Customer Birthday" : $.fn.getSubMenuAddNodeWithoutWrapper("Customer Birthday", "conditionwhencustomerbirthday"),

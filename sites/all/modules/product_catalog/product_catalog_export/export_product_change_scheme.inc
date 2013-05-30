@@ -4,17 +4,23 @@ function _product_change_scheme_for_export($exportItemNids = NULL, $isExternalAP
     $retData = array();
     $retDataTmp = array();
     $productNids = array();
-
+    $productSchemeIds = array();
+    
+    /*
     if (count($exportItemNids) == 1) {
         $exportItemNids = array($exportItemNids);
     }
-
-	$viewResult = views_get_view_result('list_product_change', 'panel_pane_3', join(',', $exportItemNids));
+    */
+    
+    $viewResult = views_get_view_result('list_product_change', 'panel_pane_3', join(',', $exportItemNids));
+	
+	dsm($viewResult, 'viewResult');
 	
 	foreach ($viewResult as $record) {
 		$productChange = array();
 		
 		$productChange['product_change_scheme_id'] = $record->field_field_product_change_id[0]['raw']['value'];
+		
 		$productChange['product_change_scheme_name'] = $record->node_title;
 		$productChange['service_domain'] = _get_common_code($record->field_field_service_domain[0]['raw']['taxonomy_term']);
 		$productChange['billing_type'] = _get_common_code($record->field_field_billing_type[0]['raw']['taxonomy_term']);
@@ -78,11 +84,13 @@ function _product_change_scheme_for_export($exportItemNids = NULL, $isExternalAP
 		$productChange['transferable_counters'] = $selctedCounters;
 		
 	    $retDataTmp[] = $productChange;
+	    
+	    $productSchemeIds[] = $productChange['product_change_scheme_id'];
 	}
-    
+	
     if(!$isExternalAPI) {
 	    if (!empty($exportItemNids)) {
-	        $retData['ifvalues']['resources'] = array_values($exportItemNids);
+	        $retData['ifvalues']['resources'] = $productSchemeIds;
 	    } else {
 	        $retData['ifvalues']['resources'] = '';
 	    }

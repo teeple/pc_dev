@@ -4,10 +4,13 @@ function _product_group_for_export($exportItemNids = NULL, $isExternalAPI = FALS
     $retData = array();
     $retDataTmp = array();
     $productNids = array();
+    $productGroupIds = array();
 
+	/*
     if (count($exportItemNids) == 1) {
         $exportItemNids = array($exportItemNids);
     }
+    */
     
     $viewResult = views_get_view_result('list_product_group', 'panel_pane_4', join(',', $exportItemNids));
     
@@ -23,13 +26,14 @@ function _product_group_for_export($exportItemNids = NULL, $isExternalAPI = FALS
 		}
 		
 		$productGroup['selected_products'] = $productGroupMain;
+		$retDataTmp[] = $productGroup;
 		
-        $retDataTmp[] = $productGroup;
+		$productGroupIds[] = $productGroup['product_group_id'];
     }
     
     if(!$isExternalAPI) {
 	    if (!empty($exportItemNids)) {
-	        $retData['ifvalues']['resources'] = array_values($exportItemNids);
+	        $retData['ifvalues']['resources'] = $productGroupIds;
 	    } else {
 	        $retData['ifvalues']['resources'] = '';
 	    }

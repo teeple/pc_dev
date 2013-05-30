@@ -153,6 +153,7 @@ function _add_ajax_submit_callback($form_id, &$form) {
         case 'conditionwhatratinggroup_node_form' :
         case 'conditionwhatcounterfortracking_node_form' :
         case 'conditionwhensubscriptionday_node_form' :
+        case 'conditionwhentodaysubscriptionda_node_form' :
         case 'conditionwhatincomingcall_node_form' :
         case 'conditionwhereserviceid_node_form' :
         // case 'conditionwhatcardtype_node_form':
@@ -492,6 +493,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             break;
         case 'conditionwhenactivationday_node_form' :
         case 'conditionwhensubscriptionday_node_form' :
+        case 'conditionwhentodaysubscriptionda_node_form' :
         case 'conditionwhenactivedays_node_form' :
         case 'conditionwhencustomerbirthday_node_form' :
         case 'conditionwhencompanybirthday_node_form' :
