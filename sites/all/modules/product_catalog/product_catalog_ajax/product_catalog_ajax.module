@@ -848,6 +848,10 @@ function product_catalog_ajax_add_modal_content($js = NULL, $contentType, $refNo
 			$refNode = node_load($refNodeNid);
 			$form_state['product_nid'] = $refNode->field_ref_product['und'][0]['nid'];
 			break;
+		case 'actionsetonthreshold':
+			$node->title = 'action_'.$refNodeNid;
+			$node->field_ref_treenodecounter['und'][0]['nid'] = $refNodeNid;
+			break;
 		case 'holidaylist_repeatable':
 		case 'holidaylist_specific':
 			$form_state['holidaylist_nid']= $refNodeNid;
@@ -918,6 +922,7 @@ function product_catalog_ajax_add_modal_content($js = NULL, $contentType, $refNo
 			case 'actionsetcounter':
 			case 'actionsetcounteronbonus':
 			case 'actionsetbonusonrecurringcharge':
+			case 'actionsetonthreshold':
 				$defaultTabIndex = $refTreeTid;
 				$refTreeTid = NULL;
 				$output[] = _add_command_after_dismiss_modal($refNodeNid,$refTreeTid,$defaultTabIndex);
@@ -2096,6 +2101,7 @@ function product_catalog_modal_form_edit_modal_content($js = NULL, $contentType,
 			case 'actionsetcounter':
 			case 'actionsetcounteronbonus':
 			case 'actionsetbonusonrecurringcharge':
+			case 'actionsetonthreshold':
 				$defaultTabIndex = $refTreeTid;
 				$refTreeTid = NULL;
 				$output[] = _add_command_after_dismiss_modal($refNodeNid,$refTreeTid,$defaultTabIndex);
@@ -2118,7 +2124,7 @@ function product_catalog_ajax_delete_from_view($nodeNid, $refNodeNid, $additiona
 		
 	$node = node_load($nodeNid);
 	$output = array();
-
+	
 	switch($node->type){
 		case 'rate':
 		case 'numberspecialfactors';
@@ -2144,7 +2150,8 @@ function product_catalog_ajax_delete_from_view($nodeNid, $refNodeNid, $additiona
 		case 'actionsetcounteronbonus':
 		case 'actionsetbonusonrecurringcharge':
         case 'actionsetnotification':
-            //additional param means default tab index
+        case 'actionsetonthreshold' :
+        	//additional param means default tab index
 			$output[] = _add_command_after_dismiss_modal($refNodeNid,NULL,$additionalParam);
 			break;
 	}
