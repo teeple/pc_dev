@@ -252,6 +252,31 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
     }
     
     switch($form_id) {
+      case 'mapbasicratedomestic_node_form':
+        _unset_menu_items($form, $form_id);
+        
+        $tariffplan_nid = $form_state['build_info']['args'][1];
+        $tariffplan_node = node_load($tariffplan_nid);
+        
+        $rating_group = _get_domestic_ratinggroup_in_tariff_plan($tariffplan_node);
+        unset($form['#validate']);
+        
+        $timetable_node = node_load($tariffplan_node->field_ref_timetable_domestic['und'][0]['nid']);
+        $timetable_factor = _get_timetablefactor($timetable_node);
+        
+        $form['field_map_rating_group']['und']['#options'] = $rating_group;
+        $form['field_ref_timetablefactors']['und']['#options'] = $timetable_factor;
+        
+        $ref_tree_tid = $form_state['build_info']['args'][2];
+        $viewResult = views_get_view_result('list_rates', 'panel_pane_2', $tariffplan_nid,$ref_tree_tid);
+        $options = array();
+        foreach($viewResult as $item){
+          $options[$item->nid] = $item->node_title;
+        }
+        $form['field_ref_rate']['und']['#options'] = $options;
+        
+        $form['actions']['submit']['#submit'][] = '_create_mapped_basicrate_node_domestic';
+        break;
     		case 'productgroup_node_form':
     			_unset_menu_items($form, $form_id);
     			if(isset($form['nid']['#value'])) {
