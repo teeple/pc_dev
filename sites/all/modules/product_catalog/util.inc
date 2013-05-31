@@ -969,5 +969,21 @@ function set_permissions_all_checked(){
 		$user = user_role_load_by_name($role);
 		user_role_grant_permissions($user->rid, array_keys(module_invoke_all('permission')));
 	}
+}
+
+function _tmp_create_prdattributedepositamount($productNid) {
+	global $user;
 	
+	$productNode = node_load($productNid);
+	$vocaName = _get_vocabulary_name('simpleproductoffering', $productNode);
+	$term = current(taxonomy_get_term_by_name('Deposit Amount', $vocaName));
+		
+	$node = new StdClass();
+	$node->uid = $user->uid;
+	$node->language = 'und';
+	$node->type = 'prdattributedeposit';
+	$node->field_ref_tree_tid['und'][0]['value'] = $term->tid;
+	$node->field_ref_product['und'][0]['nid'] = $productNid;
+	
+	node_save($node);
 }
