@@ -145,6 +145,7 @@ function _add_ajax_submit_callback($form_id, &$form) {
         case 'conditionwhatnonusagetypefactors_node_form' :
         case 'prdattributefeaturecode_node_form' :
         case 'prdattributebenefit_node_form' :
+        case 'prdattributedeposit_node_form' :
         case 'loyaltypoint_node_form' :
         case 'actionbonustransfer_node_form' :
         case 'conditionwhatcalltype_node_form' :
@@ -329,7 +330,6 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
         $ref_tree_tid = $form_state['build_info']['args'][2];
         $viewResult = views_get_view_result('list_rates', 'panel_pane_2', $tariffplan_nid,$ref_tree_tid);
         $options = array();
-        $options['_none'] = 'None';
         foreach($viewResult as $item){
           $options[$item->nid] = $item->node_title;
         }
@@ -778,6 +778,13 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 
             break;
 
+        case 'prdattributedeposit_node_form' :
+        	$form['field_ref_product']['#type'] = 'hidden';
+        	$form['field_ref_tree_tid']['#type'] = 'hidden';        	
+        	
+            _unset_menu_items($form, $form_id);
+            break;
+            
         case 'locationfactor_node_form' :
         case 'homezonefactor_node_form' :
             _unset_menu_items($form, $form_id);
@@ -925,12 +932,12 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             	
             } else {
 	            $disabledFields = array(// 'field_scale', 
-	            												'field_counter_type',
-	            												'field_service_domain',
-	            												'field_billing_type_counter',
-	            												'field_counter_unit_type',
-	            												'field_counter_group'
-	            									);
+									'field_counter_type',
+									'field_service_domain',
+									'field_billing_type_counter',
+									'field_counter_unit_type',
+									'field_counter_group'
+    									);
             	foreach ($disabledFields as $field) {
             		$command = '$form[\'' . $field ."']['und']['#disabled'] = TRUE;";
             		eval($command);
