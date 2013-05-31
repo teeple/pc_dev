@@ -2,10 +2,6 @@
 
 function basicrate_table_in_tariff_plan($type,$tariffplanNid,$refTreeTid){
   $tariffplanNode = node_load($tariffplanNid);
-  $ratingGroups = array();
-  $timetable_factor = array();
-  $basicrateNodes = array();
-  $rowItem = array();
   
   switch($type){
     case 'basicrate_domestic':
@@ -13,8 +9,7 @@ function basicrate_table_in_tariff_plan($type,$tariffplanNid,$refTreeTid){
       $ratingGroups = _get_domestic_ratinggroup_in_tariff_plan($tariffplanNode);
       
       //2. search timetablefactors
-      $timetable_node = node_load($tariffplanNode->field_ref_timetable_domestic['und'][0]['nid']);
-      $timetable_factor = _get_timetablefactor($timetable_node);
+      $timetable_factor = _get_timetablefactor($tariffplanNode->field_ref_timetable_domestic['und'][0]['nid']);
       
       //3. make row Item for map
       foreach($ratingGroups as $ratingGroup){
@@ -42,7 +37,7 @@ function basicrate_table_in_tariff_plan($type,$tariffplanNid,$refTreeTid){
       $output = theme('table',array('header' => $headers,'rows' => $rows));
       
       //6. mapping link
-      $mappingLink = _create_modal_mapping_link('mapbasicratedomestic',array($tariffplanNid,$refTreeTid));
+      $mappingLink = _create_modal_mapping_link('mapbasicratedomestic','Mapping Rates',array($tariffplanNid,$refTreeTid));
       $output .= $mappingLink;
       break;
     case 'basicrate_roaming':
@@ -71,8 +66,63 @@ function basicrate_table_in_tariff_plan($type,$tariffplanNid,$refTreeTid){
       $output = theme('table',array('header' => $headers,'rows' => $rows));
       
       //5. mapping link
-      $mappingLink = _create_modal_mapping_link('mapbasicrateroaming',array($tariffplanNid,$refTreeTid));
+      $mappingLink = _create_modal_mapping_link('mapbasicrateroaming','Mapping Rates',array($tariffplanNid,$refTreeTid));
       $output .= $mappingLink;
+      break;
+    case 'basicrate_idd':
+      //1. prepare table
+      $headers = array('Carrier','Rating Group','Timetable Factor','Rate');
+      $output = NULL;
+      
+      //2. search tariffplan_idd_carrier_node
+      $numberingplan_nid = $tariffplanNode->field_ref_numberingplan_idd['und'][0]['nid'];
+      $tariffplan_idd_carriers = _get_tariffplan_idd_carrier_node($tariffplanNid);
+      
+      foreach($tariffplan_idd_carriers as $tariffplan_idd_carrier_key => $tariffplan_idd_carrier_value){
+        $carrier_nid = $tariffplan_idd_carrier_value['carrier']['nid'];
+        $carrier_name = $tariffplan_idd_carrier_value['carrier']['name'];
+        $timetable_nid = $tariffplan_idd_carrier_value['timetable'];
+        
+        //3. search rating group for the carrier
+        $rating_groups = _get_idd_ratinggroup_iin_tariffplan($numberingplan_nid,$carrier_nid);
+        
+        //4. search timetablefactors
+        $timetable_factor = _get_timetablefactor($timetable_nid);
+        
+        //5. make row Item for map
+        $rowItem = array();
+        foreach($rating_groups as $rating_group){
+          foreach($timetable_factor as $factor){
+            $rowItem[$rating_group][$factor] = NULL;
+          }
+        }
+        
+        //6. search mapped basicrate nodes
+        $viewResult = views_get_view_result('list_basicrate', 'panel_pane_3', $tariffplanNid,$tariffplan_idd_carrier_key);
+        foreach($viewResult as $item){
+          $rowItem[$item->field_data_field_rating_group_field_rating_group_value][$item->node_field_data_field_ref_timetablefactors_title]
+            = $item->node_field_data_field_ref_rate_title;
+        }
+        
+        //7. draw table
+        $rows = array();
+        foreach($rowItem as $ratingKey => $ratingValue){
+          foreach($ratingValue as $factorKey => $factorValue){
+            if($factorValue == NULL) $factorValue = '<font color="red">Not Defined</font>';  
+            $rows[] = array($carrier_name,$ratingKey,$factorKey,$factorValue);
+          }
+        }
+        if(!empty($rows)){
+          $output .= theme('table',array('header' => $headers,'rows' => $rows));
+          //8. mapping link
+          $mappingLink = _create_modal_mapping_link('mapbasicrateidd','Mapping Rates for '.$carrier_name,array($tariffplanNid,$refTreeTid,$tariffplan_idd_carrier_key));
+          $output .= $mappingLink;
+        }else{
+          $output .= '<div><font color="red"> Timetable is not selected for '.$carrier_name .'</font></div>';
+        }
+        
+        $output .= '</br>';
+      }
       break;
   }
   

@@ -1,5 +1,26 @@
 <?php 
 
+function _get_idd_ratinggroup_iin_tariffplan($numberingplan_nid,$carrier_nid){
+  $query = db_select('field_data_field_rating_group', 'rg');
+  $query->condition('rg.bundle', 'idd_ratinggroup','=');
+  $query->join('field_data_field_ref_numberingplan_idd','idd','rg.entity_id = idd.entity_id');
+  $query->condition('idd.field_ref_numberingplan_idd_nid',$numberingplan_nid,'=');
+  $query->join('field_data_field_ref_carrier_mobile','carrier','rg.entity_id = carrier.entity_id');
+  $query->condition('carrier.field_ref_carrier_mobile_nid',$carrier_nid,'=');
+  $query->fields('rg',array('field_rating_group_value'));
+  $query->distinct();
+  $query->orderBy('rg.field_rating_group_value', 'ASC');
+ 
+  $result = $query->execute();
+  $ratingGroups = array();
+  while($record = $result->fetchAssoc()) { 
+    $rating_group = current($record);
+    $ratingGroups[$rating_group] = $rating_group;
+  } 
+  
+  return $ratingGroups;
+}
+
 function _get_roaming_ratinggroup_in_tariffplan($tariffplanNode){
   $targetCreatedContentType = 'basicrate_roaming';
   $targetQueryArgNid = array('0' => $tariffplanNode->field_ref_roaming_plan['und'][0]['nid']);
@@ -69,10 +90,10 @@ function _get_domestic_ratinggroup_in_tariff_plan($tariffplanNode){
   return $ratingGroups;
 }
 
-function _get_timetablefactor($timetableNode){
+function _get_timetablefactor($timetable_nid){
   $timetable_factor = array();
   
-  $viewResult = views_get_view_result('list_timetablefactors', 'panel_pane_2', $timetableNode->nid);
+  $viewResult = views_get_view_result('list_timetablefactors', 'panel_pane_2', $timetable_nid);
   foreach($viewResult as $item){
     $timetable_factor[$item->node_field_data_field_ref_timetablefactors_nid] = $item->node_field_data_field_ref_timetablefactors_title;
   }
@@ -128,6 +149,73 @@ function _create_mapped_basicrate_node_roaming($form,$form_state){
         $node->field_ref_rate['und'][0]['nid'] = $rate_nid;
         node_save($node);  
       }  
+    }
+  }
+
+  if(!empty($delete_nids)){
+    node_delete_multiple($delete_nids);
+  }
+}
+
+function _create_mapped_basicrate_node_idd($form,$form_state){
+  global $user;
+  $target_content_type = 'basicrate_idd';
+  $tariffplan_idd_carrier_nid = $form_state['values']['field_ref_tariffplan_idd_carrier']['und'][0]['nid'];
+  
+  //get requried info from form  
+  $tariffplan_nid = $form_state['build_info']['args'][1];
+  $ref_tree_tid = $form_state['build_info']['args'][2];
+  $rate_nid = $form_state['values']['field_ref_rate']['und'][0]['nid'];
+    
+  $rating_groups = array();
+  $timetable_factors = array();
+  
+  foreach($form_state['values']['field_map_rating_group']['und'] as $item){
+    $rating_groups[] = $item['value'];
+  }
+  
+  foreach($form_state['values']['field_ref_timetablefactors']['und'] as $item){
+    $timetable_factors[] = $item['nid'];
+  }
+  
+  //get basicrate node already exist
+  $already_exist_basic_rate_node = array();
+  
+  $view_result = views_get_view_result('list_basicrate', 'panel_pane_3', $tariffplan_nid);
+  foreach($view_result as $item){
+    $item_rating_group = $item->field_data_field_rating_group_field_rating_group_value;
+    $item_timetable_factor =$item->_field_data['nid']['entity']->field_ref_timetablefactors['und'][0]['nid'];
+    $already_exist_basic_rate_node[$item_rating_group][$item_timetable_factor] = $item->nid;
+  }
+ 
+  $delete_nids = array();
+  
+  //create new node or update
+  foreach($rating_groups as $rating_group){
+    foreach($timetable_factors as $timetable_factor){
+      if($rate_nid == NULL){
+        if(isset($already_exist_basic_rate_node[$rating_group][$timetable_factor])){
+          $delete_nids[] = $already_exist_basic_rate_node[$rating_group][$timetable_factor];
+        }
+      }else{
+        if(isset($already_exist_basic_rate_node[$rating_group][$timetable_factor])){//update
+          $node = node_load($already_exist_basic_rate_node[$rating_group][$timetable_factor]);
+          $node->field_ref_rate['und'][0]['nid'] = $rate_nid; 
+          node_save($node);  
+        }else{//create
+          $node = new StdClass();
+          $node->uid = $user->uid;
+          $node->language = 'und';
+          $node->type = $target_content_type;
+          $node->field_ref_tariffplan['und'][0]['nid'] = $tariffplan_nid;
+          $node->field_ref_timetablefactors['und'][0]['nid'] = $timetable_factor;
+          $node->field_rating_group['und'][0]['value'] = $rating_group;
+          $node->field_rating_group['und'][0]['safe_value'] = $rating_group;
+          $node->field_ref_rate['und'][0]['nid'] = $rate_nid;
+          $node->field_ref_tariffplan_idd_carrier['und'][0]['nid'] = $tariffplan_idd_carrier_nid;
+          node_save($node);  
+        }  
+      }      
     }
   }
 
@@ -268,19 +356,47 @@ function product_catalog_ajax_custom_submit() {
 	exit;
 }
 
+function _get_carriers_in_numbering_plan($numberingplan_nid){
+  $carriersView = views_get_view('list_carriers_in_numberingplan_idd');
+  $carriersView->set_display('panel_pane_1');
+  $carriersView->set_arguments(array('0' => $numberingplan_nid));
+  $carriersView->execute();
+  $carriers = array();
+  foreach($carriersView->result as $record){
+    $carriers[$record->node_field_data_field_ref_carrier_mobile_nid] = $record->node_field_data_field_ref_carrier_mobile_title;
+  }
+  
+  return $carriers;
+}
+
+function _get_tariffplan_idd_carrier_node($tariffplan_nid){
+  $tariffplanIddCarrierView = views_get_view('list_tariffplan_idd_carrier');
+  $tariffplanIddCarrierView->set_display('panel_pane_1');
+  $tariffplanIddCarrierView->set_arguments(array('0' => $tariffplan_nid));
+  $tariffplanIddCarrierView->execute();
+  
+  $nodes = array();
+  foreach($tariffplanIddCarrierView->result as $item){
+    $nodes[$item->nid] = array('carrier' => array('nid' => $item->field_field_ref_carrier_mobile[0]['raw']['nid'],
+                                                  'name' => $item->field_field_ref_carrier_mobile[0]['rendered']['#markup']
+                                            ),
+                               'timetable' => array('nid' => $item->node_field_data_field_ref_timetable_idd_nid
+                                              )
+                         );
+  }
+  
+  return $nodes;
+}
+
 function _create_tariffplan_idd_carrier($tariffplanNode,$newNumberingplanNid){
     global $user;
     $targetCreatedContentType = 'basicrate_idd';
     
     //delete old tariffplan_idd_carrier
-    $tariffplanIddCarrierView = views_get_view('list_tariffplan_idd_carrier');
-    $tariffplanIddCarrierView->set_display('panel_pane_1');
-    $tariffplanIddCarrierView->set_arguments(array('0' => $tariffplanNode->nid));
-    $tariffplanIddCarrierView->execute();
+    $tariffplan_idd_carriers = _get_tariffplan_idd_carrier_node($tariffplanNode->nid);
     
-    $delNids = array();
-    foreach($tariffplanIddCarrierView->result as $item){
-        $delNids[] = $item->nid;
+    foreach($tariffplan_idd_carriers as $key => $item){
+      $delNids[] = $key;
     }
     node_delete_multiple($delNids);
     
@@ -288,24 +404,17 @@ function _create_tariffplan_idd_carrier($tariffplanNode,$newNumberingplanNid){
     _delete_all_basicrate_in_tariffplan_by_type($targetCreatedContentType,$tariffplanNode->nid);
     
     //find new carriers in numberingplan
-    $carriersView = views_get_view('list_carriers_in_numberingplan_idd');
-    $carriersView->set_display('panel_pane_1');
-    $carriersView->set_arguments(array('0' => $newNumberingplanNid));
-    $carriersView->execute();
-    $carriers = array();
-    foreach($carriersView->result as $record){
-        $carriers[] = $record->node_field_data_field_ref_carrier_mobile_nid;
-    }
+    $carriers = _get_carriers_in_numbering_plan($newNumberingplanNid);
     
     //create new tariffplan_idd_carrier
     $tariffplan_idd_carriers = array();
-    foreach($carriers as $carrier){
+    foreach($carriers as $key => $value){
         $tariffplanIddCarrierNode = new StdClass();
         $tariffplanIddCarrierNode->uid = $user->uid;
         $tariffplanIddCarrierNode->language = 'und';
         $tariffplanIddCarrierNode->type = 'tariffplan_idd_carrier';
         $tariffplanIddCarrierNode->field_ref_tariffplan['und'][0]['nid'] = $tariffplanNode->nid;
-        $tariffplanIddCarrierNode->field_ref_carrier_mobile['und'][0]['nid'] = $carrier;
+        $tariffplanIddCarrierNode->field_ref_carrier_mobile['und'][0]['nid'] = $key;
         node_save($tariffplanIddCarrierNode);   
         $tariffplan_idd_carriers[] = array('nid' => $tariffplanIddCarrierNode->nid);
     }

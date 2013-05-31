@@ -1,5 +1,5 @@
 <?php 
-function _create_modal_mapping_link($contentType,$params){
+function _create_modal_mapping_link($contentType,$title,$params){
   ctools_include('ajax');
   ctools_include('modal');
   ctools_modal_add_js();
@@ -11,7 +11,7 @@ function _create_modal_mapping_link($contentType,$params){
   
   $add_class_2 = 'ctools-use-modal ctools-modal-add-item-modal-style';
   
-  $link_string = '<div><a href="'.$add_url.'" class='.$add_class_2.'>Mapping Rates</a></div>';
+  $link_string = '<div><a href="'.$add_url.'" class='.$add_class_2.'>'.$title.'</a></div>';
   
   return $link_string;
 }
