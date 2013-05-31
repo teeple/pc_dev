@@ -36,7 +36,7 @@ function export_product_change_scheme($export_item_nids=NULL){
 }
 
 function export_product($export_item_nids=NULL,$target){
-    $data = _product_for_export($export_item_nids,$target);
+    $data = _product_for_export($export_item_nids,FALSE,$target);
 	return json_encode($data);
 }
 

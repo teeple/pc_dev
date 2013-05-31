@@ -80,7 +80,7 @@ function _product_for_export($exportItemNids = NULL, $isExternalAPI = FALSE, $ta
 	    } else {
 	        $retData['ifvalues']['resources'] = '';
 	    }
-	  }
+	 }
 	  
     $retData['products'] = $retDataTmp;
 
@@ -135,7 +135,8 @@ function _get_deposit_scheme($product,$target=NULL) {
 			
 			// treenodecounter 중 deposit과 연관있는 것만 찾아온다.
 			$treeNodeCounterResult = views_get_view_result('list_treenodecounter', 'panel_pane_6', $product->nid);
-			if( count($treeNodeCounterResult) > 0 ) { 
+			
+			if( count($treeNodeCounterResult) > 0 ) {
 				$treeNodeCounter = current($treeNodeCounterResult);
 				
 				$thresholdLimit = $treeNodeCounter->field_field_threshold_on_counter[0]['raw']['value'];
@@ -147,11 +148,13 @@ function _get_deposit_scheme($product,$target=NULL) {
 				$depositScheme = _create_deposit_scheme($treeNodeCounter, $depositAmount, $thresholdLimit, $thresholdScheme);
 				
 				if(isset($target)) {
+					$redirectFlag = FALSE;
+					
 					// 해당 threshold scheme을 deploy한다.
-					export_deploy('THRESHOLD_SCHEME', array($thresholdScheme->nid), $target);
+					export_deploy('THRESHOLD_SCHEME', array($thresholdScheme->nid), $target, $redirectFlag);
 					
 					// 해당 deposit scheme을 deploy한다.
-					export_deploy('DEPOSIT_SCHEME', array($depositScheme->nid), $target);
+					export_deploy('DEPOSIT_SCHEME', array($depositScheme->nid), $target, $redirectFlag);
 				}
 				$scheme['deposit_scheme_id'] = $depositScheme->nid;
 			}

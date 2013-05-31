@@ -110,7 +110,7 @@ function _get_export_base_url($target){
     return $baseURL;
 }
 
-function export_deploy($export_type, $export_item_list = NULL, $target) {
+function export_deploy($export_type, $export_item_list = NULL, $target, $redirectFlag = TRUE) {
 	global $user;
 	$baseURL = _get_export_base_url($target);
    
@@ -212,8 +212,10 @@ function export_deploy($export_type, $export_item_list = NULL, $target) {
     	node_save($historyNode);
     	
     	// $redirect_url = 'lifecycles/history/'.$exportTypeTerm->tid;
-    	$redirect_url = 'lifecycles/history/'.$export_type;
-    	drupal_goto($redirect_url);
+    	if($redirectFlag) {
+    		$redirect_url = 'lifecycles/history/'.$export_type;
+	    	drupal_goto($redirect_url);
+	    }
    }
 }
 
