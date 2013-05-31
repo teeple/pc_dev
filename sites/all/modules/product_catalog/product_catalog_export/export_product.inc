@@ -1,6 +1,6 @@
 <?php
 
-function _product_for_export($exportItemNids = NULL, $isExternalAPI = FALSE) {
+function _product_for_export($exportItemNids = NULL, $isExternalAPI = FALSE, $target=NULL) {
     $retData = array();
     $retDataTmp = array();
     $productNids = array();
@@ -44,7 +44,7 @@ function _product_for_export($exportItemNids = NULL, $isExternalAPI = FALSE) {
         $nonUsage = array();
 
         // $nonUsage['threshold_scheme'] = _get_thresdhold_scheme($node);
-        $nonUsage['deposit_scheme'] = _get_deposit_scheme($node);
+        $nonUsage['deposit_scheme'] = _get_deposit_scheme($node, $target);
         $nonUsage['recurring_scheme'] = _get_recurring_scheme($node -> nid);
         
         $recurringTypes = array(1 => 'Daily', 3 => '1/3 Monthly', 4 => 'Monthly');
@@ -69,7 +69,6 @@ function _product_for_export($exportItemNids = NULL, $isExternalAPI = FALSE) {
         if(!$isExternalAPI) {
            $product['rating_rules'] = rating_rules_export_by_content_type('rating_rule_export_product', $node -> nid);
         }
-        
         $productNids[] = $node -> field_product_id['und'][0]['value'];
 
         $retDataTmp[] = $product;
@@ -116,20 +115,157 @@ function _get_product_relationship($nid){
     return $relationship;
 }
 
-function _get_deposit_scheme($product) {
+function _get_deposit_scheme($product,$target=NULL) {
+	$depositScheme = array();
 
-    $scheme = array();
-    $view = views_get_view('list_depositscheme');
-    $view -> set_display('panel_pane_4');
-    $view -> set_arguments(array('0' => $product -> nid));
-    $view -> execute();
-    if (!empty($view -> result)) {
-        $scheme['deposit_scheme_id'] = $view -> result[0] -> node_field_data_field_ref_depositscheme_nid;
-    } else {
-        $scheme = NULL;
-    }
-    return $scheme;
+	$productTypeTerm = taxonomy_term_load($product->field_product_type['und'][0]['tid']);
+	$billingTypeTerm = taxonomy_term_load($product->field_billing_type['und'][0]['tid']);
+	
+	$scheme = NULL;
+	
+	// Additional / Postpaid type product
+	if( ($productTypeTerm->name == 'Additional') && ($billingTypeTerm->name == 'Postpaid') ) {
+		
+		// get deposit amount
+		$viewResult = views_get_view_result('list_prdattributedeposit', 'panel_pane_1', $product->nid);
+		if( count($viewResult) >  0 ) { 
+			
+			$prdAttributeDeposit = current($viewResult);
+			$depositAmount = $prdAttributeDeposit->field_field_deposit_amount[0]['raw']['value'];
+			
+			// treenodecounter 중 deposit과 연관있는 것만 찾아온다.
+			$treeNodeCounterResult = views_get_view_result('list_treenodecounter', 'panel_pane_6', $product->nid);
+			if( count($treeNodeCounterResult) > 0 ) { 
+				$treeNodeCounter = current($treeNodeCounterResult);
+				
+				$thresholdLimit = $treeNodeCounter->field_field_threshold_on_counter[0]['raw']['value'];
+				
+				// create threshold scheme
+				$thresholdScheme = _create_threshold_scheme($treeNodeCounter);
+				
+				// create deposit scheme
+				$depositScheme = _create_deposit_scheme($treeNodeCounter, $depositAmount, $thresholdLimit, $thresholdScheme);
+				
+				if(isset($target)) {
+					// 해당 threshold scheme을 deploy한다.
+					export_deploy('THRESHOLD_SCHEME', array($thresholdScheme->nid), $target);
+					
+					// 해당 deposit scheme을 deploy한다.
+					export_deploy('DEPOSIT_SCHEME', array($depositScheme->nid), $target);
+				}
+				$scheme['deposit_scheme_id'] = $depositScheme->nid;
+			}
+		}
+		
+	} else {
+	
+	    $view = views_get_view('list_depositscheme');
+	    $view -> set_display('panel_pane_4');
+	    $view -> set_arguments(array('0' => $product -> nid));
+	    $view -> execute();
+	    
+	    if (!empty($view -> result)) {
+	        $scheme['deposit_scheme_id'] = $view -> result[0] -> node_field_data_field_ref_depositscheme_nid;
+	        
+	    } else {
+	        $scheme = NULL;
+	        
+	    }
+	}
+	
+	return $scheme;
+}
 
+function _create_threshold_scheme($treeNodeCounter) {
+	global $user;
+	
+	// thresholdscheme save
+	$scheme = new stdClass();
+	$scheme->type = 'thresholdscheme';
+	$scheme->title = 'thresholdscheme_tmp';
+	$scheme->language = 'und';
+	$scheme->status = 1;
+	$scheme->sticky = 1;
+	$scheme->uid = $user->uid;
+	node_save($scheme);
+	
+	// threshold scheme factors
+	$factor = new stdClass();
+	$factor->type = 'thresholdschemefactors';
+	node_object_prepare($factor);
+	$factor->title = 'ThresholdSchemeFactors';
+	$factor->language = LANGUAGE_NONE;
+	$factor->status = 1;
+	$factor->sticky = 1;
+	$factor->uid = $user->uid;
+	$factor->field_limittothreshold['und'][0]['value'] = 100;
+	$factor->field_ref_thresholdscheme['und'][0]['nid'] = $scheme->nid;
+	node_save($factor);
+	
+	$tmpViewResult = views_get_view_result('list_actionsetonthreshold', 'panel_pane_1', $treeNodeCounter->nid);
+	
+	if( count($tmpViewResult) > 0 ) {
+		$actionSetThreshold = current($tmpViewResult);
+		
+		// Create and save field collection for node
+		$field_collection_item = entity_create('field_collection_item', array('field_name' => 'field_threshold_action_set'));
+		$field_collection_item->setHostEntity('node', $factor);
+		$field_collection_item->field_action_type[LANGUAGE_NONE][]['tid'] = $actionSetThreshold->field_field_threshold_action_wo_block[0]['raw']['tid'];
+		$field_collection_item->field_message_orig[LANGUAGE_NONE][]['value'] = $actionSetThreshold->field_field_message_orig[0]['raw']['value'];
+		$field_collection_item->field_message_dest[LANGUAGE_NONE][]['tid'] = $actionSetThreshold->field_field_message_dest[0]['raw']['tid'];
+		$field_collection_item->field_ref_messages[LANGUAGE_NONE][]['nid'] = $actionSetThreshold->field_field_ref_messages[0]['raw']['nid'];
+		$field_collection_item->save();
+	}
+	
+	return $scheme;
+}
+
+function _create_deposit_scheme($treeNodeCounter, $depositAmount, $thresholdLimit, $thresholdScheme) {
+	global $user;
+	
+	$product = node_load($treeNodeCounter->field_field_ref_product[0]['raw']['nid']);
+	
+	// thresholdscheme save
+	$scheme = new stdClass();
+	$scheme->type = 'depositscheme';
+	$scheme->title = 'depositscheme_tmp';
+	$scheme->language = LANGUAGE_NONE;
+	$scheme->status = 1;
+	$scheme->sticky = 1;
+	$scheme->uid = $user->uid;
+	$scheme->field_service_domain['und'][0]['tid'] = $product->field_service_type_of_provider['und'][0]['tid'];
+	node_save($scheme);
+	
+	// thresholdschemefactors save
+	$factor = new stdClass();
+	$factor->type = 'depositschemefactors';
+	node_object_prepare($factor);
+	$factor->title = 'depositschemefactors_tmp';
+	$factor->language = LANGUAGE_NONE;
+	$factor->status = 1;
+	$factor->sticky = 1;
+	$factor->uid = $user->uid;
+	$factor->field_ref_depositscheme['und'][0]['nid'] = $scheme->nid;
+	$factor->field_ref_thres_counter_acc['und'][0]['nid'] = $treeNodeCounter->field_field_ref_counter[0]['raw']['nid'];
+	$factor->field_ref_thres_counter_limit['und'][0]['nid'] = $treeNodeCounter->field_field_ref_counter[0]['raw']['nid'];
+	$factor->field_is_default_factor['und'][0]['value'] = 0;
+	$factor->field_ref_thresholdscheme['und'][0]['nid'] = $thresholdScheme->nid;
+	$factor->field_thismonth_accu_counter = NULL;
+	$factor->field_ref_type_of_call_mul = NULL;
+	$factor->field_counter_unit_type['und'][0]['tid'] = 696; // Money type fixed
+	node_save($factor);
+	
+	// field_deposit_amount_collection
+	
+	// Create and save field collection for node
+	$field_collection_item = entity_create('field_collection_item', array('field_name' => 'field_deposit_amount_collection'));
+	$field_collection_item->setHostEntity('node', $factor);
+	$field_collection_item->field_deposit_amount[LANGUAGE_NONE][]['value'] = $depositAmount;
+	$field_collection_item->field_threshold_amount[LANGUAGE_NONE][]['value'] = $thresholdLimit;
+	$field_collection_item->field_threshold_amount_max[LANGUAGE_NONE][]['value'] = $thresholdLimit;
+	$field_collection_item->save();
+	
+	return $scheme;
 }
 
 function _get_counter_list($product) {
@@ -275,7 +411,6 @@ function _get_recurring_scheme($productNid) {
     }
 
     return $retArray;
-
 }
 
 /*
