@@ -48,6 +48,13 @@
 					      	},
 				},
 				
+				'attribute_deposit_amount': {
+					"valid_children" : "none",
+					  		"icon" : {
+					      		"image" : "/sites/default/files/icons/attribute_detail.png"
+					      	},
+				},
+				
 				'attribute_available_channel': {
 					"valid_children" : ["prdattributeavailablechannel"],
 					  		"icon" : {

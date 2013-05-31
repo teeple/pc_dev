@@ -1105,11 +1105,9 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             
             $billingType = taxonomy_term_load($form['field_billing_type']['und']['#default_value']);
             if ($billingType->name == 'Prepaid') {
-            	dsm($form, 'form');
             	unset($form['#groups']['group_contraints']);
             	unset($form['#fieldgroups']['group_contraints']);
             }
-            
 
             //if($form['field_product_type']['und']['#options'][$productTypeTid] == 'Main') {
             $unsetItems[] = 'field_product_sub_type';
@@ -1145,7 +1143,10 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 												'field_expire_date_type',
 												'field_expire_date',
 												'field_field_deferred_subscriptio',
-												'field_hlr_template_id'));
+												'field_hlr_template_id',
+												'field_loyalty_point_for_subscrip',
+												'field_next_join_confirm',
+												'field_resubscription_flag'));
                 
                 $options = _get_product_exclusive_list($form['nid']['#value']);
                 $form['field_exclusiveness']['und']['#options'] = $options['list'];
@@ -1880,6 +1881,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
                 'wrapper' => 'actionsetcounter_fields_wrapper'
             );
             break;
+            
         case 'roaming_ratinggroup_node_form' :
             $form['field_ref_roaming_plan']['#type'] = 'hidden';
             $form['field_ref_roaming_type']['und']['#options']['_none'] = 'SMS Outgoing';
@@ -2024,6 +2026,14 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             
             _unset_menu_items($form, $form_id);
             break;
+		
+		case 'actionsetonthreshold_node_form':
+			$form['title']['#type'] = 'hidden';
+			$form['field_ref_treenodecounter']['#type'] = 'hidden';
+			$form['field_weight']['#type'] = 'hidden';
+				
+			_unset_menu_items($form, $form_id);
+			break;
 
         case 'tariffplan_node_form' :
             unset($form['field_parent_node']);

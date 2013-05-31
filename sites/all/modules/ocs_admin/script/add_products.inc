@@ -1,5 +1,7 @@
 <?php
 
+require( 'script_common.inc');
+
 $header = explode( ',', "PrdType,Package Type,Category,Active Period,Grade Period,Price,Package(MB),Package Flag,Package Name,,Prepaid Speed,Postpaid Speed,SMS msg,update user,update date,add tariff,SMS buy,min usage,rollover option,chagne flag,threshod 1,threshold 2,threshold 3,treatment,deposit,threshold corp 1,threshold corp 2,threhold corp3,,,,,,");
 $header = array_flip( $header);
 
@@ -80,26 +82,18 @@ $nl = '
 ';
 
 // get voca terms
-$term_prdtype = ocs_get_terms_tid( 'PrdType');
-
-$term_billtype = ocs_get_terms_tid( 'BillType');
-
-$term_prd_subtype = ocs_get_terms_tid( 'PrdSubType');
-
-$term_cust_subtype = ocs_get_terms_tid( 'CustKdCd');
-
-$term_prd_expire_date = ocs_get_terms_tid( 'PrdExpireDate');
-
-$term_mobile_tid = ocs_get_terms_tid( 'tpl_default_tree_mobile');
+global $term;
+$term = ocs_get_all_terms();
 
 //print_r( $header);
+$idx = 0;
 foreach( $package_info as $package) {
 	$info = explode( ',', $package);
 
 	// product type
 	$type = $info[ $header['PrdType']];
-	if ( ! isset( $term_prdtype[$type])) {
-		print 'Invalid product type : ' . $type . $nl;
+	if ( ! isset( $term['PrdType'][$type])) {
+		println( 'Invalid product type : ' . $type);
 		continue;
 	}
 
@@ -110,25 +104,26 @@ foreach( $package_info as $package) {
 	$result = $query->entityCondition('entity_type', 'node')
 		->entityCondition('bundle', 'simpleproductoffering')
 		->propertyCondition('title', $title)
-		->fieldCondition('field_product_type', 'tid', $term_prdtype[$type])
+		->fieldCondition('field_product_type', 'tid', $term['PrdType'][$type])
 		->execute();
 
 	if ( empty( $result)) {
-		print 'Add NEW product : ' . $title . $nl;
+		println( 'Add NEW product : ' . $title);
 		$p = ocs_admin_get_new_node( 'simpleproductoffering');
 
 		// product type
-		$p->field_product_type['und'][0]['tid'] = $term_prdtype[$type];
+		$p->field_product_type['und'][0]['tid'] = $term['PrdType'][$type];
 
 		// product name and description
-		$p->field_description['und'][0]['value'] = $p->title = $title;
+		$p->title = $title;
 	}
 	else {
 		$nid = array_pop( array_keys( $result['node']));
 		$p = node_load( $nid);
-		print 'Existing product : ' . $title . $nl;
+		println( 'Existing product : ' . $title);
 	}
 
+	$p->field_description['und'][0]['value'] = 'FCE: ' . $info[ $header['Package Name']] ;
 
 	// product id
 	$p->field_product_id['und'][0]['value'] = 'packet_package_' . $info[ $header['Package Type']];
@@ -137,7 +132,7 @@ foreach( $package_info as $package) {
 	$p->field_short_code['und'][0]['value'] = 'pp_' . $info[ $header['Package Type']];
 
 	// bill type
-	$p->field_billing_type['und'][0]['tid'] = $term_billtype['Prepaid'];
+	$p->field_billing_type['und'][0]['tid'] = $term['BillType']['Prepaid'];
 
 	// market : default value (unitel)
 
@@ -146,40 +141,66 @@ foreach( $package_info as $package) {
 	// customer sub type : personal 
 
 	// expire date type
-	$p->field_expire_date_type['und'][0]['tid'] = $term_prd_expire_date['Month'];
+	$p->field_expire_date_type['und'][0]['tid'] = $term['PrdExpireDate']['Month'];
 
 	// expire date
 	$p->field_expire_date['und'][0]['value'] = '1';
 
 	// product sub type
-	$p->field_product_sub_type['und'][0]['tid'] = $term_prd_subtype['Normal'];
+	$p->field_product_sub_type['und'][0]['tid'] = $term['PrdSubType']['Normal'];
 
 	// customer sub type
-	$p->field_customer_group_type['und'][0]['tid'] = $term_cust_subtype['Personal'];
+	$p->field_customer_group_type['und'][0]['tid'] = $term['CustKdCd']['Personal'];
 
 	node_save( $p);
 
+	$counter = counter_info( 'packet_package');
+
+	// check counter list
+	check_counter_list( $p, $term['tpl_default_tree_mobile']['Counter'], $counter);
+
 	// check subscription fee
-	check_subscription_fee( $p, $term_mobile_tid['nonusage_subscription_charge'], $info[ $header['Price']]);
-	break;
+	check_subscription_fee( $p, $term['tpl_default_tree_mobile']['nonusage_subscription_charge'], $info[ $header['Price']]);
+
+	// check bonus
+	check_subscription_bonus( $p, $term['tpl_default_tree_mobile']['nonusage_subscription_bonus'], $info[ $header['Package(MB)']], $counter);
+
+	$idx ++;
+	println('>> ' . $idx . ' << ============');
+//	if ( $idx == 1) break;
 }
 
-function check_subscription_fee( $product, $tid, $price)
+function counter_info( $name)
 {
-	// find the price
+	// find the counter
 	$query = new EntityFieldQuery();
 	$result = $query->entityCondition('entity_type', 'node')
-		->entityCondition('bundle', 'actionpricechargeonetime')
-		->fieldCondition('field_ref_product', 'nid', $product->nid)
+		->entityCondition('bundle', 'counter')
+		->propertyCondition('title', $name)
+		->execute();
+
+	if ( empty( $result)) {
+		return NULL;
+	}
+	$nid = array_pop( array_keys( $result['node']));
+	return node_load( $nid);
+}
+
+function get_attribute( $type, $nid, $tid)
+{
+	// actionpriceallowanceonetime
+	$query = new EntityFieldQuery();
+	$result = $query->entityCondition('entity_type', 'node')
+		->entityCondition('bundle', $type)
+		->fieldCondition('field_ref_product', 'nid', $nid)
 		->fieldCondition('field_ref_tree_tid', 'value', $tid)
 		->execute();
 
 	if ( empty( $result)) {
-		print 'Add NEW price : ' . $price . $nl;
-		$p = ocs_admin_get_new_node( 'actionpricechargeonetime');
+		$p = ocs_admin_get_new_node( $type);
 
 		// set ref product 
-		$p->field_ref_product['und'][0]['nid'] = $product->nid;
+		$p->field_ref_product['und'][0]['nid'] = $nid;
 
 		// set tree tid
 		$p->field_ref_tree_tid['und'][0]['value'] = $tid;
@@ -187,12 +208,91 @@ function check_subscription_fee( $product, $tid, $price)
 	else {
 		$nid = array_pop( array_keys( $result['node']));
 		$p = node_load( $nid);
-		print 'Existing price : ' . $p->title . $nl;
 	}
 
-	$p->title = 'Charge ' . $price ;
+	return $p;
+}
 
-	$p->field_price_amount_float['und'][0]['value'] = $price;
+function print_result( $node, $str)
+{
+	if ( property_exists( $node, 'nid')) {
+		println( 'Existing ' . $str);
+	}
+	else {
+		println( 'New ' . $str);
+	}
+}
+	
+function check_subscription_bonus( $product, $tid, $bonus, $counter)
+{
+	global $term;
+
+	// actionpriceallowanceonetime
+	$p = get_attribute( 'actionpriceallowanceonetime', $product->nid, $tid);
+
+	$p->title = $bonus . ' MB';
+	$p->field_title_2nd['und'][0]['value'] = $p->title;
+
+	print_result( $p, 'Bonus : ' . $p->title);
+	node_save( $p);
+
+	// actionsetcounteronbonus
+	$query = new EntityFieldQuery();
+	$result = $query->entityCondition('entity_type', 'node')
+		->entityCondition('bundle', 'actionsetcounteronbonus')
+		->fieldCondition('field_ref_source_action', 'nid', $p->nid)
+		->fieldCondition('field_ref_counter', 'nid', $counter->nid)
+		->execute();
+
+	if ( empty( $result)) {
+		$c = ocs_admin_get_new_node( 'actionsetcounteronbonus');
+
+		$c->field_ref_source_action['und'][0]['nid'] = $p->nid;
+		$c->field_ref_counter['und'][0]['nid'] = $counter->nid;
+	}
+	else {
+		$nid = array_pop( array_keys( $result['node']));
+		$c = node_load( $nid);
+	}
+	
+	$c->field_amount['und'][0]['value'] = $bonus ;		// MB to bytes
+	$c->field_add_or_replace['und'][0]['tid'] = $term['counterset_addorreplace']['Replace'] ;	// replace
+	$c->field_startdate_option1['und'][0]['tid'] = $term['day_option']['start']['Now'];
+	$c->field_enddate_option1['und'][0]['tid'] = $term['day_option']['end']['+ N Date(D,W,M,Y)'];
+	$c->field_enddate_option3['und'][0]['value'] = 30;	// 30 days
+	$c->field_enddate_option4['und'][0]['tid'] = $term['day_option']['unit']['Day'];
+
+	node_save( $c);
+}
+
+function check_counter_list( $product, $tid, $counter)
+{
+	// find the counter
+	$p = get_attribute( 'prdcounterlist', $product->nid, $tid);
+	$p->title = 'PrdCounterList';
+
+	if ( empty( $p->field_counter_list)) {
+		$p->field_counter_list['und'][0]['nid'] = $counter->nid;
+	}
+	else if( array_search( $counter->nid, array_get_value( $p->field_counter_list)) === FALSE) {
+		$p->field_counter_list['und'][] = array( 'nid' => $counter->nid);
+		printf( 'Add counter %s to the Existing counter list : %s', $counter->title, $p->title);
+		println();
+	}
 
 	node_save( $p);
 }
+
+
+function check_subscription_fee( $product, $tid, $price)
+{
+	// find the price
+	$p = get_attribute( 'actionpricechargeonetime', $product->nid, $tid);
+	$p->title = 'Charge ' . $price ;
+	$p->field_price_amount_float['und'][0]['value'] = $price;
+	print_result( $p, 'Subscription Fee : ' . $p->title);
+
+	node_save( $p);
+}
+
+
