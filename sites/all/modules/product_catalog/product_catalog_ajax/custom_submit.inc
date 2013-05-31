@@ -30,26 +30,38 @@ function _create_mapped_basicrate_node_domestic($form,$form_state){
     $already_exist_basic_rate_node[$item_rating_group][$item_timetable_factor] = $item->nid;
   }
  
+  $delete_nids = array();
+  
   //create new node or update
   foreach($rating_groups as $rating_group){
     foreach($timetable_factors as $timetable_factor){
-      if(isset($already_exist_basic_rate_node[$rating_group][$timetable_factor])){//update
-        $node = node_load($already_exist_basic_rate_node[$rating_group][$timetable_factor]);
-        $node->field_ref_rate['und'][0]['nid'] = $rate_nid; 
-        node_save($node);  
-      }else{//create
-        $node = new StdClass();
-        $node->uid = $user->uid;
-        $node->language = 'und';
-        $node->type = $target_content_type;
-        $node->field_ref_tariffplan['und'][0]['nid'] = $tariffplan_nid;
-        $node->field_ref_timetablefactors['und'][0]['nid'] = $timetable_factor;
-        $node->field_rating_group['und'][0]['value'] = $rating_group;
-        $node->field_rating_group['und'][0]['safe_value'] = $rating_group;
-        $node->field_ref_rate['und'][0]['nid'] = $rate_nid;
-        node_save($node);  
-      }       
+      if($rate_nid == NULL){
+        if(isset($already_exist_basic_rate_node[$rating_group][$timetable_factor])){
+          $delete_nids[] = $already_exist_basic_rate_node[$rating_group][$timetable_factor];
+        }
+      }else{
+        if(isset($already_exist_basic_rate_node[$rating_group][$timetable_factor])){//update
+          $node = node_load($already_exist_basic_rate_node[$rating_group][$timetable_factor]);
+          $node->field_ref_rate['und'][0]['nid'] = $rate_nid; 
+          node_save($node);  
+        }else{//create
+          $node = new StdClass();
+          $node->uid = $user->uid;
+          $node->language = 'und';
+          $node->type = $target_content_type;
+          $node->field_ref_tariffplan['und'][0]['nid'] = $tariffplan_nid;
+          $node->field_ref_timetablefactors['und'][0]['nid'] = $timetable_factor;
+          $node->field_rating_group['und'][0]['value'] = $rating_group;
+          $node->field_rating_group['und'][0]['safe_value'] = $rating_group;
+          $node->field_ref_rate['und'][0]['nid'] = $rate_nid;
+          node_save($node);  
+        }  
+      }      
     }
+  }
+
+  if(!empty($delete_nids)){
+    node_delete_multiple($delete_nids);
   }
 }
 
