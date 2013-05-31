@@ -1,45 +1,5 @@
 <?php
 
-function _get_domestic_ratinggroup_in_tariff_plan($tariffplanNode){
-  $ratingGroups = array();  
-  
-  $targetQueryArgNid = array('0' => $tariffplanNode->field_ref_numberingplan_domestic['und'][0]['nid']);
-  $targetQueryNumberingPlanType = 'numberingplan_domestic';
-  $targetQueryJoinNumberingPlanTableName = 'field_data_field_ref_numberingplan_domestic';
-  $targetQueryJoinNumberingPlanFieldName = 'field_ref_numberingplan_domestic_nid';
-  $targetQueryRatingGroupType = 'domestic_ratinggroup';
-  
-  $query = db_select('node', 'n');
-  $query->condition('n.type', $targetQueryNumberingPlanType,'=');
-  $query->condition('n.nid',$targetQueryArgNid,'=');
-  $query->join($targetQueryJoinNumberingPlanTableName,'plan','n.nid = plan.'.$targetQueryJoinNumberingPlanFieldName);
-  $query->condition('plan.bundle',$targetQueryRatingGroupType,'=');
-  $query->join('field_data_field_rating_group','rg','plan.entity_id = rg.entity_id');
-  $query->fields('rg',array('field_rating_group_value'));
-  $query->distinct();
-  $query->orderBy('rg.field_rating_group_value', 'ASC');
-  
-  $result = $query->execute();
-  
-  while($record = $result->fetchAssoc()) {
-    $rating_group = current($record);
-    $ratingGroups[$rating_group] = $rating_group;
-  }
-  
-  return $ratingGroups;
-}
-
-function _get_timetablefactor($timetableNode){
-  $timetable_factor = array();
-  
-  $viewResult = views_get_view_result('list_timetablefactors', 'panel_pane_2', $timetableNode->nid);
-  foreach($viewResult as $item){
-    $timetable_factor[$item->node_field_data_field_ref_timetablefactors_nid] = $item->node_field_data_field_ref_timetablefactors_title;
-  }
-  
-  return $timetable_factor;
-}
-
 function basicrate_table_in_tariff_plan($type,$tariffplanNid,$refTreeTid){
   $tariffplanNode = node_load($tariffplanNid);
   $ratingGroups = array();
@@ -65,14 +25,12 @@ function basicrate_table_in_tariff_plan($type,$tariffplanNid,$refTreeTid){
       
       //4. search mapped basicrate nodes
       $viewResult = views_get_view_result('list_basicrate', 'panel_pane_2', $type, $tariffplanNid);
-      
       foreach($viewResult as $item){
         $rowItem[$item->field_data_field_rating_group_field_rating_group_value][$item->node_field_data_field_ref_timetablefactors_title]
           = $item->node_field_data_field_ref_rate_title;
       }
       
       //5. draw table
-      //draw table
       $headers = array('Rating Group','Timetable Factor','Rate');
       $rows = array();
       foreach($rowItem as $ratingKey => $ratingValue){
@@ -81,14 +39,42 @@ function basicrate_table_in_tariff_plan($type,$tariffplanNid,$refTreeTid){
           $rows[] = array($ratingKey,$factorKey,$factorValue);
         }
       }
+      $output = theme('table',array('header' => $headers,'rows' => $rows));
       
       //6. mapping link
       $mappingLink = _create_modal_mapping_link('mapbasicratedomestic',array($tariffplanNid,$refTreeTid));
+      $output .= $mappingLink;
+      break;
+    case 'basicrate_roaming':
+      //1. search used rating group
+      $ratingGroups = _get_roaming_ratinggroup_in_tariffplan($tariffplanNode);
+      
+      //2. make row Item for map
+      foreach($ratingGroups as $ratingGroup){
+        $rowItem[$ratingGroup] = NULL;
+      }
+      
+      //3. search mapped basicrate nodes
+      $viewResult = views_get_view_result('list_basicrate', 'panel_pane_5', $tariffplanNid);
+      foreach($viewResult as $item){
+        $rowItem[$item->field_data_field_rating_group_field_rating_group_value]
+          = $item->node_field_data_field_ref_rate_title;
+      }
+      
+      //4. draw table
+      $headers = array('Rating Group','Rate');
+      $rows = array();
+      foreach($rowItem as $ratingKey => $ratingValue){
+        if($ratingValue == NULL) $ratingValue = '<font color="red">Not Defined</font>';  
+        $rows[] = array($ratingKey,$ratingValue);
+      }
+      $output = theme('table',array('header' => $headers,'rows' => $rows));
+      
+      //5. mapping link
+      $mappingLink = _create_modal_mapping_link('mapbasicrateroaming',array($tariffplanNid,$refTreeTid));
+      $output .= $mappingLink;
       break;
   }
-
-  $output = theme('table',array('header' => $headers,'rows' => $rows));
-  $output .= $mappingLink;
   
   return $output;
 }

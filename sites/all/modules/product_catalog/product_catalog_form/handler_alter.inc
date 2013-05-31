@@ -254,6 +254,28 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
     }
     
     switch($form_id) {
+      case 'mapbasicrateroaming_node_form':
+        _unset_menu_items($form, $form_id);
+        
+        $tariffplan_nid = $form_state['build_info']['args'][1];
+        $tariffplan_node = node_load($tariffplan_nid);
+        
+        $rating_group = _get_roaming_ratinggroup_in_tariffplan($tariffplan_node);
+        unset($form['#validate']);
+        
+        $form['field_map_rating_group']['und']['#options'] = $rating_group;
+        
+        $ref_tree_tid = $form_state['build_info']['args'][2];
+        $viewResult = views_get_view_result('list_rates', 'panel_pane_2', $tariffplan_nid,$ref_tree_tid);
+        $options = array();
+        $options['_none'] = 'None';
+        foreach($viewResult as $item){
+          $options[$item->nid] = $item->node_title;
+        }
+        $form['field_ref_rate']['und']['#options'] = $options;
+        
+        $form['actions']['submit']['#submit'][] = '_create_mapped_basicrate_node_roaming';
+        break;
       case 'mapbasicratedomestic_node_form':
         _unset_menu_items($form, $form_id);
         
@@ -272,6 +294,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
         $ref_tree_tid = $form_state['build_info']['args'][2];
         $viewResult = views_get_view_result('list_rates', 'panel_pane_2', $tariffplan_nid,$ref_tree_tid);
         $options = array();
+        $options['_none'] = 'None';
         foreach($viewResult as $item){
           $options[$item->nid] = $item->node_title;
         }
