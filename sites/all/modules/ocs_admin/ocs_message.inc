@@ -595,15 +595,15 @@ function ocs_message_group_format($nid)
 {
 	$node = node_load($nid);
 
-	$format = array();
+	$format = '';
 	if (isset($node->field_ocs_message_list['und'])) {
 		foreach ($node->field_ocs_message_list['und'] as $msg) {
 			$msg_node = node_load($msg['nid']);
 			if (!empty($msg_node))
-				$format[] = $msg_node->field_ocs_format['und'][0]['value'];
+				$format .= $msg_node->field_ocs_format['und'][0]['value'] . "\n" ;
 		}
 	}
-	return implode(' ', $format);
+	return $format;
 }
 
 function ocs_admin_message_group_form_submit($form, &$form_state)
@@ -631,4 +631,42 @@ function ocs_admin_message_group_form_submit($form, &$form_state)
 
 		node_save($node);
 	}
+}
+
+function ocs_ussd_code_form( &$form, &$form_state)
+{
+    $options = array();
+    foreach( array_keys($form['field_notification_message']['und']['#options']) as $nid) {
+        $node = node_load( $nid);
+        if ( ! empty( $node)) {
+            $options[$node->type][$nid] = $node->title;
+            if ( $node->type == 'ocs_messages') {
+                $options[$node->type][$nid] .= ' : ' . $node->field_ocs_format['und'][0]['value'];
+            }
+            else {
+                $text = '';
+                foreach( $node->field_ocs_message_list['und'] as $idx => $msg_nid) {
+                    $msg = node_load( $msg_nid);
+                    $text .= $msg->field_ocs_format['und'][0]['value'] . ' ' ;
+                }
+                $options[$node->type][$nid] .= ' : ' . $text;
+            }
+        }
+    }
+
+    $form['field_notification_message']['und']['#options'] = $options;
+}
+
+function ocs_ussd_code_node_form_validate( $form, &$form_state)
+{
+    // check if the ussd code exist already
+	$query = new EntityFieldQuery();
+	$result = $query->entityCondition('entity_type', 'node')
+		->entityCondition('bundle', 'ocs_ussd_code')
+		->propertyCondition('title', $form_state['values']['title'])
+        ->execute();
+
+    if ( ! empty( $result) )  {
+        form_set_error('title', t( 'USSD code @code exist already', array( '@code' => $form_state['values']['title'])));
+    }
 }
