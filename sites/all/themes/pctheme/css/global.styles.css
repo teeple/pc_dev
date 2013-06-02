@@ -2428,12 +2428,12 @@ div.div_float_left {
 
   
 /* to add language icon in ocs_message list */
-td.supported_lang ul li.first {
+.supported_lang ul li.first {
 	list-style-position: outside;
 	list-style-image: url( ../img/mongolia_flag.png);
 }   
     
-td.supported_lang ul li.last {
+.supported_lang ul li.last {
 	list-style-position: outside;
 	list-style-image: url( ../img/usa_flag.png);
 }
@@ -2511,4 +2511,12 @@ div.exported_data .content {
 /* for service permission tab */
 .ocs_svc_perm.VOICE {
   color: red;
+}
+
+/* for long field */
+.long_field.form-select {
+    width: 80%;
+}
+.long_field .form-select {
+    width: 80%;
 }

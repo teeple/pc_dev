@@ -1,31 +1,29 @@
 <?php
 
-require( 'script_common.inc');
-
 // check argument
 $fname = NULL;
 $fname = drush_shift();
 $prd_id = drush_shift();
 
 if ( $fname == NULL) {
-	println( 'Usage: <file name> [product_id]');
+	printf( "Usage: <file name> [product_id]\n");
 	return;
 }
 
-println( 'Backup to file:'. $fname);
+printf( "Backup to file:%s/%s\n", DRUPAL_ROOT, $fname);
 
 // open file
 $fp = fopen( $fname, 'w+');
 if ( $fp === FALSE) {
-	println( 'Fail to write file '. $fname);
+	printf( "Fail to write file:%s\n", $fname);
 	return;
 }
 
 
 global $term;
 $term = ocs_get_all_terms();
-fwriteln( $fp, '# term');
-fwriteln( $fp, serialize( $term));
+fwrite( $fp, "# term\n");
+fwrite( $fp, serialize( $term)."\n");
 
 // find the product
 $query = new EntityFieldQuery();
@@ -41,7 +39,7 @@ $result = $query->execute();
 $idx = 0;
 foreach( array_keys( $result['node']) as $nid) {
 	$p = node_load( $nid);
-	println( 'Product : ' . $p->title);
+	printf( "Product : %s\n", $p->title);
 
 	// dump all of its child node
 	$view = views_get_view('list_product_child_node');
@@ -61,15 +59,19 @@ foreach( array_keys( $result['node']) as $nid) {
 		}
 
 		printf( "  %s:%s\n", $childNode->type, $childNode->title);
-		fwriteln( $fp, '# ' . $childNode->type . ':data' );
-		fwriteln( $fp, serialize( $childNode));
+		fwrite( $fp, '# ' . $childNode->type . ":data\n" );
+		fwrite( $fp, serialize( $childNode)."\n");
 	}
 
-	fwriteln( $fp, '# ' . $p->type);
-	fwriteln( $fp, serialize( $p));
+	fwrite( $fp, '# ' . $p->type . "\n");
+	fwrite( $fp, serialize( $p)."\n");
+    $idx ++;
 }
 
 fclose($fp);
+printf( "\nBackup finished\n");
+printf( "  Number of products : %d\n", $idx); 
+printf( "  Backup file        : %s/%s\n", DRUPAL_ROOT, $fname);
 
 
 function writeChildAction( $fp, $child)
@@ -84,7 +86,7 @@ function writeChildAction( $fp, $child)
 
 		$type = $child->type . ':' . $targetActionSetNode->type;
 		printf( "  %s:%s\n", $type, $childNode->title);
-		fwriteln( $fp, '# '. $type);
-		fwriteln( $fp, serialize( $targetActionSetNode));
+		fwrite( $fp, '# '. $type."\n");
+		fwrite( $fp, serialize( $targetActionSetNode)."\n");
 	}
 }

@@ -27,8 +27,24 @@ function _array_ocs_config($nid = NULL) {
     $jsonData['DEFAULT_ENTRY_VOUCHER_TYPE'] = $record -> field_field_default_entry_voucher_type[0]['raw']['safe_value'];
     break;
   }
+  $retData['ocs_global_config']['config'] = $jsonData;
+
+  //fetch data
+  $viewResult = views_get_view_result('list_ussd_code', 'json', $nid);
+  //dpm( $viewResult, 'ocs global config');
+
+  $jsonData = array();
+  foreach ($viewResult as $record) {
+    //dsm($record,'record');
+    $jsonData[] = array(
+        'access_code' => $record->node_title,
+        'desc' => 'PREPAID_BALANCE_QUERY',
+        'action' => array(
+            'parameters' => array( 'dest' => 'CALLING', 
+                'message' => $record->field_field_notification_message[0]['raw']['nid'])));
+  }
+  $retData['ocs_global_config']['ussd_access_code'] = $jsonData;
   $retData['ifvalues']['resources'] = array();
-  $retData['ocs_global_config'] = $jsonData;
 
   return $retData;
 }
