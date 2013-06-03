@@ -633,6 +633,7 @@ function ocs_admin_message_group_form_submit($form, &$form_state)
 	}
 }
 
+/*
 function ocs_ussd_code_form( &$form, &$form_state)
 {
     $options = array();
@@ -657,6 +658,7 @@ function ocs_ussd_code_form( &$form, &$form_state)
     $form['field_notification_message']['und']['#options'] = $options;
 }
 
+
 function ocs_ussd_code_node_form_validate( $form, &$form_state)
 {
     // check if the ussd code exist already
@@ -670,6 +672,7 @@ function ocs_ussd_code_node_form_validate( $form, &$form_state)
         form_set_error('title', t( 'USSD code @code exist already', array( '@code' => $form_state['values']['title'])));
     }
 }
+*/
 
 function ocs_ussd_code_form( &$form, &$form_state)
 {
