@@ -113,9 +113,9 @@ function _get_export_base_url($target){
 function export_deploy($export_type, $export_item_list = NULL, $target, $redirectFlag = TRUE) {
 	global $user;
 	$baseURL = _get_export_base_url($target);
-   
-   	$exportItemNids = !empty($export_item_list)? array_keys($export_item_list): array();
 	
+   	$exportItemNids = !empty($export_item_list)? array_keys($export_item_list): array();
+   	
 	$failedValidation = FALSE;
     switch($export_type){
         case 'PRODUCT':

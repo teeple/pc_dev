@@ -151,10 +151,10 @@ function _get_deposit_scheme($product,$target=NULL) {
 					$redirectFlag = FALSE;
 					
 					// 해당 threshold scheme을 deploy한다.
-					export_deploy('THRESHOLD_SCHEME', array($thresholdScheme->nid), $target, $redirectFlag);
+					export_deploy('THRESHOLD_SCHEME', array($thresholdScheme->nid => $thresholdScheme), $target, $redirectFlag);
 					
 					// 해당 deposit scheme을 deploy한다.
-					export_deploy('DEPOSIT_SCHEME', array($depositScheme->nid), $target, $redirectFlag);
+					export_deploy('DEPOSIT_SCHEME', array($depositScheme->nid => $depositScheme), $target, $redirectFlag);
 				}
 				$scheme['deposit_scheme_id'] = $depositScheme->nid;
 			}

@@ -14,6 +14,7 @@ function _array_deposit_scheme($exportItemNids=NULL){
 
         $depositScheme['id'] = isset($record->nid) ? $record->nid: null;
         $depositScheme['title'] = isset($record->node_title) ? $record->node_title: null;
+        
         if(isset($record->nid)){
             //scheme factors
             $depositSchemeFactorsList = views_get_view_result('list_depositschemefactors', 'panel_pane_5', $record->nid);
