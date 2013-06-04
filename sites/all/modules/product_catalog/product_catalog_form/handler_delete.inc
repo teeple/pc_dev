@@ -12,6 +12,11 @@ function product_catalog_form_node_delete($node){
     $childNodes = get_nested_children_nids($node->nid);
 
 	switch($node->type){
+    case 'domestic_ratinggroup':
+      $rating_group = $node->field_rating_group['und'][0]['value'];
+      $numberingplan_nid = $node->field_ref_numberingplan_domestic['und'][0]['nid'];
+      _delete_basicrate_domestic_by_ratinggroup($numberingplan_nid,$rating_group,$node->nid);
+      break;
 		case 'simpleproductoffering':
 			//상품 삭제시 cleanup 작업  
 			//default basic counters
