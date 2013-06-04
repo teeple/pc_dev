@@ -20,7 +20,7 @@ if ( $fp === FALSE) {
 }
 
 
-// find the product
+// find the taxonomy
 $query = new EntityFieldQuery();
 $query->entityCondition('entity_type', 'taxonomy_term');
 

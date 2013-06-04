@@ -19,11 +19,20 @@ if ( $fp === FALSE) {
 	return;
 }
 
+// backup taxonomy
+$query = new EntityFieldQuery();
+$query->entityCondition('entity_type', 'taxonomy_term');
+$result = $query->execute();
 
-global $term;
-$term = ocs_get_all_terms();
-fwrite( $fp, "# term\n");
-fwrite( $fp, serialize( $term)."\n");
+printf( "Backup Taxonomy\n");
+$voca = array();
+foreach( array_keys( $result['taxonomy_term']) as $tid) {
+	$p = taxonomy_term_load( $tid);
+	$voca[ $p->vocabulary_machine_name][$p->tid] = $p;
+}
+fprintf( $fp, "# taxonomy\n");
+fprintf( $fp, "%s\n", serialize( $voca));
+
 
 // find the product
 $query = new EntityFieldQuery();
@@ -47,8 +56,13 @@ foreach( array_keys( $result['node']) as $nid) {
 	$view->set_arguments(array('0' => $p->nid));
 	$view->execute();
 
+	$childList = array();
 	foreach($view->result as $record){
-		$childNode = node_load($record->nid);
+		$childList[] = $record->nid;
+	}
+
+	foreach( $childList as $nid) {
+		$childNode = node_load($nid);
 
 		switch( $childNode->type) {
 			case 'tariffplan' :
@@ -58,13 +72,24 @@ foreach( array_keys( $result['node']) as $nid) {
 				break;
 		}
 
-		printf( "  %s:%s\n", $childNode->type, $childNode->title);
-		fwrite( $fp, '# ' . $childNode->type . ":data\n" );
-		fwrite( $fp, serialize( $childNode)."\n");
+		printf( "  %d:%s:%s\n", $childNode->nid, $childNode->type, $childNode->title);
+		fprintf( $fp, "# tree_tid:%d:%s\n", $childNode->field_ref_tree_tid['und'][0]['value'], $childNode->type);
+		fprintf( $fp, "%s\n", serialize( $childNode));
+
+		while( isset($childNode->field_parent_node['und'])) {
+			$parentNid = $childNode->field_parent_node['und'][0]['nid'];
+			if ( array_search( $parentNid, $childList) !== FALSE) break;
+
+			// save parent node
+			$childNode = node_load( $parentNid);
+			printf( "    %d:%s:%s\n", $childNode->nid, $childNode->type, $childNode->title);
+			fprintf( $fp, "# parent:%d:%s\n", $childNode->nid, $childNode->type);
+			fprintf( $fp, "%s\n", serialize( $childNode));
+		}
 	}
 
-	fwrite( $fp, '# ' . $p->type . "\n");
-	fwrite( $fp, serialize( $p)."\n");
+	fprintf( $fp, "# %s\n", $p->type);
+	fprintf( $fp, "%s\n", serialize( $p));
     $idx ++;
 }
 
@@ -85,8 +110,8 @@ function writeChildAction( $fp, $child)
 		$targetActionSetNode = node_load($actionSetRecord->nid);
 
 		$type = $child->type . ':' . $targetActionSetNode->type;
-		printf( "  %s:%s\n", $type, $childNode->title);
-		fwrite( $fp, '# '. $type."\n");
-		fwrite( $fp, serialize( $targetActionSetNode)."\n");
+		printf( "    %s:%s\n", $type, $childNode->title);
+		fprintf( $fp, "# action:%d:%s\n", $child->nid, $type);
+		fprintf( $fp, "%s\n", serialize( $targetActionSetNode));
 	}
 }

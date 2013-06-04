@@ -1242,6 +1242,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
                 		unset($form['#groups']['group_next_join']);
                 		unset($form['#fieldgroups']['group_next_join']);
                 		*/
+                		unset($form['field_loyalty_point_for_subscrip']);
                 		
                     break;
                 default :
