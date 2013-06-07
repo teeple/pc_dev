@@ -923,6 +923,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
           	  $form['field_counter_id']['und']['#disabled'] = TRUE;
           	  
           	  //billtype에 따라 counter group 제한하도록 ajax handler 추가 
+          	  /*
           	  $form['field_counter_group']['und']['#prefix'] = '<div id="counter_group">';
           	  $form['field_counter_group']['und']['#postfix'] = '</div>';
           	  
@@ -930,6 +931,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
           	      'callback' => 'counter_bill_type_change_callback',
           	      'wrapper' => 'counter_group'  
           	  );
+          	  */
             	
             } else {
 	            $disabledFields = array(// 'field_scale', 
@@ -1026,8 +1028,8 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             
             $form['field_ref_target_product']['und']['#options'] = $options['list'];
             break;
-        case 'simpleproductoffering_node_form' :
-    		$disabledItems = array();
+        case 'simpleproductoffering_node_form':
+        	$disabledItems = array();
 			$hiddenItems = array();
 			$unsetItems = array('field_r_prodofferingrel', 
 								'field_r_productspecification',
@@ -2874,3 +2876,4 @@ function _get_product_exclusive_list($productNid){
     
     return $options;
 }
+

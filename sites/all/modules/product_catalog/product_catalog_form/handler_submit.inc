@@ -922,4 +922,45 @@ function set_unlimited_in_treenodecounter($node) {
 	}
 }
 
-
+function set_exclusiveness_check($node_unchanged, $node_changed) {
+	$productNid = $node_changed->nid;
+	dsm($productNid, 'productNid');
+	
+	$list_unchanged = array();
+	$list_changed = array();
+	
+	if(isset($node_unchanged->field_exclusiveness) && (!empty($node_unchanged->field_exclusiveness['und'])) ) {
+		foreach($node_unchanged->field_exclusiveness['und'] as $record) {
+			$list_unchanged[] = $record['nid'];
+		}
+	}
+	
+	if(isset($node_changed->field_exclusiveness) && (!empty($node_changed->field_exclusiveness['und'])) ) {
+		foreach($node_changed->field_exclusiveness['und'] as $record) {
+			$list_changed[] = $record['nid'];
+		}
+	}
+	
+	$addList = array_diff($list_changed, $list_unchanged);
+	$deleteList = array_diff($list_unchanged, $list_changed);
+	
+	foreach($addList as $item) {
+		$productForAdd = node_load($item);
+		$productForAdd->field_exclusiveness['und'][] = array('nid' => $productNid);
+		node_save($productForAdd);
+	}
+	
+	foreach($deleteList as $item) {
+		$productForDelete = node_load($item);
+		$index = 0;
+		
+		foreach($productForDelete->field_exclusiveness['und'] as $record) {
+			if($record['nid'] == $productNid) {
+				unset($productForDelete->field_exclusiveness['und'][$index]);
+				node_save($productForDelete);
+				break;
+			};
+			$index ++;
+		}
+	}
+}

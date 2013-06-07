@@ -260,6 +260,17 @@ function product_catalog_form_node_validate($node, $form, &$form_state) {
                 }
                 break;
                 
+            case 'treenodecounter_node_form':
+            	/*
+            	dsm($form_state, 'form_state');
+            	$depositSetFlag = $form_state['input']['field_based_on_deposit_amount'][0];
+            	
+            	if($depositSetFlag == 1) {
+            		$refProductNid = $form_state['input']['field_ref_product']['und'][0]['nid'];
+            	}
+            	*/
+            	break;
+                
             case 'carrier_mobile_node_form':
                 $isDuplicated = FALSE;
                 $failReason = '';

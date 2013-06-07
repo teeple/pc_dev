@@ -144,9 +144,6 @@ function _get_deposit_scheme($product,$target=NULL) {
 				// $thresholdLimit = $treeNodeCounter->field_field_threshold_on_counter[0]['raw']['value'];
 				$thresholdLimit = $treeNodeCounter->field_field_threshold_limit_amount[0]['raw']['value'];
 				
-				dsm($treeNodeCounter, 'treeNOdeCounter');
-				dsm($thresholdLimit, 'thresholdLimit');
-				
 				// create threshold scheme
 				$thresholdScheme = _create_threshold_scheme($treeNodeCounter);
 				
