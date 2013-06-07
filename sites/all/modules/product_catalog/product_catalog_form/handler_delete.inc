@@ -12,6 +12,24 @@ function product_catalog_form_node_delete($node){
     $childNodes = get_nested_children_nids($node->nid);
 
 	switch($node->type){
+		case 'productgroup':
+			$viewResultMainSelected = views_get_view_result('list_product_group_main_selected', 'panel_pane_4', $node->nid);
+			foreach($viewResultMainSelected as $item) {
+				$childNodes[] = $item->nid;
+			}
+			break;
+			
+		case 'productchange':
+			$viewResultSubSelected = views_get_view_result('list_product_change_sub_selected', 'panel_pane_4', $node->nid);
+			foreach($viewResultSubSelected as $item) {
+				$childNodes[] = $item->nid;
+			}
+			$viewResultCounterSelected = views_get_view_result('list_product_change_counter_selected', 'panel_pane_4', $node->nid);
+			foreach($viewResultCounterSelected as $item) {
+				$childNodes[] = $item->nid;
+			}
+			break;
+			
 		case 'simpleproductoffering':
 			//상품 삭제시 cleanup 작업  
 			//default basic counters
@@ -143,6 +161,7 @@ function product_catalog_form_node_delete($node){
         case 'numberingplan_domestic':  
             _add_defered_delete($node);
             break;
+
     }
 	
 	$childNodes = array_unique($childNodes); 

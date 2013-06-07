@@ -6,11 +6,9 @@ function _product_group_for_export($exportItemNids = NULL, $isExternalAPI = FALS
     $productNids = array();
     $productGroupIds = array();
 
-	/*
-    if (count($exportItemNids) == 1) {
+    if (!is_array($exportItemNids)) {
         $exportItemNids = array($exportItemNids);
     }
-    */
     
     $viewResult = views_get_view_result('list_product_group', 'panel_pane_4', join(',', $exportItemNids));
     
@@ -20,6 +18,7 @@ function _product_group_for_export($exportItemNids = NULL, $isExternalAPI = FALS
         $productGroup['service_domain'] = _get_common_code($record->field_field_service_domain[0]['raw']['taxonomy_term']);
 		$productGroup['billing_type'] = _get_common_code($record->field_field_billing_type[0]['raw']['taxonomy_term']);
 		
+		$productGroupMain = NULL;
 		$viewResultMainSelected = views_get_view_result('list_product_group_main_selected', 'panel_pane_4', $record->nid);
 		foreach($viewResultMainSelected as $mainProduct) {
 			$productGroupMain[] = array('product_id' => $mainProduct->field_field_product_id[0]['raw']['value']);

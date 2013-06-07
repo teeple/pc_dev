@@ -758,7 +758,7 @@ function _get_redirect_url_in_view_n_delete($viewOrDel, $node) {
 		} else {
 			$url['path'] = 'relation/'.$node->type. '/list';
 		}
-		$url['fragment'] = 'quickset-relation_manager=4';
+		$url['fragment'] = 'quickset-relation_manager=5';
 		break;
 
 	case 'productchange':
@@ -767,7 +767,7 @@ function _get_redirect_url_in_view_n_delete($viewOrDel, $node) {
 		} else {
 			$url['path'] = 'relation/'.$node->type. '/list';
 		}
-		$url['fragment'] = 'quickset-relation_manager=5';
+		$url['fragment'] = 'quickset-relation_manager=6';
 		break;
 	
 	case 'roaming_country':
@@ -929,13 +929,13 @@ function _get_redirect_url_in_create_n_list($addOrList, $content_type, $params) 
 		break;
 	
 	case 'productgroup':
-		$fragments = array('productgroup' => 'quickset-relation_manager=4');
+		$fragments = array('productgroup' => 'quickset-relation_manager=5');
 		$url['path'] = 'relation/'. $content_type. '/'. $addOrList;
 		$url['fragment'] = $fragments[$content_type];
 		break;
 
 	case 'productchange':
-		$fragments = array('productchange' => 'quickset-relation_manager=5');
+		$fragments = array('productchange' => 'quickset-relation_manager=6');
 		$url['path'] = 'relation/'. $content_type. '/'. $addOrList;
 		$url['fragment'] = $fragments[$content_type];
 		break;

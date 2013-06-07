@@ -966,7 +966,9 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
                 unset($form['#group_children']);
 
             } else if ($refTreeTerm -> name == 'Accumulating') {
-                $form['field_threshold_on_counter']['#type'] = 'hidden';
+            	$form['field_unlimited_threshold']['#type'] = 'hidden';
+            	$form['field_threshold_limit_amount']['#type'] = 'hidden';
+            	
                 $productNid = $form['#node'] -> field_ref_product['und'][0]['nid'];
 
                 $tempView = views_get_view('list_treenodecounter');
@@ -1182,10 +1184,11 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             $firstPathName = current(explode('/', current_path()));
             
             if ($firstPathName == 'relation') {
-                $form['title']['#type'] = 'hidden';
+            	$form['title']['#type'] = 'hidden';
                 
                 $unsetItems = array_merge($unsetItems,
-											array('field_description',
+											array('field_expire_date_for_hour',
+												'field_description',
 												'field_offering_status',
 												'field_version',
 												'field_billing_type',
@@ -1209,7 +1212,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 												'field_expire_date',
 												'field_field_deferred_subscriptio',
 												'field_hlr_template_id',
-												'field_loyalty_point_for_subscrip',
+												'field_point_for_subscription',
 												'field_next_join_confirm',
 												'field_resubscription_flag'));
                 
@@ -1228,9 +1231,15 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 				foreach($viewResult as $item) {
 						$options[$item->nid] = view_get_field_value_by_label($view, 'PHP', $item);
 				}
-
-				$form['field_exclusiveness_others']['und']['#options'] = $options;
-
+				$productTypeTerm = taxonomy_term_load($productTypeTid);
+				
+				if($productTypeTerm->name == 'Main') {
+					$form['field_exclusiveness_others']['und']['#options'] = $options;
+					
+				} else {
+					$unsetItems = array_merge($unsetItems, array('field_exclusiveness_others'));
+				}
+				
             } else {
             		$unsetItems = array_merge($unsetItems, array('field_exclusiveness',
             												'field_exclusiveness_others'));
@@ -2828,6 +2837,9 @@ function _get_call_type_options(){
 
 function _get_product_exclusive_list($productNid){
     $product = node_load($productNid);
+    
+    $productTypeTerm = taxonomy_term_load($product->field_product_type['und'][0]['tid']);
+    
     $svcDomainTid = $product->field_service_type_of_provider['und'][0]['tid'];
     $billingTypeTid = $product->field_billing_type['und'][0]['tid'];
     $svcOperatorTid = $product->field_service_operator['und'][0]['tid'];
@@ -2842,7 +2854,13 @@ function _get_product_exclusive_list($productNid){
     $options['args'] = $args;
     
     $view = views_get_view('list_product_in_exclusive');
-    $view->set_display('panel_pane_2');
+    
+    if($productTypeTerm->name == 'Main') {
+    	$view->set_display('panel_pane_2');
+    } else {
+      	$view->set_display('panel_pane_5');
+    }
+    
     $view->set_arguments($args);
     $view->execute();
     

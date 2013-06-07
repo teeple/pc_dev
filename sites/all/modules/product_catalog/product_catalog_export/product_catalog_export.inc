@@ -127,6 +127,16 @@ function export_deploy($export_type, $export_item_list = NULL, $target, $redirec
                 }
             }
             break;
+       	case 'PRODUCT_GROUP':
+       	   foreach($exportItemNids as $exportItemNid){
+       	               $checkValid = validate_product($exportItemNid);
+       	               if($checkValid['is_valid'] == FALSE){
+       	                   $failedValidation = TRUE;
+       	                   break;
+       	               }
+       	           }
+       	           break;
+       		break;
     }
     
     if($failedValidation == TRUE){

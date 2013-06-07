@@ -6,16 +6,12 @@ function _product_change_scheme_for_export($exportItemNids = NULL, $isExternalAP
     $productNids = array();
     $productSchemeIds = array();
     
-    /*
-    if (count($exportItemNids) == 1) {
+    if (!is_array($exportItemNids)) {
         $exportItemNids = array($exportItemNids);
     }
-    */
     
     $viewResult = views_get_view_result('list_product_change', 'panel_pane_3', join(',', $exportItemNids));
-	
-	dsm($viewResult, 'viewResult');
-	
+    
 	foreach ($viewResult as $record) {
 		$productChange = array();
 		
@@ -64,9 +60,8 @@ function _product_change_scheme_for_export($exportItemNids = NULL, $isExternalAP
 			$expireDate['ndays'] = NULL;		
 			$expireDate['fixed_date'] = isset($record->field_field_expiredate_fixeddate[0]['raw']['value'])? $record->field_field_expiredate_fixeddate[0]['raw']['value']: NULL;
 		}
-		
+		$productChange['active_date'] = $expireDate;
 		$productChange['grace_date'] = $graceDate;
-		$productChange['expire_date'] = $expireDate;
 		
 		$viewResultSubSelected = views_get_view_result('list_product_change_sub_selected', 'panel_pane_4', $record->nid);
 		$subProducts = array();

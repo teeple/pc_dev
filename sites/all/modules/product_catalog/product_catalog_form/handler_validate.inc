@@ -216,6 +216,7 @@ function product_catalog_form_node_validate($node, $form, &$form_state) {
                     form_set_error('field_prefix', 'Duplicated Prefix found!');
                 }
                 break;
+                
             case 'idd_ratinggroup_node_form':
                 $isDuplicatedPrefix = FALSE;
                 //check duplicated in the form
@@ -258,6 +259,7 @@ function product_catalog_form_node_validate($node, $form, &$form_state) {
                     form_set_error('field_prefix', 'Duplicated Prefix found!');
                 }
                 break;
+                
             case 'carrier_mobile_node_form':
                 $isDuplicated = FALSE;
                 $failReason = '';
@@ -307,6 +309,7 @@ function product_catalog_form_node_validate($node, $form, &$form_state) {
                     form_set_error('field_prefix_multiple', $failReason);
                 }
                 break;
+                
             case 'packetdynamicl4_node_form' :
                 //check ip address is valid or not.
                 $ipValues = $node -> field_ip['und'];
@@ -379,14 +382,17 @@ function product_catalog_form_node_validate($node, $form, &$form_state) {
                     form_set_error('field_port', 'Invalid Port');
                 }
                 break;
+                
             case 'conditionwheremacaddress_node_form' :
                 if (is_macaddress($form_state['values']['field_mac_address']['und'][0]['value']) == FALSE) {
                     drupal_set_message("Only 3 bytes of Mac Address Format is allowed", 'error');
                     form_set_error('Only 3 bytes of Mac Address Format is allowed');
                 }
                 break;
+                
             case 'conditionwheremacaddress_node_form' :
                 break;
+                
             case 'timetablefactors_node_form' :
                 if ($form_state['values']['field_timeslot_from_hour']['und'][0]['value'] > $form_state['values']['field_timeslot_to_hour']['und'][0]['value']) {
                     form_set_error('Reference', 'FROM is greater than TO');
@@ -403,6 +409,7 @@ function product_catalog_form_node_validate($node, $form, &$form_state) {
                     form_set_error('Reference', 'FROM Hour(24) is not allowed');
                 }
                 break;
+                
             case 'conditionwhensubscriptionday_node_form' :
                 $operationTerm = taxonomy_term_load($form_state['values']['field_rating_operation_for_date']['und'][0]['tid']);
                 if ($operationTerm -> name == 'Is between' && ($form_state['values']['field_start_date']['und'][0]['value'] > $form_state['values']['field_end_date']['und'][0]['value'])) {
@@ -410,6 +417,7 @@ function product_catalog_form_node_validate($node, $form, &$form_state) {
                     form_set_error('Start date should be less than End Date');
                 }
                 break;
+                
             case 'conditionwhenactivedays_node_form' :
                 $operationTerm = taxonomy_term_load($form_state['values']['field_rating_operation_for_date']['und'][0]['tid']);
                 if ($operationTerm -> name == 'Is between' && $form_state['values']['field_activedays_start']['und'][0]['value'] > $form_state['values']['field_activedays_end']['und'][0]['value']) {
@@ -544,7 +552,7 @@ function product_catalog_form_node_validate($node, $form, &$form_state) {
                 break;
     
             case 'simpleproductoffering_node_form' :
-                if (!is_machine_name($form_state['values']['field_product_id']['und'][0]['value'])) {
+            	if (!is_machine_name($form_state['values']['field_product_id']['und'][0]['value'])) {
                     form_set_error('field_product_id', "Only lowercase letter, number and underscore are allowed for product id");
                 }
                 
@@ -574,8 +582,28 @@ function product_catalog_form_node_validate($node, $form, &$form_state) {
     					form_set_error('field_cug_customer_type', "CUG Customer Type field is required");
     				}
     			}
-    	          
-    	          //check exclusivessness and downgrade penalty
+    			
+    			// expire date type이 설정되어있는데, expire date값이 없으면 에러 
+    			$expireDateTypeTerm = isset($form_state['values']['field_expire_date_type']['und'][0]['tid'])? taxonomy_term_load($form_state['values']['field_expire_date_type']['und'][0]['tid']): NULL;
+    			
+    			if(isset($expireDateTypeTerm)) {
+    				
+    				if( $expireDateTypeTerm->name == 'Hour' ) {
+    				
+						if(empty($form_state['values']['field_expire_date_for_hour']['und'][0]['value'])) {
+						  form_set_error('field_expire_date_for_hour', "Expire Time Value is required");
+						}
+						
+    				} else {
+    					
+    					if(empty($form_state['values']['field_expire_date']['und'][0]['value'])) {
+		                   form_set_error('field_expire_date', "Expire Time Value is required");
+    					}
+    				}
+    			}
+    			// next join confirm이 설정되어있는데, next join product값이 없으면 에러
+    			
+    	        //check exclusivessness and downgrade penalty
                 if(isset($form_state['values']['field_exclusiveness']['und'])){
                     $isExist = FALSE;
                     $downgradePenaltyViewResult = views_get_view_result('list_product_downgrade_penalty', 'panel_pane_2', $form['#node']->nid);

@@ -653,21 +653,26 @@ function ocs_ussd_code_form( &$form, &$form_state)
             }
         }
     }
-
+    
+    unset($form['actions']['delete']);
+    
     $form['field_notification_message']['und']['#options'] = $options;
     $form['field_notification_message']['#attributes'] = array('class' => array( 'long_field'));
 }
 
 function ocs_ussd_code_node_form_validate( $form, &$form_state)
 {
-    // check if the ussd code exist already
-	$query = new EntityFieldQuery();
-	$result = $query->entityCondition('entity_type', 'node')
-		->entityCondition('bundle', 'ocs_ussd_code')
-		->propertyCondition('title', $form_state['values']['title'])
-        ->execute();
-
-    if ( ! empty( $result) )  {
-        form_set_error('title', t( 'USSD code @code exist already', array( '@code' => $form_state['values']['title'])));
-    }
+	// only check unique in case 'CREATE'	
+	if(!isset($form['nid']['#value'])) {
+		// check if the ussd code exist already
+		$query = new EntityFieldQuery();
+		$result = $query->entityCondition('entity_type', 'node')
+			->entityCondition('bundle', 'ocs_ussd_code')
+			->propertyCondition('title', $form_state['values']['title'])
+	        ->execute();
+	
+	    if ( ! empty( $result) )  {
+	        form_set_error('title', t( 'USSD code @code exist already', array( '@code' => $form_state['values']['title'])));
+	    }
+	}
 }

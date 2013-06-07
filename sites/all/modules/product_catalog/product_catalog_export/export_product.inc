@@ -4,8 +4,8 @@ function _product_for_export($exportItemNids = NULL, $isExternalAPI = FALSE, $ta
     $retData = array();
     $retDataTmp = array();
     $productNids = array();
-
-    if (count($exportItemNids) == 1) {
+    
+    if (!is_array($exportItemNids)) {
         $exportItemNids = array($exportItemNids);
     }
 
@@ -96,10 +96,12 @@ function _get_product_relationship($nid){
         foreach($record->field_field_exclusiveness as $item){
             $exclusive_product_ids[] = $item['raw']['node']->field_product_id['und'][0]['safe_value'];
         }
+        
         //exclusiveness others
         foreach($record->field_field_exclusiveness_others as $item){
             $exclusive_product_other_ids[] = $item['raw']['node']->field_product_id['und'][0]['safe_value'];
         }
+        
         //downgrade penalty
         $downgradePenaltyViewResult = views_get_view_result('list_product_downgrade_penalty', 'panel_pane_2', $record->nid);
         foreach($downgradePenaltyViewResult as $item){
@@ -139,7 +141,11 @@ function _get_deposit_scheme($product,$target=NULL) {
 			if( count($treeNodeCounterResult) > 0 ) {
 				$treeNodeCounter = current($treeNodeCounterResult);
 				
-				$thresholdLimit = $treeNodeCounter->field_field_threshold_on_counter[0]['raw']['value'];
+				// $thresholdLimit = $treeNodeCounter->field_field_threshold_on_counter[0]['raw']['value'];
+				$thresholdLimit = $treeNodeCounter->field_field_threshold_limit_amount[0]['raw']['value'];
+				
+				dsm($treeNodeCounter, 'treeNOdeCounter');
+				dsm($thresholdLimit, 'thresholdLimit');
 				
 				// create threshold scheme
 				$thresholdScheme = _create_threshold_scheme($treeNodeCounter);
@@ -618,9 +624,9 @@ function _get_attribute($product) {
                       'cug_customer_type' => array('through_common_code' => TRUE, 'field' => 'field_cug_customer_type', 'field_value' => "field_cug_customer_type['und'][0]['tid']", 'field_value_default' => NULL, ), 
                       'treatment_day' => array('through_common_code' => FALSE, 'field' => 'field_treatment_day', 'field_value' => "field_treatment_day['und'][0]['value']", 'field_value_default' => NULL), 
                       'treatment_price' => array('through_common_code' => FALSE, 'field' => 'field_treatment_price_amount', 'field_value' => "field_treatment_price_amount['und'][0]['value']", 'field_value_default' => 0), 
-                      'loyalty_point_for_subscription' => array('through_common_code' => FALSE, 'field' => 'field_loyalty_point_for_subscrip', 'field_value' => "field_loyalty_point_for_subscrip['und'][0]['value']", 'field_value_default' => 0), 
+                      'field_point_for_subscription' => array('through_common_code' => FALSE, 'field' => 'field_point_for_subscription', 'field_value' => "field_point_for_subscription['und'][0]['value']", 'field_value_default' => 0), 
                       'contract_period' => array('through_common_code' => FALSE, 'field' => 'field_contract_period‎', 'field_value' => "field_contract_period‎['und'][0]['value']", 'field_value_default' => 0), 
-                      'expire_date' => array('through_common_code' => FALSE, 'field' => 'field_expire_date', 'field_value' => "field_expire_date['und'][0]['value']", 'field_value_default' => 0), 
+//                      'expire_date' => array('through_common_code' => FALSE, 'field' => 'field_expire_date', 'field_value' => "field_expire_date['und'][0]['value']", 'field_value_default' => 0), 
                       'expire_date_type' => array('through_common_code' => TRUE, 'field' => 'field_expire_date_type', 'field_value' => "field_expire_date_type['und'][0]['tid']", 'field_value_default' => NULL), 
                       'resubscription_flag' => array('through_common_code' => FALSE, 'field' => 'field_resubscription_flag', 'field_value' => "field_resubscription_flag['und'][0]['value']", 'field_value_default' => 0), 
                       'currency' => array('through_common_code' => TRUE, 'field' => 'field_price_units', 'field_value' => "field_price_units['und'][0]['tid']", 'field_value_default' => NULL), 
@@ -875,23 +881,46 @@ function _get_attribute_exceptions($product) {
         $retArray['available_channel'] = $availableChannel;
     }
     
-    if(!empty($product->field_next_join_product)
-    	&& !empty($product->field_next_join_product['und']) 
-    	&& !empty($product->field_next_join_product['und'][0])
-    	&& !empty($product->field_next_join_product['und'][0]['nid'])
-    	
-     ) {
-     	$nextJoinProduct = node_load($product->field_next_join_product['und'][0]['nid']);
-		$retArray['next_join_product'] = $nextJoinProduct->field_product_id['und'][0]['value'];
-		
-        if(isset($product->field_next_join_confirm['und'][0]['value'])){
-            $retArray['next_join_confirm'] = 1;
-        }else{
-            $retArray['next_join_product'] = 0;
-            
-        }
-    }
+    $expireDateTypeTerm = isset($product->field_expire_date_type['und'][0]['tid']) ? taxonomy_term_load($product->field_expire_date_type['und'][0]['tid']) : NULL;
     
+    if(isset($expireDateTypeTerm)) {
+    
+    	dsm($product, 'product');
+    	
+    	if($expireDateTypeTerm->name == 'Hour') {
+    		$retArray['expire_date'] = isset($product->field_expire_date_for_hour['und'][0]['value'])? $product->field_expire_date_for_hour['und'][0]['value']: NULL;
+    	
+    	} else {
+    		$retArray['expire_date'] = isset($product->field_expire_date['und'][0]['value'])? $product->field_expire_date['und'][0]['value']: NULL;
+    	
+    	}
+    	
+    	$nextJoinConfirmTerm = isset($product->field_next_join_confirm['und'][0]['tid'])? taxonomy_term_load($product->field_next_join_confirm['und'][0]['tid']) : NULL;
+    	
+    	if( isset($nextJoinConfirmTerm) ) {
+			$retArray['next_join_confirm'] = ($nextJoinConfirmTerm->name == 'REQUIRED')? 1: 0;
+			
+			if(!empty($product->field_next_join_product)
+		    	&& !empty($product->field_next_join_product['und']) 
+		    	&& !empty($product->field_next_join_product['und'][0])
+		    	&& !empty($product->field_next_join_product['und'][0]['nid'])
+		    	
+		     ) {
+		     	$nextJoinProduct = node_load($product->field_next_join_product['und'][0]['nid']);
+				$retArray['next_join_product'] = $nextJoinProduct->field_product_id['und'][0]['value'];
+		    }
+			    
+		} else {
+			$retArray['next_join_confirm'] = NULL;
+			$retArray['next_join_product'] = NULL;
+		}
+		    
+	} else {
+		$retArray['next_join_product'] = NULL;
+		$retArray['next_join_confirm'] = NULL;
+		$retArray['expire_date'] = NULL;
+	}
+	    
     return $retArray;
 }
 
