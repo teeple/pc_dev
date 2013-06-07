@@ -330,6 +330,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
         $ref_tree_tid = $form_state['build_info']['args'][2];
         $viewResult = views_get_view_result('list_rates', 'panel_pane_2', $tariffplan_nid,$ref_tree_tid);
         $options = array();
+        $options['_none'] = 'None';
         foreach($viewResult as $item){
           $options[$item->nid] = $item->node_title;
         }
@@ -1499,7 +1500,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             _unset_menu_items($form, $form_id);
             //for selecting all carrier
             $newOptions = array();
-            $newOptions['_none'] = 'All';
+            //$newOptions['_none'] = 'All';
             
             //filter only idd carrier
             $view = views_get_view('list_carrier_mobile');
