@@ -13,7 +13,7 @@ while( $arg = drush_shift()) {
 }
 
 if ( $fname == NULL) {
-	println( 'Usage: [update] [file <file name>]');
+	printf( "Usage: [update] [file <file name>]\n");
 	return;
 }
 
@@ -22,12 +22,12 @@ if ( substr( $fname, 0, 1) != '/') {
     return;
 }
 
-println( 'Restore from file:'. $fname);
+printf( "Restore from file %s\n", $fname);
 
 // open file
 $fp = fopen( $fname, 'r');
 if ( $fp === FALSE) {
-	println( 'Fail to read file '. $fname);
+	printf( "Fail to read file %s\n", $fname);
 	return;
 }
 
@@ -47,7 +47,7 @@ foreach( $src_taxo['usagetargetdomain'] as $tid => $obj) {
 //print_r( $src_usage_target_domain);
 
 foreach( $src_taxo as $key => $term_list) {
-	println( 'Check ' . $key);
+	printf( "Check %s\n", $key);
 
 	$terms = ocs_get_terms( $key);
 
