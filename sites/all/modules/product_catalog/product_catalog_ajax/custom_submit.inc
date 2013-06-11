@@ -1,5 +1,73 @@
 <?php 
 
+function _get_tariffplan_idd_carrier_by_carrier($tariffplan_nid,$carrier_nid){
+  $tariffplan_idd_carrier_nodes = _get_tariffplan_idd_carrier_node($tariffplan_nid);
+  foreach($tariffplan_idd_carrier_nodes as $tariffplan_idd_carrier_node_key => $tariffplan_idd_carrier_node_value){
+    if($tariffplan_idd_carrier_node_value['carrier']['nid'] == $carrier_nid){
+      return $tariffplan_idd_carrier_node_key;
+    }
+  }
+}
+
+function create_tariffplan_idd_carrier_by_carrier($numberingplan_nid,$carrier_nid,$node_nid){
+  //find if carrier nid is new or not in the numberingplan
+  $is_carrier_exist = _is_carrier_exist_in_numberingplan_idd($numberingplan_nid,$carrier_nid,$node_nid);
+  if(!$is_carrier_exist){
+    //find tariffplan which uses the numberingplan
+    $tariffplans = _get_tariffplan_by_numberingplan_idd($numberingplan_nid);  
+    foreach($tariffplans as $tariffplan_nid){
+      //create new tariffplan_idd_carrier
+      $tariffplan_node = node_load($tariffplan_nid);     
+      _create_tariffplan_idd_carrier_by_carrier($tariffplan_node,$carrier_nid);
+    }
+  }
+}
+
+function _idd_ratinggroup_create_handler($form,$form_state){
+  $node_nid = $form_state['values']['nid'];
+  $numberingplan_nid = $form_state['values']['field_ref_numberingplan_idd']['und'][0]['nid'];
+  $carrier_nid = $form_state['values']['field_ref_carrier_mobile']['und'][0]['nid'];
+  
+  create_tariffplan_idd_carrier_by_carrier($numberingplan_nid,$carrier_nid,$node_nid);
+}
+
+function _create_tariffplan_idd_carrier_by_carrier($tariffplan_node,$carrier_nid){
+  global $user;
+  
+  $tariffplan_idd_carrier_node = new StdClass();
+  $tariffplan_idd_carrier_node->uid = $user->uid;
+  $tariffplan_idd_carrier_node->language = 'und';
+  $tariffplan_idd_carrier_node->type = 'tariffplan_idd_carrier';
+  $tariffplan_idd_carrier_node->field_ref_tariffplan['und'][0]['nid'] = $tariffplan_node->nid;
+  $tariffplan_idd_carrier_node->field_ref_carrier_mobile['und'][0]['nid'] = $carrier_nid;
+  node_save($tariffplan_idd_carrier_node);   
+  
+  $tariffplan_idd_carriers = $tariffplan_node->field_ref_tariffplan_idd_carrier['und'];
+  $tariffplan_idd_carriers[] = array('nid' => $tariffplan_idd_carrier_node->nid);
+  
+  $tariffplan_node = node_load($tariffplan_node->nid);
+  $tariffplan_node->field_ref_tariffplan_idd_carrier['und'] = $tariffplan_idd_carriers;
+  node_save($tariffplan_node);  
+}
+
+function _get_tariffplan_by_numberingplan_idd($numberingplan_nid){
+  $tariffplans = array();
+  $view_result = views_get_view_result('list_tariffplan', 'panel_pane_1', $numberingplan_nid);
+  foreach($view_result as $item){
+    $tariffplans[] = $item->nid;
+  }
+  return $tariffplans;
+}
+
+function _is_carrier_exist_in_numberingplan_idd($numberingplan_nid,$carrier_nid,$exclude_nid){
+  $view_result = views_get_view_result('list_carrier_in_numberingplan_idd', 'panel_pane_1', $numberingplan_nid,$carrier_nid,$exclude_nid);
+  if(count($view_result) > 0){
+    return TRUE;
+  }else{
+    return FALSE;
+  }
+}
+
 function _get_idd_ratinggroup_iin_tariffplan($numberingplan_nid,$carrier_nid){
   $query = db_select('field_data_field_rating_group', 'rg');
   $query->condition('rg.bundle', 'idd_ratinggroup','=');

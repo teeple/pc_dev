@@ -1499,6 +1499,8 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
                 if (isset($form_state['numberingplan_idd_nid'])) {
                     $form['actions']['submit']['#submit'][] = '_ratinggroup_link_to_numberingplan_idd';
                 }
+                
+                $form['actions']['submit']['#submit'][] = '_idd_ratinggroup_create_handler';
             }
             $form['field_ref_numberingplan_idd']['#type'] = 'hidden';
             _unset_menu_items($form, $form_id);

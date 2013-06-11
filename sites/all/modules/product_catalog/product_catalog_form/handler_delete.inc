@@ -38,7 +38,31 @@ function product_catalog_form_node_delete($node){
 	    case 'idd_ratinggroup':
 	      $rating_group = $node->field_rating_group['und'][0]['value'];
 	      $numberingplan_nid = $node->field_ref_numberingplan_idd['und'][0]['nid'];
-	      _delete_basicrate_idd_by_ratinggroup($numberingplan_nid,$rating_group,$node->nid);
+        $carrier_nid = $node->field_ref_carrier_mobile['und'][0]['nid'];
+        $node_nid = $node->nid;
+        
+        $del_nids = array();
+        $is_carrier_exist = _is_carrier_exist_in_numberingplan_idd($numberingplan_nid,$carrier_nid,$node_nid);
+        if(!$is_carrier_exist){//if carrier no longer exist
+          //delete all tariffplan_idd_carrier and basicrate_idd for the carrier
+          $tariffplans = _get_tariffplan_by_numberingplan_idd($numberingplan_nid);
+          foreach($tariffplans as $tariffplan_nid){
+            $tariffplan_idd_carrier_nid = _get_tariffplan_idd_carrier_by_carrier($tariffplan_nid,$carrier_nid);
+            $del_nids[] = $tariffplan_idd_carrier_nid;
+            $basicrate_idd_view_result = views_get_view_result('list_basicrate_idd', 'panel_pane_2', $tariffplan_idd_carrier_nid);
+            foreach($basicrate_idd_view_result as $basicrate_item){
+              $del_nids[] = $basicrate_item->nid;
+            }
+          }
+        }else{//if carrier exist
+          //check wheter ratinggroup exist or not
+          _delete_basicrate_idd_by_ratinggroup($numberingplan_nid,$rating_group,$carrier_nid,$node_nid);
+        }
+        
+        if(!empty($del_nids)){
+          node_delete_multiple($del_nids);
+        }
+        
 	      break;
 		case 'simpleproductoffering':
 			//상품 삭제시 cleanup 작업  

@@ -164,7 +164,10 @@ class OcsParam
 		else if ( $type == OCS_PARAM_TYPE_ACCOUNT_STATUS ||
 			$type == OCS_PARAM_TYPE_COUNTER ||
 			$type == OCS_PARAM_TYPE_PIVOT_DATE ||
-			$type == OCS_PARAM_TYPE_DAYS_TO_ADD) {
+			$type == OCS_PARAM_TYPE_DAYS_TO_ADD ||
+			$type == OCS_PARAM_TYPE_DAYS_LIST ||
+			$type == OCS_PARAM_TYPE_MONTH_LIST ||
+			$type == OCS_PARAM_TYPE_OPERATOR_LIST) {
 
 			// get all the account status
             $options = $this->get_options( $type, $param);
@@ -227,6 +230,19 @@ class OcsParam
 						'Period.SERVICE_SAVING' => 'Period of SERVICE_SAVING',
 				      	'MAX(RemainedDays.ACTIVE,Voucher.ACTIVE)' => 'Max( Remained Days of ACTIVE, Active Days of the Voucher)' ));	
 		}
+		else if ( $type == OCS_PARAM_TYPE_DAYS_LIST) {
+            $days = array();
+            for( $i=1; $i<= 31; $i++) {
+                $days[] = $i;
+            }
+            return drupal_map_assoc( $days);
+        }
+		else if ( $type == OCS_PARAM_TYPE_MONTH_LIST) {
+            return array( 'This month', 'Next month', '2 month later');
+        }
+		else if ( $type == OCS_PARAM_TYPE_OPERATOR_LIST) {
+            return drupal_map_assoc( array( '<', '<=', '==', '>=', '>'));
+        }
 
 		return $options;
 	}
