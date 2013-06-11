@@ -315,6 +315,19 @@
 					},
 				},
 				
+				// Group Bonus
+				"nonusage_group_bonus" : {
+					"valid_children" : "none",
+					"icon" : {
+					"image" : "/sites/default/files/icons/ui-menu.png"
+					        }
+				},
+				"nonusage_group_bonus_bonus" : {
+					"valid_children" : ["actionpriceallowanceonetime"],
+					"icon" : {
+						"image" : "/sites/default/files/icons/point.png"
+					},
+				},
 				
 				// UnSubscription
 				"nonusage_unsubscription" : {
@@ -506,7 +519,8 @@
 		     	        }	
 		     },   
 		    "actionpriceallowanceonetime" : {
-		    	"valid_children" : ["conditioncommonand_nonusage_subscription",
+		    	"valid_children" : [					"conditioncommonand",
+		    											"conditioncommonand_nonusage_subscription",
 		    											"conditioncommonand_nonusage_unsubscription",
 		    											"conditioncommonand_nonusage_activation",
 		    											"conditioncommonand_nonusage_recharge",

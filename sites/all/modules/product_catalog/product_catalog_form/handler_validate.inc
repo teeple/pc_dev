@@ -1,5 +1,25 @@
 <?php
 
+function validate_product_group($productGroupNid) {
+	$result = array(
+	    'is_valid' => TRUE,
+	);
+	
+	$productGroup = node_load($productGroupNid);
+	
+	$viewResult = views_get_view_result('list_product_group', 'panel_pane_4', $productGroupNid);
+	
+	if(count($viewResult) == 0) {
+		$result['is_valid'] = FALSE;
+		
+		$result['id'] = $productGroupNid;
+		$result['title'] = $productGroup->field_product_group_id['und'][0]['value'];
+		$result['reason'] = 'No products which belongs to this product group';
+	}
+	
+	return $result;
+}
+
 function validate_product($productNid){
     $result = array(
         'is_valid' => TRUE,
@@ -261,14 +281,20 @@ function product_catalog_form_node_validate($node, $form, &$form_state) {
                 break;
                 
             case 'treenodecounter_node_form':
-            	/*
-            	dsm($form_state, 'form_state');
-            	$depositSetFlag = $form_state['input']['field_based_on_deposit_amount'][0];
             	
-            	if($depositSetFlag == 1) {
-            		$refProductNid = $form_state['input']['field_ref_product']['und'][0]['nid'];
+            	if(isset($form['nid']['#value'])) {
+            		$treeNodeCounter = node_load($form['nid']['#value']);
+            		
+            		$flagBasedOnDeposit = $form_state['input']['field_based_on_deposit_amount']['und'];
+            		
+            		if($flagBasedOnDeposit == 1) {
+						$refProductNid = $treeNodeCounter->field_ref_product['und'][0]['nid'];
+	            		$viewResult = views_get_view_result('list_treenodecounter', 'panel_pane_7', $refProductNid, $treeNodeCounter->nid);
+	            		if( count($viewResult) > 0 ) {
+	            			form_set_error('field_based_on_deposit_amount', 'Based on Deposit Amount Setting should be unique');
+	            		}
+	            	}
             	}
-            	*/
             	break;
                 
             case 'carrier_mobile_node_form':
@@ -563,16 +589,28 @@ function product_catalog_form_node_validate($node, $form, &$form_state) {
                 break;
     
             case 'simpleproductoffering_node_form' :
+            
             	if (!is_machine_name($form_state['values']['field_product_id']['und'][0]['value'])) {
                     form_set_error('field_product_id', "Only lowercase letter, number and underscore are allowed for product id");
                 }
                 
-                if (!is_machine_name($form_state['values']['field_short_code']['und'][0]['value'])) {
+                $fieldShortCode = $form_state['values']['field_short_code']['und'][0]['value'];
+                 if (!is_machine_name($fieldShortCode)) {
                     form_set_error('field_short_code', "Only lowercase letter, number and underscore are allowed for short code");
                 }
                 
+                $fieldBillingTypeTid = $form_state['values']['field_billing_type']['und'][0]['tid'];
+
+				// create 시에만 확인
+				if(!isset($form['nid']['#value'])) {
+					$viewResult = views_get_view_result('list_product', 'panel_pane_2', $fieldBillingTypeTid, $fieldShortCode);
+					
+	                if(count($viewResult) > 0) {
+       					form_set_error('field_short_code', "this short code value is already used. Try different ");
+	                }
+	            }
+	                
                 $prdTypeTerm = taxonomy_term_load($form_state['values']['field_product_type']['und'][0]['tid']);
-                
                 if(empty($prdTypeTerm)) {
 	                $paths = explode('/', $_SERVER['HTTP_REFERER']);
 	                $prdTypeTerm = current(taxonomy_get_term_by_name($paths[5], 'prdtype'));

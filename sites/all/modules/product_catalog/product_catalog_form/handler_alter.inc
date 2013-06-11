@@ -106,6 +106,7 @@ function _add_ajax_submit_callback($form_id, &$form) {
         case 'conditionwheredevicetype_node_form' :
         case 'conditionwhererattype_node_form' :
         case 'conditionwheresgsn_node_form' :
+        case 'conditionwheresgsnip_node_form' :
         case 'conditionwhocustomfactors_node_form' :
         case 'conditionwhomemberfactors_node_form' :
         case 'conditionwhonumberfactors_node_form' :
@@ -590,6 +591,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
         case 'conditionwhatroamingtype_node_form':
         case 'conditionwhererattype_node_form' :
         case 'conditionwheresgsn_node_form' :
+        case 'conditionwheresgsnip_node_form' :
         case 'conditionwhenvaliddate_node_form':
             _unset_menu_items($form, $form_id);
             $form['field_weight']['#type'] = 'hidden';
