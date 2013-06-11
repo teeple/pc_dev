@@ -73,17 +73,11 @@ function product_catalog_form_node_delete($node){
         break;
       case 'timetablefactors':
         $timetablefactor_nid = $node->nid;
-        $del_nids = array();
         
         $view_result= views_get_view_result('list_timetablefactor_reference', 'panel_pane_1', $timetablefactor_nid);
         foreach($view_result as $item){
-          $del_nids[] = $item->nid;
+          $childNodes[] = $item->nid;
         }
-        
-        if(!empty($del_nids)){
-          node_delete_multiple($del_nids);
-        }
-        
         break;
 		case 'simpleproductoffering':
 			//상품 삭제시 cleanup 작업  
