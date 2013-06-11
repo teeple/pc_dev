@@ -133,6 +133,7 @@
 				break;
 			case "nonusage_subscription_bonus":
 			case "nonusage_activation_bonus":
+			case "nonusage_group_bonus_bonus":
 			case "nonusage_recharge_bonus":
 			case "nonusage_usageend_bonus":
 			case "nonusage_recurring_bonus":
@@ -216,6 +217,7 @@
 			case 'conditionwhatroamingtype':
 			case 'conditionwhererattype':
 			case 'conditionwheresgsn':
+			case 'conditionwheresgsnip':
 			case 'conditionwhatservicedomain':
 			case 'conditionwhatcontentprice':
 			case 'conditionwhatcalltype':
@@ -492,7 +494,8 @@
 			"Roaming Zone" : $.fn.getSubMenuAddNodeWithoutWrapper("Roaming Zone", "conditionwhereroamingzone"),
 			"Roaming Country" : $.fn.getSubMenuAddNodeWithoutWrapper("Roaming Country", "conditionwhereroamingcountry"),
 			"RAT Type" : $.fn.getSubMenuAddNodeWithoutWrapper("RAT Type", "conditionwhererattype"),
-			"SGSN" : $.fn.getSubMenuAddNodeWithoutWrapper("SGSN", "conditionwheresgsn")
+			"SGSN" : $.fn.getSubMenuAddNodeWithoutWrapper("SGSN", "conditionwheresgsn"),
+			"SGSN IP" : $.fn.getSubMenuAddNodeWithoutWrapper("SGSN IP", "conditionwheresgsnip"),
 		};
 		return obj;
 	};
@@ -516,7 +519,8 @@
 			"Client Device Type" : $.fn.getSubMenuAddNodeWithoutWrapper("Client Device Type", "conditionwheredevicetype"),
 			"Service ID" : $.fn.getSubMenuAddNodeWithoutWrapper("Service ID", "conditionwhereserviceid"),
 			"RAT Type" : $.fn.getSubMenuAddNodeWithoutWrapper("RAT Type", "conditionwhererattype"),
-			"SGSN" : $.fn.getSubMenuAddNodeWithoutWrapper("SGSN", "conditionwheresgsn")
+			"SGSN" : $.fn.getSubMenuAddNodeWithoutWrapper("SGSN", "conditionwheresgsn"),
+			"SGSN IP" : $.fn.getSubMenuAddNodeWithoutWrapper("SGSN IP", "conditionwheresgsnip"),
 		};
 		return obj;
 	};

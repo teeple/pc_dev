@@ -298,12 +298,14 @@ function _get_rel_type_by_nonusage_type($tempRelType) {
 			$rel_type_suffix = '_nonusage_activation';
 			break;
 		case 'recharge':
+		case 'group_bonus':
 			$rel_type_suffix = '_nonusage_recharge';
 			break;
 		case 'usageend':
 			$rel_type_suffix = '_nonusage_usageend';
 			break;
 	}
+	
 	return $rel_type_suffix;
 }
 
@@ -330,38 +332,38 @@ function _get_rel_type_on_condition($item) {
 		  }
 		  break;
 		  
-		case 'Discount':
-			$tempRelType = $treeTerm->field_rel_type['und'][0]['value'];
-			
-		  if($tempRelType == 'treeNodeCustomDiscount') {
-					$rel_type .= _get_rel_type_by_usage_type($treeTerm->vocabulary_machine_name);
-		  } else {
-		  		$rel_type .= _get_rel_type_by_nonusage_type($tempRelType);
-		  }
-		  break;
-			
-		case 'Bonus':
-			$tempRelType = $treeTerm->field_rel_type['und'][0]['value'];
-			$rel_type .= _get_rel_type_by_nonusage_type($tempRelType);
-			
-			break;
-			
-		case 'Block':
-			$tempRelType = $treeTerm->field_rel_type['und'][0]['value'];
-			
-			if($tempRelType == 'treeNodeCustomBlock') {
-					$rel_type .= _get_rel_type_by_usage_type($treeTerm->vocabulary_machine_name);
-			}
-			break;
-			
-		case 'Predefined':
-		case 'Dynamic':
-		case 'DefaultQoS':
-			$rel_type .= _get_rel_type_by_usage_type($treeTerm->vocabulary_machine_name);
-			break;
-			
-		default:
-			break;
+	case 'Discount':
+		$tempRelType = $treeTerm->field_rel_type['und'][0]['value'];
+		
+	  if($tempRelType == 'treeNodeCustomDiscount') {
+				$rel_type .= _get_rel_type_by_usage_type($treeTerm->vocabulary_machine_name);
+	  } else {
+	  		$rel_type .= _get_rel_type_by_nonusage_type($tempRelType);
+	  }
+	  break;
+		
+	case 'Bonus':
+		$tempRelType = $treeTerm->field_rel_type['und'][0]['value'];
+		$rel_type .= _get_rel_type_by_nonusage_type($tempRelType);
+		
+		break;
+		
+	case 'Block':
+		$tempRelType = $treeTerm->field_rel_type['und'][0]['value'];
+		
+		if($tempRelType == 'treeNodeCustomBlock') {
+				$rel_type .= _get_rel_type_by_usage_type($treeTerm->vocabulary_machine_name);
+		}
+		break;
+		
+	case 'Predefined':
+	case 'Dynamic':
+	case 'DefaultQoS':
+		$rel_type .= _get_rel_type_by_usage_type($treeTerm->vocabulary_machine_name);
+		break;
+		
+	default:
+		break;
 	}
 	
 	return $rel_type;

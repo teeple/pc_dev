@@ -13,6 +13,9 @@ define( 'OCS_PARAM_TYPE_FUNCTION', '10');
 define( 'OCS_PARAM_TYPE_ACCOUNT_STATUS', '11');
 define( 'OCS_PARAM_TYPE_PIVOT_DATE', '12');
 define( 'OCS_PARAM_TYPE_DAYS_TO_ADD', '13');
+define( 'OCS_PARAM_TYPE_DAYS_LIST', '14');
+define( 'OCS_PARAM_TYPE_MONTH_LIST', '15');
+define( 'OCS_PARAM_TYPE_OPERATOR_LIST', '16');
 
 function ocs_admin_get_param_type( $name)
 {

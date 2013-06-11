@@ -1838,7 +1838,7 @@ function product_catalog_ajax_add_content($js = NULL) {
      */
      
 		case 'conditioncommonand':
-						$child = new StdClass();
+					$child = new StdClass();
 		    		$child->uid = $user->uid;
 		    		$child->type = $childContentType;
 		    		$child->language = 'und';

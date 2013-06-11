@@ -915,15 +915,17 @@ function _vouchercardtype_submit_handler($form, $form_state) {
 }
 
 function set_unlimited_in_treenodecounter($node) {
-	$unlimitedOption = $node->field_unlimited_threshold['und'][0]['value'];
-	if($unlimitedOption == 1) {
-	   $node-> field_threshold_limit_amount['und'][0]['value'] = 999999999999;
+	
+	if(isset($node->field_unlimited_threshold)) {
+		$unlimitedOption = $node->field_unlimited_threshold['und'][0]['value'];
+		if($unlimitedOption == 1) {
+		   $node-> field_threshold_limit_amount['und'][0]['value'] = 999999999999;
+		}
 	}
 }
 
 function set_exclusiveness_check($node_unchanged, $node_changed) {
 	$productNid = $node_changed->nid;
-	dsm($productNid, 'productNid');
 	
 	$list_unchanged = array();
 	$list_changed = array();
