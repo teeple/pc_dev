@@ -71,6 +71,20 @@ function product_catalog_form_node_delete($node){
         
         _delete_basicrate_roaming_by_ratinggroup($numberingplan_nid,$rating_group,$node_nid);
         break;
+      case 'timetablefactors':
+        $timetablefactor_nid = $node->nid;
+        $del_nids = array();
+        
+        $view_result= views_get_view_result('list_timetablefactor_reference', 'panel_pane_1', $timetablefactor_nid);
+        foreach($view_result as $item){
+          $del_nids[] = $item->nid;
+        }
+        
+        if(!empty($del_nids)){
+          node_delete_multiple($del_nids);
+        }
+        
+        break;
 		case 'simpleproductoffering':
 			//상품 삭제시 cleanup 작업  
 			//default basic counters
