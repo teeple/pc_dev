@@ -15,6 +15,7 @@ global $fp;
 global $child_info;
 global $child_node;
 global $nid_field_list;
+global $no_title_attribute_list;    // list of attribute which has no title condition
 
 
 // get global variables
@@ -55,6 +56,9 @@ $update_field_list = array(
         'field_lifecycle_states' => 'ocs_account_state',
         'field_lifecycle_state' => 'ocs_account_state',
         'field_lifecycle_scheme' => 'lifecyclescheme',
+        'field_ocs_message_list' => 'ocs_messages',
+        'field_ocs_action' => 'ocs_actions',
+        'field_ocs_transition' => 'ocs_state_machine',
         ),
     'target_id' => array(
         'field_ocs_from_state' => 'ocs_account_state',
@@ -62,6 +66,11 @@ $update_field_list = array(
         'field_ocs_trigger_events' => 'ocs_events',
         ),
     );
+
+$no_title_attribute_list = array(     // list of attribute which has no title condition
+    'actionpricechargerecurringdefaul' => FALSE
+    );
+
 $src_node = array();
 $check_this = array();
 $node_list = array();
@@ -258,6 +267,7 @@ function add_product( $src, $child)
             printf( "    save child : org_nid=%d nid=%d type=%s title=%s\n", 
                 $org_nid, $childNode->nid, $childNode->type, $childNode->title);
             $child['tree_tid'][$org_nid]['new_node'] = $childNode->nid;
+        //readline("Enter to continue ...");
 
             /*
             if(isset($targetChildNode->field_charge_collection)){
@@ -286,6 +296,7 @@ function add_product( $src, $child)
                     node_save($actionSetNode);
 
                     printf( "        save action: nid=%d type=%s:%s title=%s\n", $childSetNode->nid, $childNode->type, $actionSetNode->type, $actionSetNode->title);
+        //readline("Enter to continue ...");
                 }
             }
             //if ( $idx ++ == 1) break;
@@ -413,14 +424,17 @@ function saveTariffPlan( $child, $org_nid)
 
 function get_attribute( $productNode, $src)
 {
-    global $update_field_list;
+    global $update_field_list, $no_title_attribute_list;
     //print_r( $src);
 
 	$query = new EntityFieldQuery();
 	$query->entityCondition('entity_type', 'node')
 		->entityCondition('bundle', $src->type)
-        ->propertyCondition( 'title', $src->title)
 		->fieldCondition('field_ref_product', 'nid', $productNode->nid);
+
+    if ( ! isset( $no_title_attribute_list[$src->type])) {
+        $query->propertyCondition( 'title', $src->title);
+    }
 
     $tid = 0;
 	if ( isset( $src->field_ref_tree_tid['und'])) {
@@ -860,6 +874,8 @@ function interactive_mode()
         array( 'title' => 'Domestic Numbering Plan', 'type' => 'numberingplan_domestic'),
         array( 'title' => 'Time Table', 'type' => 'timetable'),
         array( 'title' => 'Counter', 'type' => 'counter'),
+        array( 'title' => 'OCS Message', 'type' => 'ocs_messages'),
+        array( 'title' => 'OCS Message Group', 'type' => 'ocs_message_group'),
         array( 'title' => 'Unit Transfer', 'type' => 'unittransfer'),
         array( 'title' => 'Account States', 'type' => 'ocs_account_state'),
         array( 'title' => 'Lifecycle Scheme', 'type' => 'lifecyclescheme'),
@@ -875,7 +891,7 @@ function interactive_mode()
 
         $input = readline("> Input command : ");
         $input = trim( $input);
-        if ( $input == 'q') return;
+        if ( $input == '' || $input == 'q') return;
         else if ( is_numeric( $input) && $input >= 0 && $input < count($menu)) {
             restore_node( $menu[$input]['type']);
         }
@@ -897,10 +913,10 @@ function restore_node( $node_type)
         }
         check_node_exist_in_this( array_values( $src_node[$node_type]), $node_type);
 
-        $input = readline( "\n> Input number, a (All) or q(quit) : ");
+        $input = readline( "\n> Input number or title, a (All) or q(quit) : ");
         $input = trim( $input);
 
-        if ( $input == 'q' || $input == 'quit') {
+        if ( $input == '' || $input == 'q' || $input == 'quit') {
             $update_flag = FALSE;
             break;
         }
@@ -914,6 +930,17 @@ function restore_node( $node_type)
         else if ( is_numeric( $input) && $input >= 0 && $input < $idx) {
             check_node( TRUE, $list[$input]);
         }
+        else {
+            // find by title
+            foreach( $src_node[$node_type] as $nid => $obj) {
+                if ( $obj->title == $input) {
+                    check_node( TRUE, $obj);
+                    break;
+                }
+            }
+        }
+
+        readline("Enter to continue ...");
     }
 
      return;
