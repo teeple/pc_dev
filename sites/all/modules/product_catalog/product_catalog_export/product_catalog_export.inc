@@ -140,7 +140,7 @@ function export_deploy($export_type, $export_item_list = NULL, $target, $redirec
     }
     
     if($failedValidation == TRUE){
-        $message = $checkValid['base_type'] . ' '. $checkValid['title'] . ':' . $checkValid['reason'];
+        $message = 'FAIL!! '.$checkValid['base_type'] . ' '. $checkValid['title'] . ':' . $checkValid['reason'];
         drupal_set_message($message, 'error');
         
     }else{

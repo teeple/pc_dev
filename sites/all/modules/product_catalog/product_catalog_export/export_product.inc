@@ -135,27 +135,27 @@ function _get_deposit_scheme($product,$target=NULL) {
 			$prdAttributeDeposit = current($viewResult);
 			$depositAmount = $prdAttributeDeposit->field_field_deposit_amount[0]['raw']['value'];
 			
-			// treenodecounter 중 deposit과 연관있는 것만 찾아온다.
-			$treeNodeCounterResult = views_get_view_result('list_treenodecounter', 'panel_pane_6', $product->nid);
+			dsm($prdAttributeDeposit, 'prdAttributeDeposit');
+			$thresholdCounterNid = $prdAttributeDeposit->field_field_threshold_counter[0]['raw']['nid'];
 			
-			if( count($treeNodeCounterResult) > 0 ) {
-				$treeNodeCounter = current($treeNodeCounterResult);
+			if($thresholdCounterNid > 0) {
+				$treeNodeCounter = node_load($thresholdCounterNid);
 				
 				// $thresholdLimit = $treeNodeCounter->field_field_threshold_on_counter[0]['raw']['value'];
-				$thresholdLimit = $treeNodeCounter->field_field_threshold_limit_amount[0]['raw']['value'];
+				$thresholdLimit = $treeNodeCounter->field_threshold_limit_amount['und'][0]['value'];
 				
 				// create threshold scheme
 				$thresholdScheme = _create_threshold_scheme($treeNodeCounter);
-				
+			
 				// create deposit scheme
 				$depositScheme = _create_deposit_scheme($treeNodeCounter, $depositAmount, $thresholdLimit, $thresholdScheme);
-				
+			
 				if(isset($target)) {
 					$redirectFlag = FALSE;
-					
+				
 					// 해당 threshold scheme을 deploy한다.
 					export_deploy('THRESHOLD_SCHEME', array($thresholdScheme->nid => $thresholdScheme), $target, $redirectFlag);
-					
+				
 					// 해당 deposit scheme을 deploy한다.
 					export_deploy('DEPOSIT_SCHEME', array($depositScheme->nid => $depositScheme), $target, $redirectFlag);
 				}
@@ -229,7 +229,7 @@ function _create_threshold_scheme($treeNodeCounter) {
 function _create_deposit_scheme($treeNodeCounter, $depositAmount, $thresholdLimit, $thresholdScheme) {
 	global $user;
 	
-	$product = node_load($treeNodeCounter->field_field_ref_product[0]['raw']['nid']);
+	$product = node_load($treeNodeCounter->field_ref_product['und'][0]['nid']);
 	
 	// thresholdscheme save
 	$scheme = new stdClass();
@@ -252,8 +252,8 @@ function _create_deposit_scheme($treeNodeCounter, $depositAmount, $thresholdLimi
 	$factor->sticky = 1;
 	$factor->uid = $user->uid;
 	$factor->field_ref_depositscheme['und'][0]['nid'] = $scheme->nid;
-	$factor->field_ref_thres_counter_acc['und'][0]['nid'] = $treeNodeCounter->field_field_ref_counter[0]['raw']['nid'];
-	$factor->field_ref_thres_counter_limit['und'][0]['nid'] = $treeNodeCounter->field_field_ref_counter[0]['raw']['nid'];
+	$factor->field_ref_thres_counter_acc['und'][0]['nid'] = $treeNodeCounter->field_ref_counter['und'][0]['nid'];
+	$factor->field_ref_thres_counter_limit['und'][0]['nid'] = $treeNodeCounter->field_ref_counter['und'][0]['nid'];
 	$factor->field_is_default_factor['und'][0]['value'] = 0;
 	$factor->field_ref_thresholdscheme['und'][0]['nid'] = $thresholdScheme->nid;
 	$factor->field_thismonth_accu_counter = NULL;

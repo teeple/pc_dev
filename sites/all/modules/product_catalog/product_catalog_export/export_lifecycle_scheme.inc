@@ -126,7 +126,7 @@ function _decode_action_param_values( $param_list)
 {
 	$output = array();
 	foreach( $param_list as $param) {
-		list($k,$v) = explode( '=', $param['rendered']['#markup']);
+		list($k,$v) = explode( '=', $param['rendered']['#markup'], 2);
 		list($action_nid,$param_nid) = explode( ':', $k);
 
 		$param = node_load( $param_nid);
