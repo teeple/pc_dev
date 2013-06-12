@@ -29,9 +29,23 @@ function product_catalog_form_entity_update($entity, $type){
                 case 'idd_ratinggroup':
                   _idd_ratinggroup_update_handler($entity);
                   break;
+                case 'roaming_ratinggroup':
+                  _roaming_ratinggroup_update_handler($entity);
+                  break;
             }
             break;
     }
+}
+
+function _roaming_ratinggroup_update_handler($entity){
+  $old_rating_group = $entity->original->field_rating_group['und'][0]['value']; 
+  $new_rating_group = $entity->field_rating_group['und'][0]['value'];
+  $numberingplan_nid = $entity->field_ref_roaming_plan['und'][0]['nid'];
+  $node_nid = $entity->nid;
+  
+  if($old_rating_group != $new_ratinggroup){
+    _delete_basicrate_roaming_by_ratinggroup($numberingplan_nid,$old_rating_group,$node_nid);
+  }
 }
 
 function _idd_ratinggroup_update_handler($entity){
@@ -85,6 +99,23 @@ function _domestic_ratinggroup_update_handler($entity){
   
   if($original_ratinggroup != $new_ratinggroup){
     _delete_basicrate_domestic_by_ratinggroup($numberingplan_nid,$original_ratinggroup,$entity->nid);
+  }
+}
+
+function _delete_basicrate_roaming_by_ratinggroup($numberingplan_nid,$rating_group,$basicrate_nid){
+  $rating_group_view_result 
+    = views_get_view_result('list_roaming_plan_ratinggroup', 'panel_pane_4', $numberingplan_nid,$rating_group,$basicrate_nid);
+  
+  if(empty($rating_group_view_result)){//if not exist delete related basicrate_domestic
+    $del_nids = array();  
+    $basicrate_view_result = views_get_view_result('list_basicrate_roaming', 'panel_pane_1', $numberingplan_nid,$rating_group,$basicrate_nid);
+    foreach($basicrate_view_result as $item){
+      $del_nids[] = $item->nid;
+    }
+    
+    if(!empty($del_nids)){
+      node_delete_multiple($del_nids);
+    }
   }
 }
 

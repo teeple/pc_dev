@@ -2324,6 +2324,10 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             
         case 'carrier_mobile_node_form' :
             _unset_menu_items($form, $form_id);
+            // in case EDIT
+            if (isset($form['nid']['#value'])) {          
+              $form['field_ref_prefix_type']['#disabled'] = TRUE;
+            }
             break;
         case 'treenodevouchercardforproduct_node_form' :
             _unset_menu_items($form, $form_id);

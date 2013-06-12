@@ -86,7 +86,26 @@ function is_machine_name($argStr) {
 function product_catalog_form_node_validate($node, $form, &$form_state) {
 
     if($form_state['values']['op'] == 'Delete'){
-        
+        switch($form['form_id']['#value']) {
+          case 'carrier_mobile_node_form':
+            $view_result = views_get_view_result('list_carrier_mobile_reference', 'panel_pane_1', $node->nid);
+            if(count($view_result) > 0){
+              form_set_error('title',"You should remove the items referencing this carrier in numbering plan first!");
+            }
+            break;
+          case 'roaming_country_node_form':
+            $view_result = views_get_view_result('list_roaming_country_reference', 'panel_pane_1', $node->nid);
+            if(count($view_result) > 0){
+              form_set_error('title',"You should remove the items referencing this country in roaming plan or roaming carrier first!");
+            }
+            break;
+          case 'roaming_carrier_node_form':
+            $view_result = views_get_view_result('list_roaming_carrier_reference', 'panel_pane_1', $node->nid);
+            if(count($view_result) > 0){
+              form_set_error('title',"You should remove the items referencing this carrier in roaming plan first!");
+            }
+            break;
+        }
     }else{
         switch($form['form_id']['#value']) {
             case 'roaming_zone_node_form':

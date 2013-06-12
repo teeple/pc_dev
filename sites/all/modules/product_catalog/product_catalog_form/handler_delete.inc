@@ -64,6 +64,21 @@ function product_catalog_form_node_delete($node){
         }
         
 	      break;
+      case 'roaming_ratinggroup':
+        $rating_group = $node->field_rating_group['und'][0]['value']; 
+        $numberingplan_nid = $node->field_ref_roaming_plan['und'][0]['nid'];
+        $node_nid = $node->nid;
+        
+        _delete_basicrate_roaming_by_ratinggroup($numberingplan_nid,$rating_group,$node_nid);
+        break;
+      case 'timetablefactors':
+        $timetablefactor_nid = $node->nid;
+        
+        $view_result= views_get_view_result('list_timetablefactor_reference', 'panel_pane_1', $timetablefactor_nid);
+        foreach($view_result as $item){
+          $childNodes[] = $item->nid;
+        }
+        break;
 		case 'simpleproductoffering':
 			//상품 삭제시 cleanup 작업  
 			//default basic counters

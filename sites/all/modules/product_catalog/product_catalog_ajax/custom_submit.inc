@@ -110,7 +110,7 @@ function _get_roaming_ratinggroup_in_tariffplan($tariffplanNode){
           $allowedRoamingType = array('HPLMN','VPLMN','Other PLMN','Incoming');
           break;
       case 'tpl_tariffplan_sms':
-          $allowedRoamingType = array('Incoming SMS','Outgoing SMS');
+          $allowedRoamingType = array('SMS Incoming','SMS Outgoing');
           break;
   }
   $query->condition('term.name',$allowedRoamingType,'in');

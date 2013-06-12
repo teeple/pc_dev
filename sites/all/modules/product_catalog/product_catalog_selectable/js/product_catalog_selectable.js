@@ -17,11 +17,13 @@
 			if(selected.length == 0){
 				alert('Select Timeslot');
 			}else{
+				$.fn.masking("Processing...");
 				$.ajax({
 					url : '/product_catalog_selectable/timetablefactorsslot/add',
 					type: "post",
 			        data: {'timetable_nid': timetableNid, 'add_title': addTitle, 'selected': selected},
 					success : function(data) {
+						$.fn.unmasking();
 						var output = $.parseJSON(data);
 						$(location).attr('href',output[1].url);						
 					}
