@@ -16,6 +16,35 @@ function _create_modal_mapping_link($contentType,$title,$params){
   return $link_string;
 }
 
+function _create_modal_upload_link($contentType,$params) {
+	/*
+	ctools_include('ajax');
+	ctools_include('modal');
+	ctools_modal_add_js();
+	
+	$upload_url = '/product_catalog_ajax/nojs/upload_modal/'.$contentType;
+	foreach($params as $param){
+		$upload_url .= '/'.$param;
+	}
+	*/
+	switch($contentType) {
+		case 'locationfactor':
+			$upload_url = '/import/location_cellid_importer#quickset-qtabs_common_data=7';
+			break;
+		case 'devicemodel':
+			$upload_url = '/import/imei_prefix_importer#quickset-qtabs_common_data=5';
+			break;
+			
+	}
+	
+	$add_class_1 = 'add-link-in-rightpane';
+	// $add_class_2 = 'ctools-use-modal ctools-modal-add-item-modal-style';
+	
+	$link_string = '<div class='.$add_class_1.'><a href="'.$upload_url.'" >Upload</a></div>';
+	
+	return $link_string;
+}
+
 function _create_modal_add_link($contentType,$params){
 	ctools_include('ajax');
 	ctools_include('modal');

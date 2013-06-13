@@ -24,6 +24,13 @@ function product_catalog_ajax_menu() {
       'access callback' => TRUE,
       'type' => MENU_CALLBACK,
   );
+  $items['product_catalog_ajax/%ctools_js/upload_modal/%'] = array( 
+      'title' => 'Add New',
+      'page callback' => 'product_catalog_ajax_upload_modal_content',
+      'page arguments' => array(1,3),
+      'access callback' => TRUE,
+      'type' => MENU_CALLBACK,
+  );
   $items['product_catalog_ajax/check_rollover_type/%'] = array( 
       'title' => 'Add New',
       'page callback' => 'product_catalog_ajax_check_belong_to_rollover',
@@ -795,6 +802,56 @@ settings =>
     exit;
     */
     drupal_goto();
+}
+
+function product_catalog_ajax_upload_modal_content($js = NULL, $content_type, $addPram=NULL) {
+	global $user;
+	ctools_include('node.pages', 'node', '');
+	ctools_include('modal');
+	ctools_include('ajax');
+	
+	$formName = 'feeds_import_form';
+	
+	switch($content_type) {
+		case 'locationfactor':
+			$formTitle = 'Upload bulk Location information';
+			$importerName = 'location_cellid_importer';
+			break;
+	}
+	
+	$form_state = array();
+	if (!$js) {
+		return drupal_get_form($formName);
+	}
+	$form_state['title'] = $formTitle;
+	$form_state['ajax'] = 'TRUE';
+	
+	$form_state['build_info']['args'] = array($importerName);
+	$form_state['build_info']['files'] = array('menu' => 'sites/all/modules/feeds/feeds.pages.inc');
+	
+	$output = ctools_modal_form_wrapper($formName, $form_state);
+	
+	dsm($formName, 'upload_formName');
+	dsm($form_state, 'upload_form_state');
+	
+	dsm('upload_here');
+	dsm($output, 'upload_output');
+	
+	if (!empty($form_state['executed'])) {
+		$output = array();
+		//$output[] = ctools_modal_command_display(t('Node created'),'<div class="modal-message">Node creation successful.</div>');
+		$output[] = ctools_modal_command_dismiss();
+		
+		switch($contentType){
+			case 'locationfactor':
+				$output[] = ctools_ajax_command_reload();
+				break;
+		}
+	}
+	
+	print ajax_render($output);
+	exit;
+	
 }
 
 function product_catalog_ajax_add_modal_content($js = NULL, $contentType, $refNodeNid, $refTreeTid, $addParam=NULL) {

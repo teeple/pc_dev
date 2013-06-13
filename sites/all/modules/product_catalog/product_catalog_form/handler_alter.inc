@@ -249,7 +249,6 @@ function edit_pane_callback($form, &$form_state) {
     return $form;
 }
 
-
 function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 
 	load_required_js_css_before_ajax_load();
@@ -257,7 +256,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
     if ((isset($form['#attributes']) && isset($form['#attributes']['class'])) && gettype($form['#attributes']['class']) == 'array') {
         $form['#attributes']['class'][] = 'myform';
     }
-    
+        
     switch($form_id) {
       case 'mapbasicrateroaming_node_form':
         _unset_menu_items($form, $form_id);
