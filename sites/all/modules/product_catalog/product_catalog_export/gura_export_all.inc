@@ -1251,7 +1251,6 @@ function view_get_field_value($view , $field_name , $record)
 					}
 					else if(get_field_type_string($field_name) == 'field_ipaddress')
 					{
-						dsm($raw_item);
 						$arr[] = $raw_item['raw']['start'];
 						if($raw_item['raw']['end']!=$raw_item['raw']['start'])
 						{
