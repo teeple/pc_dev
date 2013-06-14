@@ -275,7 +275,7 @@ function to_rating_rule_string($value)
 	return $value;
 }
 
-function format_rating_factor_value($field_name, $und, $value)
+function format_rating_factor_value($field_name, $und, $value, &$type_info)
 {
 	$field_type = get_field_type_string($field_name);
 	/*
@@ -297,6 +297,11 @@ function format_rating_factor_value($field_name, $und, $value)
 		$finfo = field_info_field($field_name);
 		$granularity = $finfo['settings']['granularity'];
 		$format_str = '%Y%m%d';
+		if(!is_null($type_info))
+		{
+			$type_info['type'] = 'string';
+			$type_info['size'] = '8';
+		}
 		/*
 		if($granularity['second'] !== 0)
 		{
@@ -306,8 +311,13 @@ function format_rating_factor_value($field_name, $und, $value)
 		}
 		else 
 		 */
-			if($granularity['minute'] !== 0)
+		if($granularity['minute'] !== 0)
 		{
+			if($type_info!=NULL)
+			{
+				$type_info['type'] = 'string';
+				$type_info['size'] = '20';
+			}
 			$format_str = '%Y-%m-%dT%H:%M';
 			//$value = '\''. strftime($format_str, strtotime($value)) . '\'';
 			return strftime($format_str, strtotime($value));
@@ -339,7 +349,90 @@ function get_rating_factor_value_from_partial_date($value)
 	return $ret;
 }
 
-function get_rating_factor_values_from_drupal_field($obj , $field_name_arr, $use_title, $use_field = NULL)
+function set_rating_type_info($field_name , &$type_info)
+{
+	if(!is_null($type_info))
+	{
+		$field_info = field_info_field($field_name);
+		if($field_info!=NULL)
+		{
+			$type_info['drupal_type'] = $field_info['type'];
+			if($field_info['type']=='datetime')
+			{
+				$type_info['type'] = 'string';
+				$type_info['size'] = '16';
+			}
+			else if($field_info['type'] == 'node_reference')
+			{
+				$type_info['type'] = 'string';
+				$type_info['size'] = '128';
+			}
+			else if($field_info['type'] == 'number_integer')
+			{
+				$type_info['type'] = 'int';
+				//$type_info['size'] = 0;
+			}
+			else if($field_info['type'] == 'number_float')
+			{
+				$type_info['type'] = 'double';
+				//$type_info['size'] = 0;
+			}
+			else if($field_info['type'] == 'list_boolean')
+			{
+				$type_info['type'] = 'string';
+				$type_info['size'] = 6;
+			}
+			else if($field_info['type'] == 'list_text')
+			{
+				// max foreach(['settings']['allowed_values'])
+				$type_info['type'] = 'string';
+				$type_info['size'] = '128';
+			}
+			else if($field_info['type'] == 'list_integer')
+			{
+				// max foreach(['settings']['allowed_values'])
+				$type_info['type'] = 'string';
+				$type_info['size'] = '128';
+			}
+			else if($field_info['type'] == 'taxonomy_term_reference')
+			{
+				$type_info['type'] = 'string';
+				$type_info['size'] = '128';
+			}
+			else if(array_key_exists('settings' , $field_info))
+			{
+				if(array_key_exists('max_length' , $field_info['settings']))
+				{
+					$type_info['type'] = $field_info['type'];
+					$type_info['size'] = $field_info['settings']['max_length'];
+				}
+				else
+				{
+					//taxonomy_term
+					$type_info['type'] = 'string';
+					$type_info['size'] = '64';
+					//$type_info['type'] = $field_info['type'];
+				   // dsm($factor_name);
+					//dsm($field_info);
+				}
+			}
+			else
+			{
+				dsm($factor_name);
+				dsm($field_info);
+			}
+		}
+		else
+		{
+			// php
+			//dsm($field_handler);
+			$type_info['type'] = 'string';
+			$type_info['size'] = '64';
+		}
+	}
+}
+
+function get_rating_factor_values_from_drupal_field($obj , $field_name_arr, $use_title, $use_field = NULL, &$type_info = NULL)
 {
 	$ret = array();
 	/*
@@ -351,6 +444,7 @@ function get_rating_factor_values_from_drupal_field($obj , $field_name_arr, $use
 	*/
 	foreach($field_name_arr as $field_name)
 	{
+		set_rating_type_info($field_name , $type_info);
 		if(property_exists($obj , $field_name))
 		{
 			$temp = $obj->$field_name;
@@ -364,16 +458,25 @@ function get_rating_factor_values_from_drupal_field($obj , $field_name_arr, $use
 					{
 						$c = node_load($nid);
 						$value = $c->title;
+						if(!is_null($type_info))
+						{
+							$type_info['type'] = 'string';
+							$type_info['size'] = '128';
+						}
 
 					}
 					else if($use_field!=NULL)
 					{
 						$c = node_load($nid);
-						$value = get_rating_factor_values_from_drupal_field($c , array($use_field)  , FALSE , NULL);
+						$value = get_rating_factor_values_from_drupal_field($c , array($use_field)  , FALSE , NULL, $type_info);
 					}
 					else
 					{
 						$value = $nid;
+						if(!is_null($type_info))
+						{
+							$type_info['type'] = 'int';
+						}
 					}
 
 					if($value!=NULL)
@@ -398,6 +501,11 @@ function get_rating_factor_values_from_drupal_field($obj , $field_name_arr, $use
 					$value = $taxo->name;
 					if($use_title == TRUE)
 					{
+						if(!is_null($type_info))
+						{
+							$type_info['type'] = 'string';
+							$type_info['size'] = '128';
+						}
 					}
 					else
 					{
@@ -406,12 +514,21 @@ function get_rating_factor_values_from_drupal_field($obj , $field_name_arr, $use
 							//dsm($taxo);
 							$temp = get_drupal_field_values($taxo , 'field_common_code');
 							$value = $temp[0];
+							if(!is_null($type_info))
+							{
+								$type_info['type'] = 'int';
+							}
 							//dsm($value);
 						}
 						if(property_exists($taxo , 'field_rating_operation_code'))
 						{
 							$temp = get_drupal_field_values($taxo , 'field_rating_operation_code');
 							$value = $temp[0];
+							if(!is_null($type_info))
+							{
+								$type_info['type'] = 'string';
+								$type_info['size'] = '20';
+							}
 						}
 					}
 
@@ -425,21 +542,35 @@ function get_rating_factor_values_from_drupal_field($obj , $field_name_arr, $use
 					if(array_key_exists('from' , $und))
 					{
 						$ret[]  = get_rating_factor_value_from_partial_date($und['from']);
+						if(!is_null($type_info))
+						{
+							$type_info['type'] = 'string';
+							$type_info['size'] = '20';
+						}
 					}
 					if(array_key_exists('to' , $und))
 					{
 						$ret[]  = get_rating_factor_value_from_partial_date($und['to']);
+						if(!is_null($type_info))
+						{
+							$type_info['type'] = 'string';
+							$type_info['size'] = '20';
+						}
 					}
 				}
 				else if(get_field_type_string($field_name) == 'field_ipaddress')
 				{
 					$ret[] = $und['start'];
 					$ret[] = $und['end'];
+					if(!is_null($type_info))
+					{
+						$type_info['type'] = 'double';
+					}
 				}
 				else
 				{
 					$value = $und['value'];
-					$value = format_rating_factor_value($field_name , $und , $value);
+					$value = format_rating_factor_value($field_name , $und , $value, $type_info);
 					if($value!=NULL)
 					{
 						$ret[] = $value;
@@ -448,7 +579,7 @@ function get_rating_factor_values_from_drupal_field($obj , $field_name_arr, $use
 					if(array_key_exists("value2" , $und))
 					{
 						$value = $und['value2'];
-						$value = format_rating_factor_value($field_name , $und , $value);
+						$value = format_rating_factor_value($field_name , $und , $value, $type_info);
 						if($value!=NULL)
 						{
 							$ret [] = $value;
@@ -637,13 +768,25 @@ function generate_condition_string_by_condition_node($nid, &$factor_list )
 {
     $node = node_load($nid);
 	$types = node_load_multiple(array(), array('type' => 'rating_factor_conversion' , 'title'=>$node->type)); 
+	$type_info = array();
 	if(count($types)>0)
 	{
 		foreach($types as $type)
 		{
 			if(array_key_exists('und' , $type->field_rating_factor_name) && count($type->field_rating_factor_name['und'])>0)
 			{
-				$factor_list[$type->field_rating_factor_name['und'][0]['value']] = $type;
+				$factor_name = $type->field_rating_factor_name['und'][0]['value'];
+				$ret = preg_match_all('/\$\(([a-zA-Z0-9_]+)\)/', $factor_name , $out);
+				foreach($out[1] as $o)
+				{
+					$replace_value = get_rating_factor_values_from_drupal_field($node, array(0=>$o) , TRUE);
+					if(count($replace_value)>0)
+					{
+						$factor_name = str_replace('$('.$o.')' , $replace_value[0] , $factor_name);
+					}
+				}
+
+				$factor_list[$factor_name] = array('conversion_info'=>$type, 'type_info'=>$type_info);
 				$value = NULL;
 				$use_title = FALSE;
 				$override_op = FALSE;
@@ -719,9 +862,11 @@ function generate_condition_string_by_condition_node($nid, &$factor_list )
 					$drupal_field_name = get_drupal_field_values($type , "field_value");
 					//dsm($node);
 					if($op == "between")
-						$value = get_rating_factor_values_from_drupal_field($node , $drupal_field_name, $use_title, $use_field);
+						$value = get_rating_factor_values_from_drupal_field($node , $drupal_field_name, $use_title, $use_field, $type_info);
 					else
-						$value = get_rating_factor_values_from_drupal_field($node , array(0=>$drupal_field_name[0]), $use_title, $use_field);
+						$value = get_rating_factor_values_from_drupal_field($node , array(0=>$drupal_field_name[0]), $use_title, $use_field, $type_info);
+
+					$factor_list[$factor_name] = array('conversion_info'=>$type, 'type_info'=>$type_info);
 				}
 				else
 				{
@@ -740,7 +885,7 @@ function generate_condition_string_by_condition_node($nid, &$factor_list )
 					if(count($value)==0)
 						return NULL;
 
-					$factor_name = $type->field_rating_factor_name['und'][0]['value'];
+					//$factor_name = $type->field_rating_factor_name['und'][0]['value'];
 
 					if($op == '=' || $op == 'starts' || $op == 'ends')
 					{
@@ -814,7 +959,7 @@ function generate_condition_string_by_condition_node($nid, &$factor_list )
 				else
 				{
 					$value = to_rating_rule_string($value);
-					return $type->field_rating_factor_name['und'][0]['value'] . ' ' . $op . ' ' . $value;
+					return $factor_name . ' ' . $op . ' ' . $value;
 				}
 			}
 			else
@@ -825,7 +970,7 @@ function generate_condition_string_by_condition_node($nid, &$factor_list )
 				{
 					$value = $newfunc($node);
 
-					$factor_list[$value[0]['label']] = $value[0];
+					$factor_list[$value[0]['label']] = array('conversion_info'=>$value[0], 'type_info'=>$type_info);
 					return $value[1];
 				}
 				else
@@ -908,9 +1053,34 @@ function generate_condition_string_from_tree_node($nid)
     {
         $j = array();
         $j['factors'] = array();
-        foreach($factor_list as $factor_name => $factor)
-        {
-            $j['factors'][] = $factor_name;
+        foreach($factor_list as $factor_name => $f)
+		{
+			$factor = $f['conversion_info'];
+			$type_info = $f['type_info'];
+			if(array_key_exists('und' , $factor->field_rating_factor_name) && count($factor->field_rating_factor_name['und'])>0 && $factor_name != $factor->field_rating_factor_name['und'][0]['value'])
+			{
+				$a = array('replaced'=>$factor_name, 'original'=>$factor->field_rating_factor_name['und'][0]['value']);
+				if(array_key_exists('type', $type_info))
+				{
+					$a['type'] = $type_info['type'];
+					$a['size'] = $type_info['size'];
+				}	
+				$j['factors'][] = $a;
+			}
+			else
+			{
+				if(array_key_exists('type', $type_info))
+				{
+					$a = array('replaced'=>$factor_name, 'original'=>$factor_name);
+					$a['type'] = $type_info['type'];
+					$a['size'] = $type_info['size'];
+					$j['factors'][] = $a;
+				}
+				else
+				{
+					$j['factors'][] = $factor_name;
+				}
+			}
         }
         $j['condition'] = $ret;
 		return $j;
@@ -1164,9 +1334,18 @@ function get_rating_factor_info($rating_factor_name)
         {
             $ret = array();
             $ret["label"] = $rating_factor_name;
-            $ret["default_op"] = isset($node->field_rating_factor_op['und'][0]['value'])?$node->field_rating_factor_op['und'][0]['value']:"=";
-            $ret["size"] = $node->field_rating_factor_size['und'][0]['value'];
-            $ret["type"] = $node->field_rating_factor_type['und'][0]['value'];
+			$ret["default_op"] = isset($node->field_rating_factor_op['und'][0]['value'])?$node->field_rating_factor_op['und'][0]['value']:"=";
+			if(array_key_exists('und' , $node->field_rating_factor_size))
+			{
+				$ret["size"] = $node->field_rating_factor_size['und'][0]['value'];
+			}
+			if(array_key_exists('und' , $node->field_rating_factor_type))
+			{
+				$ret["type"] = $node->field_rating_factor_type['und'][0]['value'];
+			}
+
+
+
             $ret["tags"] = get_drupal_field_values($node, "field_rating_factor_tags");
             return $ret;
         }
@@ -1259,83 +1438,8 @@ function rating_rules_export_from_view($title, $view_name, $display_name, $nid=N
                             $factorMeta['size'] = '128';
                         }
                         else if($field_handler->handler_type == 'field')
-                        {
-                            $field_info = field_info_field($field['field']);
-                            if($field_info!=NULL)
-                            {
-                                $factorMeta['drupal_type'] = $field_info['type'];
-                                if($field_info['type']=='datetime')
-                                {
-                                    $factorMeta['type'] = 'string';
-                                    $factorMeta['size'] = '16';
-                                }
-                                else if($field_info['type'] == 'node_reference')
-                                {
-                                    $factorMeta['type'] = 'string';
-                                    $factorMeta['size'] = '128';
-                                }
-                                else if($field_info['type'] == 'number_integer')
-                                {
-                                    $factorMeta['type'] = 'int';
-                                    //$factorMeta['size'] = 0;
-                                }
-                                else if($field_info['type'] == 'number_float')
-                                {
-                                    $factorMeta['type'] = 'double';
-                                    //$factorMeta['size'] = 0;
-                                }
-                                else if($field_info['type'] == 'list_boolean')
-                                {
-                                    $factorMeta['type'] = 'string';
-                                    $factorMeta['size'] = 6;
-                                }
-                                else if($field_info['type'] == 'list_text')
-                                {
-                                    // max foreach(['settings']['allowed_values'])
-                                    $factorMeta['type'] = 'string';
-                                    $factorMeta['size'] = '128';
-                                }
-                                else if($field_info['type'] == 'list_integer')
-                                {
-                                    // max foreach(['settings']['allowed_values'])
-                                    $factorMeta['type'] = 'string';
-                                    $factorMeta['size'] = '128';
-                                }
-                                else if($field_info['type'] == 'taxonomy_term_reference')
-                                {
-                                    $factorMeta['type'] = 'string';
-                                    $factorMeta['size'] = '64';
-                                }
-                                else if(array_key_exists('settings' , $field_info))
-                                {
-                                    if(array_key_exists('max_length' , $field_info['settings']))
-                                    {
-                                        $factorMeta['type'] = $field_info['type'];
-                                        $factorMeta['size'] = $field_info['settings']['max_length'];
-                                    }
-                                    else
-                                    {
-                                        //taxonomy_term
-                                        $factorMeta['type'] = 'string';
-                                        $factorMeta['size'] = '64';
-                                        //$factorMeta['type'] = $field_info['type'];
-                                       // dsm($factor_name);
-                                        //dsm($field_info);
-                                    }
-                                }
-                                else
-                                {
-                                    dsm($factor_name);
-                                    dsm($field_info);
-                                }
-                            }
-                            else
-                            {
-                                // php
-                                //dsm($field_handler);
-                                $factorMeta['type'] = 'string';
-                                $factorMeta['size'] = '64';
-                            }
+						{
+							set_rating_type_info($field['field'] , $factorMeta);
                         }
                         else
                         {
@@ -1368,26 +1472,41 @@ function rating_rules_export_from_view($title, $view_name, $display_name, $nid=N
                     $factor_name = $field_name_map[$field_name];
                     if(array_key_exists($factor_name, $factor_meta_map) && $factor_meta_map[$factor_name]['type'] == 'json_condition')
                     {
-                        //dsm(view_get_field_value($view , $field_name , $record));
-                        //$rule[$factor_name] = json_decode(view_get_field_value($view , $field_name , $record));
                         $condition = json_decode(view_get_field_value($view , $field_name , $record));
                         if($condition != NULL)
                         {
                             $count = 0;
                             foreach($condition->factors as $rating_factor)
                             {
-                                //dsm($rating_factor);
-                                $sub_factor = get_rating_factor_info($rating_factor);;
+								//dsm($rating_factor);
+
+								if(is_object($rating_factor))
+								{
+									$sub_factor = get_rating_factor_info($rating_factor->original);
+									$sub_factor_name = $rating_factor->replaced;
+									$sub_factor['label'] = $sub_factor_name;
+									if((!array_key_exists('type', $sub_factor) || $sub_factor['type'] == NULL) && property_exists($rating_factor, 'type'))
+									{
+										$sub_factor['type'] = $rating_factor->type;
+										if(property_exists($rating_factor, 'size'))
+										{
+											$sub_factor['size'] = $rating_factor->size;
+										}
+									}
+								}	
+								else
+								{
+									$sub_factor = get_rating_factor_info($rating_factor);;
+									$sub_factor_name = $rating_factor;
+								}
                                 if(!has_same_sub_factor( $factor_meta_map[$factor_name]['sub_rule_factors'] , $sub_factor['label']))
                                 {
                                     $sub_factor['order'] = $count++;
-                                    $factor_meta_map[$factor_name]['sub_rule_factors'][$rating_factor] = $sub_factor;
+                                    $factor_meta_map[$factor_name]['sub_rule_factors'][$sub_factor_name] = $sub_factor;
                                 }
                             }
                             $rule[$factor_name] = $condition->condition;
                         }
-
-
                     }
                     else
                     {
