@@ -664,6 +664,27 @@ function ocs_ussd_code_node_form_validate( $form, &$form_state)
 {
 	// only check unique in case 'CREATE'	
 	if(!isset($form['nid']['#value'])) {
+		// check USSD code format 
+		$valid_code = TRUE;
+		$code = $form_state['values']['title'];
+		if ( substr( $code, 0, 1) == '*' && substr( $code, -1 ) == '#') {
+			for( $i=1; $i < strlen($code)-1; $i++) {
+				$c = substr( $code, $i, 1);
+				if ( ! (is_numeric( $c) || $c == '*')) {
+					$valid_code = FALSE;
+					break;
+				}
+			}
+		}
+		else {
+			$valid_code = FALSE;
+		}
+
+		if ( $valid_code === FALSE) {
+	        form_set_error('title', t( 'Invalid USSD code format'));
+			return;
+		}
+
 		// check if the ussd code exist already
 		$query = new EntityFieldQuery();
 		$result = $query->entityCondition('entity_type', 'node')
