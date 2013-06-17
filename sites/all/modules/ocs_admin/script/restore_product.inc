@@ -59,6 +59,9 @@ $update_field_list = array(
         'field_ocs_message_list' => 'ocs_messages',
         'field_ocs_action' => 'ocs_actions',
         'field_ocs_transition' => 'ocs_state_machine',
+        'field_ref_counter' => 'counter',
+        'field_counter' => 'counter',
+        'field_ref_connected_product' => 'simpleproductoffering',
         ),
     'target_id' => array(
         'field_ocs_from_state' => 'ocs_account_state',
@@ -262,8 +265,10 @@ function add_product( $src, $child)
             $org_nid = $data->nid;
 
             $childNode = get_attribute( $productNode, $data);
+			if ( $childNode === NULL) continue;
 
             node_save($childNode);
+
             printf( "    save child : org_nid=%d nid=%d type=%s title=%s\n", 
                 $org_nid, $childNode->nid, $childNode->type, $childNode->title);
             $child['tree_tid'][$org_nid]['new_node'] = $childNode->nid;
@@ -453,7 +458,8 @@ function get_attribute( $productNode, $src)
 		$p->field_ref_tree_tid['und'][0]['value'] = $tid;
 		_unset_unused_field_of_cloned_node($p);
 
-        check_field( $p);
+        if ( check_field( $p) === FALSE)
+			return NULL;
 	}
 	else {
 		$nid = array_pop( array_keys( $result['node']));
@@ -471,7 +477,7 @@ function get_target_tid( $voca, $srcTid)
     //print_r( $src_term[$voca]);
 
 	// first get term name
-    $tid = 0;
+    $tid = NULL;
     $name = get_src_term_name( $srcTid);
 	if ( ! empty( $name)) {
 		if ( !isset( $dst_term[$voca])) {
@@ -675,7 +681,11 @@ function check_field( $node)
                     $id = ( $type == 'tid') ? get_target_tid( $voca, $field['und'][$idx][$type]) : 
                         get_target_nid( $field_name, $voca, $field['und'][$idx][$type]);
 
-                    if ( ! empty( $id)) {
+					if ( $id == NULL) {
+						printf(">> Stop checking fields\n");
+						return FALSE;
+					}
+					else if ( ! empty( $id)) {
                         $field['und'][$idx][$type] = $id;
 
                         if ( $field['und'][$idx][$type] != $id)
@@ -686,6 +696,8 @@ function check_field( $node)
             }
         }
     }
+
+	return TRUE;
 }
 
 function get_target_nid( $field_name, $type, $org_nid)
@@ -750,14 +762,15 @@ function check_child_node( $parent, $org_parent_nid)
                         _unset_unused_field_of_cloned_node($child);
 
                         printf("Check fields.\n");
-                        check_field( $child);
+                        $ret = check_field( $child);
+						if ( $ret === FALSE) continue;
 
                         // set node reference
                         $child->$ref['rev_ref_field'] = array( 'und' => array( 0 => array( 'nid' => $parent->nid)));
 
                         node_save( $child);
 
-                        printf("Save child node nid=%d title=%s\n", $child->nid, $child->title);
+                        printf("  Save child node nid=%d title=%s\n", $child->nid, $child->title);
 
                         if ( isset( $ref['ref_field'])) {
                             // add child reference

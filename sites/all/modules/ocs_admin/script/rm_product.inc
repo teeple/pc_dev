@@ -15,7 +15,24 @@ if ( $prd_id == NULL) {
 	return;
 }
 
-printf( "Remove product : %s\n", $prd_id);
+if ( $prd_id == 'all') {
+	$query = new EntityFieldQuery();
+	$result = $query->entityCondition('entity_type', 'node')
+		->entityCondition('bundle', 'simpleproductoffering')
+		->execute();
 
-rm_product( $prd_id);
-
+	if ( empty( $result)) {
+		printf("No products are found\n");
+	}
+	else {
+		foreach( array_keys( $result['node']) as $nid) {
+			$node = node_load( $nid);
+			printf( "Remove product : %s\n", $node->title);
+			rm_product( $node->field_product_id['und'][0]['value']);
+		}
+	}
+}
+else {
+	printf( "Remove product : %s\n", $prd_id);
+	rm_product( $prd_id);
+}
