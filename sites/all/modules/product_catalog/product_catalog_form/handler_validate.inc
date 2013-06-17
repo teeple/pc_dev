@@ -80,9 +80,6 @@ function is_machine_name($argStr) {
 }
 
 function product_catalog_form_node_validate($node, $form, &$form_state) {
-dsm($node,'$node');
-dsm($form,'$form');
-dsm($form_state,'$form_state');
   if ($form_state['values']['op'] == 'Delete') {
     switch($form['form_id']['#value']) {
       case 'carrier_mobile_node_form' :
