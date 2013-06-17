@@ -123,7 +123,6 @@ function product_catalog_form_node_validate($node, $form, &$form_state) {
 
           if ($valid_code === FALSE) {
             form_set_error('title', t('Invalid USSD code format'));
-            return;
           }
 
           // check if the ussd code exist already
