@@ -2166,6 +2166,7 @@ function product_catalog_modal_form_edit_modal_content($js = NULL, $contentType,
 			case 'homezonefactor':
             case 'roaming_zone':
             case 'prddowngradepenalty':
+            case 'ocs_ussd_code':
 				$output[] = ctools_ajax_command_reload();
 				break;
 			case 'actionsetcounter':
