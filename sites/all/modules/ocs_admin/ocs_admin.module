@@ -600,15 +600,17 @@ function ocs_admin_form_alter(&$form, &$form_state, $form_id)
 		if($form_id == 'ocs_state_machine_node_form' ) {
 			ocs_lifecycle_node_form( $form, $form_state, $form_id);
 		}
+    /*
         else if ( $form_id == 'ocs_ussd_code_node_form') {
             ocs_ussd_code_form( $form, $form_state);
         }
+    */
     }
 }
 
 /*
 	implementation of hook_validate()
-*/
+
 function ocs_admin_node_validate( $node, $form, &$form_state)
 {
     if ( $form_state['values']['op'] == 'Save') {
@@ -617,6 +619,7 @@ function ocs_admin_node_validate( $node, $form, &$form_state)
         }
     }
 }
+*/
 
 /*
 load card type

@@ -633,6 +633,7 @@ function ocs_admin_message_group_form_submit($form, &$form_state)
 	}
 }
 
+/*
 function ocs_ussd_code_form( &$form, &$form_state)
 {
     $options = array();
@@ -697,3 +698,5 @@ function ocs_ussd_code_node_form_validate( $form, &$form_state)
 	    }
 	}
 }
+*/
+
