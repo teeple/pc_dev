@@ -104,34 +104,31 @@ function product_catalog_form_node_validate($node, $form, &$form_state) {
   } else {
     switch($form['form_id']['#value']) {
       case 'ocs_ussd_code_node_form' :
-        // only check unique in case 'CREATE'
-        if (!isset($form['nid']['#value'])) {
-          // check USSD code format
-          $valid_code = TRUE;
-          $code = $form_state['values']['title'];
-          if (substr($code, 0, 1) == '*' && substr($code, -1) == '#') {
-            for ($i = 1; $i < strlen($code) - 1; $i++) {
-              $c = substr($code, $i, 1);
-              if (!(is_numeric($c) || $c == '*')) {
-                $valid_code = FALSE;
-                break;
-              }
+        // check USSD code format
+        $valid_code = TRUE;
+        $code = $form_state['values']['title'];
+        if (substr($code, 0, 1) == '*' && substr($code, -1) == '#') {
+          for ($i = 1; $i < strlen($code) - 1; $i++) {
+            $c = substr($code, $i, 1);
+            if (!(is_numeric($c) || $c == '*')) {
+              $valid_code = FALSE;
+              break;
             }
-          } else {
-            $valid_code = FALSE;
           }
+        } else {
+          $valid_code = FALSE;
+        }
 
-          if ($valid_code === FALSE) {
-            form_set_error('title', t('Invalid USSD code format'));
-          }
+        if ($valid_code === FALSE) {
+          form_set_error('title', t('Invalid USSD code format'));
+        }
 
-          // check if the ussd code exist already
-          $query = new EntityFieldQuery();
-          $result = $query -> entityCondition('entity_type', 'node') -> entityCondition('bundle', 'ocs_ussd_code') -> propertyCondition('title', $form_state['values']['title']) -> execute();
+        // check if the ussd code exist already
+        $query = new EntityFieldQuery();
+        $result = $query -> entityCondition('entity_type', 'node') -> entityCondition('bundle', 'ocs_ussd_code') -> propertyCondition('title', $form_state['values']['title']) -> execute();
 
-          if (!empty($result)) {
-            form_set_error('title', t('USSD code @code exist already', array('@code' => $form_state['values']['title'])));
-          }
+        if (!empty($result)) {
+          form_set_error('title', t('USSD code @code exist already', array('@code' => $form_state['values']['title'])));
         }
         break;
       case 'roaming_zone_node_form' :
