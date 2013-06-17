@@ -28,17 +28,17 @@ $data = array(
 'N,Mobile,Main,Happy Life,happy_life,Personal,Prepaid,h2',
 	);
 
-$ah = array_flip( explode( ',', 'Purchasable Categories,Validity,Counter ID,Price,Min (Voice),Count (SMS),MB (Packet),Unit (Remains),Package Name,Short Code,SMS buy,SMS Number,Purchasable again?,Un-purchasable?,Is counter transferrable?,Recurring?,Comment,,,,'));
+$ah = array_flip( explode( ',', 'Purchasable Categories,Validity,Counter ID,Price,Min,Count,MB,Unit,Package Name,Short Code,SMS buy,SMS Number,Purchasable again?,Un-purchasable?,Is counter transferrable?,Recurring?,Comment,,,,'));
 
 $ap_data = array(
 'N|Y|G|B|S|A|Z|X|C|E|F|M|W|Q,-,1102,120GG,-,-,50,,PacketPackage_50,D1,Y,1415,Y,N,?,N,,,,,',
 'N|Y|G|B|S|A|Z|X|C|E|F|M|W|Q,30,302,1000TG,-,-,50,,PurchasePackage_50M (Starter),B1,Y,1423,Y,N,?,N,,,,,',
 'N|Y|G|B|S|A|Z|X|C|E|F|M|W|Q,30,302,3000TG,-,-,200,,PurchasePackage_200M (Ascend),B2,Y,1423,Y,N,?,N,,,,,',
 'N|Y|G|B|S|A|Z|X|C|E|F|M|W|Q,30,302,12000TG,-,-,1024,,PurchasePackage_1G (Smart),B3,Y,1423,Y,N,?,N,,,,,',
-'N|Y|G|B|S|A|Z|X|C|E|F|M|W|Q,30,54,19900TG,-,-,92160,,PurchasePackage_UnLmt (Unlimited),B4,Y,1423,N,N,?,N,,,,,',
+'N|Y|G|B|S|A|Z|X|C|E|F|M|W|Q,30,54,19900TG,-,-,2000,,PurchasePackage_UnLmt (Unlimited),B4,Y,1423,N,N,?,N,,,,,',
 'N|Y|G|B|S|A|Z|X|C|E|F|M|W,30,302,0,-,-,1024,,NewYearPacket_1GB_1M,-,N,-,-,N,?,Y,temporary promotional,,,,',
 'N|Y|G|B|S|A|Z|X|C|E|F|M|W,-,702,0,-,-,247,,PacketPackage247,-,Y,-,-,N,?,N,temporary promotional,,,,',
-'N|Y|G|S|A|Z|X|M,1,67,1000TG,-,-,20480,,PacketPackageDaily,DATA,Y,1416,Y,N,?,N,expires on next day at 06:00am,,,,',
+'N|Y|G|S|A|Z|X|M,1,67,1000TG,-,-,1024,,PacketPackageDaily,DATA,Y,1416,Y,N,?,N,expires on next day at 06:00am,,,,',
 'N|Y|G|B|S|A|Z|X|C|M,7,1002,400GG,-,-,200,,PacketPackageGG_200,D2,Y,1415,N,Y,?,N,,,,,',
 'N|Y|G|B|S|A|Z|X|C|E|F|M|W,3,1004,100GG,10,-,-,,FreeCallTimeGG_10,C1,Y,1415,N,Y,?,N,,,,,',
 'N|Y|G|B|S|A|Z|X|C|E|F|M|W,7,1004,500GG,50,-,-,,FreeCallTimeGG_50,C2,Y,1415,N,Y,?,N,,,,,',
@@ -77,12 +77,12 @@ $ap_data = array(
 ',3,-,50GG,,,,,AmusementPark_Automat,B3,Y,1415,N,Y,?,N,once a day,,,,',
 ',3,,50GG,,,,,AmusementPark_ScaryHouse,B7,Y,1415,N,Y,?,N,once a day,,,,',
 ',-,-,0TG,,,,,Minii nutag (VPN),<zip code>,,1441,N,Y,?,N,,,,,',
-',-,,10% of amount,,,,,Uloan,<amount>,,1444,N,N,?,N,upto 1000TG,,,,',
-',-,,10% of amount,,,,,Unit_Transfer(PS to PPS),<phno>,,1444,Y,N,?,Y,upto 10000TG can be transferred,,,,',
+',-,,0,,,,,Uloan,<amount>,,1444,N,N,?,N,upto 1000TG,,,,',
+',-,,0,,,,,Unit_Transfer(PS to PPS),<phno>,,1444,Y,N,?,Y,upto 10000TG can be transferred,,,,',
 ',,,550TG,,,,,Close 5 /family&friends/,<PhoneNumber>,Y,1445,Y,N,?,N,Send free messages upto 4 members,,,,',
 'N|Y|G|B|S|A|Z|X|C|E|F|M|W|Q,3,,,,3,,,Call Me,<PhoneNumber>,N,1447,N,Y,?,Y,"Sends "Call me" messages to specified numbers for free until next Recharge",,,,',
-',-,,50TG per day,-,-,-,,U-Media_enable,on2,Y,1433,N,Y,?,Y,Umedia service,,,,',
-',-,-,-,-,-,-,,U-Media_disable,off2,Y,1433,N,Y,?,Y,Umedia service,,,,',
+',-,,50TG,-,-,-,,U-Media_enable,on2,Y,1433,N,Y,?,Y,Umedia service,,,,',
+',-,-,0,-,-,-,,U-Media_disable,off2,Y,1433,N,Y,?,Y,Umedia service,,,,',
 'N|Y|G|B|S|A|Z|X|C|E|F|M|W|Q,,,50TG,,,,,NumberSearch_PS,d <4digits>,Y,101010,Y,N,?,N,Search available post numbers,,,,',
 'N|Y|G|B|S|A|Z|X|C|E|F|M|W|Q,,,50TG,,,,,NumberSearch_PPS,u <4digits>,Y,,Y,N,?,N,Search available Prepaid numbers,,,,',
 ',,,,,,,,VoiceGreeting,,Y,1435,,,?,,,,,,',
@@ -97,7 +97,7 @@ $ap_data = array(
 ',,,50TG,,,,,Horoscope,<birthday>,Y,101010,Y,N,?,N,,,,,',
 ',,,50TG,,,,,Hair cut day,0,Y,101010,Y,N,?,N,,,,,',
 ',,,50TG,,,,,Love Letters & Short Poems,Single Letter,Y,247,Y,N,?,N,,,,,',
-',-,,50TG per SMS,,,,,GroupSMS,,,172288,Y,N,?,Y,,,,,',
+',-,,0,,,,,GroupSMS,,,172288,Y,N,?,Y,,,,,',
 	);
 
 $attr = array(
@@ -147,7 +147,8 @@ $attr = array(
 
 // get voca terms
 $voca_list = array( 'custdvcd', 'billtype', 'prdtype', 'featurecode', 'tpl_default_tree_mobile', 
-		'prdexpiredate', 'countermainoraccu', 'specialdateoptions', 'specialenddateoptions');
+		'prdexpiredate', 'countermainoraccu', 'specialdateoptions', 'specialenddateoptions', 
+		'counterset_addorreplace', 'unitofmeasure_enddate');
 $term = array();
 foreach( $voca_list as $voca) {
 	if ( substr( $voca, 0, 4) == 'tpl_') {
@@ -333,29 +334,12 @@ foreach( $ap_data as $item) {
 	// customer sub type
 
 	// expire date
-	if ( is_numeric( $d[$ah['Validity']])) {
+	$validity = $d[$ah['Validity']];
+	if ( is_numeric( $validity)) {
 		$p->field_expire_date_type['und'][0]['tid'] = $term['prdexpiredate']['Day'];
-		$p->field_expire_date['und'][0]['value'] = $d[$ah['Validity']];
+		$p->field_expire_date['und'][0]['value'] = $validity;
 	}
 
-	// price
-	$price = $d[$ah['Price']];
-	$unit = substr( $price, -2);
-	$amount = substr( $price, 0, -2);
-	if ( $unit == 'TG') {
-		$node = get_attr( $p, 'actionpricechargeonetime', $term['tpl_default_tree_mobile']['nonusage_subscription_charge'], 'Charge '. $amount);
-		$node->field_price_amount_float['und'][0]['value'] = $amount;
-		node_save( $node);
-
-		printf("  price : %s TG\n", $amount);
-	}
-	else if ( $unit == 'GG') {
-		$p->field_point_for_subscription['und'][0]['value'] = $amount;
-		printf("  price : %s GG\n", $amount);
-	}
-	else {
-		printf(">> ERROR : Invalid price format : %s\n", $price);
-	}
 
 	// add counter
 	$counter_id = $d[$ah['Counter ID']];
@@ -375,8 +359,65 @@ foreach( $ap_data as $item) {
 		$node->field_unlimited_threshold['und'][0]['value'] = 0;
 		node_save( $node);
 		printf("  attach counter to charging : %s\n", $counter->title);
+
 	}
 
+	// price
+	$price = $d[$ah['Price']];
+	if ( is_numeric( $price) || empty($price)) {
+		$unit = 'TG';
+		$amount = empty($price) ? 0 : $price;
+	}
+	else {
+		$unit = substr( $price, -2);
+		$amount = substr( $price, 0, -2);
+	}
+
+	if ( $unit == 'GG') {
+		$p->field_point_for_subscription['und'][0]['value'] = $amount;
+		printf("  price : %s GG\n", $amount);
+	}
+	else {
+		$charge = get_attr( $p, 'actionpricechargeonetime', $term['tpl_default_tree_mobile']['nonusage_subscription_charge'], 'Charge '. $amount);
+		$charge->field_price_amount_float['und'][0]['value'] = $amount;
+		node_save( $charge);
+		printf("  price : %s TG\n", $amount);
+
+		unset( $p->field_point_for_subscription);
+
+		if ( $counter) {
+			foreach( array( 'Min', 'Count', 'MB', 'Unit') as $unit) {
+				$amount = $d[$ah[$unit]];
+//				printf("  %s %s\n", $unit, $amount);
+				if ( !empty($amount) && is_numeric( $amount)) {
+					if ( $unit == 'MB') $amount *= 1024*1024;
+					else if ( $unit == 'Min') $amount *= 60;
+
+					$node = get_attr_cond( 'actionsetcounter', 'ActionSetCounter', array(
+						array( 'field_ref_counter', 'nid', $counter->nid),
+						array( 'field_ref_source_action', 'nid', $charge->nid),
+						));
+					$node->field_ref_counter['und'][0]['nid'] = $counter->nid;
+					$node->field_ref_source_action['und'][0]['nid'] = $charge->nid;
+					$node->field_amount['und'][0]['value'] = $amount;
+					$node->field_add_or_replace['und'][0]['tid'] = $term['counterset_addorreplace']['Add'];
+					$node->field_startdate_option1['und'][0]['tid'] = $term['specialdateoptions']['Now'];
+
+					if ( is_numeric( $validity)) {
+						$node->field_enddate_option1['und'][0]['tid'] = $term['specialenddateoptions']['+ N Date(D,W,M,Y)'];
+						$node->field_enddate_option3['und'][0]['value'] = $validity;
+						$node->field_enddate_option4['und'][0]['tid'] = $term['unitofmeasure_enddate']['Day'];
+					}
+					else {
+						$node->field_enddate_option1['und'][0]['tid'] = $term['specialenddateoptions']['Unlimited'];
+					}
+
+					node_save( $node);
+					printf("  set subscription bonus %d %s\n", $amount, $unit);
+				}
+			}
+		};
+	}
 		 
 
 	node_save( $p);
@@ -472,6 +513,31 @@ function set_allowed_prefix( $node, $prefix_list)
 			$p->field_prefix_range_end['und'][0]['value']);
 	}
 	node_save( $node);
+}
+
+function get_attr_cond( $type, $title, $field_cond)
+{
+	// find the attribute
+	$query = new EntityFieldQuery();
+	$query->entityCondition('entity_type', 'node')
+		->entityCondition('bundle', $type);
+
+	if ( $field_cond) {
+		foreach( $field_cond as $cond) {
+			$query->fieldCondition( $cond[0], $cond[1], $cond[2]);
+		}
+	}
+	$result = $query->execute();
+
+	if ( empty( $result)) {
+		$node = ocs_admin_get_new_node( $type);
+		printf("  New attribute type=%s title=%s\n", $type, $title);
+	}
+	else {
+		$node = node_load( array_pop( array_keys( $result['node'])));
+	}
+
+	return $node;
 }
 
 function get_attr( $product, $type, $tree_tid, $title = NULL, $field_cond = NULL)
@@ -612,18 +678,6 @@ function check_counter_list( $product, $tid, $counter)
 		$p->field_counter_list['und'][] = array( 'nid' => $counter->nid);
 		printf( "Add counter %s to the Existing counter list : %s\n", $counter->title, $p->title);
 	}
-
-	node_save( $p);
-}
-
-
-function check_subscription_fee( $product, $tid, $price)
-{
-	// find the price
-	$p = get_attribute( 'actionpricechargeonetime', $product->nid, $tid);
-	$p->title = 'Charge ' . $price ;
-	$p->field_price_amount_float['und'][0]['value'] = $price;
-	print_result( $p, 'Subscription Fee : ' . $p->title);
 
 	node_save( $p);
 }
