@@ -28,6 +28,78 @@ $data = array(
 'N,Mobile,Main,Happy Life,happy_life,Personal,Prepaid,h2',
 	);
 
+$ah = array_flip( explode( ',', 'Purchasable Categories,Validity,Counter ID,Price,Min (Voice),Count (SMS),MB (Packet),Unit (Remains),Package Name,Short Code,SMS buy,SMS Number,Purchasable again?,Un-purchasable?,Is counter transferrable?,Recurring?,Comment,,,,'));
+
+$ap_data = array(
+'N|Y|G|B|S|A|Z|X|C|E|F|M|W|Q,-,1102,120GG,-,-,50,,PacketPackage_50,D1,Y,1415,Y,N,?,N,,,,,',
+'N|Y|G|B|S|A|Z|X|C|E|F|M|W|Q,30,302,1000TG,-,-,50,,PurchasePackage_50M (Starter),B1,Y,1423,Y,N,?,N,,,,,',
+'N|Y|G|B|S|A|Z|X|C|E|F|M|W|Q,30,302,3000TG,-,-,200,,PurchasePackage_200M (Ascend),B2,Y,1423,Y,N,?,N,,,,,',
+'N|Y|G|B|S|A|Z|X|C|E|F|M|W|Q,30,302,12000TG,-,-,1024,,PurchasePackage_1G (Smart),B3,Y,1423,Y,N,?,N,,,,,',
+'N|Y|G|B|S|A|Z|X|C|E|F|M|W|Q,30,54,19900TG,-,-,92160,,PurchasePackage_UnLmt (Unlimited),B4,Y,1423,N,N,?,N,,,,,',
+'N|Y|G|B|S|A|Z|X|C|E|F|M|W,30,302,0,-,-,1024,,NewYearPacket_1GB_1M,-,N,-,-,N,?,Y,temporary promotional,,,,',
+'N|Y|G|B|S|A|Z|X|C|E|F|M|W,-,702,0,-,-,247,,PacketPackage247,-,Y,-,-,N,?,N,temporary promotional,,,,',
+'N|Y|G|S|A|Z|X|M,1,67,1000TG,-,-,20480,,PacketPackageDaily,DATA,Y,1416,Y,N,?,N,expires on next day at 06:00am,,,,',
+'N|Y|G|B|S|A|Z|X|C|M,7,1002,400GG,-,-,200,,PacketPackageGG_200,D2,Y,1415,N,Y,?,N,,,,,',
+'N|Y|G|B|S|A|Z|X|C|E|F|M|W,3,1004,100GG,10,-,-,,FreeCallTimeGG_10,C1,Y,1415,N,Y,?,N,,,,,',
+'N|Y|G|B|S|A|Z|X|C|E|F|M|W,7,1004,500GG,50,-,-,,FreeCallTimeGG_50,C2,Y,1415,N,Y,?,N,,,,,',
+'N|Y|G|B|S|A|Z|X|C|E|F|M|W,1,1006,125GG,-,100,-,,FreeSmsGG_100,M1,Y,1415,N,Y,?,N,,,,,',
+'N|Y|G|B|S|A|Z|X|C|E|F|M|W,7,1006,300GG,-,500,-,,FreeSmsGG_500,M2,Y,1415,N,Y,?,N,,,,,',
+'N|Y|G|S|A|Z|X|M,1,68,1000TG,1440,-,-,,FreeCallTimeDaily,CALL,Y,1416,Y,N,?,N,expires on next day at 06:00am,,,,',
+'N|Y|G|S|A|Z|X|M,1,69,1000TG,-,500,-,,FreeSmsDaily,SMS,Y,1416,Y,N,?,N,expires on next day at 06:00am,,,,',
+'N|Y|G|S|A|Z|X|M,30,2104,2000TG,20,-,-,,CallTimeMonthly20_1,M1,Y,1416,Y,N,?,N,,,,,',
+',,1606,,-,200,-,,SmsMonthly200_1,,,,,,?,,,,,,',
+'N|Y|G|S|A|Z|X|M,30,2104,3000TG,30,-,-,,CallTimeMonthly30_2,M2,Y,1416,Y,N,?,N,,,,,',
+',,1606,,-,300,-,,SmsMonthly300_2,,,,,,?,,,,,,',
+'N|Y|G|S|A|Z|X|M,30,2104,5000TG,100,-,-,,CallTimeMonthly100_3,C1,Y,1416,Y,N,?,N,,,,,',
+',,1606,,-,100,-,,SmsMonthly100_3,,,,,,?,,,,,,',
+'N|Y|G|S|A|Z|X|M,30,2104,10000TG,300,-,-,,CallTimeMonthly300_4,C2,Y,1416,Y,N,?,N,,,,,',
+',,1606,,-,300,-,,SmsMonthly300_4,,,,,,?,,,,,,',
+'N|Y|G|B|S|A|Z|X|C|M,5,1004,300GG,30,-,-,,FreeCallTimeGG_30,C3,Y,1415,N,Y,?,N,,,,,',
+'N|Y|G|B|S|A|Z|X|C|M,4,1006,200GG,-,300,-,,FreeSmsGG_300,M3,Y,1415,N,Y,?,N,,,,,',
+'-,30,-,150GG,-,-,-,,Free_CRBT,V1,Y,1415,N,N,?,N,,,,,',
+'-,30,-,150GG,-,-,-,,Free_MCL,V2,Y,1415,N,N,?,N,,,,,',
+'B|C|E|F|A|D|G|M|N|R|S|X|Y|Z,1,1404,0,30,-,-,,Birthday_Call,-,N,-,N,N,?,N,happens once a year (promotional),,,,',
+',,1106,,-,30,-,,Birthday_Sms,,,,,,?,,,,,,',
+',,502,,-,-,30,,Birthday_Data,,,,,,?,,,,,,',
+'?,30,-,1200TG,-,-,-,,CRBTMonthly_1,M1,Y,1456,Y,N,?,Y,,,,,',
+'?,90,-,3000TG,-,-,-,,CRBTMonthly_3,M3,Y,1456,Y,N,?,Y,,,,,',
+'?,180,-,5500TG,-,-,-,,CRBTMonthly_6,M6,Y,1456,Y,N,?,Y,,,,,',
+'?,360,-,10000TG,-,-,-,,CRBTMonthly_12,M12,Y,1456,Y,N,?,Y,,,,,',
+',3,-,50GG,,,,,UrgooCinema,B1,Y,1415,N,Y,?,N,once a day,,,,',
+',3,-,50GG,,,,,BayanUlgii_StarCinema,K4,Y,1415,N,Y,?,N,once a day,,,,',
+',3,-,50GG,,,,,Darkhan_StarCinema,K1,Y,1415,N,Y,?,N,once a day,,,,',
+',3,-,50GG,,,,,Darkhan_DDKaraoke,K2,Y,1415,N,Y,?,N,once a day,,,,',
+',3,-,50GG,,,,,Khovd_AmusementPark,K5,Y,1415,N,Y,?,N,once a day,,,,',
+',3,-,50GG,,,,,Khovd_SwimmingPool,K6,Y,1415,N,Y,?,N,once a day,,,,',
+',3,-,50GG,,,,,Khovd_Cinema,K7,Y,1415,N,Y,?,N,once a day,,,,',
+',3,-,50GG,,,,,Zavkhan_Cinema,K8,Y,1415,N,Y,?,N,once a day,,,,',
+',3,-,50GG,,,,,MongolianPaintballCommittee,P1,Y,1415,N,Y,?,N,once a day,,,,',
+',3,-,50GG,,,,,AmusementPark_Automat,B3,Y,1415,N,Y,?,N,once a day,,,,',
+',3,,50GG,,,,,AmusementPark_ScaryHouse,B7,Y,1415,N,Y,?,N,once a day,,,,',
+',-,-,0TG,,,,,Minii nutag (VPN),<zip code>,,1441,N,Y,?,N,,,,,',
+',-,,10% of amount,,,,,Uloan,<amount>,,1444,N,N,?,N,upto 1000TG,,,,',
+',-,,10% of amount,,,,,Unit_Transfer(PS to PPS),<phno>,,1444,Y,N,?,Y,upto 10000TG can be transferred,,,,',
+',,,550TG,,,,,Close 5 /family&friends/,<PhoneNumber>,Y,1445,Y,N,?,N,Send free messages upto 4 members,,,,',
+'N|Y|G|B|S|A|Z|X|C|E|F|M|W|Q,3,,,,3,,,Call Me,<PhoneNumber>,N,1447,N,Y,?,Y,"Sends "Call me" messages to specified numbers for free until next Recharge",,,,',
+',-,,50TG per day,-,-,-,,U-Media_enable,on2,Y,1433,N,Y,?,Y,Umedia service,,,,',
+',-,-,-,-,-,-,,U-Media_disable,off2,Y,1433,N,Y,?,Y,Umedia service,,,,',
+'N|Y|G|B|S|A|Z|X|C|E|F|M|W|Q,,,50TG,,,,,NumberSearch_PS,d <4digits>,Y,101010,Y,N,?,N,Search available post numbers,,,,',
+'N|Y|G|B|S|A|Z|X|C|E|F|M|W|Q,,,50TG,,,,,NumberSearch_PPS,u <4digits>,Y,,Y,N,?,N,Search available Prepaid numbers,,,,',
+',,,,,,,,VoiceGreeting,,Y,1435,,,?,,,,,,',
+',,,,,,,1500TG,DopinStar,-,N,1443,Y,Y,?,N,Recharges selected phone with 1500 unit| Every time Owner recharges dopin phone with 15|000,,,,',
+',,,350TG,,,,,ID_couple,Xoc 350| Xoc <PhoneNumber>,Y,1441,N,N,?,N,Detailed information here,,,,',
+'Y,1,-,250TG,,40,,,ID_SMS_Package_onnet,250,Y,1441,N,N,?,N,Detailed information here,,,,',
+'Y,1,-,300TG,,40,,,ID_SMS_Package_offnet,300,Y,1441,N,N,?,N,Detailed information here,,,,',
+'Z,30,,10000TG,,,,,ONNET_VOICE /CPPS only/,10000,Y,1441,N,N,?,N,Detailed information here,,,,',
+',,,50TG,,,,,Jokes,0,Y,2012,Y,N,?,N,,,,,',
+',,,50TG,,,,,Greetings,1,Y,2012,Y,N,?,N,,,,,',
+',,,50TG,,,,,Fortune Teller,9,Y,2012,Y,N,?,N,,,,,',
+',,,50TG,,,,,Horoscope,<birthday>,Y,101010,Y,N,?,N,,,,,',
+',,,50TG,,,,,Hair cut day,0,Y,101010,Y,N,?,N,,,,,',
+',,,50TG,,,,,Love Letters & Short Poems,Single Letter,Y,247,Y,N,?,N,,,,,',
+',-,,50TG per SMS,,,,,GroupSMS,,,172288,Y,N,?,Y,,,,,',
+	);
+
 $attr = array(
 		'all' => array(
 			'attribute_featurecode' => array( 
@@ -74,7 +146,8 @@ $attr = array(
 		);
 
 // get voca terms
-$voca_list = array( 'custdvcd', 'billtype', 'prdtype', 'featurecode', 'tpl_default_tree_mobile');
+$voca_list = array( 'custdvcd', 'billtype', 'prdtype', 'featurecode', 'tpl_default_tree_mobile', 
+		'prdexpiredate', 'countermainoraccu', 'specialdateoptions', 'specialenddateoptions');
 $term = array();
 foreach( $voca_list as $voca) {
 	if ( substr( $voca, 0, 4) == 'tpl_') {
@@ -94,6 +167,7 @@ $arg_product_id = drush_shift();
 //print_r( $header);
 $idx = 0;
 foreach( $data as $item) {
+	break;
 	$d = explode( ',', $item);
 
 	$prd_id = $d[$h['id']];
@@ -205,6 +279,141 @@ foreach( $data as $item) {
 
 }
 
+// add VAS, Additional Product
+foreach( $ap_data as $item) {
+	$d = explode( ',', $item);
+
+	$title = $d[$ah['Package Name']];
+	$title_a = explode( ' ', $title);
+	$prd_id = strtolower( $title_a[0]);
+
+	if ( !empty( $arg_product_id) && $prd_id != $arg_product_id ) 
+		continue;
+
+	// find the product
+	$query = new EntityFieldQuery();
+	$result = $query->entityCondition('entity_type', 'node')
+		->entityCondition('bundle', 'simpleproductoffering')
+		->propertyCondition('title', $title)
+		->execute();
+
+	if ( empty( $result)) {
+		printf( "Add NEW product : %s %s\n", $title, $prd_id);
+		$p = ocs_admin_get_new_node( 'simpleproductoffering');
+
+		// product name and description
+		$p->title = $title;
+	}
+	else {
+		$nid = array_pop( array_keys( $result['node']));
+		$p = node_load( $nid);
+		printf( "Existing product : %s %s\n", $title, $prd_id);
+	}
+
+	$p->field_product_type['und'][0]['tid'] = $term['prdtype']['Additional'];
+	$p->field_description['und'][0]['value'] = t( 'FCE PPS Package @t @c', 
+				array( '@t' => $title, '@c' => $d[$ah['Comment']]));
+
+	// product id
+	$p->field_product_id['und'][0]['value'] = $prd_id;
+
+	// short code
+	$p->field_short_code['und'][0]['value'] = substr( $d[$ah['Short Code']], 0, 8);
+
+	// bill type
+	$p->field_billing_type['und'][0]['tid'] = $term['billtype']['Prepaid'];
+
+	// market : default value (unitel)
+
+	// customer type : personal (default)
+	$p->field_customer_type['und'][0]['tid'] = $term['custdvcd']['Personal'];
+
+	// customer sub type : personal 
+
+	// customer sub type
+
+	// expire date
+	if ( is_numeric( $d[$ah['Validity']])) {
+		$p->field_expire_date_type['und'][0]['tid'] = $term['prdexpiredate']['Day'];
+		$p->field_expire_date['und'][0]['value'] = $d[$ah['Validity']];
+	}
+
+	// price
+	$price = $d[$ah['Price']];
+	$unit = substr( $price, -2);
+	$amount = substr( $price, 0, -2);
+	if ( $unit == 'TG') {
+		$node = get_attr( $p, 'actionpricechargeonetime', $term['tpl_default_tree_mobile']['nonusage_subscription_charge'], 'Charge '. $amount);
+		$node->field_price_amount_float['und'][0]['value'] = $amount;
+		node_save( $node);
+
+		printf("  price : %s TG\n", $amount);
+	}
+	else if ( $unit == 'GG') {
+		$p->field_point_for_subscription['und'][0]['value'] = $amount;
+		printf("  price : %s GG\n", $amount);
+	}
+	else {
+		printf(">> ERROR : Invalid price format : %s\n", $price);
+	}
+
+	// add counter
+	$counter_id = $d[$ah['Counter ID']];
+	$counter = get_counter( $counter_id);
+	if ( $counter ) {
+		$node = get_attr( $p, 'prdcounterlist', $term['tpl_default_tree_mobile']['counter'], 'PrdCounterList');
+		$node->field_counter_list['und'][0]['nid'] = $counter->nid;
+		node_save( $node);
+		printf("  add counter : %s\n", $counter->title);
+
+		$node = get_attr( $p, 'treenodecounter', $term['tpl_default_tree_mobile']['counter_main'], NULL,
+				array( array( 'field_ref_counter', 'nid', $counter->nid)));
+		$node->field_ref_counter['und'][0]['nid'] = $counter->nid;
+		$node->field_main_or_accumulated['und'][0]['tid'] = $term['countermainoraccu']['Main'];
+		$node->field_startdate_option1['und'][0]['tid'] = $term['specialdateoptions']['Now'];
+		$node->field_enddate_option1['und'][0]['tid'] = $term['specialenddateoptions']['Unlimited'];
+		$node->field_unlimited_threshold['und'][0]['value'] = 0;
+		node_save( $node);
+		printf("  attach counter to charging : %s\n", $counter->title);
+	}
+
+		 
+
+	node_save( $p);
+	/*
+
+	// add attributes
+	$attr_list = array_merge( $attr['all'], isset($attr[$prd_id]) ? $attr[$prd_id] : array());
+	foreach( $attr_list as $key => $val) {
+		switch( $key) {
+			case 'attribute_featurecode':
+				$node = get_attr( $p, $val['type'], $term['tpl_default_tree_mobile'][$key], $val['value']);
+				$node->field_ref_service_feature_code['und'][0]['tid'] = $term['featurecode'][$val['value']];
+				node_save( $node);
+				break;
+			case 'attribute_allowed_prefix' :
+				$node = get_attr( $p, $val['type'], $term['tpl_default_tree_mobile'][$key], 'Allowed');
+				set_allowed_prefix( $node, $val['value']);
+				break;
+			case 'attribute_subscriber_lifecycle_scheme':
+				$nids = ocs_get_nodes_by_title( 'lifecyclescheme', $val['value']);
+				if ( empty( $nids)) {
+					printf("  No Lifecycle scheme was found. name=%s\n", $val['value']);
+				}
+				else {
+					$node = get_attr( $p, $val['type'], $term['tpl_default_tree_mobile'][$key], $val['value']);
+					$node->title = $val['value'];
+					$node->field_lifecycle_scheme['und'][0]['nid'] = $nids[0];
+					node_save( $node);
+				}
+				break;
+		}
+	}
+	*/
+
+}
+
+
 function set_allowed_prefix( $node, $prefix_list)
 {
 	$prefix_to_delete = array();
@@ -265,19 +474,25 @@ function set_allowed_prefix( $node, $prefix_list)
 	node_save( $node);
 }
 
-function get_attr( $product, $type, $tree_tid, $val)
+function get_attr( $product, $type, $tree_tid, $title = NULL, $field_cond = NULL)
 {
 	// find the attribute
 	$query = new EntityFieldQuery();
-	$result = $query->entityCondition('entity_type', 'node')
+	$query->entityCondition('entity_type', 'node')
 		->entityCondition('bundle', $type)
 		->fieldCondition('field_ref_product', 'nid', $product->nid)
-		->fieldCondition('field_ref_tree_tid', 'value', $tree_tid)
-		->execute();
+		->fieldCondition('field_ref_tree_tid', 'value', $tree_tid);
+
+	if ( $field_cond) {
+		foreach( $field_cond as $cond) {
+			$query->fieldCondition( $cond[0], $cond[1], $cond[2]);
+		}
+	}
+	$result = $query->execute();
 
 	if ( empty( $result)) {
 		$node = ocs_admin_get_new_node( $type);
-		$node->title = $val;
+		if ( $title) $node->title = $title;
 		$node->field_ref_product['und'][0]['nid'] = $product->nid;
 		$node->field_ref_tree_tid['und'][0]['value'] = $tree_tid;
 		printf("  New attribute type=%s title=%s\n", $type, $node->title);
@@ -289,13 +504,13 @@ function get_attr( $product, $type, $tree_tid, $val)
 	return $node;
 }
 
-function counter_info( $name)
+function get_counter( $counter_id)
 {
 	// find the counter
 	$query = new EntityFieldQuery();
 	$result = $query->entityCondition('entity_type', 'node')
 		->entityCondition('bundle', 'counter')
-		->propertyCondition('title', $name)
+		->fieldCondition('field_counter_id', 'value', $counter_id)
 		->execute();
 
 	if ( empty( $result)) {

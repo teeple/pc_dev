@@ -470,10 +470,12 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 								'@svc' => $record->taxonomy_term_data_name));
 				}
 
+				/*
 				foreach( array_keys( $form['field_feature_codes']) as $key) {
 					$form['field_feature_codes'][$key]['field_feature_codes']['und']['#options'] = $options;
 				}
-
+				*/
+				
     			break;
             case 'backup_migrate_ui_manual_backup_load_profile_form':
                 $form['profile']['#type'] = 'hidden';
@@ -1244,7 +1246,9 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 												'field_hlr_template_id',
 												'field_point_for_subscription',
 												'field_next_join_confirm',
-												'field_resubscription_flag'));
+												'field_resubscription_flag',
+												'field_cug_customer_type',
+												'field_cug_group_type'));
                 
                 $options = _get_product_exclusive_list($form['nid']['#value']);
                 $form['field_exclusiveness']['und']['#options'] = $options['list'];
