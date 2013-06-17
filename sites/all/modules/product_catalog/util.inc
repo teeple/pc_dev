@@ -807,14 +807,17 @@ function _get_redirect_url_in_view_n_delete($viewOrDel, $node) {
 	case 'packetdynamicchargingrule':
 	case 'packetdynamicl4':
 	case 'packetsgsn':
+	case 'packetsgsnip':
 		$paths = array('packetpredefinedchargingrule' => 'packet/predefined/charging_rule',
 								'packetdynamicchargingrule' => 'packet/dynamic/charging_rule',
 								'packetdynamicl4' => 'packet/dynamic/l4',
-								'packetsgsn' => 'packet/sgsn' );
+								'packetsgsn' => 'packet/sgsn',
+								'packetsgsnip' => 'packet/sgsnip');
 		$fragments = array('packetpredefinedchargingrule' => '',
 								'packetdynamicchargingrule' => 'quickset-packet=1',
 								'packetdynamicl4' => 'quickset-packet=2',
-								'packetsgsn' => 'quickset-packet=3');
+								'packetsgsn' => 'quickset-packet=3',
+								'packetsgsnip' => 'quickset-packet=4');
 		
 		if ($viewOrDel == 'view') {
 			$url['path'] = 'common/'.$paths[$node->type].'/'.$node->nid;
@@ -944,14 +947,17 @@ function _get_redirect_url_in_create_n_list($addOrList, $content_type, $params) 
 	case 'packetdynamicchargingrule':
 	case 'packetdynamicl4':
 	case 'packetsgsn':
+	case 'packetsgsnip':
 		$paths = array('packetpredefinedchargingrule' => 'packet/predefined/charging_rule',
 								'packetdynamicchargingrule' => 'packet/dynamic/charging_rule',
 								'packetdynamicl4' => 'packet/dynamic/l4',
-								'packetsgsn' => 'packet/sgsn' );
+								'packetsgsn' => 'packet/sgsn',
+								'packetsgsnip' => 'packet/sgsnip');
 		$fragments = array('packetpredefinedchargingrule' => '',
 								'packetdynamicchargingrule' => 'quickset-packet=1',
 								'packetdynamicl4' => 'quickset-packet=2',
-								'packetsgsn' => 'quickset-packet=3');
+								'packetsgsn' => 'quickset-packet=3',
+								'packetsgsnip' => 'quickset-packet=4');
 		
 		$url['path'] = 'common/'.$paths[$content_type].'/'.$addOrList;
 		$url['fragment'] = $fragments[$content_type];

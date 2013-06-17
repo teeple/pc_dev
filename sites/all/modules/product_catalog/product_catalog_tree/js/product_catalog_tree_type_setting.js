@@ -880,6 +880,12 @@
 						"image" : "/sites/default/files/file.png"
 					}
 				},
+				"conditionwhatmainproductforpeer" : {
+					"valid_children" : "none",
+					"icon" : {
+						"image" : "/sites/default/files/file.png"
+					}
+				},
 				"conditionwhendurationfactors" : {
 					"valid_children" : "none",
 					"icon" : {

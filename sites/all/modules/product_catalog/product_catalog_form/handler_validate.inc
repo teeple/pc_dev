@@ -6,11 +6,11 @@ function validate_product_group($productGroupNid) {
 	);
 	
 	$productGroup = node_load($productGroupNid);
+	$viewResultMainSelected = views_get_view_result('list_product_group_main_selected', 'panel_pane_4', $productGroupNid);
 	
-	$viewResult = views_get_view_result('list_product_group', 'panel_pane_4', $productGroupNid);
-	
-	if(count($viewResult) == 0) {
+	if(count($viewResultMainSelected) == 0) {
 		$result['is_valid'] = FALSE;
+        $result['base_type'] = 'PRODUCT GROUP';
 		
 		$result['id'] = $productGroupNid;
 		$result['title'] = $productGroup->field_product_group_id['und'][0]['value'];
@@ -300,7 +300,8 @@ function product_catalog_form_node_validate($node, $form, &$form_state) {
                 break;
                 
             case 'treenodecounter_node_form':
-            	
+				
+				/*            	
             	if(isset($form['nid']['#value'])) {
             		$treeNodeCounter = node_load($form['nid']['#value']);
             		
@@ -314,6 +315,7 @@ function product_catalog_form_node_validate($node, $form, &$form_state) {
 	            		}
 	            	}
             	}
+            	*/
             	break;
                 
             case 'carrier_mobile_node_form':

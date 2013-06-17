@@ -120,6 +120,7 @@ function _add_ajax_submit_callback($form_id, &$form) {
         case 'conditioncommoncarrieridd_node_form' :
         case 'conditionwhatcardtype_node_form' :
         case 'conditionwhatmainproduct_node_form' :
+        case 'conditionwhatmainproductforpeer_node_form' :        
         case 'conditioncommoncarrierdomestic_node_form' :
         case 'conditioncommonratinggroup_node_form' :
         case 'conditioncommontimetablefactors_node_form' :
@@ -157,6 +158,9 @@ function _add_ajax_submit_callback($form_id, &$form) {
         case 'conditionwhensubscriptionday_node_form' :
         case 'conditionwhentodaysubscriptionda_node_form' :
         case 'conditionwhatincomingcall_node_form' :
+        case 'conditionwhatisgroupcall_node_form' :                
+		case 'conditionwhatisclir_node_form':
+		case 'conditionwhatgroupmembercount_node_form':
         case 'conditionwhereserviceid_node_form' :
         // case 'conditionwhatcardtype_node_form':
         case 'conditionwhenactivationday_node_form' :
@@ -245,7 +249,6 @@ function edit_pane_callback($form, &$form_state) {
     return $form;
 }
 
-
 function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 
 	load_required_js_css_before_ajax_load();
@@ -253,7 +256,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
     if ((isset($form['#attributes']) && isset($form['#attributes']['class'])) && gettype($form['#attributes']['class']) == 'array') {
         $form['#attributes']['class'][] = 'myform';
     }
-    
+        
     switch($form_id) {
       case 'mapbasicrateroaming_node_form':
         _unset_menu_items($form, $form_id);
@@ -593,43 +596,57 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
         case 'conditionwheresgsn_node_form' :
         case 'conditionwheresgsnip_node_form' :
         case 'conditionwhenvaliddate_node_form':
+        case 'conditionwhatservicedomain_node_form':
             _unset_menu_items($form, $form_id);
             $form['field_weight']['#type'] = 'hidden';
             $form['field_parent_node']['#type'] = 'hidden';
             break;
             
-        case 'conditionwhatservicedomain_node_form':
-		        $form['field_weight']['#type'] = 'hidden';
-		        $form['field_parent_node']['#type'] = 'hidden';
-		        _unset_menu_items($form, $form_id);
-		        break;
-
 	   case 'conditionwhatmainproduct_node_form':
+		    $form['field_weight']['#type'] = 'hidden';
+		    $form['field_parent_node']['#type'] = 'hidden';
+		    _unset_menu_items($form, $form_id);
+		    
+		    $parentNode = node_load($form['#node']->field_parent_node['und'][0]['nid']);
+		    $productNode = find_parent_product($parentNode);
+		    $args = array(
+		        '0' => $productNode->field_service_type_of_provider['und'][0]['tid'],
+		        '1' => $productNode->field_service_operator['und'][0]['tid'],
+		        '2' => $productNode->field_billing_type['und'][0]['tid'],
+		        '3' => $productNode->field_customer_type['und'][0]['tid']
+		    );
+		    
+			$tempView = views_get_view('list_product_for_cond_main_product');
+			$tempView->set_display('panel_pane_1');
+			$tempView->set_arguments($args);
+			$tempView->execute();
+		     
+		    $options = array();
+		    foreach($tempView->result as $item){
+		        $options[$item->nid] = $item->node_title;
+		    }
+		
+		   $form['field_main_product']['und']['#options'] = $options;
+		   break;
+	   
+       case 'conditionwhatmainproductforpeer_node_form' :        
+	   
 	        $form['field_weight']['#type'] = 'hidden';
 	        $form['field_parent_node']['#type'] = 'hidden';
             _unset_menu_items($form, $form_id);
             
             $parentNode = node_load($form['#node']->field_parent_node['und'][0]['nid']);
 	        $productNode = find_parent_product($parentNode);
-            $args = array(
-                '0' => $productNode->field_service_type_of_provider['und'][0]['tid'],
-                '1' => $productNode->field_service_operator['und'][0]['tid'],
-                '2' => $productNode->field_billing_type['und'][0]['tid'],
-                '3' => $productNode->field_customer_type['und'][0]['tid']
-            );
-            
-			$tempView = views_get_view('list_product_for_cond_main_product');
-			$tempView->set_display('panel_pane_1');
-			$tempView->set_arguments($args);
-			$tempView->execute();
-             
+	        
+			$viewResult = views_get_view_result('list_product_for_cond_main_product', 'panel_pane_2', $productNode->field_service_type_of_provider['und'][0]['tid']);
+			 
             $options = array();
-    	    foreach($tempView->result as $item){
+    	    foreach($viewResult as $item){
     	        $options[$item->nid] = $item->node_title;
     	    }
 	    
 	       $form['field_main_product']['und']['#options'] = $options;
-	    break;
+		    break;
 		        
         case 'conditionwhatcardtype_node_form' :
             $form['field_weight']['#type'] = 'hidden';
@@ -784,8 +801,16 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
         case 'prdattributedeposit_node_form' :
         	$form['field_ref_product']['#type'] = 'hidden';
         	$form['field_ref_tree_tid']['#type'] = 'hidden';        	
-        	
-            _unset_menu_items($form, $form_id);
+        	_unset_menu_items($form, $form_id);
+            
+            $productNid = $form['field_ref_product']['und'][0]['nid']['#default_value'];
+            $viewResult = views_get_view_result('list_treenodecounter', 'panel_pane_8', $productNid);
+            
+            $options = array();
+			foreach($viewResult as $item) {
+				$options[$item->nid] = $item->node_field_data_field_ref_counter_title;
+            }
+            $form['field_threshold_counter']['und']['#options'] = $options;
             break;
             
         case 'locationfactor_node_form' :
@@ -1256,7 +1281,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
                 		unset($form['#groups']['group_next_join']);
                 		unset($form['#fieldgroups']['group_next_join']);
                 		*/
-                		unset($form['field_loyalty_point_for_subscrip']);
+                		unset($form['field_point_for_subscription']);
                 		
                     break;
                 default :
@@ -1287,8 +1312,13 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
         case 'conditionwhatnonusagetypefactors_node_form' :
         case 'conditionwhatcustomfactors_node_form' :
         case 'conditionwhatincomingcall_node_form' :
-        case 'conditionwhaturlgroupfactors_node_form' :
-        case 'conditionwhencustomfactors_node_form' :
+        case 'conditionwhatisgroupcall_node_form' :                
+		case 'conditionwhatisclir_node_form':
+		case 'conditionwhatgroupmembercount_node_form':
+		case 'conditionwhaturlgroupfactors_node_form' :
+		case 'conditionwhatisclir_node_form':
+		case 'conditionwhatgroupmembercount_node_form':
+		case 'conditionwhencustomfactors_node_form' :
         case 'conditionwhendayofmonth_node_form' :
         case 'conditionwhendayfactors_node_form' :
         case 'conditionwhentimeslotfactors_node_form' :
@@ -1499,8 +1529,6 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
                 if (isset($form_state['numberingplan_idd_nid'])) {
                     $form['actions']['submit']['#submit'][] = '_ratinggroup_link_to_numberingplan_idd';
                 }
-                
-                $form['actions']['submit']['#submit'][] = '_idd_ratinggroup_create_handler';
             }
             $form['field_ref_numberingplan_idd']['#type'] = 'hidden';
             _unset_menu_items($form, $form_id);
@@ -2316,6 +2344,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             break;
         case 'packetdynamicl4_node_form' :
         case 'packetsgsn_node_form':
+        case 'packetsgsnip_node_form':
         case 'packetpredefinedchargingrule_node_form' :
         case 'roaming_carrier_node_form' :
             _unset_menu_items($form, $form_id);

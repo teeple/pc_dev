@@ -198,7 +198,9 @@
 			case 'treenodeunittransferscheme':
 			case 'treenodelifecyclescheme':
 			case 'conditionwhatincomingcall':
+			case 'conditionwhatisgroupcall':
 			case 'conditionwhatmainproduct':
+			case 'conditionwhatmainproductforpeer':
 			case 'conditionwhensubscriptionday':
 			case 'conditionwhentodaysubscriptionda':
 			case 'conditionwhenactivationday':
@@ -548,10 +550,14 @@
 			"RoamingType" : $.fn.getSubMenuAddNodeWithoutWrapper("RoamingType", "conditionwhatroamingtype"),
 			"Card Types" : $.fn.getSubMenuAddNodeWithoutWrapper("Card Types", "conditionwhatcardtype"),
 			"Incoming Call" : $.fn.getSubMenuAddNodeWithoutWrapper("Incoming Call", "conditionwhatincomingcall"),
+			"Is Group Call" : $.fn.getSubMenuAddNodeWithoutWrapper("Is Group Call", "conditionwhatisgroupcall"),
+			"Is CLIR" : $.fn.getSubMenuAddNodeWithoutWrapper("Is CLIR", "conditionwhatisclir"),
+			"Group Member Count" : $.fn.getSubMenuAddNodeWithoutWrapper("Group Member Count", "conditionwhatgroupmembercount"),			
 			"Call Type" : $.fn.getSubMenuAddNodeWithoutWrapper("Call Type", "conditionwhatcalltype"),
 			"Counter" : $.fn.getSubMenuAddNodeWithoutWrapper("Counter", "conditionwhatcounter"),
 			"Rating Group" : $.fn.getSubMenuAddNodeWithoutWrapper("Rating Group", "conditionwhatratinggroup"),
-			"Main Product" : $.fn.getSubMenuAddNodeWithoutWrapper("Main Product", "conditionwhatmainproduct")
+			"Main Product" : $.fn.getSubMenuAddNodeWithoutWrapper("Main Product", "conditionwhatmainproduct"),
+			"Callee Main Product" : $.fn.getSubMenuAddNodeWithoutWrapper("Callee's Main Product", "conditionwhatmainproductforpeer")
 		};
 		return obj;
 	};
@@ -560,7 +566,8 @@
 		var obj = {
 			"Card Types" : $.fn.getSubMenuAddNodeWithoutWrapper("Card Types", "conditionwhatcardtype"),
 			"Counter" : $.fn.getSubMenuAddNodeWithoutWrapper("Counter", "conditionwhatcounter"),
-			"Main Product" : $.fn.getSubMenuAddNodeWithoutWrapper("Main Product", "conditionwhatmainproduct")
+			"Main Product" : $.fn.getSubMenuAddNodeWithoutWrapper("Main Product", "conditionwhatmainproduct"),
+			"Callee Main Product" : $.fn.getSubMenuAddNodeWithoutWrapper("Callee's Main Product", "conditionwhatmainproductforpeer")
 		};
 		return obj;
 	};
@@ -570,6 +577,7 @@
 			"Counter" : $.fn.getSubMenuAddNodeWithoutWrapper("Counter", "conditionwhatcounter"),
 			"Call Type" : $.fn.getSubMenuAddNodeWithoutWrapper("Call Type", "conditionwhatcalltype"),
 			"Main Product" : $.fn.getSubMenuAddNodeWithoutWrapper("Main Product", "conditionwhatmainproduct"),
+			"Callee Main Product" : $.fn.getSubMenuAddNodeWithoutWrapper("Callee's Main Product", "conditionwhatmainproductforpeer"),
 			"Content Price" : $.fn.getSubMenuAddNodeWithoutWrapper("Content Price", "conditionwhatcontentprice")			
 		};
 		return obj;
@@ -581,9 +589,13 @@
 			"Card Types" : $.fn.getSubMenuAddNodeWithoutWrapper("Card Types", "conditionwhatcardtype"),
 			"RoamingType" : $.fn.getSubMenuAddNodeWithoutWrapper("RoamingType", "conditionwhatroamingtype"),
 			"Incoming Call" : $.fn.getSubMenuAddNodeWithoutWrapper("Incoming Call", "conditionwhatincomingcall"),
+			"Is Group Call" : $.fn.getSubMenuAddNodeWithoutWrapper("Is Group Call", "conditionwhatisgroupcall"),			
+			"Is CLIR" : $.fn.getSubMenuAddNodeWithoutWrapper("Is CLIR", "conditionwhatisclir"),
+			"Group Member Count" : $.fn.getSubMenuAddNodeWithoutWrapper("Group Member Count", "conditionwhatgroupmembercount"),			
 			"Call Type" : $.fn.getSubMenuAddNodeWithoutWrapper("Call Type", "conditionwhatcalltype"),
 			"Counter" : $.fn.getSubMenuAddNodeWithoutWrapper("Counter", "conditionwhatcounter"),
-			"Main Product" : $.fn.getSubMenuAddNodeWithoutWrapper("Main Product", "conditionwhatmainproduct")
+			"Main Product" : $.fn.getSubMenuAddNodeWithoutWrapper("Main Product", "conditionwhatmainproduct"),
+			"Callee Main Product" : $.fn.getSubMenuAddNodeWithoutWrapper("Callee's Main Product", "conditionwhatmainproductforpeer")
 		};
 		return obj;
 	};
@@ -591,10 +603,14 @@
 	$.fn.getConditionWhatType5 = function() {
 		var obj = {
 			"Incoming Call" : $.fn.getSubMenuAddNodeWithoutWrapper("Incoming Call", "conditionwhatincomingcall"),
+			"Is Group Call" : $.fn.getSubMenuAddNodeWithoutWrapper("Is Group Call", "conditionwhatisgroupcall"),						
+			"Is CLIR" : $.fn.getSubMenuAddNodeWithoutWrapper("Is CLIR", "conditionwhatisclir"),
+			"Group Member Count" : $.fn.getSubMenuAddNodeWithoutWrapper("Group Member Count", "conditionwhatgroupmembercount"),					
 			"Call Type" : $.fn.getSubMenuAddNodeWithoutWrapper("Call Type", "conditionwhatcalltype"),
 			"RoamingType" : $.fn.getSubMenuAddNodeWithoutWrapper("RoamingType", "conditionwhatroamingtype"),
 			"Counter" : $.fn.getSubMenuAddNodeWithoutWrapper("Counter", "conditionwhatcounter"),
-			"Main Product" : $.fn.getSubMenuAddNodeWithoutWrapper("Main Product", "conditionwhatmainproduct")
+			"Main Product" : $.fn.getSubMenuAddNodeWithoutWrapper("Main Product", "conditionwhatmainproduct"),
+			"Callee Main Product" : $.fn.getSubMenuAddNodeWithoutWrapper("Callee's Main Product", "conditionwhatmainproductforpeer")
 		};
 		return obj;
 	};
@@ -605,7 +621,8 @@
 			"NonUsageType" : $.fn.getSubMenuAddNodeWithoutWrapper("NonUsageType", "conditionwhatnonusagetypefactors"),
 			"Card Types" : $.fn.getSubMenuAddNodeWithoutWrapper("Card Types", "conditionwhatcardtype"),
 			"Counter" : $.fn.getSubMenuAddNodeWithoutWrapper("Counter", "conditionwhatcounter"),
-			"Main Product" : $.fn.getSubMenuAddNodeWithoutWrapper("Main Product", "conditionwhatmainproduct")
+			"Main Product" : $.fn.getSubMenuAddNodeWithoutWrapper("Main Product", "conditionwhatmainproduct"),
+			"Callee Main Product" : $.fn.getSubMenuAddNodeWithoutWrapper("Callee's Main Product", "conditionwhatmainproductforpeer")
 		};
 		return obj;
 	};
@@ -625,6 +642,9 @@
 			"RoamingType" : $.fn.getSubMenuAddNodeWithoutWrapper("RoamingType", "conditionwhatroamingtype"),
 			"Card Types" : $.fn.getSubMenuAddNodeWithoutWrapper("Card Types", "conditionwhatcardtype"),
 			"Incoming Call" : $.fn.getSubMenuAddNodeWithoutWrapper("Incoming Call", "conditionwhatincomingcall"),
+			"Is Group Call" : $.fn.getSubMenuAddNodeWithoutWrapper("Is Group Call", "conditionwhatisgroupcall"),						
+			"Is CLIR" : $.fn.getSubMenuAddNodeWithoutWrapper("Is CLIR", "conditionwhatisclir"),
+			"Group Member Count" : $.fn.getSubMenuAddNodeWithoutWrapper("Group Member Count", "conditionwhatgroupmembercount"),					
 			"Call Type" : $.fn.getSubMenuAddNodeWithoutWrapper("Call Type", "conditionwhatcalltype"),
 			"Counter" : $.fn.getSubMenuAddNodeWithoutWrapper("Counter", "conditionwhatcounter"),
 			"Rating Group" : $.fn.getSubMenuAddNodeWithoutWrapper("Rating Group", "conditionwhatratinggroup"),
@@ -653,6 +673,9 @@
 		var obj = {
 			"Service Domain" : $.fn.getSubMenuAddNodeWithoutWrapper("Service Domain", "conditionwhatservicedomain"),
 			"Incoming Call" : $.fn.getSubMenuAddNodeWithoutWrapper("Incoming Call", "conditionwhatincomingcall"),
+			"Is Group Call" : $.fn.getSubMenuAddNodeWithoutWrapper("Is Group Call", "conditionwhatisgroupcall"),						
+			"Is CLIR" : $.fn.getSubMenuAddNodeWithoutWrapper("Is CLIR", "conditionwhatisclir"),
+			"Group Member Count" : $.fn.getSubMenuAddNodeWithoutWrapper("Group Member Count", "conditionwhatgroupmembercount"),					
 			"Call Type" : $.fn.getSubMenuAddNodeWithoutWrapper("Call Type", "conditionwhatcalltype"),
 			"Counter" : $.fn.getSubMenuAddNodeWithoutWrapper("Counter", "conditionwhatcounter"),
 		};
@@ -664,6 +687,9 @@
 			"Service Domain" : $.fn.getSubMenuAddNodeWithoutWrapper("Service Domain", "conditionwhatservicedomain"),
 			"RoamingType" : $.fn.getSubMenuAddNodeWithoutWrapper("RoamingType", "conditionwhatroamingtype"),
 			"Incoming Call" : $.fn.getSubMenuAddNodeWithoutWrapper("Incoming Call", "conditionwhatincomingcall"),
+			"Is Group Call" : $.fn.getSubMenuAddNodeWithoutWrapper("Is Group Call", "conditionwhatisgroupcall"),						
+			"Is CLIR" : $.fn.getSubMenuAddNodeWithoutWrapper("Is CLIR", "conditionwhatisclir"),
+			"Group Member Count" : $.fn.getSubMenuAddNodeWithoutWrapper("Group Member Count", "conditionwhatgroupmembercount"),					
 			"Call Type" : $.fn.getSubMenuAddNodeWithoutWrapper("Call Type", "conditionwhatcalltype"),
 			"Counter" : $.fn.getSubMenuAddNodeWithoutWrapper("Counter", "conditionwhatcounter"),
 			"Rating Group" : $.fn.getSubMenuAddNodeWithoutWrapper("Rating Group", "conditionwhatratinggroup"),
@@ -676,7 +702,8 @@
 			"Service Domain" : $.fn.getSubMenuAddNodeWithoutWrapper("Service Domain", "conditionwhatservicedomain"),
 			"Counter" : $.fn.getSubMenuAddNodeWithoutWrapper("Counter", "conditionwhatcounter"),
 			"Call Type" : $.fn.getSubMenuAddNodeWithoutWrapper("Call Type", "conditionwhatcalltype"),
-			"Main Product" : $.fn.getSubMenuAddNodeWithoutWrapper("Main Product", "conditionwhatmainproduct")
+			"Main Product" : $.fn.getSubMenuAddNodeWithoutWrapper("Main Product", "conditionwhatmainproduct"),
+			"Callee Main Product" : $.fn.getSubMenuAddNodeWithoutWrapper("Callee's Main Product", "conditionwhatmainproductforpeer")
 		};
 		return obj;
 	};
@@ -688,9 +715,13 @@
 			"Card Types" : $.fn.getSubMenuAddNodeWithoutWrapper("Card Types", "conditionwhatcardtype"),
 			"RoamingType" : $.fn.getSubMenuAddNodeWithoutWrapper("RoamingType", "conditionwhatroamingtype"),
 			"Incoming Call" : $.fn.getSubMenuAddNodeWithoutWrapper("Incoming Call", "conditionwhatincomingcall"),
+			"Is Group Call" : $.fn.getSubMenuAddNodeWithoutWrapper("Is Group Call", "conditionwhatisgroupcall"),						
+			"Is CLIR" : $.fn.getSubMenuAddNodeWithoutWrapper("Is CLIR", "conditionwhatisclir"),
+			"Group Member Count" : $.fn.getSubMenuAddNodeWithoutWrapper("Group Member Count", "conditionwhatgroupmembercount"),					
 			"Call Type" : $.fn.getSubMenuAddNodeWithoutWrapper("Call Type", "conditionwhatcalltype"),
 			"Counter" : $.fn.getSubMenuAddNodeWithoutWrapper("Counter", "conditionwhatcounter"),
-			"Main Product" : $.fn.getSubMenuAddNodeWithoutWrapper("Main Product", "conditionwhatmainproduct")
+			"Main Product" : $.fn.getSubMenuAddNodeWithoutWrapper("Main Product", "conditionwhatmainproduct"),
+			"Callee Main Product" : $.fn.getSubMenuAddNodeWithoutWrapper("Callee's Main Product", "conditionwhatmainproductforpeer")
 		};
 		return obj;
 	};
@@ -702,7 +733,8 @@
 			"Card Types" : $.fn.getSubMenuAddNodeWithoutWrapper("Card Types", "conditionwhatcardtype"),
 			"Counter" : $.fn.getSubMenuAddNodeWithoutWrapper("Counter", "conditionwhatcounter"),
 			"Content Price" : $.fn.getSubMenuAddNodeWithoutWrapper("Content Price", "conditionwhatcontentprice"),
-			"Main Product" : $.fn.getSubMenuAddNodeWithoutWrapper("Main Product", "conditionwhatmainproduct")
+			"Main Product" : $.fn.getSubMenuAddNodeWithoutWrapper("Main Product", "conditionwhatmainproduct"),
+			"Callee Main Product" : $.fn.getSubMenuAddNodeWithoutWrapper("Callee's Main Product", "conditionwhatmainproductforpeer")
 		};
 		return obj;
 	};
