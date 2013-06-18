@@ -102,7 +102,20 @@ function ocs_admin_message_form($form, &$form_state, $nid = NULL, $op = NULL)
 		);
 	}
 
-	$scheduled = isset($form_state['values']['flag']) ? $form_state['values']['flag'] : 0;
+	if(isset($node)){//edit
+		$delivery_date = isset($node->field_value['und'][0]['value'])?$node->field_value['und'][0]['value']:3;	
+		$delivery_time = isset($node->field_valid_date_hour['und'][0]['value'])?$node->field_valid_date_hour['und'][0]['value']:"00";
+		if(!isset($form_state['values'])){//when first rendering
+			$scheduled = isset($node->field_scheduled_delivery['und'][0]['value'])?$node->field_scheduled_delivery['und'][0]['value']:0;
+		}else{
+			$scheduled = isset($form_state['values']['flag']) ? $form_state['values']['flag'] : 0;
+		}
+	}else{//create
+		$scheduled = isset($form_state['values']['flag']) ? $form_state['values']['flag'] : 0;
+		$delivery_date = 3;
+		$delivery_time = "00";
+	}
+	
 	$form['scheduled'] = array(
 		'#type' => 'fieldset',
 		'#prefix' => '<div id="message_scheduled_div">',
@@ -121,10 +134,15 @@ function ocs_admin_message_form($form, &$form_state, $nid = NULL, $op = NULL)
 	);
 
 	if ( $scheduled ) {
+		if(isset($node)){
+			$delivery_date = $node->field_value['und'][0]['value'];	
+			$delivery_time = $node->field_valid_date_hour['und'][0]['value'];
+		}
+		
 		$form['scheduled']['delivery_date'] = array(
 			'#type' => 'textfield',
 			'#title' => 'Date ',
-			'#default_value' => '3',
+			'#default_value' => $delivery_date,
 			'#field_prefix' => 'After ',
 			'#field_suffix' => 'Days ',
 		);
@@ -138,6 +156,7 @@ function ocs_admin_message_form($form, &$form_state, $nid = NULL, $op = NULL)
 			'#type' => 'select',
 			'#title' => 'Time',
 			'#options' => drupal_map_assoc( $time_list),
+			'#default_value' => $delivery_time
 		);
 	}
 
@@ -359,7 +378,7 @@ function ocs_admin_message_form_validate($form, &$form_state)
 		}
 
 		if ( $values['flag'] == 1 ) {
-			if ( intval( $values['delivery_date']) <= 0) {
+			if ( intval( $values['delivery_date']) < 0) {
 				form_set_error('delivery_date', 'Invalid delivery date');
 			}
 		}

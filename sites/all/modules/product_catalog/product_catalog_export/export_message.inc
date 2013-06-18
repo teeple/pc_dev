@@ -30,7 +30,8 @@ function _array_message($exportItemNids = NULL)
 		
 		$msg['scheduled_delivery'] = $record->field_field_scheduled_delivery[0]['raw']['value'];
 		if($msg['scheduled_delivery']){
-			$msg['delivery_date'] = isset($record->field_field_value[0]['raw']['value'])?$record->field_field_value[0]['raw']['value']:NULL;
+			$msg['delivery_date'] = isset($record->_field_data['nid']['entity']->field_value['und'][0]['value'])
+									?$record->_field_data['nid']['entity']->field_value['und'][0]['value']:NULL;
 		}
 	//	$msg['delivery_date'] = $record->field_field_value[0]['raw']['value'];
 		$msg['delivery_time'] = $record->field_field_valid_date_hour[0]['raw']['value'];
