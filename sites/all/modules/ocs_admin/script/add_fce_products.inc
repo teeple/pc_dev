@@ -13,19 +13,19 @@ $data = array(
 'F,Mobile,Main,DOPIN 86C,dopin_86c,Personal,Prepaid,d1',
 'D,Mobile,Main,DOPIN Old,dopin_old,Personal,Prepaid,d2',
 'A,Mobile,Main,CPPS Onnet Free,cpps_onnet_free,Group,Prepaid,c3',
-'C,Mobile,Main,CDOPIN,cdopin,Group,Prepaid,c4',
-'Z,Mobile,Main,CPPS,cpps,Group,Prepaid,c5',
+'C,Mobile,Main,CDOPIN,61,Group,Prepaid,c4',
+'Z,Mobile,Main,CPPS,40,Group,Prepaid,c5',
 'K,Mobile,Main,VoIP 77 -2,voip_77_2,Personal,Prepaid,v1',
 'J,Mobile,Main,VoIP 77-1,voip_77_1,Personal,Prepaid,v2',
-'R,Mobile,Main,Second Tariff,second_tariff,Personal,Prepaid,s1',
-'P,Mobile,Main,PPS Live Modem,pps_live_modem,Personal,Prepaid,p1',
-'Q,Mobile,Main,Easy Tour,easy_tour,Personal,Prepaid,e1',
-'S,Mobile,Main,New Life,new_life,Personal,Prepaid,n1',
-'Y,Mobile,Main,ID,id,Personal,Prepaid,i2',
-'E,Mobile,Main,DOPIN Valid 90 Days,dopin_90_days,Personal,Prepaid,d3',
-'B,Mobile,Main,DOPIN,dopin,Personal,Prepaid,d4',
-'M,Mobile,Main,Happy Life Valid 90 Days,happy_life_90_days,Personal,Prepaid,h1',
-'N,Mobile,Main,Happy Life,happy_life,Personal,Prepaid,h2',
+'R,Mobile,Main,Second Tariff,28,Personal,Prepaid,s1',
+'P,Mobile,Main,PPS Live Modem,16,Personal,Prepaid,p1',
+'Q,Mobile,Main,Easy Tour,33,Personal,Prepaid,e1',
+'S,Mobile,Main,New Life,4,Personal,Prepaid,n1',
+'Y,Mobile,Main,ID,30,Personal,Prepaid,i2',
+'E,Mobile,Main,DOPIN Valid 90 Days,34,Personal,Prepaid,d3',
+'B,Mobile,Main,DOPIN,12,Personal,Prepaid,d4',
+'M,Mobile,Main,Happy Life Valid 90 Days,27,Personal,Prepaid,h1',
+'N,Mobile,Main,Happy Life,1,Personal,Prepaid,h2',
 	);
 
 $ah = array_flip( explode( ',', 'Purchasable Categories,Validity,Counter ID,Price,Min,Count,MB,Unit,Package Name,Short Code,SMS buy,SMS Number,Purchasable again?,Un-purchasable?,Is counter transferrable?,Recurring?,Comment,,,,'));
@@ -110,7 +110,8 @@ $attr = array(
 				'value' => 'E2E_Mobile Prepaid'),
 			),
 
-		'happy_life' => array(
+		// happy life
+		'1' => array(	
 			'attribute_allowed_prefix' => array(
 				'type' => 'prdattributeprefixrangeallowed',
 				'value' => array( 
@@ -142,7 +143,178 @@ $attr = array(
 					*/
 					),
 				)
-			)
+			),
+			// happy life 90 days
+		'27' => array(	
+			'attribute_allowed_prefix' => array(
+				'type' => 'prdattributeprefixrangeallowed',
+				'value' => array( 
+					array( '88', '120000', '199999'),
+					array( '88', '210000', '229999'),
+					array( '88', '240000', '299999'),
+					array( '88', '310000', '399999'),
+					array( '88', '420000', '489999'),
+					array( '88', '500000', '599999'),
+					array( '88', '610000', '699999'),
+					array( '88', '710000', '789999'),
+					array( '88', '810000', '879999'),
+					array( '88', '890000', '999999'),
+					array( '89', '120000', '299999'),
+					array( '89', '350000', '389999'),
+					array( '89', '400000', '409999'),
+					array( '89', '420000', '489999'),
+					array( '89', '500000', '589999'),
+					array( '89', '600000', '689999'),
+					array( '89', '700000', '769999'),
+					array( '89', '780000', '789999'),
+					array( '89', '800000', '879999'),
+					array( '86', '120000', '599999'),
+					array( '86', '700000', '999999'),
+					),
+				),
+			),
+			// DOPIN
+		'12' => array(	
+			'attribute_allowed_prefix' => array(
+				'type' => 'prdattributeprefixrangeallowed',
+				'value' => array( 
+					array( '88', '200000', '209999'),
+					array( '88', '300000', '309999'),
+					array( '88', '400000', '409999'),
+					array( '88', '600000', '609999'),
+					array( '88', '700000', '709999'),
+					array( '89', '690000', '699999'),
+					array( '89', '890000', '999999'),
+					array( '86', '600000', '699999'),
+					array( '88', '120000', '999999'),
+					array( '89', '120000', '299999'),
+					array( '89', '350000', '389999'),
+					array( '89', '400000', '409999'),
+					array( '89', '420000', '489999'),
+					array( '89', '500000', '589999'),
+					array( '89', '600000', '689999'),
+					array( '89', '700000', '769999'),
+					array( '89', '780000', '789999'),
+					array( '89', '800000', '879999'),
+					array( '86', '120000', '599999'),
+					array( '86', '700000', '999999'),
+					),
+				),
+				/*
+				Special: 8820,8830,8840,8860,8870,8969,8989-8999,8660-8669
+				Normal: 8812-8899 
+				8912-8929, 8935-8938, 8940, 8942-8948, 8950-8958, 8960-8968, 8970-8976, 8978, 8980-8987, 
+				8612-8659, 8670-8699
+				*/
+			),
+			// DOPIN 90 days
+		'34' => array(	
+			'attribute_allowed_prefix' => array(
+				'type' => 'prdattributeprefixrangeallowed',
+				'value' => array( 
+					array( '88', '200000', '299999'),
+					array( '88', '300000', '399999'),
+					array( '88', '400000', '499999'),
+					array( '88', '600000', '699999'),
+					array( '88', '700000', '799999'),
+					array( '89', '690000', '699999'),
+					array( '89', '890000', '999999'),
+					array( '86', '600000', '699999'),
+					array( '88', '120000', '999999'),
+					array( '89', '120000', '299999'),
+					array( '89', '350000', '389999'),
+					array( '89', '400000', '409999'),
+					array( '89', '420000', '489999'),
+					array( '89', '420000', '489999'),
+					array( '89', '500000', '589999'),
+					array( '89', '600000', '689999'),
+					array( '89', '700000', '769999'),
+					array( '89', '780000', '789999'),
+					array( '89', '800000', '879999'),
+					array( '86', '120000', '599999'),
+					array( '86', '700000', '999999'),
+					),
+				),
+				/*
+				Special: 8820,8830,8840,8860,8870,8969,8989-8999,8660-8669
+				Normal: 8812-8899 
+				8912-8929, 8935-8938, 8940, 8942-8948, 8950-8958, 8960-8968, 8970-8976, 8978, 8980-8987, 
+				8612-8659, 8670-8699
+				*/
+			),
+			// CPPS
+		'40' => array(	
+			'attribute_allowed_prefix' => array(
+				'type' => 'prdattributeprefixrangeallowed',
+				'value' => array( 
+					array( '88', '120000', '199999'),
+					array( '88', '210000', '229999'),
+					array( '88', '240000', '299999'),
+					array( '88', '310000', '399999'),
+					array( '88', '410000', '499999'),
+					array( '88', '610000', '699999'),
+					array( '88', '710000', '879999'),
+					array( '88', '890000', '999999'),
+					array( '89', '120000', '299999'),
+					array( '89', '350000', '389999'),
+					array( '89', '400000', '409999'),
+					array( '89', '420000', '489999'),
+					array( '89', '500000', '589999'),
+					array( '89', '600000', '689999'),
+					array( '89', '700000', '769999'),
+					array( '89', '780000', '789999'),
+					array( '89', '800000', '879999'),
+					array( '86', '120000', '599999'),
+					array( '86', '700000', '999999'),
+					),
+				),
+					/*
+					8812-8899 (not included:8823, 8820, 8830, 8840, 8860, 8870, 8888)
+					8912-8929, 8935-8938, 8940, 8942-8948, 8950-8958, 8960-8968, 8970-8976, 8978, 8980-8987,
+					8612-8659, 8670-8699
+					*/
+			),			// CDOPIN
+		'61' => array(	
+			'attribute_allowed_prefix' => array(
+				'type' => 'prdattributeprefixrangeallowed',
+				'value' => array( 
+					array( '88', '200000', '209999'),
+					array( '88', '300000', '309999'),
+					array( '88', '400000', '409999'),
+					array( '88', '600000', '609999'),
+					array( '88', '700000', '709999'),
+					array( '89', '690000', '699999'),
+					array( '89', '890000', '999999'),
+					array( '86', '600000', '699999'),
+					array( '88', '120000', '999999'),
+					array( '89', '120000', '299999'),
+					array( '89', '350000', '389999'),
+					array( '89', '400000', '409999'),
+					array( '89', '420000', '489999'),
+					array( '89', '500000', '589999'),
+					array( '89', '600000', '689999'),
+					array( '89', '700000', '769999'),
+					array( '89', '780000', '789999'),
+					array( '89', '800000', '879999'),
+					array( '86', '120000', '599999'),
+					array( '86', '700000', '999999'),
+					),
+				),
+			),
+
+			// PPS live modem
+		'16' => array(	
+			'attribute_allowed_prefix' => array(
+				'type' => 'prdattributeprefixrangeallowed',
+				'value' => array( 
+					array( '88', '230000', '239999'),
+					array( '89', '410000', '419999'),
+					),
+				),
+					/*
+					8823, 8941
+					*/
+			),
 		);
 
 // get voca terms
@@ -259,6 +431,8 @@ foreach( $data as $item) {
 	}
 
 }
+
+return;
 
 // add VAS, Additional Product
 foreach( $ap_data as $item) {
