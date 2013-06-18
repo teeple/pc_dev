@@ -23,6 +23,8 @@ function _array_voucher_cardtype($exportItemNids = NULL, $isExternalAPI = FALSE)
 
     $viewResult = $view -> result;
     $jsonRecord_vouchers = array();
+	
+	dsm($exportItemNids,'exportItemNids');
 	dsm($view,'voucher view');
 	
     foreach ($viewResult as $record) {
@@ -137,7 +139,7 @@ function _array_voucher_cardtype($exportItemNids = NULL, $isExternalAPI = FALSE)
         $jsonRecord_vouchers[] = $jsonRecord;
         $voucherIds[] = $jsonRecord['id'];
     }
-	dsm($exportItemNids,'exportitemnids');
+	
 	dsm($voucherIds,'voucherids');
     if (!empty($exportItemNids)) {
         $jsonData_common['resources'] = array_values($voucherIds);
