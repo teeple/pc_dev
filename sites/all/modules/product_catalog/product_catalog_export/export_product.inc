@@ -92,6 +92,7 @@ function _get_product_relationship($nid){
     $relationship = array(); 
     
     foreach($viewResult as $record) {
+    
         //exclusiveness
         foreach($record->field_field_exclusiveness as $item){
             $exclusive_product_ids[] = $item['raw']['node']->field_product_id['und'][0]['safe_value'];

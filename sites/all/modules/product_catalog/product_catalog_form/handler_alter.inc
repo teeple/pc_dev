@@ -1270,6 +1270,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 				if($productTypeTerm->name == 'Main') {
 					$form['field_exclusiveness_others']['und']['#options'] = $options;
 					
+					unset($form['field_exclusiveness']);
 				} else {
 					$unsetItems = array_merge($unsetItems, array('field_exclusiveness_others'));
 				}
@@ -1984,16 +1985,37 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
             
             $mergedCounterList = $basicCounterList + $existingCounterList;
             $form['field_ref_counter']['und']['#options'] = $mergedCounterList;
-
-            _unset_menu_items($form, $form_id);
+           	
+           	_unset_menu_items($form, $form_id);
             
-            $form['field_enddate_option1']['#prefix'] = '<div id="actionsetcounter_fields_wrapper">';
+            // Edit
+            /*
+            dsm($form_state['values'], 'form_state_values');
+            if(isset($form['nid']['#value'])) {
+            	
+            	$counterNode = node_load($form['field_ref_counter']['und']['#default_value'][0]);
+				$counterTypeTerm = taxonomy_term_load($counterNode->field_counter_type['und'][0]['tid']);
+	            $counterUnitTypeTerm = taxonomy_term_load($counterNode->field_counter_unit_type['und'][0]['tid']);
+	            
+	            $options = array();
+	            foreach($counterUnitTypeTerm->field_ref_counter_sub_unit_type['und'] as $item) {
+	            	$options[$item['tid']] = taxonomy_term_load($item['tid'])->name;
+	            }
+	            $form['field_counter_sub_unit_type']['und']['#options'] = $options;
+	            
+            }
+            
+            
+            // $form['field_enddate_option1']['#prefix'] = '<div id="actionsetcounter_fields_wrapper">';
+            $form['field_counter_sub_unit_type']['#prefix'] = '<div id="actionsetcounter_fields_wrapper">';
             $form['field_enddate_option2']['#postfix'] = '</div>';
             
             $form['field_ref_counter']['und']['#ajax'] = array(
                 'callback' => 'actionsetcounter_ajax_callback',
                 'wrapper' => 'actionsetcounter_fields_wrapper'
             );
+            */
+            
             break;
             
         case 'roaming_ratinggroup_node_form' :
@@ -2592,26 +2614,41 @@ function product_group_change_ajax_callback($form, &$form_state) {
 }
 
 function actionsetcounter_ajax_callback($form, &$form_state){
-    /*
-    $form_state['hhhhhh'] = TRUE;
-    $form_state['rebuild'] = TRUE;
-    */
-    $counterNode = node_load($form_state['values']['field_ref_counter']['und'][0]['nid']);
-    $counterTypeTerm = taxonomy_term_load($counterNode->field_counter_type['und'][0]['tid']);
-    
-    if($counterTypeTerm->name !== 'Rollover'){
-        $returnStr .= drupal_render($form['field_enddate_option1']);
-        $returnStr .= drupal_render($form['field_startdate_option1']);
-        $returnStr .= drupal_render($form['field_enddate_option3']);
-        $returnStr .= drupal_render($form['field_enddate_option4']);
-        $returnStr .= drupal_render($form['field_enddate_option2']);
-        $returnStr .= drupal_render($form['actions']);
-    }else{
-        $returnStr = '<div id="actionsetcounter_fields_wrapper">';
-        $returnStr .= drupal_render($form['actions']);
-        $returnStr .= '</div>';
-    }
-    return $returnStr;
+
+	$options = array();
+	
+	if(!isset($form_state['values']['field_ref_counter']['und'][0]['nid'])) {
+		
+	} else {
+		$counterNode = node_load($form_state['values']['field_ref_counter']['und'][0]['nid']);
+	    $counterTypeTerm = taxonomy_term_load($counterNode->field_counter_type['und'][0]['tid']);
+	    $counterUnitTypeTerm = taxonomy_term_load($counterNode->field_counter_unit_type['und'][0]['tid']);
+	    
+	    foreach($counterUnitTypeTerm->field_ref_counter_sub_unit_type['und'] as $item){
+	    	$options[$item['tid']] = taxonomy_term_load($item['tid'])->name;
+	    }
+	    
+	    $form['field_counter_sub_unit_type']['und']['#options'] = $options;
+	    $returnStr = drupal_render($form['field_counter_sub_unit_type']);
+	    
+	    if($counterTypeTerm->name !== 'Rollover'){
+	        $returnStr .= drupal_render($form['field_enddate_option1']);
+	        $returnStr .= drupal_render($form['field_startdate_option1']);
+	        $returnStr .= drupal_render($form['field_enddate_option3']);
+	        $returnStr .= drupal_render($form['field_enddate_option4']);
+	        $returnStr .= drupal_render($form['field_enddate_option2']);
+	        $returnStr .= drupal_render($form['actions']);
+	    }else{
+	        $returnStr = '<div id="actionsetcounter_fields_wrapper">';
+	        $returnStr .= drupal_render($form['actions']);
+	        $returnStr .= '</div>';
+	    }
+	}
+	dsm($options, 'options_in_ajax');
+	
+	$form_state['rebuild'] = TRUE;
+	
+	return $returnStr;
 }
 
 function deposit_counter_callback($form,$form_state) {
