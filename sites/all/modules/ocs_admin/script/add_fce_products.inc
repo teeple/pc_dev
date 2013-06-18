@@ -165,14 +165,18 @@ foreach( $voca_list as $voca) {
 // check argument
 $arg_product_id = drush_shift();
 
+// main product category list
+$main_product_category = array();
+
 //print_r( $header);
 $idx = 0;
 foreach( $data as $item) {
-	break;
 	$d = explode( ',', $item);
 
 	$prd_id = $d[$h['id']];
 	$title = $d[$h['name']];
+
+	$main_product_category[$d[$h['category']]] = $title;
 
 	if ( !empty( $arg_product_id) && $prd_id != $arg_product_id ) 
 		continue;
@@ -217,6 +221,7 @@ foreach( $data as $item) {
 	// customer sub type : personal 
 
 	// customer sub type
+	unset( $p->field_exclusiveness_others['und']);
 
 	node_save( $p);
 
@@ -250,32 +255,7 @@ foreach( $data as $item) {
 
 	// add tariff plan
 	foreach( array( 'voice', 'sms') as $type) {
-		$tariffplan_name = $prd_id . '_' . $type . '_2013-01-01';
-		$nids = ocs_get_nodes_by_title( 'tariffplan', $tariffplan_name);
-		if ( empty( $nids)) {
-			$tariffplan = ocs_admin_get_new_node( 'tariffplan');
-			$tariffplan->title = $tariffplan_name;
-
-			printf("  New tariff plan %s\n", $tariffplan_name);
-		}
-		else {
-			$tariffplan = node_load( $nids[0]);
-
-			printf("  Existing tariff plan %s\n", $tariffplan_name);
-		}
-
-		$tariffplan->field_ref_product['und'][0]['nid'] = $p->nid;
-		$tariffplan->field_ref_tree_tid['und'][0]['value'] = $term['tpl_default_tree_mobile']['usage_' . $type];
-		$tariffplan->field_tree_child_voca_name['und'][0]['value'] = 'tpl_tariffplan_' . $type;
-		$tariffplan->field_valid_date_ymd['und'][0] = array(
-				'value' => '2013-01-01 00:00:00',
-				'timezone' => 'Asia/Ulaanbaatar',
-				'timezone_db' => 'Asia/Ulaanbaatar',
-				'date_type' => 'datetime',
-				);
-		$tariffplan->field_valid_date_hour['und'][0]['value'] = '00';
-
-		node_save( $tariffplan);
+		add_tariff_plan( $p, $type);
 	}
 
 }
@@ -385,7 +365,27 @@ foreach( $ap_data as $item) {
 
 		unset( $p->field_point_for_subscription);
 
-		if ( $counter) {
+		if ( substr( $p->title, 0, strlen( 'PurchasePackage_UnLmt')) == 'PurchasePackage_UnLmt') {
+			// for unlimited product
+			// add data tariff plan
+			$tariffplan = add_tariff_plan( $p, 'data');
+
+			// add 100% discount
+			$node = get_attr_cond( 'actionpricediscountfactors', '100%discount', array(
+						array( 'field_ref_product', 'nid', $p->nid),
+						array( 'field_ref_tree_tid', 'value', $term['tpl_default_tree_mobile']['treeNodeCustomDiscount']),
+						array( 'field_ref_tree_nid', 'nid', $tariffplan->nid),
+						));
+			$node->field_ref_product['und'][0]['nid'] = $p->nid;
+			$node->field_ref_tree_tid['und'][0]['value'] = $term['tpl_default_tree_mobile']['treeNodeCustomDiscount'];
+			$node->field_ref_tree_nid['und'][0]['nid'] = $tariffplan->nid;
+			$node->field_discount_['und'][0]['value'] = 100;
+			$node->title = 'discount 100%';
+			node_save( $node);
+
+			printf("  discount 100 %%\n");
+		}
+		else if ( $counter) {
 			foreach( array( 'Min', 'Count', 'MB', 'Unit') as $unit) {
 				$amount = $d[$ah[$unit]];
 //				printf("  %s %s\n", $unit, $amount);
@@ -421,37 +421,47 @@ foreach( $ap_data as $item) {
 		 
 
 	node_save( $p);
-	/*
 
-	// add attributes
-	$attr_list = array_merge( $attr['all'], isset($attr[$prd_id]) ? $attr[$prd_id] : array());
-	foreach( $attr_list as $key => $val) {
-		switch( $key) {
-			case 'attribute_featurecode':
-				$node = get_attr( $p, $val['type'], $term['tpl_default_tree_mobile'][$key], $val['value']);
-				$node->field_ref_service_feature_code['und'][0]['tid'] = $term['featurecode'][$val['value']];
-				node_save( $node);
-				break;
-			case 'attribute_allowed_prefix' :
-				$node = get_attr( $p, $val['type'], $term['tpl_default_tree_mobile'][$key], 'Allowed');
-				set_allowed_prefix( $node, $val['value']);
-				break;
-			case 'attribute_subscriber_lifecycle_scheme':
-				$nids = ocs_get_nodes_by_title( 'lifecyclescheme', $val['value']);
-				if ( empty( $nids)) {
-					printf("  No Lifecycle scheme was found. name=%s\n", $val['value']);
-				}
-				else {
-					$node = get_attr( $p, $val['type'], $term['tpl_default_tree_mobile'][$key], $val['value']);
-					$node->title = $val['value'];
-					$node->field_lifecycle_scheme['und'][0]['nid'] = $nids[0];
-					node_save( $node);
-				}
-				break;
+	// set exclusiveness
+	$category_list = explode( ',', 'X,W,O,I,G,F,D,A,C,Z,K,J,R,P,Q,S,Y,E,B,M,N');
+	$purchase_category = $d[$ah['Purchasable Categories']];
+	$result = array_diff( $category_list, explode( '|', $purchase_category));
+	foreach( $result as $category) {
+		$nids = ocs_get_nodes_by_title( 'simpleproductoffering', $main_product_category[$category]);
+		if ( empty( $nids)) {
+			printf("  Main product %s for category %s not found\n", $main_product_category[$category], $category);
+		}
+		else if ( count( $nids) > 1) {
+			printf("  Too many main products %s for category %s : %d\n", $main_product_category[$category], $category, count( $nids));
+		}
+		else {
+			if ( strlen( $purchase_category) > 0 && $purchase_category != '-') {
+				$product = node_load( $nids[0]);
+				$product->field_exclusiveness_others['und'][] = array( 'nid' => $p->nid);
+				node_save( $product);
+				printf("  Exclusive to main product %s\n", $product->title);
+			}
 		}
 	}
-	*/
+}
 
+function add_tariff_plan( $product, $type)
+{
+	$tariffplan_name = $product->field_product_id['und'][0]['value'] . '_' . $type . '_2013-01-01';
+	$tariffplan = get_attr( $product, 'tariffplan', $term['tpl_default_tree_mobile']['usage_' . $type], $tariffplan_name);
+
+	$tariffplan->field_tree_child_voca_name['und'][0]['value'] = 'tpl_tariffplan_' . $type;
+	$tariffplan->field_valid_date_ymd['und'][0] = array(
+			'value' => '2013-01-01 00:00:00',
+			'timezone' => 'Asia/Ulaanbaatar',
+			'timezone_db' => 'Asia/Ulaanbaatar',
+			'date_type' => 'datetime',
+			);
+	$tariffplan->field_valid_date_hour['und'][0]['value'] = '00';
+
+	node_save( $tariffplan);
+
+	return $tariffplan;
 }
 
 
@@ -565,6 +575,7 @@ function get_attr( $product, $type, $tree_tid, $title = NULL, $field_cond = NULL
 	}
 	else {
 		$node = node_load( array_pop( array_keys( $result['node'])));
+		printf("  Existing attribute type=%s title=%s\n", $type, $node->title);
 	}
 
 	return $node;
