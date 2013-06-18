@@ -14,7 +14,7 @@ function _array_message($exportItemNids = NULL)
     }
 	//fetch data
 	$viewResult = views_get_view_result('ocs_messages', 'panel_json', empty($exportItemNids)?NULL:$exporItemNids);
-	//dpm( $viewResult, 'messages');
+	dpm( $viewResult, 'messages');
 	
 	foreach ($viewResult as $record) {
 	    $msg = array();
@@ -29,6 +29,9 @@ function _array_message($exportItemNids = NULL)
 		}
 		
 		$msg['scheduled_delivery'] = $record->field_field_scheduled_delivery[0]['raw']['value'];
+		if($msg['scheduled_delivery']){
+			$msg['delivery_date'] = isset($record->field_field_value[0]['raw']['value'])?$record->field_field_value[0]['raw']['value']:NULL;
+		}
 	//	$msg['delivery_date'] = $record->field_field_value[0]['raw']['value'];
 		$msg['delivery_time'] = $record->field_field_valid_date_hour[0]['raw']['value'];
 
