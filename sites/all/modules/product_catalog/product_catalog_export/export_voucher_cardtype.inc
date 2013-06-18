@@ -23,7 +23,8 @@ function _array_voucher_cardtype($exportItemNids = NULL, $isExternalAPI = FALSE)
 
     $viewResult = $view -> result;
     $jsonRecord_vouchers = array();
-
+	dsm($view,'voucher view');
+	
     foreach ($viewResult as $record) {
 
         $jsonRecord['id'] = isset($record -> field_field_voucher_id) ? $record -> field_field_voucher_id[0]['rendered']['#markup'] : null;
@@ -35,9 +36,7 @@ function _array_voucher_cardtype($exportItemNids = NULL, $isExternalAPI = FALSE)
         $jsonRecord['service_operator'] = _add_commoncode($record -> field_field_service_operator);
         $jsonRecord['use_area'] = !empty($record -> field_field_use_area) ? $record -> field_field_use_area[0]['rendered']['#markup'] : null;
         
-        dsm($record, 'record');
         $node = node_load($record->nid);
-        dsm($node, 'node');
         
         $validStart = isset($record -> field_field_valid_date_ymd_w_enddate[0]['raw']['value']) ? $record -> field_field_valid_date_ymd_w_enddate[0]['raw']['value'] : '0001-01-01 00:00:00';
         $validEnd = isset($record -> field_field_valid_date_ymd_w_enddate[0]['raw']['value2']) ? $record -> field_field_valid_date_ymd_w_enddate[0]['raw']['value2'] : '9999-12-31 23:59:59';
@@ -138,7 +137,8 @@ function _array_voucher_cardtype($exportItemNids = NULL, $isExternalAPI = FALSE)
         $jsonRecord_vouchers[] = $jsonRecord;
         $voucherIds[] = $jsonRecord['id'];
     }
-
+	dsm($exportItemNids,'exportitemnids');
+	dsm($voucherIds,'voucherids');
     if (!empty($exportItemNids)) {
         $jsonData_common['resources'] = array_values($voucherIds);
     } else {
