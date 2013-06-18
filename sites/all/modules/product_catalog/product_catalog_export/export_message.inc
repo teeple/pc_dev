@@ -14,7 +14,7 @@ function _array_message($exportItemNids = NULL)
     }
 	//fetch data
 	$viewResult = views_get_view_result('ocs_messages', 'panel_json', empty($exportItemNids)?NULL:$exporItemNids);
-	dpm( $viewResult, 'messages');
+	//dpm( $viewResult, 'messages');
 	
 	foreach ($viewResult as $record) {
 	    $msg = array();
