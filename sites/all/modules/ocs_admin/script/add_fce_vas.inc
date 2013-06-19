@@ -210,6 +210,15 @@ foreach( $data as $item) {
 	}
 
 	// add price
+	$bill_type = $d[$h['type']];
+	$price = $d[$h['Price']];
+	if ( ($bill_type == 'Daily' || $bill_type == 'Monthly') && $price > 0) {
+		$node = get_attr( $p, 'actionpricechargerecurringdefaul', 
+			$term['tpl_default_tree_mobile']['nonusage_fee_recurring_default']);
+		$node->field_price_amount_float['und'][0]['value'] = $price;
+		$node->field_pricing_cycle_type['und'][0]['value'] = ($bill_type == 'Daily') ? '1' : '2';
+		node_save( $node);
+	}
 }
 
 return;
