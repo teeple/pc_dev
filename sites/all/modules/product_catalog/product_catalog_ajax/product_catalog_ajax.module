@@ -2199,6 +2199,7 @@ function product_catalog_ajax_delete_from_view($nodeNid, $refNodeNid, $additiona
 	switch($node->type){
 		case 'rate':
 		case 'numberspecialfactors';
+		case 'loyaltypointfactors':
             //additional param means refTreeTid
 			$output[] = _add_command_after_dismiss_modal($refNodeNid,$additionalParam);
 			break;
