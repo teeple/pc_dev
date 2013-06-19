@@ -129,14 +129,22 @@ function export_deploy($export_type, $export_item_list = NULL, $target, $redirec
             break;
        	case 'PRODUCT_GROUP':
        	   foreach($exportItemNids as $exportItemNid){
-       	               $checkValid = validate_product_group($exportItemNid);
-       	               if($checkValid['is_valid'] == FALSE){
-       	                   $failedValidation = TRUE;
-       	                   break;
-       	               }
-       	           }
-       	           break;
-       		break;
+	           $checkValid = validate_product_group($exportItemNid);
+		           if($checkValid['is_valid'] == FALSE){
+	               $failedValidation = TRUE;
+	               break;
+		           }
+		       }
+		    	break;
+		    case 'VOUCHER':
+					foreach($exportItemNids as $exportItemNid){
+	           $checkValid = validate_voucher($exportItemNid);
+		           if($checkValid['is_valid'] == FALSE){
+	               $failedValidation = TRUE;
+	               break;
+		           }
+		       }
+					break;
     }
     
     if($failedValidation == TRUE){
