@@ -993,3 +993,29 @@ function _tmp_create_prdattributedepositamount($productNid) {
 	
 	node_save($node);
 }
+
+function is_integer_string($value){
+	if(!is_numeric($value)){
+		return FALSE;
+	}
+	
+	$value2 = (int)$value;
+	if($value2 != $value){
+		return FALSE;
+	}
+	return TRUE;
+}
+
+function is_integer_between_range($value){
+	$MAX_INT_VALUE = 1000000000;
+	$MIN_INT_VALUE = -10000000000;
+	
+	if($value < $MIN_INT_VALUE){
+		return -1;
+	}elseif($value > $MAX_INT_VALUE){
+		return 1;
+	}else{
+		return 0;
+	}
+	
+}

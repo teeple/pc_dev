@@ -139,6 +139,54 @@ function product_catalog_form_node_validate($node, $form, &$form_state) {
     }
   } else {
     switch($form['form_id']['#value']) {
+			case 'conditionwhatcounter_node_form':
+				$is_valid = TRUE;
+				
+				//value check. only integer is available
+				if($is_valid){
+					$value_count = count($form_state['values']['field_value']['und']);
+					$is_empty = TRUE;
+					for($i=0;$i<$value_count;$i++){
+						$value = $form_state['values']['field_value']['und'][$i]['value'];
+						if(!empty($value)){
+							$is_empty = FALSE;
+							break;
+						}
+					}
+					if($is_empty){
+						$target_element = 'field_value';
+						$is_valid = FALSE;
+						$fail_rasion = 'Value is required';
+					}
+				}
+				
+				if($is_valid){
+					for($i=0;$i<$value_count;$i++){
+						$value = $form_state['values']['field_value']['und'][$i]['value'];
+						$target_element = 'field_value][und]['. $i .'][value';
+						if(!empty($value) && !is_integer_string($value)){
+							$is_valid = FALSE;
+							$fail_rasion = 'Only Integer value is allowed';
+							break;
+						}else{
+							$is_in_range = is_integer_between_range($value);
+							if($is_in_range < 0){
+								$is_valid = FALSE;
+								$fail_rasion = 'It is less than Minimum Value -10000000000';
+								break;
+							}elseif($is_in_range > 0){
+								$is_valid = FALSE;
+								$fail_rasion = 'It is greater than Maximum Value 10000000000';
+								break;
+							}
+						}
+					}
+				}
+				
+				if(!$is_valid){
+					form_set_error($target_element, $fail_rasion);
+				}
+				break;
       case 'ocs_ussd_code_node_form' :
         // check USSD code format
         $valid_code = TRUE;
