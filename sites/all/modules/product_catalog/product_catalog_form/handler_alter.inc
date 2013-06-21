@@ -1072,8 +1072,6 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			
 			$allCountersBelongsTo = _select_treenodecounterforvoucherprd($treeNodeProductForVoucherPrdNid);
 			
-			dsm($allCountersBelongsTo, 'allCounterBelongsTo');
-			
 			foreach($form['field_ref_counter']['und']['#options'] as $key => $value) {
 				if(in_array($key, $allCountersBelongsTo)) {
 					$options[$key] = $value;
@@ -2640,7 +2638,7 @@ function actionsetcounter_ajax_callback($form, &$form_state) {
 			$returnStr .= '</div>';
 		}
 	}
-	dsm($options, 'options_in_ajax');
+	// dsm($options, 'options_in_ajax');
 
 	$form_state['rebuild'] = TRUE;
 

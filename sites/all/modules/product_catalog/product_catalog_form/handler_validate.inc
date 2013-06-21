@@ -183,10 +183,50 @@ function product_catalog_form_node_validate($node, $form, &$form_state) {
 					}
 				}
 				
+				$counter = node_load($form_state['values']['field_ref_counter']['und'][0]['nid']);
+				$inputCounterSubUnitTypeTid = $form_state['values']['field_counter_sub_unit_type']['und'][0]['tid'];
+				$counterUnitTypeTerm = taxonomy_term_load($counter->field_counter_unit_type['und'][0]['tid']);
+				$counterSubUnitTypes = $counterUnitTypeTerm->field_ref_counter_sub_unit_type['und'];
+				
+				$foundFlag = FALSE;
+				foreach($counterSubUnitTypes as $key => $value) {
+				if( $value['tid'] == $inputCounterSubUnitTypeTid ) {
+						$foundFlag = TRUE;
+						break;
+					}
+				}
+				if(!$foundFlag) {
+					$target_element = 'field_counter_sub_unit_type';
+					$is_valid = FALSE;
+					$fail_rasion = "Unit Type should be matched to counter's unit type";
+				}
+				
 				if(!$is_valid){
 					form_set_error($target_element, $fail_rasion);
 				}
 				break;
+				
+	  case 'actionsetcounter_node_form':
+	  case 'actionsetcounteronbonus_node_form':
+	  case 'actionsetbonusonrecurringcharge_node_form':
+	  	$counter = node_load($form_state['values']['field_ref_counter']['und'][0]['nid']);
+	  	
+	  	$inputCounterSubUnitTypeTid = $form_state['values']['field_counter_sub_unit_type']['und'][0]['tid'];
+	  	$counterUnitTypeTerm = taxonomy_term_load($counter->field_counter_unit_type['und'][0]['tid']);
+	  	$counterSubUnitTypes = $counterUnitTypeTerm->field_ref_counter_sub_unit_type['und'];
+	  	
+		$foundFlag = FALSE;
+		foreach($counterSubUnitTypes as $key => $value) {
+			if( $value['tid'] == $inputCounterSubUnitTypeTid ) {
+	  			$foundFlag = TRUE;
+	  		}
+	  	}
+	  	
+	  	if(!$foundFlag) {
+	  		form_set_error('field_counter_sub_unit_type', "Unit Type should be matched to counter's unit type");
+	  	}
+	  	
+	  	break;
       case 'ocs_ussd_code_node_form' :
         // check USSD code format
         $valid_code = TRUE;
@@ -404,26 +444,7 @@ function product_catalog_form_node_validate($node, $form, &$form_state) {
           form_set_error('field_prefix', 'Duplicated Prefix found!');
         }
         break;
-
-      case 'treenodecounter_node_form' :
-
-        /*
-         if(isset($form['nid']['#value'])) {
-         $treeNodeCounter = node_load($form['nid']['#value']);
-
-         $flagBasedOnDeposit = $form_state['input']['field_based_on_deposit_amount']['und'];
-
-         if($flagBasedOnDeposit == 1) {
-         $refProductNid = $treeNodeCounter->field_ref_product['und'][0]['nid'];
-         $viewResult = views_get_view_result('list_treenodecounter', 'panel_pane_7', $refProductNid, $treeNodeCounter->nid);
-         if( count($viewResult) > 0 ) {
-         form_set_error('field_based_on_deposit_amount', 'Based on Deposit Amount Setting should be unique');
-         }
-         }
-         }
-         */
-        break;
-
+        
       case 'carrier_mobile_node_form' :
         $isDuplicated = FALSE;
         $failReason = '';
