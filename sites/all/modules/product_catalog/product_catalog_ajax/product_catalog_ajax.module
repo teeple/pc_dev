@@ -1221,6 +1221,7 @@ function product_catalog_ajax_select_submit() {
 				$js_data['replace_or_append'] = 'replace';
 				
 				// delete existing .. 
+				/*
 				$view = views_get_view('list_treenodeproductforvoucher');
 				$view->set_display('panel_pane_1');
 				$view->set_arguments(array('0' => $tmpProductNid[1]));
@@ -1231,6 +1232,7 @@ function product_catalog_ajax_select_submit() {
 						node_delete($record->nid);
 					}
 				}
+				*/ 
       	break;
   	  
       case 'voucher_product_specific':
