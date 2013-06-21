@@ -993,3 +993,22 @@ function _tmp_create_prdattributedepositamount($productNid) {
 	
 	node_save($node);
 }
+
+// 특정 아이템을 bulk로 입력함.
+function _tmp_create_prdattributepackaged($productNid) {
+	global $user;
+	
+	$productNode = node_load($productNid);
+		
+	$node = new StdClass();
+	$node->uid = $user->uid;
+	$node->language = 'und';
+	$node->type = 'prdattributepackaged';
+	$node->field_ref_product['und'][0]['nid'] = $productNid;
+	$node->field_ref_tree_tid['und'][0]['value'] = 6537; // hidden
+	$node->field_ref_prdrelationtype['und'][0]['tid'] = 788; // packaged hidden
+	$node->field_ref_connected_product['und'][0]['nid'] = 130504; // Bonud On Recharge
+	
+	node_save($node);
+}
+

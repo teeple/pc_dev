@@ -885,11 +885,11 @@ function _vouchercardtype_submit_handler($form, $form_state) {
 	} else {
 		$node->field_tree_child_voca_name['und'][0] = array('value' => 'tpl_vouchercardtype');
 	}
-		
 	node_save($node);
 	
 	// 자동으로 voucher를 위한 counter를 생성시킨다.
 	// 
+	/*
 	$allCounters = views_get_view_result('list_counter_for_vouchercardtype', 'panel_pane_1');
 	foreach($allCounters as $counter) {
 		$treeNodeCounterForVoucher = new StdClass();
@@ -902,6 +902,7 @@ function _vouchercardtype_submit_handler($form, $form_state) {
 		
 		node_save($treeNodeCounterForVoucher);
 	}
+	*/
 	
 	// loyaltypoint content type을 자동으로 생성해준다.
 	// 

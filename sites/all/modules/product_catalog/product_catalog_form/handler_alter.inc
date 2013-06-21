@@ -457,11 +457,9 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 				$options[$record -> tid] = t('<span class="@class">@svc</span>', array('@class' => t('ocs_svc_perm @1 @2', array('@1' => $subgroup1, '@2' => $subgroup2)), '@svc' => $record -> taxonomy_term_data_name));
 			}
 
-			/*
 			 foreach( array_keys( $form['field_feature_codes']) as $key) {
-			 $form['field_feature_codes'][$key]['field_feature_codes']['und']['#options'] = $options;
+				 $form['field_feature_codes'][$key]['field_feature_codes']['und']['#options'] = $options;
 			 }
-			 */
 
 			break;
 		case 'backup_migrate_ui_manual_backup_load_profile_form' :
@@ -1008,6 +1006,107 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			_unset_menu_items($form, $form_id);
 
 			break;
+		
+		case 'treenodecounterforvoucher_node_form' :
+		
+			$form['field_weight']['#type'] = 'hidden';
+			$form['field_parent_node']['#type'] = 'hidden';
+			$form['field_ref_vouchercardtype']['#type'] = 'hidden';
+			$form['field_r_productoffering']['#type'] = 'hidden';
+			$form['field_ref_tree_tid']['#type'] = 'hidden';
+
+			$options = array();
+			
+			// Edit
+			if( isset($form['nid']['#value']) ) {
+				$counterNidDefault = $form['field_ref_counter']['und']['#default_value'][0];
+				$options[$counterNidDefault] = $form['field_ref_counter']['und']['#options'][$counterNidDefault];
+			}
+			
+			$voucherCardTypeNid = $form['field_ref_vouchercardtype']['und'][0]['nid']['#default_value'];
+			$refTreeTid = $form['field_ref_tree_tid']['und'][0]['value']['#default_value'];
+			$tempTerm = taxonomy_term_load($refTreeTid);
+			
+			$tempSvcDomainTerm = taxonomy_get_term_by_name($tempTerm->name, 'tpl_vouchercardtype');
+			$svcDomainTerm = current($tempSvcDomainTerm);
+			
+			// 해당 voucher card type에 속한 treenodecounterforvoucher의 nid는 제외한다. (즉 이미 설정된 것들은 제외)
+			$allCountersBelongsTo = views_get_view_result('list_treenodecounterforvoucher', 'panel_pane_2', $voucherCardTypeNid);
+			
+			$counterNids = array();
+			foreach($allCountersBelongsTo as $item) {
+				$counterNids[] = $item->node_field_data_field_ref_counter_nid;
+			}
+			
+			// 해당 service domain에 속한 모든 basic counter를 가져온다.
+			$args = array('0' => $svcDomainTerm->name,
+						'1' => join('+', $counterNids));
+						
+			$view = views_get_view('list_counter_for_vouchercardtype');
+			$view->set_display('panel_pane_7');
+			$view->set_arguments($args);
+			$view->execute();
+			$availableCounters = $view->result;
+			
+			foreach($availableCounters as $item) {
+				$options[$item->nid] = view_get_field_value_by_label($view, 'PHP', $item);
+			}
+			$form['field_ref_counter']['und']['#options'] = $options;
+			
+			_unset_menu_items($form, $form_id);
+			break;
+			
+		case 'treenodecounterforvoucherprd_node_form' :
+		
+			$form['field_ref_treenodeproductforvouc']['#type'] = 'hidden';
+			
+			$options = array();
+			
+			// Edit
+			if( isset($form['nid']['#value']) ) {
+				$counterNidDefault = $form['field_ref_counter']['und']['#default_value'][0];
+				$options[$counterNidDefault] = $form['field_ref_counter']['und']['#options'][$counterNidDefault];
+			}
+			
+			$treeNodeProductForVoucherPrdNid = $form['field_ref_treenodeproductforvouc']['und'][0]['nid']['#default_value'];
+			
+			$allCountersBelongsTo = _select_treenodecounterforvoucherprd($treeNodeProductForVoucherPrdNid);
+			
+			dsm($allCountersBelongsTo, 'allCounterBelongsTo');
+			
+			foreach($form['field_ref_counter']['und']['#options'] as $key => $value) {
+				if(in_array($key, $allCountersBelongsTo)) {
+					$options[$key] = $value;
+				}
+			}
+			
+			$form['field_ref_counter']['und']['#options']= $options;
+			
+			/*
+			$counterNids = array();
+			foreach($allCountersBelongsTo as $item) {
+				$counterNids[] = $item->node_field_data_field_ref_counter_nid;
+			}
+			
+			// 해당 service domain에 속한 모든 basic counter를 가져온다.
+			$args = array('0' => $svcDomainTerm->name,
+						'1' => join('+', $counterNids));
+						
+			$view = views_get_view('list_counter_for_vouchercardtype');
+			$view->set_display('panel_pane_7');
+			$view->set_arguments($args);
+			$view->execute();
+			$availableCounters = $view->result;
+			
+			foreach($availableCounters as $item) {
+				$options[$item->nid] = view_get_field_value_by_label($view, 'PHP', $item);
+			}
+			$form['field_ref_counter']['und']['#options'] = $options;
+			*/
+			
+			_unset_menu_items($form, $form_id);
+			break;
+			
 		case 'conditionwhatcalltype_node_form' :
 			unset($form['field_parent_node']);
 			unset($form['field_weight']);
@@ -1152,9 +1251,9 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 				unset($form['#fieldgroups']['group_contraints']);
 			}
 
-			//if($form['field_product_type']['und']['#options'][$productTypeTid] == 'Main') {
-			$unsetItems[] = 'field_product_sub_type';
-			//}
+			if($form['field_product_type']['und']['#options'][$productTypeTid] == 'Main') {
+				$unsetItems[] = 'field_product_sub_type';
+			}
 			_unset_menu_items($form, $form_id);
 
 			$firstPathName = current(explode('/', current_path()));

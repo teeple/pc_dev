@@ -897,6 +897,15 @@ function product_catalog_ajax_add_modal_content($js = NULL, $contentType, $refNo
 			$node->title = $refNodeNid;
 			$node->field_lifecycle_scheme['und'][0]['nid'] = $refNodeNid;
 			break;
+		case 'treenodecounterforvoucher':
+			$treeNodeTerm = taxonomy_get_term_by_name($refTreeTid, 'tpl_vouchercardtype');
+			$svcDomainTerm = current($treeNodeTerm);
+			$node->field_ref_vouchercardtype['und'][0]['nid'] = $refNodeNid;
+			$node->field_ref_tree_tid['und'][0]['value'] = $svcDomainTerm->tid;
+			break;
+		case 'treenodecounterforvoucherprd':
+			$node->field_ref_treenodeproductforvouc['und'][0]['nid'] = $refNodeNid;
+			break;
 		case 'actionsetcounter':
 		case 'actionsetcounteronbonus':
 		case 'actionsetbonusonrecurringcharge':
@@ -998,6 +1007,15 @@ function product_catalog_ajax_add_modal_content($js = NULL, $contentType, $refNo
 				$output[] = _add_command_after_dismiss_modal($refNodeNid,$refTreeTid,$defaultTabIndex);
 				break;
 			
+			case 'treenodecounterforvoucher':
+				$refTreeTid = $form_state['values']['field_ref_tree_tid']['und'][0]['value'];
+				$output[] = _add_command_after_dismiss_modal($refNodeNid,$refTreeTid,$defaultTabIndex);
+				break;
+			case 'treenodecounterforvoucherprd':
+				$defaultTabIndex = $refTreeTid;
+				$refTreeTid = NULL;
+				$output[] = _add_command_after_dismiss_modal($refNodeNid,$refTreeTid,$defaultTabIndex);
+				break;
 			default : //for tree
 				$output[] = _add_command_after_dismiss_modal($refNodeNid,$refTreeTid);
 				break;
@@ -1214,23 +1232,23 @@ function product_catalog_ajax_select_submit() {
       	$child->field_ref_product['und'][0]['nid'] = $childNid;
       	node_save($child);
       	
-      	// _create_treenodecounterforvoucherprd($child, $childNid);
+      	_create_treenodecounterforvoucherprd($child, $childNid);
       	
       	$js_data['append_to'] = 'inside';
       	
-				$js_data['replace_or_append'] = 'replace';
-				
-				// delete existing .. 
-				$view = views_get_view('list_treenodeproductforvoucher');
-				$view->set_display('panel_pane_1');
-				$view->set_arguments(array('0' => $tmpProductNid[1]));
-				$view->execute();
-				
-				foreach($view->result as $record) {
-					if($child->nid != $record->nid) {
-						node_delete($record->nid);
-					}
-				}
+		$js_data['replace_or_append'] = 'replace';
+		
+		// delete existing .. 
+		$view = views_get_view('list_treenodeproductforvoucher');
+		$view->set_display('panel_pane_1');
+		$view->set_arguments(array('0' => $tmpProductNid[1]));
+		$view->execute();
+		
+		foreach($view->result as $record) {
+			if($child->nid != $record->nid) {
+				node_delete($record->nid);
+			}
+		}
       	break;
   	  
       case 'voucher_product_specific':
@@ -1243,27 +1261,26 @@ function product_catalog_ajax_select_submit() {
       	$child->field_ref_product['und'][0]['nid'] = $childNid;
       	node_save($child);
       	
-      	_create_treenodecounterforvoucherprd($child, $childNid);
+      	// _create_treenodecounterforvoucherprd($child, $childNid);
       	
       	$js_data['append_to'] = 'inside';
       	
       	// voucher card type에서 type이 Discount일 때에는 product가 하나만 선택될 수 있도록 변경 
       	if($voucherTypeTerm->name == 'Discount') {
-					$js_data['replace_or_append'] = 'replace';
-					
-					// delete existing .. 
-					$view = views_get_view('list_treenodeproductforvoucher');
-					$view->set_display('panel_pane_1');
-					$view->set_arguments(array('0' => $tmpProductNid[1]));
-					$view->execute();
-					
-					foreach($view->result as $record) {
-						if($child->nid != $record->nid) {
-							node_delete($record->nid);
-						}
-					}
+			$js_data['replace_or_append'] = 'replace';
+			
+			// delete existing .. 
+			$view = views_get_view('list_treenodeproductforvoucher');
+			$view->set_display('panel_pane_1');
+			$view->set_arguments(array('0' => $tmpProductNid[1]));
+			$view->execute();
+			
+			foreach($view->result as $record) {
+				if($child->nid != $record->nid) {
+					node_delete($record->nid);
+				}
+			}
       	}
-
       	
       	break;
 
@@ -1436,6 +1453,41 @@ function _remove_existing_children($root_nid, $refTreeTid) {
 	$nodes = get_1st_children_nids_by_in_tree($root_nid, $refTreeTid);
 	node_delete_multiple($nodes);
 	
+}
+
+function _select_treenodecounterforvoucherprd($treenodeproductforvoucher) {
+
+	$params = array('0' => $treenodeproductforvoucher);
+	$view = views_get_view('list_prdcounterlist');
+	$view->set_display('panel_pane_2');
+	$view->set_arguments($params);
+	$view->execute();
+	
+	$counterNids = array();
+	foreach($view->result as $record) {
+		//$counterList[] = view_get_field_value_by_label($view, 'qtabConfigNid', $record);
+		$counterNids[] = view_get_field_value_by_label($view, 'qtabConfigNid', $record);
+	}
+	
+	// Prepaid면서 Basic , Optional인 counter만 걸러낸다.
+	$params = array('0' => join('+',$counterNids));
+	$view = views_get_view('query_list_counter');
+		$view->set_display('panel_pane_4');
+	$view->set_arguments($params);
+	$view->execute();
+	$counterList = array();
+	foreach($view->result as $record) {
+		$counterList[] = $record->nid;
+	}
+	
+	// 해당 상품의 basic counter를 가져옴.
+	// $product = node_load($productNid);
+	$counter_list = _get_default_basic_counters($productNid);
+	foreach($counter_list as $key => $value) {
+		$counterList[] = $key;
+	}
+	
+	return $counterList;
 }
 
 // 선택된 product의 counter만큼
@@ -2177,6 +2229,13 @@ function product_catalog_modal_form_edit_modal_content($js = NULL, $contentType,
 				$refTreeTid = NULL;
 				$output[] = _add_command_after_dismiss_modal($refNodeNid,$refTreeTid,$defaultTabIndex);
 				break;
+			case 'treenodecounterforvoucher':
+				$refTreeTid = $form_state['values']['field_ref_tree_tid']['und'][0]['value'];
+				$output[] = _add_command_after_dismiss_modal($refNodeNid,$refTreeTid,$defaultTabIndex);
+				break;
+			case 'treenodecounterforvoucherprd':
+				$output[] = _add_command_after_dismiss_modal($refNodeNid,$refTreeTid,$defaultTabIndex);
+				break;
         }
         
     }else{
@@ -2226,6 +2285,15 @@ function product_catalog_ajax_delete_from_view($nodeNid, $refNodeNid, $additiona
         case 'actionsetonthreshold' :
         	//additional param means default tab index
 			$output[] = _add_command_after_dismiss_modal($refNodeNid,NULL,$additionalParam);
+			break;
+		case 'treenodecounterforvoucher':
+			$treeNodeCounter = node_load($nodeNid);
+			$refTreeTid = $treeNodeCounter->field_ref_tree_tid['und'][0]['value'];
+			$output[] = _add_command_after_dismiss_modal($refNodeNid,$refTreeTid,$defaultTabIndex);
+			break;
+		case 'treenodecounterforvoucherprd':
+			$refTreeTid = NULL;
+			$output[] = _add_command_after_dismiss_modal($refNodeNid,$refTreeTid,$defaultTabIndex);
 			break;
 	}
 	

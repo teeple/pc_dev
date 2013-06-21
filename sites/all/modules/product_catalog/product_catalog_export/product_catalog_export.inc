@@ -114,8 +114,10 @@ function export_deploy($export_type, $export_item_list = NULL, $target, $redirec
 	global $user;
 	$baseURL = _get_export_base_url($target);
 	
-   	$exportItemNids = !empty($export_item_list)? array_keys($export_item_list): array();
-   	
+	$exportItemNids = !empty($export_item_list)? array_keys($export_item_list): array();
+	
+	dsm($exportItemNids, 'exportItemNids');
+	
 	$failedValidation = FALSE;
     switch($export_type){
         case 'PRODUCT':

@@ -23,12 +23,14 @@ function _array_export_counter($exportItemNids=NULL){
 	
 	//fetch data
 	$view = views_get_view('list_counter');
-	if(!empty($exportItemNids) && count($exportItemNids) > 1) {
-		$exportItemNids = join('+', $exportItemNids);
-	} 
-	$viewResult = views_get_view_result('list_counter', 'panel_pane_5', $exportItemNids);
-	$counterIds = array();
 	
+	if(!empty($exportItemNids) && count($exportItemNids) > 1) {
+		$tempArgs = join('+', $exportItemNids);
+	} 
+	
+	$viewResult = views_get_view_result('list_counter', 'panel_pane_5', $tempArgs);
+	
+	$counterIds = array();
   foreach($viewResult as $record) {
     $jsonCounter = array();
     $jsonCounter['counter_id'] = $record->field_field_counter_id[0]['raw']['value'];
@@ -51,10 +53,15 @@ function _array_export_counter($exportItemNids=NULL){
 		
 		$counterIds[] = $record->field_field_counter_id[0]['raw']['value'];
   }
-
-  if($exportItemNids!=NULL) {
+  dsm($counterIds, 'counterIds');
+  
+  if(!empty($exportItemNids)) {
+  	  	dsm($counterIds, 'counterIds_1');
+  	
   	$jsonData_common['resources'] = $counterIds;
 	} else {
+	dsm($counterIds, 'counterIds_1');
+	
     $jsonData_common['resources'] = array();
 	}
 	
