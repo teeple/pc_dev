@@ -38,6 +38,7 @@ function rm_product( $prd_id)
 
             switch( $childNode->type) {
                 case 'tariffplan' :
+					delChildTariff($childNode);
                     break;
                 default:
                     delChildAction( $childNode);
@@ -46,11 +47,39 @@ function rm_product( $prd_id)
 
             node_delete( $record->nid);
             printf( "  %s  %s\n", $childNode->type, $childNode->title);
+
+			// check field_collection_item
+			foreach( array( 'field_prefix_range', 'field_charge_collection') as $field_name) {
+				if ( isset($childNode->$field_name)) {
+					$nids = array_get_value( $childNode->$field_name, FALSE);
+					foreach( $nids as $nid) {
+						entity_delete( 'field_collection_item', $nid);
+						printf("  Delete %s item_id=%d\n", $field_name, $nid);
+					}
+				}
+			}
         }
 
         node_delete( $p->nid);
     }
 
+}
+
+function delChildTariff( $child)
+{
+	foreach( array( 'rate', 'basicrate_domestic') as $type) {
+		$query = new EntityFieldQuery();
+		$result = $query->entityCondition( 'entity_type', 'node')
+			->entityCondition( 'bundle', $type)
+			->fieldCondition( 'field_ref_tariffplan', 'nid', $child->nid)
+			->execute();
+
+		foreach( array_keys( $result['node']) as $nid) {
+			$node = node_load( $nid);
+			printf("  delete %s %s\n", $type, $node->title);
+			node_delete( $nid);
+		}
+	}
 }
 
 function delChildAction( $child)

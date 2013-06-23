@@ -117,17 +117,11 @@ $product_id = NULL;
 while( $arg = drush_shift()) {
 	if ( $arg == 'file') $fname = drush_shift();
 	else if ( $arg == 'update') $update_flag = TRUE;
-	else if ( $arg == 'reset') {
-        $reset_flag = TRUE;
-	    $node_list = explode(',', drush_shift());
-    }
-	else if ( $arg == 'yes') $yes_flag = TRUE;
-	else if ( $arg == 'i') $interactive_flag = TRUE;
-	else $product_id = $arg;
+	else if ( $arg == 'product') $product_id = drush_shift();
 }
 
 if ( $fname == NULL) {
-	printf( "Usage: [i] [update] [reset <node list>] [yes] [file <file name>] [product_id] \n");
+	printf( "Usage: [file <file name>] [product <product_id>] [update]\n");
 	return;
 }
 
@@ -142,7 +136,26 @@ if ( $fp === FALSE) {
 
 $prd_field = field_info_instances( 'node', 'simpleproductoffering');
 
-interactive_mode();
+read_taxonomy();
+read_node();
+
+if ( $product_id) {
+
+	foreach( $src_node['simpleproductoffering'] as $nid => $obj) {
+		if ( $obj->field_product_id['und'][0]['value'] == $product_id) {
+			check_node( FALSE, $obj);
+			if ( $update_flag) {
+				printf("\nUpdate ... \n");
+				check_node( TRUE, $obj);
+			}
+			break;
+		}
+	}
+}
+else {
+	interactive_mode();
+}
+
 return;
 
 /* not used
@@ -243,6 +256,80 @@ function check_product( $p, $field, $child)
 	}
 }
 
+function check_diff_product( $src, $child, $productNode)
+{
+	global $user, $src_term;
+
+	$idx = 0;
+    //print_r( $child['action']);
+    $parentRefNodeList = array();
+	foreach( $child['tree_tid'] as $tid => $data_list) {
+        foreach( $data_list as $data) {
+
+            $org_nid = $data->nid;
+
+            $childNode = get_attribute( $productNode, $data);
+			if ( $childNode === NULL) continue;
+
+			if ( isset( $childNode->nid)) {
+				$field = field_info_instances( 'node', $src->type);
+				check_diff( FALSE, $field, $data, $childNode);
+			}
+
+            /*
+            if(isset($targetChildNode->field_charge_collection)){
+                _clone_field_collection('node',$targetChildNode,$childNode,'field_charge_collection');
+            }
+            if(isset($targetChildNode->field_discount_collection)){
+                _clone_field_collection('node',$targetChildNode,$childNode,'field_discount_collection');
+            }
+            _clone_nested_child_node($targetChildNode,$childNode);
+            */
+
+           if ( $childNode->type == 'tariffplan') {
+           //    saveTariffPlan( $child, $org_nid);
+           }
+           else if ( isset($child['action'][$org_nid])) {
+                printf("Action for %s\n", $data->title);
+
+                foreach( $child['action'][$org_nid] as $obj) {
+					$actionNode = get_attr_cond( $obj->type, $obj->title, array(
+								array( 'field_ref_source_action', 'nid', $childNode->nid)
+								));
+					check_diff( FALSE, field_info_instances( 'node', $obj->type), $obj, $actionNode);
+                }
+            }
+        }
+	}
+
+}
+
+function get_attr_cond( $type, $title, $field_cond)
+{
+	// find the attribute
+	$query = new EntityFieldQuery();
+	$query->entityCondition('entity_type', 'node')
+		->entityCondition('bundle', $type);
+
+	if ( $field_cond) {
+		foreach( $field_cond as $cond) {
+			$query->fieldCondition( $cond[0], $cond[1], $cond[2]);
+		}
+	}
+	$result = $query->execute();
+
+	if ( empty( $result)) {
+		$node = ocs_admin_get_new_node( $type);
+		printf("  New attribute type=%s title=%s\n", $type, $title);
+	}
+	else {
+		$node = node_load( array_pop( array_keys( $result['node'])));
+	}
+
+	return $node;
+}
+
+
 function add_product( $src, $child)
 {
 	global $user, $src_term;
@@ -274,6 +361,9 @@ function add_product( $src, $child)
             $child['tree_tid'][$org_nid]['new_node'] = $childNode->nid;
         //readline("Enter to continue ...");
 
+			if ( isset( $childNode->field_prefix_range)) {
+				update_prefix_range( $childNode, 'field_prefix_range');
+			}
             /*
             if(isset($targetChildNode->field_charge_collection)){
                 _clone_field_collection('node',$targetChildNode,$childNode,'field_charge_collection');
@@ -285,7 +375,7 @@ function add_product( $src, $child)
             */
 
            if ( $childNode->type == 'tariffplan') {
-               saveTariffPlan( $child, $org_nid);
+               saveTariffPlan( $child, $childNode, $org_nid);
            }
            else if ( isset($childNode->field_parent_node['und'])) {
                $parentRefNodeList[] = $childNode->nid;
@@ -347,6 +437,31 @@ function add_product( $src, $child)
     }
 }
 
+function update_prefix_range( $node, $field_name)
+{
+	global $src_node;
+
+	$nids = array_get_value( $node->$field_name, FALSE);
+	unset( $node->{$field_name}['und']);
+
+	$field_info = field_info_instances('field_collection_item', $field_name);
+	foreach( $nids as $nid) {
+		// field_collection_item
+		$p = entity_create( 'field_collection_item', array( 'field_name' => $field_name));
+		$p->setHostEntity( 'node', $node);
+
+		$org = $src_node[$field_name][$nid];
+		foreach( array_keys( $field_info) as $key) {
+			$p->$key = $org->$key;
+		}
+		$p->save();
+
+		printf("    set idx=%d %s\n", count( $node->{$field_name}['und']), $field_name);
+	}
+	node_save( $node);
+}
+
+
 function checkField( &$child)
 {
     global $src_node;
@@ -379,6 +494,7 @@ function checkField( &$child)
                 }
             }
             else {
+				print_r( $src_node[$child->type]);
                 printf(">> ERROR : ref field '%s' not found in the backup file. nid=%d\n", $field_name, $nid);
             }
         }
@@ -386,9 +502,9 @@ function checkField( &$child)
 }
 
 // TODO : check numbering plan and time table
-function saveTariffPlan( $child, $org_nid)
+function saveTariffPlan( $child, $childNode, $org_nid)
 {
-    global $user;
+    global $user, $src_node;
 
     $rateList = array();
     // save rate type first
@@ -401,6 +517,21 @@ function saveTariffPlan( $child, $org_nid)
            $tariffChild->uid = $user->uid;
            $tariffChild->field_ref_tariffplan['und'][0]['nid'] = $childNode->nid;
             _unset_unused_field_of_cloned_node($tariffChild);
+
+			if ( isset($tariffChild->field_charge_collection)) {
+				if ( isset( $src_node['field_charge_collection'][$tariffChild->field_charge_collection['und'][0]['value']])) {
+					$field_info = field_info_instances( 'field_collection_item', 'field_charge_collection');
+					$org = $src_node['field_charge_collection'][$tariffChild->field_charge_collection['und'][0]['value']];
+					$p = entity_create('field_collection_item', array('field_name' => 'field_charge_collection'));
+					$p->setHostEntity( 'node', $tariffChild);
+					foreach( array_keys( $field_info) as $key) {
+						$p->$key = $org->$key;
+					}
+					$p->save();
+					printf("    save field_charge_collection\n");
+				}
+			}
+
             node_save($tariffChild);
 
            printf( "    save rate nid=%d type=%s title=%s\n", $tariffChild->nid, $tariffChild->type, $tariffChild->title);
@@ -444,8 +575,13 @@ function get_attribute( $productNode, $src)
     $tid = 0;
 	if ( isset( $src->field_ref_tree_tid['und'])) {
 		$srcTid = $src->field_ref_tree_tid['und'][0]['value'];
-		$tid = get_target_tid( get_src_term_voca($srcTid), $src->field_ref_tree_tid['und'][0]['value']);
-		$query->fieldCondition('field_ref_tree_tid', 'value', $tid);
+		if ( !empty( $srcTid)) {
+			$tid = get_target_tid( get_src_term_voca($srcTid), $src->field_ref_tree_tid['und'][0]['value']);
+			$query->fieldCondition('field_ref_tree_tid', 'value', $tid);
+		}
+		else {
+			printf(">> WARNING : invalid value field_ref_tree_tid\n");
+		}
 	}
 
 	$result = $query->execute();
@@ -457,16 +593,25 @@ function get_attribute( $productNode, $src)
 		$p->field_ref_product['und'][0]['nid'] = $productNode->nid;
 		$p->field_ref_tree_tid['und'][0]['value'] = $tid;
 		_unset_unused_field_of_cloned_node($p);
-
-        if ( check_field( $p) === FALSE)
-			return NULL;
 	}
 	else {
 		$nid = array_pop( array_keys( $result['node']));
 		$p = node_load( $nid);
 
+		$field_info = field_info_instances( 'node', $src->type);
+		foreach( array_keys( $field_info) as $key) {
+			// update other fields if it's not included in the list
+			if ( array_search( $key, array( 'field_ref_product', 'field_ref_tree_tid')) === FALSE) {
+				$p->$key = $src->$key;
+			}
+		}
+
 		printf( "  attribute found type=%s %s nid=%d \n", $p->type, $p->title, $p->nid);
 	}
+
+	if ( check_field( $p) === FALSE)
+		return NULL;
+
 	return $p;
 }
 
@@ -493,6 +638,9 @@ function get_target_tid( $voca, $srcTid)
 		if ( $srcTid != $tid) 
 			printf( ">> WARNING: term id changed %s:%d => %d\n", $name, $srcTid, $tid);
 	}
+	else {
+		printf( ">> WARNING: invalid term id=%d voca=%s\n", $srcTid, $voca);
+	}
 
 	return $tid;
 }
@@ -504,6 +652,7 @@ function get_src_term_name( $tid)
     $name = $src_term['reverse'][$tid];
     if ( empty( $name)) {
 		printf(">> ERROR: term not found tid=%d\n", $tid);
+		debug_print_backtrace();
         return NULL;
     }
 
@@ -517,6 +666,7 @@ function get_src_term_voca( $tid)
     $name = $src_term['reverse'][$tid];
     if ( empty( $name)) {
 		printf(">> ERROR: term not found tid=%d\n", $tid);
+		debug_print_backtrace();
         return NULL;
     }
 
@@ -579,6 +729,10 @@ function check_node( $update_flag, $src)
 
             $field = field_info_instances( 'node', $src->type);
             check_diff( $update_flag, $field, $src, $node);
+
+			if ( $src->type == 'simpleproductoffering') {
+				check_diff_product( $src, $child_node[$src->type][$src->nid], $node);
+			}
 
             return;
         }
@@ -669,29 +823,30 @@ function update_timetable( $src)
 
 function check_field( $node)
 {
-    global $update_field_list;
+    global $update_field_list, $src_node, $update_flag;
 
     foreach( $update_field_list as $type => $list) {
         // $type is 'tid', 'nid' or 'target_id'
         foreach( $list as $field_name => $voca) {
             if ( isset( $node->{$field_name}['und'])) {
-                //printf("  check %s  voca=%s\n", $field_name, $voca);
+                printf("  check %s  voca=%s\n", $field_name, $voca);
                 $field = &$node->$field_name;
-                foreach( $field['und'] as $idx => $nid) {
-                    $id = ( $type == 'tid') ? get_target_tid( $voca, $field['und'][$idx][$type]) : 
-                        get_target_nid( $field_name, $voca, $field['und'][$idx][$type]);
+
+				foreach( $field['und'] as $idx => $nid) {
+					$id = ( $type == 'tid') ? get_target_tid( $voca, $field['und'][$idx][$type]) : 
+						get_target_nid( $field_name, $voca, $field['und'][$idx][$type]);
 
 					if ( $id == NULL) {
 						printf(">> Stop checking fields\n");
 						return FALSE;
 					}
 					else if ( ! empty( $id)) {
-                        $field['und'][$idx][$type] = $id;
+						$field['und'][$idx][$type] = $id;
 
-                        if ( $field['und'][$idx][$type] != $id)
-                            printf( ">> WARNING: Change field %s[%d] %d=>%d\n", 
-                                $field_name, $idx, $field['und'][$idx][$type], $id);
-                    }
+						if ( $field['und'][$idx][$type] != $id)
+							printf( ">> WARNING: Change field %s[%d] %d=>%d\n", 
+								$field_name, $idx, $field['und'][$idx][$type], $id);
+					}
                 }
             }
         }
@@ -794,16 +949,24 @@ function check_child_node( $parent, $org_parent_nid)
 
 function check_diff( $update_flag, $field, $src, $node)
 {
+	$ignore_list = array( 
+			'field_ref_product' => TRUE,
+			'field_weight' => TRUE);
+
     $diff = _compare_content( $field, $src, $node);
     if ( !empty( $diff)) {
         foreach( $diff as $label => $attr) {
-            printf("  %s (%s)\n", $label, $attr[2]);
-            printf("    src  : '%s'\n", json_encode( $attr[0], TRUE));
-            printf("    this : '%s'\n", json_encode( $attr[1], TRUE));
-            if ( $update_flag && !empty($attr[0])) {
-                printf( "  >>> Update %s: '%s'=>'%s'\n", $attr[2], json_encode( $node->$attr[2], TRUE), json_encode( $src->$attr[2], TRUE));
-                $node->$attr[2] = $src->$attr[2];
-            }
+			if ( ! isset( $ignore_list[$attr[2]])) {
+				printf("  %s (%s)\n", $label, $attr[2]);
+				printf("    src  : '%s'\n", json_encode( $attr[0], TRUE));
+				printf("    this : '%s'\n", json_encode( $attr[1], TRUE));
+				if ( $update_flag && !empty($attr[0])) {
+					printf( "  >>> Update %s: '%s'=>'%s'\n", 
+							$attr[2], json_encode( $node->$attr[2], TRUE), 
+							json_encode( $src->$attr[2], TRUE));
+					$node->$attr[2] = $src->$attr[2];
+				}
+			}
         }
         if ( $update_flag) node_save( $node);
     }
@@ -880,9 +1043,6 @@ function remove_node_list( $type, $nids)
 
 function interactive_mode()
 {
-    read_taxonomy();
-    read_node();
-
     $menu = array( array( 'title' => 'Carrier', 'type' => 'carrier_mobile'),
         array( 'title' => 'Domestic Numbering Plan', 'type' => 'numberingplan_domestic'),
         array( 'title' => 'Time Table', 'type' => 'timetable'),
@@ -1003,6 +1163,9 @@ function read_node()
         if ( $type == 'node' ) {
             $src_node[$obj->type][$obj->nid] = $obj;
         }
+		else if ( $type == 'field_collection_item') {
+            $src_node[$subtype][$id] = $obj;
+		}
         else if ( $type == 'simpleproductoffering') {
             $src_node[$obj->type][$obj->nid] = $obj;
             $child_node[$obj->type][$obj->nid] = $child;
