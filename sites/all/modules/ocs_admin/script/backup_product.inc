@@ -21,6 +21,16 @@ if ( $fp === FALSE) {
 
 backupTaxonomy( $fp);
 
+$entity_list = array( 
+	'field_charge_collection',
+	'field_discount_collection',
+	'field_prefix_range',
+	);
+
+foreach( $entity_list as $type) {
+	backupEntity( $fp, $type);
+}
+
 // backup other node types
 $node_list = array(
  'carrier_mobile',
@@ -47,6 +57,7 @@ $node_list = array(
 foreach( $node_list as $type) {
 	backupNodes( $fp, $type);
 }
+
 
 // find the product
 $query = new EntityFieldQuery();
@@ -228,4 +239,37 @@ function backupNodes( $fp, $type)
 	fprintf( $fp, "%s\n", serialize("end"));
 
 	printf("Node type:%s backuped nodes:%d\n", $type, $idx);
+}
+
+function backupEntity( $fp, $type)
+{
+	printf("\nBackup field_collection_item type %s\n", $type);
+
+	fprintf( $fp, "# field_collection_item:0:%s\n", $type);
+	fprintf( $fp, "%s\n", serialize("begin"));
+
+	$query = new EntityFieldQuery();
+	$query->entityCondition('entity_type', 'field_collection_item', '=')
+		->propertyCondition( 'field_name', $type);
+
+	$result = $query->execute();
+
+	$idx = 0;
+	if ( !empty( $result)) {
+
+		foreach( array_keys( $result['field_collection_item']) as $nid) {
+			$node = entity_load_single( 'field_collection_item', $nid);
+
+			printf( "  %s : %s\n", $type, $node->item_id);
+			fprintf( $fp, "# field_collection_item:%d:%s\n", $nid, $type);
+			fprintf( $fp, "%s\n", serialize( $node));
+
+			$idx ++;
+		}
+	}
+
+	fprintf( $fp, "# field_collection_item:0:%s\n", $type);
+	fprintf( $fp, "%s\n", serialize("end"));
+
+	printf("field_collection_item type:%s backuped entities:%d\n", $type, $idx);
 }
