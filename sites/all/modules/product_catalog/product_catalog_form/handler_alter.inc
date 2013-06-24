@@ -1222,7 +1222,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 					unset($form['#fieldgroups']['group_cug']);
 				} else {
 					$disabledItems[] = 'field_cug_customer_type';
-					$disabledItems[] = 'field_cug_group_type';
+					// $disabledItems[] = 'field_cug_group_type';
 				}
 
 				$svcDomainTid = $form['field_service_type_of_provider']['und']['#default_value'][0];

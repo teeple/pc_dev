@@ -54,11 +54,15 @@ function _array_lifecycle_scheme($exportItemNids=NULL){
 				if ( !empty( $node->field_field_notification_before)) {
 					$state_noti_before[ $state_name] = intval( $node->field_field_notification_before[0]['raw']['value']);
 				}
+				if ( !empty( $node->field_field_notification_by)) {
+					$state_noti_by[ $state_name] = $node->field_field_notification_by[0]['rendered']['#title'];	
+				}
 			}
 			
 			$scheme['permission'] = $perm;
 			$scheme['state_period'] = $state_period;
 			$scheme['noti_before'] = $state_noti_before;
+			$scheme['noti_by'] = $state_noti_by;
 			
 			// get state transition rules
 			$view_transition = views_get_view_result('ocs_state_machine', 'panel_json', $record->nid);
