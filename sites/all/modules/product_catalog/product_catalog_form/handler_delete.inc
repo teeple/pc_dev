@@ -34,9 +34,20 @@ function product_catalog_form_node_delete($node){
 	      $rating_group = $node->field_rating_group['und'][0]['value'];
 	      $numberingplan_nid = $node->field_ref_numberingplan_domestic['und'][0]['nid'];
 	      _delete_basicrate_domestic_by_ratinggroup($numberingplan_nid,$rating_group,$node->nid);
-	      break;
+				
+				//unlink ratinggroup
+				$numberingplan_node = node_load($numberingplan_nid);
+				$new_rating_group = array();
+				foreach($numberingplan_node->field_ref_domestic_ratinggroup['und'] as $rating_group){
+					if($rating_group['nid'] != $node_nid){
+						$new_rating_group[] = $rating_group;
+					}
+				}
+				$numberingplan_node->field_ref_domestic_ratinggroup['und'] = $new_rating_group;
+				node_save($numberingplan_node);
+				break;
 	    case 'idd_ratinggroup':
-	      $rating_group = $node->field_rating_group['und'][0]['value'];
+			  $rating_group = $node->field_rating_group['und'][0]['value'];
 	      $numberingplan_nid = $node->field_ref_numberingplan_idd['und'][0]['nid'];
         $carrier_nid = $node->field_ref_carrier_mobile['und'][0]['nid'];
         $node_nid = $node->nid;
@@ -63,6 +74,16 @@ function product_catalog_form_node_delete($node){
           node_delete_multiple($del_nids);
         }
         
+				//unlink ratinggroup
+				$numberingplan_node = node_load($numberingplan_nid);
+				$new_rating_group = array();
+				foreach($numberingplan_node->field_ref_idd_ratinggroup['und'] as $rating_group){
+					if($rating_group['nid'] != $node_nid){
+						$new_rating_group[] = $rating_group;
+					}
+				}
+				$numberingplan_node->field_ref_idd_ratinggroup['und'] = $new_rating_group;
+				node_save($numberingplan_node);
 	      break;
       case 'roaming_ratinggroup':
         $rating_group = $node->field_rating_group['und'][0]['value']; 
@@ -70,6 +91,17 @@ function product_catalog_form_node_delete($node){
         $node_nid = $node->nid;
         
         _delete_basicrate_roaming_by_ratinggroup($numberingplan_nid,$rating_group,$node_nid);
+				
+				//unlink ratinggroup
+				$numberingplan_node = node_load($numberingplan_nid);
+				$new_rating_group = array();
+				foreach($numberingplan_node->field_ref_roaming_ratinggroup['und'] as $rating_group){
+					if($rating_group['nid'] != $node_nid){
+						$new_rating_group[] = $rating_group;
+					}
+				}
+				$numberingplan_node->field_ref_roaming_ratinggroup['und'] = $new_rating_group;
+				node_save($numberingplan_node);
         break;
       case 'timetablefactors':
         $timetablefactor_nid = $node->nid;
