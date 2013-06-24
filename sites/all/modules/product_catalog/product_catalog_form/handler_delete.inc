@@ -33,6 +33,7 @@ function product_catalog_form_node_delete($node){
 	    case 'domestic_ratinggroup':
 	      $rating_group = $node->field_rating_group['und'][0]['value'];
 	      $numberingplan_nid = $node->field_ref_numberingplan_domestic['und'][0]['nid'];
+				$node_nid = $node->nid;
 	      _delete_basicrate_domestic_by_ratinggroup($numberingplan_nid,$rating_group,$node->nid);
 				
 				//unlink ratinggroup
@@ -40,6 +41,7 @@ function product_catalog_form_node_delete($node){
 				$new_rating_group = array();
 				foreach($numberingplan_node->field_ref_domestic_ratinggroup['und'] as $rating_group){
 					if($rating_group['nid'] != $node_nid){
+						
 						$new_rating_group[] = $rating_group;
 					}
 				}
