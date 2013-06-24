@@ -405,7 +405,7 @@ function product_catalog_form_node_validate($node, $form, &$form_state) {
         break;
 
       case 'idd_ratinggroup_node_form' :
-        $isDuplicatedPrefix = FALSE;
+				$isDuplicatedPrefix = FALSE;
         //check duplicated in the form
         $prefixs = array();
         foreach ($form_state['input']['field_prefix']['und'] as $item) {
@@ -422,15 +422,16 @@ function product_catalog_form_node_validate($node, $form, &$form_state) {
           }
         }
 
-        //check duplicated in other carrier
+        //check duplicated in the carrier
         if (!$isDuplicatedPrefix) {
           $view = views_get_view('list_numberingplan_idd_ratinggroup');
           $view -> set_display('panel_pane_4');
           $prefixArgs = join('+', $prefixs);
-          $args = array('0' => $form['#node'] -> field_ref_numberingplan_idd['und'][0]['nid'], '1' => $prefixArgs);
+          $args = array('0' => $form['#node'] -> field_ref_numberingplan_idd['und'][0]['nid'], '1' => $prefixArgs,
+          	'2' => $form_state['values']['field_ref_carrier_mobile']['und'][0]['nid']);
 
           if (isset($form['nid']['#value'])) {
-            $args['2'] = $form['nid']['#value'];
+            $args['3'] = $form['nid']['#value'];
           }
           $view -> set_arguments($args);
           $view -> execute();
