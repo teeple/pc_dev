@@ -16,6 +16,27 @@ function _create_modal_mapping_link($contentType,$title,$params){
   return $link_string;
 }
 
+function _create_modal_export_link($contentType,$params) {
+	switch($contentType) {
+		case 'locationfactor':
+			$export_url = '/common/locations/export#quickset-qtabs_common_data=7';
+			break;
+		case 'devicemodel':
+			$export_url = '/common/devicemodel/export#quickset-qtabs_common_data=5';
+			break;
+			
+	}
+	
+	$add_class_1 = 'add-link-in-rightpane';
+	// $add_class_2 = 'ctools-use-modal ctools-modal-add-item-modal-style';
+	
+	//$link_string = '<div class='.$add_class_1.'><a href="'.$upload_url.'" >Export All</a></div>';
+	$link_string = '<a href="'.$export_url.'" class ='.$add_class_1.'>+ Export All</a>';
+	
+	
+	return $link_string;
+}
+
 function _create_modal_upload_link($contentType,$params) {
 	/*
 	ctools_include('ajax');
@@ -40,7 +61,8 @@ function _create_modal_upload_link($contentType,$params) {
 	$add_class_1 = 'add-link-in-rightpane';
 	// $add_class_2 = 'ctools-use-modal ctools-modal-add-item-modal-style';
 	
-	$link_string = '<div class='.$add_class_1.'><a href="'.$upload_url.'" >Upload</a></div>';
+	// $link_string = '<div class='.$add_class_1.'><a href="'.$upload_url.'" >Upload</a></div>';
+	$link_string = '<a href="'.$upload_url.'" class ='.$add_class_1.'>+ Bulk Upload</a>';
 	
 	return $link_string;
 }
