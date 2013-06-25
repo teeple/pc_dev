@@ -63,6 +63,14 @@
 				menus.custom_create._disabled = false;
 				menus.custom_create.submenu = $.fn.getSubMenuAddNode("Condition Set", "conditioncommonand");
 				break;
+			case "treeNodeCugDiscount":	
+				menus.custom_delete._disabled = false;
+				menus.custom_delete.action = function(node) {
+					$.fn.deleteNode(node);
+				};
+				menus.custom_create._disabled = false;
+				menus.custom_create.submenu = $.fn.getSubMenuAddNode("Action Price Discount", "actionpricecugdiscountfactors");
+				break;
 			case "actionpricecugdiscountfactors":
 				menus.custom_create._disabled = false;
 				menus.custom_create.submenu = $.fn.getSubMenuAddNode("Condition Set", "conditioncommonand");

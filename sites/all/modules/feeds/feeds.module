@@ -288,6 +288,7 @@ function feeds_menu() {
     'type' => MENU_DEFAULT_LOCAL_TASK,
     'weight' => -10,
   );
+  /*
   $items['import/%/delete-items'] = array(
     'title' => 'Delete items',
     'page callback' => 'drupal_get_form',
@@ -306,6 +307,7 @@ function feeds_menu() {
     'file' => 'feeds.pages.inc',
     'type' => MENU_LOCAL_TASK,
   );
+  */
   $items['import/%/template'] = array(
     'page callback' => 'feeds_importer_template',
     'page arguments' => array(1),

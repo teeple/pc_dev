@@ -248,12 +248,18 @@ function product_catalog_form_node_validate($node, $form, &$form_state) {
         }
 
         // check if the ussd code exist already
+        /*
         $query = new EntityFieldQuery();
         $result = $query -> entityCondition('entity_type', 'node') -> entityCondition('bundle', 'ocs_ussd_code') -> propertyCondition('title', $form_state['values']['title']) -> execute();
-
+        
         if (!empty($result)) {
-          form_set_error('title', t('USSD code @code exist already', array('@code' => $form_state['values']['title'])));
+        
+          // Create
+          if(!isset($form['nid']['#value'])) {
+          	form_set_error('title', t('USSD code @code exist already', array('@code' => $form_state['values']['title'])));
+          } 
         }
+        */
         break;
       case 'roaming_zone_node_form' :
         $isValid = TRUE;

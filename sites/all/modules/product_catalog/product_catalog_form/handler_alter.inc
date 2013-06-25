@@ -257,8 +257,11 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 	if ((isset($form['#attributes']) && isset($form['#attributes']['class'])) && gettype($form['#attributes']['class']) == 'array') {
 		$form['#attributes']['class'][] = 'myform';
 	}
-
+	
 	switch($form_id) {
+		case 'ocs_ussd_code_node_form' :
+			// $form['title']['#disabled'] = TRUE;
+			break;
 		case 'mapbasicrateroaming_node_form' :
 			_unset_menu_items($form, $form_id);
 
@@ -905,9 +908,14 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			break;
 
 		case 'counter_node_form' :
-			$counterTypeTerm = current(taxonomy_get_term_by_name($form_state['counter_type'], 'countertype'));
+			
+			if(!empty($form_state['counter_type'])) {
+				$counterTypeTerm = current(taxonomy_get_term_by_name($form_state['counter_type'], 'countertype'));
+			} else {
+				$counterTypeTerm = current(taxonomy_get_term_by_name('Optional', 'countertype'));
+			}
 			$form['field_weight_for_unittransfer']['#type'] = 'hidden';
-
+			
 			// Create
 			if (!isset($form['nid']['#value'])) {
 
@@ -1156,6 +1164,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 				$hiddenItems = array_merge($hiddenItems, array('field_product_type', 'field_service_type_of_provider'));
 
 				$productTypeName = $form_state['product_type_name'];
+				
 				if ($productTypeName != 'CUG') {
 					$hiddenItems[] = 'field_cug_member_counter';
 					$unsetItems[] = 'field_cug_group_type';
@@ -1209,7 +1218,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 				$product_nid = $form['nid']['#value'];
 				$hiddenItems = array_merge($hiddenItems, array('field_product_type', 'field_service_type_of_provider'));
 
-				$disabledItems = array_merge($disabledItems, array('field_billing_type', 'field_service_operator', 'field_price_units', 'field_product_id', 'field_customer_type', 'field_customer_group_type'));
+				$disabledItems = array_merge($disabledItems, array('field_billing_type', 'field_service_operator', 'field_price_units', 'field_product_id', 'field_custdvcd4prod', 'field_customer_group_type'));
 
 				$productTypeTid = $form['field_product_type']['und']['#default_value'][0];
 				$productTypeName = $form['field_product_type']['und']['#options'][$productTypeTid];
@@ -1228,9 +1237,11 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 				$svcDomainTid = $form['field_service_type_of_provider']['und']['#default_value'][0];
 				$billingTypeTid = $form['field_billing_type']['und']['#default_value'];
 				$svcOperatorTid = $form['field_service_operator']['und']['#default_value'];
-				$customerTypeTid = $form['field_customer_type']['und']['#default_value'][0];
+				// $customerTypeTid = $form['field_customer_type']['und']['#default_value'][0];
 
-				$viewResult = views_get_view_result('list_product_for_nextjoin', 'panel_pane_2', $svcDomainTid, $productTypeTid, $billingTypeTid, $svcOperatorTid, $customerTypeTid);
+				// $viewResult = views_get_view_result('list_product_for_nextjoin', 'panel_pane_2', $svcDomainTid, $productTypeTid, $billingTypeTid, $svcOperatorTid, $customerTypeTid);
+
+				$viewResult = views_get_view_result('list_product_for_nextjoin', 'panel_pane_2', $svcDomainTid, $productTypeTid, $billingTypeTid, $svcOperatorTid);
 
 				$options = array();
 				foreach ($viewResult as $item) {
@@ -1259,7 +1270,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			if ($firstPathName == 'relation') {
 				$form['title']['#type'] = 'hidden';
 
-				$unsetItems = array_merge($unsetItems, array('field_expire_date_for_hour', 'field_description', 'field_offering_status', 'field_version', 'field_billing_type', 'field_validfor_product', 'field_service_operator', 'field_billing_cycle', 'field_product_id', 'field_customer_type', 'field_customer_group_type', 'field_is_bundle', 'field_deferred_subscription_flag', 'field_price_units', 'field_treatment_price_amount', 'field_treatment_day', 'field_contract_period', 'field_roaming_allowed', 'field_cug_member_counter', 'field_short_code', 'field_next_join_product', 'field_expire_date_type', 'field_expire_date', 'field_field_deferred_subscriptio', 'field_hlr_template_id', 'field_point_for_subscription', 'field_next_join_confirm', 'field_resubscription_flag', 'field_cug_customer_type', 'field_cug_group_type'));
+				$unsetItems = array_merge($unsetItems, array('field_expire_date_for_hour', 'field_description', 'field_offering_status', 'field_version', 'field_billing_type', 'field_validfor_product', 'field_service_operator', 'field_billing_cycle', 'field_product_id', 'field_custdvcd4prod', 'field_customer_group_type', 'field_is_bundle', 'field_deferred_subscription_flag', 'field_price_units', 'field_treatment_price_amount', 'field_treatment_day', 'field_contract_period', 'field_roaming_allowed', 'field_cug_member_counter', 'field_short_code', 'field_next_join_product', 'field_expire_date_type', 'field_expire_date', 'field_field_deferred_subscriptio', 'field_hlr_template_id', 'field_point_for_subscription', 'field_next_join_confirm', 'field_resubscription_flag', 'field_cug_customer_type', 'field_cug_group_type'));
 
 				$options = _get_product_exclusive_list($form['nid']['#value']);
 				$form['field_exclusiveness']['und']['#options'] = $options['list'];

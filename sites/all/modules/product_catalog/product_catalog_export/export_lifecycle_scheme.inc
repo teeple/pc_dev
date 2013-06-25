@@ -5,9 +5,9 @@ function _array_lifecycle_scheme($exportItemNids=NULL){
 		$jsonData_schemes = array();
     $schemeIds = array();
     
-		if(!empty($exportItemNids) && count($exportItemNids) > 1) {
-			$exportItemNids = join('+', $exportItemNids);
-		}
+	if(!empty($exportItemNids) && count($exportItemNids) > 1) {
+		$exportItemNids = join('+', $exportItemNids);
+	}
 		
     //fetch data    
     $viewResult = views_get_view_result('list_lifecycle_scheme', 'panel_json', $exportItemNids);

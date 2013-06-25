@@ -49,9 +49,13 @@ function _product_for_export($exportItemNids = NULL, $isExternalAPI = FALSE, $ta
         
         $recurringTypes = array(1 => 'Daily', 3 => '1/3 Monthly', 4 => 'Monthly');
         
-        if(isset($$nonUsage['recurring_scheme']['charge_scheme']['rcrr_period_type'])) {
+        if(!empty($nonUsage['recurring_scheme']['charge_scheme']['rcrr_period_type'])) {
+        	dsm('here1');
+        	
         	$nonUsage['recurring_charge']['period_type'] = $recurringTypes[$nonUsage['recurring_scheme']['charge_scheme']['rcrr_period_type']];
         } else {
+        	dsm('here2');
+        
  	       $nonUsage['recurring_charge']['period_type'] = NULL;
         }
         
@@ -420,92 +424,6 @@ function _get_recurring_scheme($productNid) {
     return $retArray;
 }
 
-/*
- function _get_recurring_scheme($productNid) {
- $retArray = array();
-
- $view_name = 'list_child_item_for_product';
- $display = 'panel_pane_1';
- $args = array(
- '0' => $productNid,
- '1' => 'prdnonusagerecurringchargescheme'
- );
- $records = _get_nids_from_views($view_name, $display, $args);
- $chargeScheme = node_load(current($records));
-
- $retArray['charge_scheme'] = array(
- 'rcrr_insff_balance_charge'
- => !empty($chargeScheme->field_rcrr_insff_balance_charge)? $chargeScheme->field_rcrr_insff_balance_charge['und'][0]['value']: NULL,
- 'rcrr_use_charging_day'
- => !empty($chargeScheme->field_rcrr_insff_balance_charge)? $chargeScheme->field_rcrr_insff_balance_charge['und'][0]['value']: NULL,
- 'rcrr_charge_first_or_later'
- => !empty($chargeScheme->field_rcrr_charging_type)? $chargeScheme->field_rcrr_charging_type['und'][0]['value']: NULL,
- 'rcrr_period_value'
- => !empty($chargeScheme->field_charging_cycle)? $chargeScheme->field_charging_cycle['und'][0]['value']: NULL,
- 'rcrr_period_type'
- => !empty($chargeScheme->field_charging_cycle_type)? $chargeScheme->field_charging_cycle_type['und'][0]['value']: NULL,
- 'rcrr_charging_day_month'
- => !empty($chargeScheme->field_rcrr_charging_day_month)? $chargeScheme->field_rcrr_charging_day_month['und'][0]['value']: NULL,
- 'rcrr_charging_day_week'
- => !empty($chargeScheme->field_rcrr_charging_day_week)? $chargeScheme->field_rcrr_charging_day_week['und'][0]['value']: NULL,
- 'rcrr_charging_day_weekOrMonth'
- => !empty($chargeScheme->field_charging_day_type)? $chargeScheme->field_charging_day_type['und'][0]['value']: NULL,
- );
-
- $args[1] = 'prdnonusagerecurringbonusscheme';
- $records = _get_nids_from_views($view_name, $display, $args);
- $bonusScheme = node_load(current($records));
-
- $retArray['bonus_scheme'] = array(
- 'rcrr_use_charging_day'
- => !empty($bonusScheme->field_rcrr_insff_balance_charge)? $bonusScheme->field_rcrr_insff_balance_charge['und'][0]['value']: NULL,
- 'rcrr_period_value'
- => !empty($bonusScheme->field_charging_cycle)? $bonusScheme->field_charging_cycle['und'][0]['value']: NULL,
- 'rcrr_period_type'
- => !empty($bonusScheme->field_charging_cycle_type)? $bonusScheme->field_charging_cycle_type['und'][0]['value']: NULL,
- 'rcrr_charging_day_month'
- => !empty($bonusScheme->field_rcrr_charging_day_month)? $bonusScheme->field_rcrr_charging_day_month['und'][0]['value']: NULL,
- 'rcrr_charging_day_week'
- => !empty($bonusScheme->field_rcrr_charging_day_week)? $bonusScheme->field_rcrr_charging_day_week['und'][0]['value']: NULL,
- 'rcrr_charging_day_weekOrMonth'
- => !empty($bonusScheme->field_charging_day_type)? $bonusScheme->field_charging_day_type['und'][0]['value']: NULL,
- );
-
- return $retArray;
- }
- */
-
-/*
- function _get_recurring_charge($productNid) {
- $view_name = 'list_actionpricechargerecurring';
- $display = 'panel_pane_1';
- $args = array( '0'=> $productNid );
-
- $req_labels = array(
- 'rcrr_insff_balance_charge' => 'Insufficient Balance Charge',
- 'price_amount' 				=> 'Price_amount',
- 'price_unit' 				=> 'Price_units',
- 'valid_for' 				=> 'validFor',
- 'cycle_pricing' 			=> 'Pricing Cycle',
- 'cycle_type_pricing' 		=> 'Pricing Cycle Type',
- 'rcrr_use_charging_day'		=> 'Related to Invoice Date',
- 'rcrr_insff_balance_charge' => 'Charging First or Later',
- 'rcrr_period_type'			=> 'Charging Cycle Type',
- 'rcrr_period_value'			=> 'Charging Cycle',
- 'rcrr_charging_day_month'   => 'Charging Day_Day of Month',
- 'rcrr_charging_day_week'	=> 'Charging Day_Day of Week',
- 'rcrr_charging_day_weekOrMonth' => 'Charging Day_Week or Month',
- 'pricing_cycle'				=> 'Pricing Cycle',
- 'pricing_cycle_type'		=> 'Pricing Cycle Type',
- 'charging_cycle'			=> 'Charging Cycle',
- 'charging_cycle_type'		=> 'Charging Cycle Type'
- );
- $records = _get_records_from_views_by_label($view_name, $display, $args, $req_labels);
-
- return $records;
- }
- */
-
 function _get_nonusage_rollover($productNid) {
 
 }
@@ -557,7 +475,19 @@ function _get_onetime_charge($productNid) {
             $price = NULL;
         }
         $charge = array('charge_type' => $chargeType, 'price' => $price);
-
+        
+        $attribute = array();
+        foreach($item->field_field_attribute_key_value as $fieldCollectionItem) {
+        	$renderedItem = current($fieldCollectionItem['rendered']['entity']['field_collection_item']);
+        	$key = $renderedItem['field_ref_productattributekey']['#object']->field_ref_productattributekey['und'][0]['taxonomy_term']->name;
+        	$commonCode = $renderedItem['field_ref_productattributekey']['#object']->field_ref_productattributekey['und'][0]['taxonomy_term']->field_common_code['und'][0]['value'];
+        	$value = $renderedItem['field_ref_productattributekey']['#object']->field_attribute_value['und'][0]['value'];
+        	$attribute[] = array('key' => 
+        								array('codeGroup' => 'ProductAttributeKey', 'code' => $commonCode, 'meaning' => $key),
+        						'value' => $value
+        						);
+        }
+        $charge['attribute'] = $attribute;
         $charges[] = $charge;
     }
     return $charges;
