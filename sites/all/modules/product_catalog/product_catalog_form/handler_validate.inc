@@ -139,7 +139,7 @@ function product_catalog_form_node_validate($node, $form, &$form_state) {
 			case 'counter_node_form' :
 				$view_result = views_get_view_result('list_counter_refereces', 'panel_pane_1', $node -> nid);
         if (count($view_result) > 0) {
-          form_set_error('title', "You should remove the items referencing this counter first!");
+          form_set_error('field_counter_id', "You should remove the items referencing this counter first!");
         }
         break;
     }
