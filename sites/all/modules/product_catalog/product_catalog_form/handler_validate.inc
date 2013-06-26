@@ -136,6 +136,12 @@ function product_catalog_form_node_validate($node, $form, &$form_state) {
           form_set_error('title', "You should remove the items referencing this carrier in roaming plan first!");
         }
         break;
+			case 'counter_node_form' :
+				$view_result = views_get_view_result('list_counter_refereces', 'panel_pane_1', $node -> nid);
+        if (count($view_result) > 0) {
+          form_set_error('title', "You should remove the items referencing this counter first!");
+        }
+        break;
     }
   } else {
     switch($form['form_id']['#value']) {
@@ -663,24 +669,6 @@ function product_catalog_form_node_validate($node, $form, &$form_state) {
         break;
 
       case 'counter_node_form' :
-        // In case Delete Confirmation
-        //
-        /*
-         if($form_state['values']['op'] == 'Delete') {
-         $view = views_get_view('list_reverse_reference_items');
-         $view->set_display('panel_pane_1');
-         $view->set_arguments(array('0' => $form['nid']['#value']));
-         $view->execute();
-
-         if(!empty($view->result)) {
-         drupal_set_message("You should remove the items referencing this counter FIRST! ",'error');
-         form_set_error("You should remove the items referencing this counter FIRST!");
-         drupal_goto('Common/counter/edit/Optional/53409');
-         }
-         return;
-         }
-         */
-
         if (!is_machine_name($form_state['values']['field_counter_id']['und'][0]['value'])) {
           form_set_error('field_counter_id', "Only letters and underscore is allowed for counter id");
         }
