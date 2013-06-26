@@ -116,7 +116,7 @@ function is_machine_name($argStr) {
 }
 
 function product_catalog_form_node_validate($node, $form, &$form_state) {
-  if ($form_state['values']['op'] == 'Delete') {
+	if ($form_state['values']['op'] == 'Delete') {
     switch($form['form_id']['#value']) {
       case 'carrier_mobile_node_form' :
         $view_result = views_get_view_result('list_carrier_mobile_reference', 'panel_pane_1', $node -> nid);
@@ -150,7 +150,7 @@ function product_catalog_form_node_validate($node, $form, &$form_state) {
         break;
       case 'number_special_node_form' :
 				$view_result = views_get_view_result('list_number_special_reference', 'panel_pane_1', $node -> nid);
-        if (count($view_result) > 0) {
+				if (count($view_result) > 0) {
           form_set_error('title', "You should remove the product referencing this special number scheme first!");
         }
         break;
