@@ -142,6 +142,12 @@ function product_catalog_form_node_validate($node, $form, &$form_state) {
           form_set_error('field_counter_id', "You should remove the items referencing this counter first!");
         }
         break;
+			case 'timetable_node_form' :
+				$view_result = views_get_view_result('list_timetable_reference', 'panel_pane_2', $node -> nid);
+        if (count($view_result) > 0) {
+          form_set_error('title', "You should remove the items referencing this timetable first!");
+        }
+        break;
     }
   } else {
     switch($form['form_id']['#value']) {
