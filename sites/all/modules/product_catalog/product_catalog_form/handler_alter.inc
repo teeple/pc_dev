@@ -1681,7 +1681,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 				$view -> execute();
 
 				$options = array();
-				$options['_none'] = '- None -';
+				//$options['_none'] = '- None -';
 				foreach ($view->result as $item) {
 					$options[$item -> nid] = view_get_field_value_by_label($view, 'PHP', $item);
 				}
