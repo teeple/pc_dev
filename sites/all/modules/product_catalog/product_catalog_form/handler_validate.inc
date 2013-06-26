@@ -519,7 +519,11 @@ function product_catalog_form_node_validate($node, $form, &$form_state) {
           form_set_error('field_prefix_multiple', $failReason);
         }
         break;
-
+     
+      case 'locationfactor_node_form' :
+      	dsm($form_state['values'], 'values');
+      	
+      	break;
       case 'packetdynamicl4_node_form' :
         //check ip address is valid or not.
         $ipValues = $node -> field_ip['und'];
