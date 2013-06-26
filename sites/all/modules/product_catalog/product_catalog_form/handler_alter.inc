@@ -210,13 +210,47 @@ function _add_ajax_submit_callback($form_id, &$form) {
 
 	if ($change) {
 		unset($form['actions']['submit']['#submit']);
+		unset($form['actions']['delete']['#submit']);
 		unset($form['#validate']);
 		unset($form['#action']);
 		$form['actions']['submit']['#id'] = 'submit-in-ajax-callback';
+		$form['actions']['delete']['#id'] = 'delete-in-ajax-callback';
 		$form['#prefix'] = '<div id="form_content">';
 		$form['#suffix'] = '</div>';
-
 		$form['actions']['submit']['#ajax'] = array('wrapper' => 'form_content', 'callback' => 'edit_pane_callback', 'method' => 'replace', 'effect' => 'fade', );
+		$form['actions']['delete']['#ajax'] = array('wrapper' => 'form_content', 'callback' => 'delete_pane_callback', 'method' => 'replace', 'effect' => 'fade', );
+	}
+}
+
+function delete_pane_callback($form, &$form_state) {
+	ctools_include('node.pages', 'node', '');
+	ctools_include('ajax');
+	
+	$newNode = node_load($form['nid']['#value']);
+	$form_state['values']['changed'] = $newNode -> changed;
+
+	node_form_validate($form, $form_state);
+	
+	if (!empty($form_state['values']['field_negative'])) {
+		if ($form_state['values']['field_negative']['und'][0]['value'] == 1) {
+			$form_state['values']['field_rating_operation']['und'][0]['tid'] = 84;
+			// Rating Operation = notin
+		} else {
+			$form_state['values']['field_rating_operation']['und'][0]['tid'] = 81;
+			// Rating Operation = is equal to
+		}
+	}
+
+	if (!form_get_errors()) {
+		$url = _get_redirect_url_in_delete($newNode);
+		$path =  $url['path'] . '#'. $url['fragment'];
+		$output[] = ctools_ajax_command_redirect($path);
+		node_delete($newNode->nid);
+		print ajax_render($output);
+		exit;
+	}else{
+		$form_state['rebuild'] = TRUE;
+		return $form;
 	}
 }
 
@@ -226,7 +260,7 @@ function edit_pane_callback($form, &$form_state) {
 	$form_state['values']['changed'] = $newNode -> changed;
 
 	node_form_validate($form, $form_state);
-
+	
 	if (!empty($form_state['values']['field_negative'])) {
 		if ($form_state['values']['field_negative']['und'][0]['value'] == 1) {
 			$form_state['values']['field_rating_operation']['und'][0]['tid'] = 84;
