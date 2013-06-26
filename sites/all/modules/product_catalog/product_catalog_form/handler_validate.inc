@@ -148,6 +148,12 @@ function product_catalog_form_node_validate($node, $form, &$form_state) {
           form_set_error('title', "You should remove the items referencing this timetable first!");
         }
         break;
+      case 'number_special_node_form' :
+				$view_result = views_get_view_result('list_number_special_reference', 'panel_pane_1', $node -> nid);
+        if (count($view_result) > 0) {
+          form_set_error('title', "You should remove the product referencing this special number scheme first!");
+        }
+        break;
     }
   } else {
     switch($form['form_id']['#value']) {

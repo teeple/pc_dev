@@ -35,7 +35,7 @@
 			case "numberspecial_tree":
 				var relType = obj.attr("rel");
 				switch (relType) {
-					case "number_special":
+					//case "number_special":
 					case 'numberspecialrate':
 					case "conditioncommonratinggroup":
 						menus.custom_delete._disabled = false;
