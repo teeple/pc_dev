@@ -948,6 +948,7 @@ function product_catalog_ajax_add_modal_content($js = NULL, $contentType, $refNo
   
   switch($contentType){
     case 'mapbasicratedomestic':
+		case 'mapbasicratedomesticincoming':
     case 'mapbasicrateroaming':
     case 'mapbasicrateidd':  
       $form_state['build_info']['args'][] = $refNodeNid;
