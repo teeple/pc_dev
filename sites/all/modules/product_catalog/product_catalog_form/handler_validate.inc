@@ -154,6 +154,18 @@ function product_catalog_form_node_validate($node, $form, &$form_state) {
           form_set_error('title', "You should remove the product referencing this special number scheme first!");
         }
         break;
+			case 'numberingplan_domestic_node_form':
+				$view_result = views_get_view_result('list_linked_product_by_common_data', 'panel_pane_1', $node -> nid);
+				if (count($view_result) > 0) {
+          form_set_error('title', "You should remove the product referencing this numberingplan first!");
+        }
+        break;
+      case 'numberingplan_idd_node_form':
+				$view_result = views_get_view_result('list_linked_product_by_common_data', 'panel_pane_2', $node -> nid);
+				if (count($view_result) > 0) {
+          form_set_error('title', "You should remove the product referencing this numberingplan first!");
+        }
+        break;
     }
   } else {
     switch($form['form_id']['#value']) {
