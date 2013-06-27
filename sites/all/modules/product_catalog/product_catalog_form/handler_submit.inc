@@ -260,7 +260,7 @@ function _create_default_cugdiscountfactors_in_tariffplan($tariffplan) {
 	global $user;
 	
 	$voca_name = $tariffplan->field_tree_child_voca_name['und'][0]['value'];
-	$cugDiscountTerm = taxonomy_get_term_by_name('CUG Discount', $voca_name);
+	$cugDiscountTerm = taxonomy_get_term_by_name('CUG Discount by CS', $voca_name);
 	$refTreeTid = current($cugDiscountTerm)->tid;
 	
 	$product = node_load($tariffplan->field_ref_product['und'][0]['nid']);

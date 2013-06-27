@@ -521,7 +521,12 @@ function product_catalog_form_node_validate($node, $form, &$form_state) {
         break;
      
       case 'locationfactor_node_form' :
-      	dsm($form_state['values'], 'values');
+      	foreach($form_state['values']['field_cell_id']['und'] as $cellId) {
+      		if( !isset($cellId) ) continue;
+      		if(!ctype_xdigit($cellId['value'])) {
+      			form_set_error('field_cellid', 'Cell ID should be hexa decimal');
+      		};
+      	}
       	
       	break;
       case 'packetdynamicl4_node_form' :

@@ -106,6 +106,7 @@ function _add_ajax_submit_callback($form_id, &$form) {
 		case 'conditionwheremacaddress_node_form' :
 		case 'conditionwheredevicetype_node_form' :
 		case 'conditionwhererattype_node_form' :
+		case 'conditionwhereapn_node_form' :
 		case 'conditionwheresgsn_node_form' :
 		case 'conditionwheresgsnip_node_form' :
 		case 'conditionwhocustomfactors_node_form' :
@@ -163,7 +164,6 @@ function _add_ajax_submit_callback($form_id, &$form) {
 		case 'conditionwhatisclir_node_form' :
 		case 'conditionwhatgroupmembercount_node_form' :
 		case 'conditionwhereserviceid_node_form' :
-		// case 'conditionwhatcardtype_node_form':
 		case 'conditionwhenactivationday_node_form' :
 		case 'numberspecialrate_node_form' :
 		case 'actionpriceallowanceonetime_node_form' :
