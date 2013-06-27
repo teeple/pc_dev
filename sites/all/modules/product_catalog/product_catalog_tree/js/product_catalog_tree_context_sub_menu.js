@@ -202,7 +202,7 @@
 			case "prdattributeprefixrangenotallowe":
 			case 'prdattributefeaturecode':
 			case 'prdattributepackaged':
-			case "simpleproductoffering":
+			//case "simpleproductoffering":
 			case 'treenodeotheronetimecharge':
 			case 'treenodedepositscheme':
 			case 'treenodethresholdscheme':

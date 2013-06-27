@@ -34,6 +34,7 @@ function _unset_menu_items(&$form, $formId) {
 		case 'productgroup_node_form' :
 		case 'productchange_node_form' :
 		case 'number_special_node_form':
+		case 'simpleproductoffering_node_form':
 			$unsetDeleteButton = FALSE;
 			break;
 	}
