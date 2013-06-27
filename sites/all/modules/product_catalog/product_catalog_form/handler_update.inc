@@ -145,6 +145,10 @@ function _delete_basicrate_domestic_by_ratinggroup($numberingplan_nid,$rating_gr
     foreach($basicrate_view_result as $item){
       $del_nids[] = $item->nid;
     }
+		$basicrate_incoming_view_result = views_get_view_result('list_basicrate_domestic_incoming', 'panel_pane_1', $numberingplan_nid,$rating_group,$basicrate_nid);
+    foreach($basicrate_incoming_view_result as $item){
+      $del_nids[] = $item->nid;
+    }
     if(!empty($del_nids)){
       node_delete_multiple($del_nids);
     }
