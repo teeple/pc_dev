@@ -620,6 +620,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 		case 'conditionwhererattype_node_form' :
 		case 'conditionwheresgsn_node_form' :
 		case 'conditionwheresgsnip_node_form' :
+		case 'conditionwhereapn_node_form' :
 		case 'conditionwhenvaliddate_node_form' :
 		case 'conditionwhatservicedomain_node_form' :
 			_unset_menu_items($form, $form_id);
@@ -2222,8 +2223,6 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			unset($form['field_ref_tariffplan_idd_carrier']);
 			unset($form['field_ref_numberspecial']);
 			unset($form['field_ref_roaming_plan']);
-			unset($form['field_numberingplan_d_incoming']);
-			unset($form['field_ref_timetable_domestic_inc']);
 			_unset_menu_items($form, $form_id);
 
 			if (!isset($form['nid']['#value'])) {

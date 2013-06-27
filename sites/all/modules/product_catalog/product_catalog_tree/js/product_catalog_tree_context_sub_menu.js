@@ -231,6 +231,7 @@
 			case 'conditionwhererattype':
 			case 'conditionwheresgsn':
 			case 'conditionwheresgsnip':
+			case 'conditionwhereapn':
 			case 'conditionwhatservicedomain':
 			case 'conditionwhatcontentprice':
 			case 'conditionwhatcalltype':
@@ -509,7 +510,7 @@
 			"RAT Type" : $.fn.getSubMenuAddNodeWithoutWrapper("RAT Type", "conditionwhererattype"),
 			"SGSN" : $.fn.getSubMenuAddNodeWithoutWrapper("SGSN", "conditionwheresgsn"),
 			"SGSN IP" : $.fn.getSubMenuAddNodeWithoutWrapper("SGSN IP", "conditionwheresgsnip"),
-			"APN" : $.fn.getSubMenuAddNodeWithoutWrapper("APN", "conditionwherespn"),			
+			"APN" : $.fn.getSubMenuAddNodeWithoutWrapper("APN", "conditionwhereapn"),			
 		};
 		return obj;
 	};
@@ -535,7 +536,7 @@
 			"RAT Type" : $.fn.getSubMenuAddNodeWithoutWrapper("RAT Type", "conditionwhererattype"),
 			"SGSN" : $.fn.getSubMenuAddNodeWithoutWrapper("SGSN", "conditionwheresgsn"),
 			"SGSN IP" : $.fn.getSubMenuAddNodeWithoutWrapper("SGSN IP", "conditionwheresgsnip"),
-			"APN" : $.fn.getSubMenuAddNodeWithoutWrapper("APN", "conditionwherespn"),			
+			"APN" : $.fn.getSubMenuAddNodeWithoutWrapper("APN", "conditionwhereapn"),			
 		};
 		return obj;
 	};
