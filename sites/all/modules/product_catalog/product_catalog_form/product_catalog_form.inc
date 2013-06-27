@@ -40,6 +40,42 @@ function basicrate_table_in_tariff_plan($type,$tariffplanNid,$refTreeTid){
       $mappingLink = _create_modal_mapping_link('mapbasicratedomestic','Mapping Rates',array($tariffplanNid,$refTreeTid));
       $output .= $mappingLink;
       break;
+		case 'basicrate_domestic_incoming':
+      //1. search used rating group
+      $ratingGroups = _get_domestic_incoming_ratinggroup_in_tariff_plan($tariffplanNode);
+			
+      //2. search timetablefactors
+      $timetable_factor = _get_timetablefactor($tariffplanNode->field_ref_timetable_domestic_inc['und'][0]['nid']);
+      
+      //3. make row Item for map
+      foreach($ratingGroups as $ratingGroup){
+        foreach($timetable_factor as $factor){
+          $rowItem[$ratingGroup][$factor] = NULL;
+        }
+      }
+      
+      //4. search mapped basicrate nodes
+      $viewResult = views_get_view_result('list_basicrate', 'panel_pane_2', $type, $tariffplanNid);
+      foreach($viewResult as $item){
+        $rowItem[$item->field_data_field_rating_group_field_rating_group_value][$item->node_field_data_field_ref_timetablefactors_title]
+          = $item->node_field_data_field_ref_rate_title;
+      }
+      
+      //5. draw table
+      $headers = array('Rating Group','Timetable Factor','Rate');
+      $rows = array();
+      foreach($rowItem as $ratingKey => $ratingValue){
+        foreach($ratingValue as $factorKey => $factorValue){
+          if($factorValue == NULL) $factorValue = '<font color="red">Not Defined</font>';  
+          $rows[] = array($ratingKey,$factorKey,$factorValue);
+        }
+      }
+      $output = theme('table',array('header' => $headers,'rows' => $rows));
+      
+      //6. mapping link
+      $mappingLink = _create_modal_mapping_link('mapbasicratedomesticincoming','Mapping Rates',array($tariffplanNid,$refTreeTid));
+      $output .= $mappingLink;
+			break;
     case 'basicrate_roaming':
       //1. search used rating group
       $ratingGroups = _get_roaming_ratinggroup_in_tariffplan($tariffplanNode);
