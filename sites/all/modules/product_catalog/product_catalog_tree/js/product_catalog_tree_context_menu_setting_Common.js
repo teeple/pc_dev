@@ -63,10 +63,6 @@
 					case "unittransfer":
 						menus.custom_create._disabled = false;
 						menus.custom_create.submenu = $.fn.getSubMenuLoadSelectForm("Select Counter Group");
-						menus.custom_delete._disabled = false;
-						menus.custom_delete.action = function(node) {
-							$.fn.deleteNode(node);
-						};
 					break;
 					case "unittransferfactor":
 						menus.custom_delete._disabled = false;

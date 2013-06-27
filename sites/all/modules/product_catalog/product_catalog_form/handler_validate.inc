@@ -154,8 +154,50 @@ function product_catalog_form_node_validate($node, $form, &$form_state) {
           form_set_error('title', "You should remove the product referencing this special number scheme first!");
         }
         break;
+			case 'numberingplan_domestic_node_form':
+				$view_result = views_get_view_result('list_linked_product_by_common_data', 'panel_pane_1', $node -> nid);
+				if (count($view_result) > 0) {
+          form_set_error('title', "You should remove the product referencing this numberingplan first!");
+        }
+        break;
+      case 'numberingplan_idd_node_form':
+				$view_result = views_get_view_result('list_linked_product_by_common_data', 'panel_pane_2', $node -> nid);
+				if (count($view_result) > 0) {
+          form_set_error('title', "You should remove the product referencing this numberingplan first!");
+        }
+        break;
+      case 'roaming_plan_node_form':
+				$view_result = views_get_view_result('list_linked_product_by_common_data', 'panel_pane_3', $node -> nid);
+				if (count($view_result) > 0) {
+          form_set_error('title', "You should remove the product referencing this roaming plan first!");
+        }
+        break;
+      case 'unittransfer_node_form' :
+				$view_result = views_get_view_result('list_unit_transfer_reference', 'panel_pane_1', $node -> nid);
+				if (count($view_result) > 0) {
+          form_set_error('title', "You should remove the product referencing this unit transfer scheme first!");
+        }
+        break;
+      case 'depositscheme_node_form' :
+				$view_result = views_get_view_result('list_deposit_scheme_reference', 'panel_pane_1', $node -> nid);
+				if (count($view_result) > 0) {
+          form_set_error('title', "You should remove the product referencing this deposit scheme first!");
+        }
+        break;
+			case 'thresholdscheme_node_form':
+				$view_result = views_get_view_result('list_threshold_scheme_reference', 'panel_pane_1', $node -> nid);
+				if (count($view_result) > 0) {
+          form_set_error('title', "You should remove the deposit scheme referencing this threshold scheme first!");
+        }
+        break;
+      case 'lifecyclescheme_node_form':
+				$view_result = views_get_view_result('list_lifecycle_scheme_reference', 'panel_pane_1', $node -> nid);
+				if (count($view_result) > 0) {
+          form_set_error('title', "You should remove the product referencing this lifecycle scheme first!");
+        }
+        break;
     }
-  } else {
+  } else { 
     switch($form['form_id']['#value']) {
     	case 'conditionwhatcounter_node_form':
 				$is_valid = TRUE;
