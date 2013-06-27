@@ -172,6 +172,12 @@ function product_catalog_form_node_validate($node, $form, &$form_state) {
           form_set_error('title', "You should remove the product referencing this roaming plan first!");
         }
         break;
+      case 'unittransfer_node_form' :
+				$view_result = views_get_view_result('list_unit_transfer_reference', 'panel_pane_1', $node -> nid);
+				if (count($view_result) > 0) {
+          form_set_error('title', "You should remove the product referencing this unit transfer scheme first!");
+        }
+        break;
     }
   } else { 
     switch($form['form_id']['#value']) {
