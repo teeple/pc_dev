@@ -190,6 +190,12 @@ function product_catalog_form_node_validate($node, $form, &$form_state) {
           form_set_error('title', "You should remove the deposit scheme referencing this threshold scheme first!");
         }
         break;
+      case 'lifecyclescheme_node_form':
+				$view_result = views_get_view_result('list_lifecycle_scheme_reference', 'panel_pane_1', $node -> nid);
+				if (count($view_result) > 0) {
+          form_set_error('title', "You should remove the product referencing this lifecycle scheme first!");
+        }
+        break;
     }
   } else { 
     switch($form['form_id']['#value']) {
