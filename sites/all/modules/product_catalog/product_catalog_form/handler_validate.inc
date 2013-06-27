@@ -167,7 +167,7 @@ function product_catalog_form_node_validate($node, $form, &$form_state) {
         }
         break;
     }
-  } else {
+  } else { 
     switch($form['form_id']['#value']) {
     	case 'conditionwhatcounter_node_form':
 				$is_valid = TRUE;
