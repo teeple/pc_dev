@@ -515,8 +515,13 @@
 		var parentNode;
 		var returnData;
 		var tree = $.jstree._reference(".product_catalog_tree");
-		console.log(product_catalog_ajax_result);
-		parentNode = $('#'+product_catalog_ajax_result.parent_nid);
+		//console.log(product_catalog_ajax_result);
+		var parneNid = product_catalog_ajax_result.parent_nid;
+		if( parneNid instanceof Array) {
+			parentNode = $('#'+product_catalog_ajax_result.parent_nid[1]);
+		}else{
+			parentNode = $('#'+product_catalog_ajax_result.parent_nid);
+		}
 		returnData = tree._parse_json(product_catalog_ajax_result.data);
 		
         var attachChild = returnData.children("li");

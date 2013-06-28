@@ -23,6 +23,7 @@
 						
 						var responseText = request.responseText; 
 						var responseJson = $.parseJSON(responseText);
+						//console.log(responseJson);
 						var product_catalog_ajax_result = responseJson[0].settings.product_catalog_ajax_result;
 					
 						//console.log(product_catalog_ajax_result);

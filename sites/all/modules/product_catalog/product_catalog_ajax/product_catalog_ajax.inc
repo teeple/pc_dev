@@ -529,7 +529,6 @@ function get_viewdata($viewName, $nid, $additionalParam=NULL) {
 }
 
 function add_js_settings_after_node_save($node){
-	
 	if(isset($node->field_parent_node['und'][0]['nid'])){
 		$parentId = 'node_'.$node->field_parent_node['und'][0]['nid'];
 	}else if(isset($node->field_ref_tree_tid['und'][0]['value'])){
@@ -552,7 +551,6 @@ function add_js_settings_after_node_save($node){
 	}
 	
 	$js_data['content_type'] = $node->type;
-	
 	$js_settings = array(
 		'success' => TRUE,
 		'data' => $js_data,
