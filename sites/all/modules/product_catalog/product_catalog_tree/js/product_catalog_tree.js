@@ -29,7 +29,11 @@
 						//console.log(responseJson);
 						if(typeof product_catalog_ajax_result != 'undefined'){
 							if(op === 'edit'){				
-								$(".product_catalog_tree").jstree("set_text", $('#' + product_catalog_ajax_result.data.nid), product_catalog_ajax_result.data.title);
+								if( product_catalog_ajax_result.data.nid instanceof Array) {
+									$(".product_catalog_tree").jstree("set_text", $('#' + product_catalog_ajax_result.data.nid[0]), product_catalog_ajax_result.data.title[0]);
+								}else{
+									$(".product_catalog_tree").jstree("set_text", $('#' + product_catalog_ajax_result.data.nid), product_catalog_ajax_result.data.title);
+								}
 							}else if(op === 'add'){
 								$.fn.addNestedMultipleChildren(product_catalog_ajax_result);
 								$("#form_content > form").replaceWith('<br/>');								
