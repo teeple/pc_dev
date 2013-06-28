@@ -300,8 +300,9 @@ function date_combo_element_process($element, &$form_state, $form) {
   && $element['#default_value'][$to_field] == $element['#default_value'][$from_field]) {
     unset($element['#default_value'][$to_field]);
   }
-
-  $show_todate = !empty($form_state['values']['show_todate']) || !empty($element['#default_value'][$to_field]) || $field['settings']['todate'] == 'required';
+	
+  //$show_todate = !empty($form_state['values']['show_todate']) || !empty($element['#default_value'][$to_field]) || $field['settings']['todate'] == 'required';
+  $show_todate = !empty($form_state['values']['show_todate']) || (!empty($element['#default_value'][$to_field]) && $element['#default_value'][$to_field] != '9999-12-31 23:59:59')|| $field['settings']['todate'] == 'required';
   $element['show_todate'] = array(
     // '#title' => t('Show End Date'),
     '#title' => t('Set End Date'),
