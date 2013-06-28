@@ -2247,9 +2247,11 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			unset($form['field_ref_tariffplan_idd_carrier']);
 			unset($form['field_ref_numberspecial']);
 			unset($form['field_ref_roaming_plan']);
+			unset($form['field_numberingplan_d_incoming']); 
+			unset($form['field_ref_timetable_domestic_inc']);
 			_unset_menu_items($form, $form_id);
 
-			if (!isset($form['nid']['#value'])) {
+			if (!isset($form['nid']['#value'])) {  
 				$relTypeTerm = taxonomy_term_load($form_state['build_info']['args'][0] -> field_ref_tree_tid['und'][0]['value']);
 
 				$productNode = node_load($form_state['build_info']['args'][0] -> field_ref_product['und'][0]['nid']);

@@ -1094,7 +1094,9 @@ function restore_node( $node_type)
             break;
         }
         else if ( $input == 'a' || $input == 'all') {
-            remove_all_node_of_specific_type( $node_type);
+			if ( $update_flag === FALSE) {
+				remove_all_node_of_specific_type( $node_type);
+			}
 
             foreach( $list as $obj) {
                 check_node( TRUE, $obj);
