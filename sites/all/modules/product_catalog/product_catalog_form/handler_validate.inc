@@ -199,8 +199,7 @@ function product_catalog_form_node_validate($node, $form, &$form_state) {
 		}
 	} else {
 		//title length check
-		dsm($form_state,'form_state');
-		if (strlen($form['title']) > 60) {
+		if (strlen($form_state['values']['title']) > 60) {
 			form_set_error('title', 'Name should be less than 60 characters');
 		} else {
 			switch($form['form_id']['#value']) {
