@@ -770,14 +770,13 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 
 				$form['actions']['submit']['#submit'][] = '_vouchercardtype_submit_handler';
 				$form['actions']['submit']['#submit'][] = 'product_catalog_form_form_redirect_handler';
-
 				// Edit
 			} else {
 				$form['field_ref_voucher_type']['und']['#disabled'] = TRUE;
 				$form['field_voucher_id']['und']['#disabled'] = TRUE;
 				$form['field_service_operator']['und']['#disabled'] = TRUE;
 			}
-
+			$form['field_valid_date_ymd_w_enddate']['und']['#required'] = FALSE;
 			break;
 
 		case 'treenodeproductforvoucher_node_form' :
