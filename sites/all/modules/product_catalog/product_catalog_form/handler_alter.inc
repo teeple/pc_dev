@@ -1246,9 +1246,12 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 				$productTypeTid = $form['field_product_type']['und']['#default_value'][0];
 				$billingTypeTid = $form['field_billing_type']['und']['#default_value'];
 				$svcOperatorTid = $form['field_service_operator']['und']['#default_value'];
-				$customerTypeTid = $form['field_customer_type']['und']['#default_value'][0];
+				
+				$viewResult = views_get_view_result('list_product_for_nextjoin', 'panel_pane_2', $serviceDomainTid, $productTypeTid, $billingTypeTid, $svcOperatorTid);
+				
+				// $customerTypeTid = $form['field_customer_type']['und']['#default_value'][0];
 
-				$viewResult = views_get_view_result('list_product_for_nextjoin', 'panel_pane_2', $serviceDomainTid, $productTypeTid, $billingTypeTid, $svcOperatorTid, $customerTypeTid);
+				//$viewResult = views_get_view_result('list_product_for_nextjoin', 'panel_pane_2', $serviceDomainTid, $productTypeTid, $billingTypeTid, $svcOperatorTid, $customerTypeTid);
 
 				$options = array();
 				foreach ($viewResult as $item) {
@@ -2631,7 +2634,7 @@ function counter_bill_type_change_callback($form, $form_state) {
 	return $returnStr;
 }
 
-function nextjoin_product_ajax_callback($form, &$form_state) {
+function nextjoin_product_ajax_callback(&$form, &$form_state) {
 
 	$paths = explode('/', $_SERVER['HTTP_REFERER']);
 
@@ -2642,9 +2645,11 @@ function nextjoin_product_ajax_callback($form, &$form_state) {
 	$productTypeTid =  current(taxonomy_get_term_by_name($productTypeName, 'prdtype')) -> tid;
 	$billingTypeTid = isset($form_state['values']['field_billing_type']) ? $form_state['values']['field_billing_type']['und'][0]['tid'] : NULL;
 	$svcOperatorTid = isset($form_state['values']['field_service_operator']) ? $form_state['values']['field_service_operator']['und'][0]['tid'] : NULL;
-	$customerTypeTid = isset($form_state['values']['field_customer_type']) ? $form_state['values']['field_customer_type']['und'][0]['tid'] : NULL;
+	
+	$viewResult = views_get_view_result('list_product_for_nextjoin', 'panel_pane_2', $svcDomainTid, $productTypeTid, $billingTypeTid, $svcOperatorTid);
+	// $customerTypeTid = isset($form_state['values']['field_customer_type']) ? $form_state['values']['field_customer_type']['und'][0]['tid'] : NULL;
 
-	$viewResult = views_get_view_result('list_product_for_nextjoin', 'panel_pane_2', $svcDomainTid, $productTypeTid, $billingTypeTid, $svcOperatorTid, $customerTypeTid);
+	// $viewResult = views_get_view_result('list_product_for_nextjoin', 'panel_pane_2', $svcDomainTid, $productTypeTid, $billingTypeTid, $svcOperatorTid, $customerTypeTid);
 
 	$options = array();
 	foreach ($viewResult as $item) {
@@ -2655,9 +2660,20 @@ function nextjoin_product_ajax_callback($form, &$form_state) {
 	$returnStr = '<div id="nextjoin_product_div">';
 	$returnStr .= drupal_render($form['field_next_join_product']);
 	$returnStr .= '</div>';
-
+	
+	dsm($form_state['values'], 'values');
+	
+	dsm($form_state['values']['field_expire_date_type']['und'][0]['tid'], 'fieldx_expire_date_type');
+	dsm($form_state['values']['field_next_join_confirm']['und'][0]['tid'], 'field_next_join_confirm');
+	
+	if( !in_array($form_state['values']['field_expire_date_type']['und'][0]['tid'], array('7155', '7156', '7780')) 
+		&& !in_array($form_state['values']['field_next_join_confirm']['und'][0]['tid'], array('7791', '7792'))
+		) {
+		$form['field_next_join_product']['#type'] = 'hidden';
+	}
+	
 	$form_state['rebuild'] = TRUE;
-
+	
 	return $returnStr;
 }
 

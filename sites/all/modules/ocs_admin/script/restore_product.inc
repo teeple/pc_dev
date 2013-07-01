@@ -690,7 +690,7 @@ function check_user_confirm()
 }
 
 
-function check_node( $update_flag, $src)
+function check_node( $update_flag, $src, $diff = FALSE)
 {
     global $user, $child_info, $src_node, $child_node;
 
@@ -730,7 +730,7 @@ function check_node( $update_flag, $src)
             $field = field_info_instances( 'node', $src->type);
             check_diff( $update_flag, $field, $src, $node);
 
-			if ( $src->type == 'simpleproductoffering') {
+			if ( $src->type == 'simpleproductoffering' && $diff == TRUE) {
 				check_diff_product( $src, $child_node[$src->type][$src->nid], $node);
 			}
 
@@ -1074,6 +1074,7 @@ function interactive_mode()
 function restore_node( $node_type)
 {
     global $src_node;
+	$diff_flag = TRUE;
 
     while( true) {
         $idx = 0;
@@ -1081,9 +1082,10 @@ function restore_node( $node_type)
         printf("\n");
         foreach( $src_node[$node_type] as $nid => $obj) {
             printf( "[%2d] ", $idx++);
-            check_node( FALSE, $obj);
+			check_node( FALSE, $obj, $diff_flag);
             $list[] = $obj;
         }
+		$diff_flag = FALSE;
         check_node_exist_in_this( array_values( $src_node[$node_type]), $node_type);
 
         $input = readline( "\n> Input number or title, a (All) or q(quit) : ");

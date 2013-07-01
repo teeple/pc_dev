@@ -535,17 +535,14 @@ function _get_attribute($product) {
                       "product_id" => array("through_common_code" => FALSE, "field" => "field_product_id", "field_value" => "field_product_id['und'][0]['value']", "field_default" => NULL), 
                       "short_code" => array("through_common_code" => FALSE, "field" => "field_short_code", "field_value" => "field_short_code['und'][0]['value']", "field_default" => NULL), 
                       "product_name" => array("through_common_code" => FALSE, "field" => "title", "field_value" => "title", "field_value_default" => ""), 
-                      // 	'is_bundle' => array('through_common_code' => FALSE, 'field' => 'field_is_bundle', 'field_value' => "field_is_bundle['und'][0]['value']", 'field_value_default' => '0'), 
                       'deferred_changing' => array('through_common_code' => FALSE, 'field' => 'field_field_deferred_subscriptio', 'field_value' => "field_field_deferred_subscriptio['und'][0]['value']", 'field_value_default' => '0'), 
                       'description' => array('through_common_code' => FALSE, 'field' => 'field_description', 'field_value' => "field_description['und'][0]['safe_value']", 'field_value_default' => NULL), 
-                      // 'version' => array('through_common_code' => FALSE, 'field' => 'field_version', 'field_value' => "field_version['und'][0]['value']", 'field_value_default' => '1.0'), 
                       'billing_cycle' => array('through_common_code' => FALSE, 'field' => 'field_billing_cycle', 'field_value' => "field_billing_cycle['und'][0]['value']", 'field_value_default' => NULL), 
                       'bill_type' => array('through_common_code' => TRUE, 'field' => 'field_billing_type', 'field_value' => "field_billing_type['und'][0]['tid']", 'field_value_default' => NULL), 
                       'product_type' => array('through_common_code' => TRUE, 'field' => 'field_product_type', 'field_value' => "field_product_type['und'][0]['tid']", 'field_value_default' => NULL), 
                       'product_sub_type' => array('through_common_code' => TRUE, 'field' => 'field_product_sub_type', 'field_value' => "field_product_sub_type['und'][0]['tid']", 'field_value_default' => NULL), 
                       'service_domain' => array('through_common_code' => TRUE, 'field' => 'field_service_type_of_provider', 'field_value' => "field_service_type_of_provider['und'][0]['tid']", 'field_value_default' => NULL), 
-                      //'status' => array('through_common_code' => TRUE, 'field' => 'field_offering_status', 'field_value' => "field_offering_status['und'][0]['tid']", 'field_value_default' => NULL), 
-                      'customer_type' => array('through_common_code' => TRUE, 'field' => 'field_customer_type', 'field_value' => "field_customer_type['und'][0]['tid']", 'field_value_default' => NULL), 
+                      'customer_type' => array('through_common_code' => TRUE, 'field' => 'field_custdvcd4prod', 'field_value' => "field_custdvcd4prod['und'][0]['tid']", 'field_value_default' => NULL), 
                       'customer_group_type' => array('through_common_code' => TRUE, 'field' => 'field_customer_group_type', 'field_value' => "field_customer_group_type['und'][0]['tid']", 'field_value_default' => NULL), 
                       'cug_member_counter' => array('through_common_code' => FALSE, 'field' => 'field_cug_member_counter', 'field_value' => "field_cug_member_counter['und'][0]['value']", 'field_value_default' => NULL, ), 
                       'cug_group_type' => array('through_common_code' => TRUE, 'field' => 'field_cug_group_type', 'field_value' => "field_cug_group_type['und'][0]['tid']", 'field_value_default' => NULL, ), 
@@ -558,9 +555,6 @@ function _get_attribute($product) {
                       'expire_date_type' => array('through_common_code' => TRUE, 'field' => 'field_expire_date_type', 'field_value' => "field_expire_date_type['und'][0]['tid']", 'field_value_default' => NULL), 
                       'resubscription_flag' => array('through_common_code' => FALSE, 'field' => 'field_resubscription_flag', 'field_value' => "field_resubscription_flag['und'][0]['value']", 'field_value_default' => 0), 
                       'currency' => array('through_common_code' => TRUE, 'field' => 'field_price_units', 'field_value' => "field_price_units['und'][0]['tid']", 'field_value_default' => NULL), 
-                      /*
-                      'hlr_template_id' => array('through_common_code' => TRUE, 'field' => 'field_hlr_template_id', 'field_value' => "field_hlr_template_id['und'][0]['tid']", 'field_value_default' => NULL), 
-                      */
                 );
 
     $result_attribute_general = _get_result($reqArray, $product);
