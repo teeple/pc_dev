@@ -516,9 +516,17 @@
 		var returnData;
 		var tree = $.jstree._reference(".product_catalog_tree");
 		//console.log(product_catalog_ajax_result);
-		var parneNid = product_catalog_ajax_result.parent_nid;
-		if( parneNid instanceof Array) {
-			parentNode = $('#'+product_catalog_ajax_result.parent_nid[1]);
+		var parentNid = product_catalog_ajax_result.parent_nid;
+		if( parentNid instanceof Array) {
+			var parent_id = null;
+			for(var i=0;i<parentNid.length;i++){
+				if(product_catalog_ajax_result.parent_nid[i] != null){
+					parent_id = product_catalog_ajax_result.parent_nid[i];
+					break;
+				}
+			}
+			
+			parentNode = $('#'+parent_id);
 		}else{
 			parentNode = $('#'+product_catalog_ajax_result.parent_nid);
 		}
