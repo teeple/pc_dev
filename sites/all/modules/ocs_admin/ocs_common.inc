@@ -360,7 +360,10 @@ function ocs_get_node_by_cond( $type, $title, $field_cond)
 
 	if ( $field_cond) {
 		foreach( $field_cond as $cond) {
-			$query->fieldCondition( $cond[0], $cond[1], $cond[2]);
+            if ( $cond[0] == 'property')
+                $query->propertyCondition( $cond[1], $cond[2]);
+            else
+                $query->fieldCondition( $cond[0], $cond[1], $cond[2]);
 		}
 	}
 	$result = $query->execute();
