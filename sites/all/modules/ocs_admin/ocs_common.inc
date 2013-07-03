@@ -351,6 +351,49 @@ function ocs_get_nodes_by_title( $type, $title)
 	return ( count($result) > 0) ? array_keys( $result['node']) : array();
 }
 
+function ocs_get_node_by_cond( $type, $title, $field_cond)
+{
+	// find the attribute
+	$query = new EntityFieldQuery();
+	$query->entityCondition('entity_type', 'node')
+		->entityCondition('bundle', $type);
+
+	if ( $field_cond) {
+		foreach( $field_cond as $cond) {
+			$query->fieldCondition( $cond[0], $cond[1], $cond[2]);
+		}
+	}
+	$result = $query->execute();
+
+	if ( empty( $result)) {
+		$node = ocs_admin_get_new_node( $type);
+		$node->title = $title;
+	}
+	else {
+		$node = node_load( array_pop( array_keys( $result['node'])));
+	}
+
+	return $node;
+}
+
+function ocs_get_nids_by_cond( $type, $field_cond = NULL)
+{
+	// find the attribute
+	$query = new EntityFieldQuery();
+	$query->entityCondition('entity_type', 'node')
+		->entityCondition('bundle', $type);
+
+	if ( $field_cond) {
+		foreach( $field_cond as $cond) {
+			$query->fieldCondition( $cond[0], $cond[1], $cond[2]);
+		}
+	}
+	$result = $query->execute();
+
+	return empty($result) ? NULL : array_keys( $result['node']);
+}
+
+
 function ocs_get_terms( $voca)
 {
 	/* get vocabulary name */
@@ -459,7 +502,8 @@ function ocs_get_terms_tid( $term_name)
 	$terms = ocs_get_terms( $term_name);
 	foreach( $terms as $tid => $term) {
 		$result[$term->name] = $tid;
-		$result[$term->field_rel_type['und'][0]['value']] = $tid;
+		if ( isset( $term->field_rel_type))
+			$result[$term->field_rel_type['und'][0]['value']] = $tid;
 	}
 
 	return $result;
