@@ -1043,5 +1043,39 @@ function delete_field($fields){
 	foreach($fields as $field_name){
 		field_delete_field($field_name);
 	}
+	
+	/*
+	$fields = array('field_can_be_overidden',
+									'field_char_relationship_type',
+									'field_char_spec_seq',
+									'field_custom_value',
+									'field_default',
+									'field_derivation_formula',
+									'field_extensible',
+									'field_id',
+									'field_is_group_call',
+									'field_lower_limit',
+									'field_max_amount_of_sms',
+									'field_max_cardinality',
+									'field_min_cardinality',
+									'field_offering_rel_type',
+									'field_package',
+									'field_r_bundledprodofferoption',
+									'field_r_prodcharvalueref',
+									'field_r_prodspeccharrelationship',
+									'field_r_prodspeccharvalue',
+									'field_r_prodspeccharvaluerel',
+									'field_r_productofferingprice',
+									'field_r_productspecchar',
+									'field_range_interval',
+									'field_ref_productattribute',
+									'field_start_date',
+									'field_unique',
+									'field_unit_of_measure',
+									'field_upper_limit',
+									'field_value_from',
+									'field_value_to',
+									'field_value_type');
+	*/
 }
 
