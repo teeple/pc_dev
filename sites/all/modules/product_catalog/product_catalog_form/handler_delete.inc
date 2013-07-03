@@ -38,15 +38,17 @@ function product_catalog_form_node_delete($node){
 				
 				//unlink ratinggroup
 				$numberingplan_node = node_load($numberingplan_nid);
-				$new_rating_group = array();
-				foreach($numberingplan_node->field_ref_domestic_ratinggroup['und'] as $rating_group){
-					if($rating_group['nid'] != $node_nid){
-						
-						$new_rating_group[] = $rating_group;
+				if(is_object($numberingplan_node)){
+					$new_rating_group = array();
+					foreach($numberingplan_node->field_ref_domestic_ratinggroup['und'] as $rating_group){
+						if($rating_group['nid'] != $node_nid){
+							
+							$new_rating_group[] = $rating_group;
+						}
 					}
+					$numberingplan_node->field_ref_domestic_ratinggroup['und'] = $new_rating_group;
+					node_save($numberingplan_node);
 				}
-				$numberingplan_node->field_ref_domestic_ratinggroup['und'] = $new_rating_group;
-				node_save($numberingplan_node);
 				break;
 	    case 'idd_ratinggroup':
 			  $rating_group = $node->field_rating_group['und'][0]['value'];
@@ -78,14 +80,16 @@ function product_catalog_form_node_delete($node){
         
 				//unlink ratinggroup
 				$numberingplan_node = node_load($numberingplan_nid);
-				$new_rating_group = array();
-				foreach($numberingplan_node->field_ref_idd_ratinggroup['und'] as $rating_group){
-					if($rating_group['nid'] != $node_nid){
-						$new_rating_group[] = $rating_group;
+				if(is_object($numberingplan_node)){
+					$new_rating_group = array();
+					foreach($numberingplan_node->field_ref_idd_ratinggroup['und'] as $rating_group){
+						if($rating_group['nid'] != $node_nid){
+							$new_rating_group[] = $rating_group;
+						}
 					}
+					$numberingplan_node->field_ref_idd_ratinggroup['und'] = $new_rating_group;
+					node_save($numberingplan_node);
 				}
-				$numberingplan_node->field_ref_idd_ratinggroup['und'] = $new_rating_group;
-				node_save($numberingplan_node);
 	      break;
       case 'roaming_ratinggroup':
         $rating_group = $node->field_rating_group['und'][0]['value']; 
@@ -96,14 +100,16 @@ function product_catalog_form_node_delete($node){
 				
 				//unlink ratinggroup
 				$numberingplan_node = node_load($numberingplan_nid);
-				$new_rating_group = array();
-				foreach($numberingplan_node->field_ref_roaming_ratinggroup['und'] as $rating_group){
-					if($rating_group['nid'] != $node_nid){
-						$new_rating_group[] = $rating_group;
+				if(is_object($numberingplan_node)){
+					$new_rating_group = array();
+					foreach($numberingplan_node->field_ref_roaming_ratinggroup['und'] as $rating_group){
+						if($rating_group['nid'] != $node_nid){
+							$new_rating_group[] = $rating_group;
+						}
 					}
+					$numberingplan_node->field_ref_roaming_ratinggroup['und'] = $new_rating_group;
+					node_save($numberingplan_node);
 				}
-				$numberingplan_node->field_ref_roaming_ratinggroup['und'] = $new_rating_group;
-				node_save($numberingplan_node);
         break;
       case 'timetablefactors':
         $timetablefactor_nid = $node->nid;

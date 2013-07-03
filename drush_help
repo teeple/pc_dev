@@ -1,0 +1,293 @@
+Execute a drush command. Run `drush help [command]` to view command-specific
+help.  Run `drush topic` to read even more documentation.
+
+Global options (see `drush topic core-global-options` for the full list):
+ -d, --debug                               Display even more information,       
+                                           including internal messages.         
+ -h, --help                                This help system.                    
+ -ia, --interactive                        Force interactive mode for commands  
+                                           run on multiple targets (e.g. `drush 
+                                           @site1,@site2 cc --ia`).             
+ -n, --no                                  Assume 'no' as answer to all         
+                                           prompts.                             
+ --php=</path/to/file>                     The absolute path to your PHP        
+                                           intepreter, if not 'php' in the      
+                                           path.                                
+ -p, --pipe                                Emit a compact representation of the 
+                                           command for scripting.               
+ -r <path>, --root=<path>                  Drupal root directory to use         
+                                           (default: current directory).        
+ -s, --simulate                            Simulate all relevant actions (don't 
+                                           actually change the system).         
+ -l <http://example.com:8888>,             URI of the drupal site to use (only  
+ --uri=<http://example.com:8888>           needed in multisite environments or  
+                                           when running on an alternate port).  
+ -v, --verbose                             Display extra information about the  
+                                           command.                             
+ --version                                 Show drush version.                  
+ -y, --yes                                 Assume 'yes' as answer to all        
+                                           prompts.                             
+
+
+Core drush commands: (core)
+ archive-dump (ard,    Backup your code, files, and database into a single      
+ archive-backup, arb)  file.                                                    
+ archive-restore       Expand a site archive into a Drupal web site.            
+ (arr)                                                                          
+ cache-clear (cc)      Clear a specific cache, or all drupal caches.            
+ cache-get (cg)        Fetch a cached object and display it.                    
+ cache-set (cs)        Cache an object expressed in JSON or var_export()        
+                       format.                                                  
+ core-config (conf,    Edit drushrc, site alias, and Drupal settings.php files. 
+ config)                                                                        
+ core-cron (cron)      Run all cron hooks in all active modules for specified   
+                       site.                                                    
+ core-execute (exec,   Execute a shell command. Usually used with a site alias. 
+ execute)                                                                       
+ core-quick-drupal     Download, install, serve and login to Drupal with        
+ (qd)                  minimal configuration and dependencies.                  
+ core-requirements     Provides information about things that may be wrong in   
+ (status-report, rq)   your Drupal installation, if any.                        
+ core-rsync (rsync)    Rsync the Drupal tree to/from another server using ssh.  
+ core-status (status,  Provides a birds-eye view of the current Drupal          
+ st)                   installation, if any.                                    
+ core-topic (topic)    Read detailed documentation on a given topic.            
+ drupal-directory      Return path to a given module/theme directory.           
+ (dd)                                                                           
+ help                  Print this help message. See `drush help help` for more  
+                       options.                                                 
+ image-flush           Flush all derived images for a given style.              
+ php-eval (eval, ev)   Evaluate arbitrary php code after bootstrapping Drupal   
+                       (if available).                                          
+ php-script (scr)      Run php script(s).                                       
+ queue-list            Returns a list of all defined queues                     
+ queue-run             Run a specific queue by name                             
+ search-index          Index the remaining search items without wiping the      
+                       index.                                                   
+ search-reindex        Force the search index to be rebuilt.                    
+ search-status         Show how many items remain to be indexed out of the      
+                       total.                                                   
+ self-update           Check to see if there is a newer Drush release           
+ (selfupdate)          available.                                               
+ shell-alias (sha)     Print all known shell alias records.                     
+ site-alias (sa)       Print site alias records for all known site aliases and  
+                       local sites.                                             
+ site-install (si)     Install Drupal along with modules/themes/configuration   
+                       using the specified install profile.                     
+ site-reset            Reset a persistently set site.                           
+ site-set (use)        Set a site alias to work on that will persist for the    
+                       current session.                                         
+ site-ssh (ssh)        Connect to a Drupal site's server via SSH for an         
+                       interactive session or to run a shell command            
+ test-clean            Clean temporary tables and files.                        
+ test-run              Run tests. Note that you must use the --uri option.      
+ updatedb (updb)       Apply any database updates required (as with running     
+                       update.php).                                             
+ usage-send (usend)    Send anonymous Drush usage information to statistics     
+                       logging site.  Usage statistics contain the Drush        
+                       command name and the Drush option names, but no          
+                       arguments or option values.                              
+ usage-show (ushow)    Show Drush usage information that has been logged but    
+                       not sent.  Usage statistics contain the Drush command    
+                       name and the Drush option names, but no arguments or     
+                       option values.                                           
+ variable-delete       Delete a variable.                                       
+ (vdel)                                                                         
+ variable-get (vget)   Get a list of some or all site variables and values.     
+ variable-set (vset)   Set a variable.                                          
+ version               Show drush version.                                      
+ watchdog-delete       Delete watchdog messages.                                
+ (wd-del, wd-delete)                                                            
+ watchdog-list         Show available message types and severity levels. A      
+ (wd-list)             prompt will ask for a choice to show watchdog messages.  
+ watchdog-show         Show watchdog messages.                                  
+ (wd-show, ws)                                                                  
+
+CTools commands: (ctools)
+ ctools-export (ctex)  Export multiple CTools exportable objects directly to    
+                       code.                                                    
+ ctools-export-disabl  Disable CTools exportables.                              
+ e (cted)                                                                       
+ ctools-export-enable  Enable CTools exportables.                               
+ (ctee)                                                                         
+ ctools-export-info    Show available CTools exportable objects.                
+ (ctei)                                                                         
+ ctools-export-revert  Revert CTools exportables from changes overridden in the 
+ (cter)                database.                                                
+ ctools-export-view    View CTools exportable object code output.               
+ (ctev)                                                                         
+
+Runserver commands: (runserver)
+ runserver (rs)        Runs a lightweight built in http server for development. 
+
+Field commands: (field)
+ field-clone           Clone a field and all its instances.                     
+ field-create          Create fields and instances. Returns urls for field      
+                       editing.                                                 
+ field-delete          Delete a field and its instances.                        
+ field-info            View information about fields, field_types, and widgets. 
+ field-update          Return URL for field editing web page.                   
+
+Project manager commands: (pm)
+ pm-disable (dis)      Disable one or more extensions (modules or themes).    
+ pm-download (dl)      Download projects from drupal.org or other sources.    
+ pm-enable (en)        Enable one or more extensions (modules or themes).     
+ pm-info (pmi)         Show detailed info for one or more extensions (modules 
+                       or themes).                                            
+ pm-list (pml)         Show a list of available extensions (modules and       
+                       themes).                                               
+ pm-refresh (rf)       Refresh update status information.                     
+ pm-releasenotes       Print release notes for given projects.                
+ (rln)                                                                        
+ pm-releases (rl)      Print release information for given projects.          
+ pm-uninstall          Uninstall one or more modules.                         
+ pm-update (up)        Update Drupal core and contrib projects and apply any  
+                       pending database updates (Same as pm-updatecode +      
+                       updatedb).                                             
+ pm-updatecode (upc)   Update Drupal core and contrib projects to latest      
+                       recommended releases.                                  
+
+SQL commands: (sql)
+ sql-cli (sqlc)        Open a SQL command-line interface using Drupal's    
+                       credentials.                                        
+ sql-connect           A string for connecting to the DB.                  
+ sql-create            Create a database.                                  
+ sql-drop              Drop all tables in a given database.                
+ sql-dump              Exports the Drupal DB as SQL using mysqldump or     
+                       equivalent.                                         
+ sql-query (sqlq)      Execute a query against the site database.          
+ sql-sync              Copy and import source database to target database. 
+                       Transfers via rsync.                                
+
+User commands: (user)
+ user-add-role (urol)  Add a role to the specified user accounts.               
+ user-block (ublk)     Block the specified user(s).                             
+ user-cancel (ucan)    Cancel a user account with the specified name.           
+ user-create (ucrt)    Create a user account with the specified name.           
+ user-information      Print information about the specified user(s).           
+ (uinf)                                                                         
+ user-login (uli)      Display a one time login link for the given user account 
+                       (defaults to uid 1).                                     
+ user-password (upwd)  (Re)Set the password for the user account with the       
+                       specified name.                                          
+ user-remove-role      Remove a role from the specified user accounts.          
+ (urrol)                                                                        
+ user-unblock (uublk)  Unblock the specified user(s).                           
+
+All commands in backup_migrate: (backup_migrate)
+ bam-backup (bb)       Backup the site's database with Backup and Migrate.  
+ bam-backups           Get a list of previously created backup files.       
+ bam-destinations      Get a list of available destinations.                
+ bam-profiles          Get a list of available settings profiles.           
+ bam-restore           Restore the site's database with Backup and Migrate. 
+ bam-sources           Get a list of available sources.                     
+
+All commands in devel: (devel)
+ devel-download        Downloads the FirePHP library from http://firephp.org/. 
+ devel-reinstall       Disable, Uninstall, and Install a list of projects.     
+ (dre)                                                                         
+ devel-token (token)   List available tokens                                   
+ fn-hook (fnh, hook)   List implementations of a given hook and explore source 
+                       of specified one.                                       
+ fn-view (fnv)         Show the source of specified function or method.        
+
+All commands in devel_generate: (devel_generate)
+ generate-content  Create content.                       
+ (genc)                                                  
+ generate-menus    Create menus and menu items.          
+ (genm)                                                  
+ generate-terms    Create terms in specified vocabulary. 
+ (gent)                                                  
+ generate-users    Create users.                         
+ (genu)                                                  
+ generate-vocabs   Create vocabularies.                  
+ (genv)                                                  
+
+All commands in features: (features)
+ features-add (fa)     Add a component to a feature module. (DEPRECATED: use  
+                       features-export)                                       
+ features-components   List features components.                              
+ (fc)                                                                         
+ features-diff (fd)    Show the difference between the default and overridden 
+                       state of a feature.                                    
+ features-export (fe)  Export a feature from your site into a module.         
+ features-list (fl,    List all the available features for your site.         
+ features)                                                                    
+ features-revert (fr)  Revert a feature module on your site.                  
+ features-revert-all   Revert all enabled feature module on your site.        
+ (fr-all, fra)                                                                
+ features-update (fu)  Update a feature module on your site.                  
+ features-update-all   Update all feature modules on your site.               
+ (fu-all, fua)                                                                
+
+All commands in migrate: (migrate)
+ migrate-analyze       Analyze the source fields for a migration.               
+ (maz)                                                                          
+ migrate-audit (ma)    View information on problems in a migration.             
+ migrate-auto-registe  Register any newly-defined migration classes             
+ r (mar)                                                                        
+ migrate-deregister    Remove all tracking of a migration                       
+ migrate-fields-desti  List the fields available for mapping in a destination.  
+ nation (mfd)                                                                   
+ migrate-fields-sourc  List the fields available for mapping from a source.     
+ e (mfs)                                                                        
+ migrate-import (mi)   Perform one or more migration processes                  
+ migrate-mappings      View information on all field mappings in a migration.   
+ (mm)                                                                           
+ migrate-messages      View any messages associated with a migration.           
+ (mmsg)                                                                         
+ migrate-reset-status  Reset a active migration's status to idle                
+ (mrs)                                                                          
+ migrate-rollback      Roll back the destination objects from a given migration 
+ (mr)                                                                           
+ migrate-status (ms)   List all migrations with current status.                 
+ migrate-stop (mst)    Stop an active migration operation                       
+ migrate-wipe (mw)     Delete all nodes from specified content types.           
+
+All commands in services_client: (services_client)
+ services-client-enti  Creates entity mapping     
+ ty-mapping (sc-em)                               
+ services-client-proc  Process entries from queue 
+ ess-queue (sc-pq)                                
+ services-client-sync  Sync nodes                 
+ -nodes (sc-sn)                                   
+ services-client-sync  Sync user references       
+ -users (sc-su)                                   
+
+All commands in ultimate_cron: (ultimate_cron)
+ cron-disable (cd)     Disable cron job. 
+ cron-enable (ce)      Enable cron job.  
+ cron-list (cl)        List cron jobs.   
+ cron-run (cr)         Run cron job.     
+ cron-unlock (cu)      Unlock cron job.  
+
+All commands in views: (views)
+ views-analyze (va)    Get a list of all Views analyze warnings             
+ views-dev (vd)        Set the Views settings to more developer-oriented    
+                       values.                                              
+ views-disable (vdis)  Disable the specified views.                         
+ views-enable (ven)    Enable the specified views.                          
+ views-list (vl)       Get a list of all views in the system.               
+ views-revert (vr)     Revert overridden views to their default state. Make 
+                       sure to backup first.                                
+
+Other commands: (adaptivetheme,make,menu_import,taxonomy_csv,views_bulk_operations,views_data_export)
+ adaptivetheme         Create a theme using adaptivetheme.                      
+ make                  Turns a makefile into a working Drupal codebase.         
+ make-generate         Generate a makefile from the current Drupal site.        
+ (generate-makefile)                                                            
+ menu-export           Exports menu to a text file.                             
+ (mi-export, me)                                                                
+ menu-import           Imports a menu from a text file.                         
+ (mi-import, mi)                                                                
+ taxocsv-export        Export terms and properties to a CSV file.               
+ (vocexp)                                                                       
+ taxocsv-import        Import taxonomies and hierarchical structures with CSV   
+ (vocimp)              file.                                                    
+ vbo-execute           Execute a bulk operation based on a Views Bulk           
+                       Operations (VBO) view.                                   
+ vbo-list              List all Views Bulk Operations (VBO) views, along with   
+                       the operations associated with each.                     
+ views-data-export     Fully executes a views_data_export display of a view and 
+ (vde)                 writes the output to file.                               
+
