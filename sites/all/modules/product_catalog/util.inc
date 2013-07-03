@@ -1038,3 +1038,10 @@ function _tmp_create_prdattributepackaged($productNid) {
 	node_save($node);
 }
 
+//field 삭제
+function delete_field($fields){
+	foreach($fields as $field_name){
+		field_delete_field($field_name);
+	}
+}
+
