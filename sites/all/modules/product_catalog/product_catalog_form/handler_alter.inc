@@ -1106,9 +1106,11 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			}
 			
 			// 해당 service domain에 속한 모든 basic counter를 가져온다.
-			$args = array('0' => $svcDomainTerm->name,
-						'1' => join('+', $counterNids));
-						
+			$args = array('0' => $svcDomainTerm->name);
+			if( !empty($counterNids) ) {
+				$args[1] = join('+', $counterNids);
+			}
+									
 			$view = views_get_view('list_counter_for_vouchercardtype');
 			$view->set_display('panel_pane_7');
 			$view->set_arguments($args);
