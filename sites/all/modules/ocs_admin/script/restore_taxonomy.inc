@@ -65,7 +65,8 @@ $src_taxo = unserialize( $buf);
 */
 
 // get this system's usage target domain
-$usage_target_domain = array_flip( ocs_get_terms_tid('usagetargetdomain'));
+$domain_tid = ocs_get_terms_tid('usagetargetdomain');
+$usage_target_domain = array_flip( $domain_tid);
 
 // get saved 'usage target domain'
 $src_usage_target_domain = array();
@@ -81,6 +82,11 @@ foreach( $src_term as $key => $term_list) {
     if( $key == 'reverse') continue;
 
 	$terms = ocs_get_terms( $key);
+	if ( empty( $terms)) {
+		printf("\n>> FATAL ERROR : vocabulary not found : %s\n", $key);
+		continue;
+	}
+
     $taxo_field = field_info_instances( 'taxonomy_term', $key);
 
     // build index
@@ -89,7 +95,7 @@ foreach( $src_term as $key => $term_list) {
         $target_domain = (isset($term->field_ref_usage_target_domain['und'])) ? $usage_target_domain[$term->field_ref_usage_target_domain['und'][0]['tid']] : '';
         $rel_type = (isset($term->field_rel_type['und'])) ? $term->field_rel_type['und'][0]['value'] : '';
         $name = $target_domain . ':' . $rel_type . ':' . $term->name;
-        $index[$name][] = $tid;
+        $index[$name][] = $term;
         /*
         if (isset($term->field_ref_usage_target_domain['und'])) {
             printf(">>>> %s %s\n", $term->field_ref_usage_target_domain['und'][0]['tid'], $name);
@@ -132,16 +138,29 @@ foreach( $src_term as $key => $term_list) {
                         }
                     }
                 }
+				if ( isset( $t->field_ref_usage_target_domain)) {
+					$t->field_ref_usage_target_domain['und'][0]['tid'] = $domain_tid[$target_domain];
+				}
+
                 $result = taxonomy_term_save( $t);
                 printf( "--> %s new term: voca=%s name=%s new tid=%d\n", ($result == SAVED_NEW) ? "Saved" : ($result == SAVED_UPDATED) ? "Updated" : "Failed", $key, $name, $t->tid);
             }
         }
         else {
-            $tid = $index[$name][0];
-            if ( $tid != $obj->tid) {
-                printf( ">> Term mismatch voca=%s name=%s src=%d this=%d\n", $key, $name, $obj->tid, $tid);
-            }
+            $t = $index[$name][0];
+			$diff = _compare_content( $taxo_field, $obj, $t);
+			if ( !empty( $diff) || $t->tid != $obj->tid) {
+                printf( ">> Term mismatch voca=%s name=%s src=%d this=%d\n", $key, $name, $obj->tid, $t->tid);
+				foreach( $diff as $label => $attr) {
+					if ( ! isset( $ignore_list[$attr[2]])) {
+						printf("  %s (%s)\n", $label, $attr[2]);
+						printf("    src  : '%s'\n", json_encode( $attr[0], TRUE));
+						printf("    this : '%s'\n", json_encode( $attr[1], TRUE));
+					}
+				}
+			}
 
+					/*
             if ( $update_flag) {
                 $t = taxonomy_term_load( $tid);
                 foreach( $taxo_field as $field_name => $info) {
@@ -168,18 +187,19 @@ foreach( $src_term as $key => $term_list) {
                 $result = taxonomy_term_save( $t);
                 printf( "--> %s update term: voca=%s name=%s new tid=%d\n", ($result == SAVED_NEW) ? "Saved" : ($result == SAVED_UPDATED) ? "Updated" : "Failed", $key, $name, $t->tid);
             }
+			*/
 
-        
             if ( count( $index[$name]) > 1) {
-                printf(">> ERROR : Multiple name defined name=%s %s\n", $name, print_r( $index[$name], TRUE));
+                printf(">> ERROR : Multiple name defined name=%s %s\n", $name, json_encode( $index[$name]));
+				/*
                 if ( $update_flag) {
                     for( $i=1; $i < count($index[$name]); $i++) {
                         taxonomy_term_delete( $index[$name][$i]);
                         printf("  delete term tid=%d\n", $index[$name][$i]);
                     }
                 }
+				*/
 
-                return;
             }
 
             unset( $index[$name]);
@@ -187,8 +207,8 @@ foreach( $src_term as $key => $term_list) {
 	}
 
 	if ( ! empty( $index)) {
-		foreach( $index as $name => $tid) {
-			printf( ">> WARNING : New term defined in this system voca=%s name=%s tid=%d\n", $key, $name, $tid);
+		foreach( $index as $name => $t) {
+			printf( ">> WARNING : New term defined in this system voca=%s name=%s tid=%d\n", $key, $name, $t->tid);
 		}
 	}
 }
@@ -295,4 +315,5 @@ function check_diff( $update_flag, $field, $src, $node)
         }
         if ( $update_flag) node_save( $node);
     }
+	return $diff;
 }
