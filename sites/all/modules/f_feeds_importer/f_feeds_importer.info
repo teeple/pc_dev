@@ -1,0 +1,11 @@
+name = f_feeds_importer
+core = 7.x
+package = Features
+dependencies[] = ctools
+dependencies[] = feeds
+features[ctools][] = feeds:feeds_importer_default:1
+features[features_api][] = api:2
+features[feeds_importer][] = import_pcrf_rule_export_
+features[feeds_importer][] = import_rating_rule_export_
+features[feeds_importer][] = import_rating_rule_export_factor_conversion_
+features[feeds_importer][] = import_rating_rule_export_product_

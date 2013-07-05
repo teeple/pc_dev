@@ -82,14 +82,11 @@ foreach( $src_term as $key => $term_list) {
     if( $key == 'reverse') continue;
 
 	$terms = ocs_get_terms( $key);
-<<<<<<< HEAD
-=======
 	if ( empty( $terms)) {
 		printf("\n>> FATAL ERROR : vocabulary not found : %s\n", $key);
 		continue;
 	}
 
->>>>>>> 7ebcc2a15d9a5e6fd5bf227c050e92f97a154ed0
     $taxo_field = field_info_instances( 'taxonomy_term', $key);
 
     // build index
@@ -141,25 +138,15 @@ foreach( $src_term as $key => $term_list) {
                         }
                     }
                 }
-<<<<<<< HEAD
-=======
 				if ( isset( $t->field_ref_usage_target_domain)) {
 					$t->field_ref_usage_target_domain['und'][0]['tid'] = $domain_tid[$target_domain];
 				}
 
->>>>>>> 7ebcc2a15d9a5e6fd5bf227c050e92f97a154ed0
                 $result = taxonomy_term_save( $t);
                 printf( "--> %s new term: voca=%s name=%s new tid=%d\n", ($result == SAVED_NEW) ? "Saved" : ($result == SAVED_UPDATED) ? "Updated" : "Failed", $key, $name, $t->tid);
             }
         }
         else {
-<<<<<<< HEAD
-            $tid = $index[$name][0];
-            if ( $tid != $obj->tid) {
-                printf( ">> Term mismatch voca=%s name=%s src=%d this=%d\n", $key, $name, $obj->tid, $tid);
-            }
-
-=======
             $t = $index[$name][0];
 			$diff = _compare_content( $taxo_field, $obj, $t);
 			if ( !empty( $diff) || $t->tid != $obj->tid) {
@@ -174,7 +161,6 @@ foreach( $src_term as $key => $term_list) {
 			}
 
 					/*
->>>>>>> 7ebcc2a15d9a5e6fd5bf227c050e92f97a154ed0
             if ( $update_flag) {
                 $t = taxonomy_term_load( $tid);
                 foreach( $taxo_field as $field_name => $info) {
@@ -201,31 +187,19 @@ foreach( $src_term as $key => $term_list) {
                 $result = taxonomy_term_save( $t);
                 printf( "--> %s update term: voca=%s name=%s new tid=%d\n", ($result == SAVED_NEW) ? "Saved" : ($result == SAVED_UPDATED) ? "Updated" : "Failed", $key, $name, $t->tid);
             }
-<<<<<<< HEAD
-
-        
-            if ( count( $index[$name]) > 1) {
-                printf(">> ERROR : Multiple name defined name=%s %s\n", $name, print_r( $index[$name], TRUE));
-=======
 			*/
 
             if ( count( $index[$name]) > 1) {
                 printf(">> ERROR : Multiple name defined name=%s %s\n", $name, json_encode( $index[$name]));
 				/*
->>>>>>> 7ebcc2a15d9a5e6fd5bf227c050e92f97a154ed0
                 if ( $update_flag) {
                     for( $i=1; $i < count($index[$name]); $i++) {
                         taxonomy_term_delete( $index[$name][$i]);
                         printf("  delete term tid=%d\n", $index[$name][$i]);
                     }
                 }
-<<<<<<< HEAD
-
-                return;
-=======
 				*/
 
->>>>>>> 7ebcc2a15d9a5e6fd5bf227c050e92f97a154ed0
             }
 
             unset( $index[$name]);
@@ -341,8 +315,5 @@ function check_diff( $update_flag, $field, $src, $node)
         }
         if ( $update_flag) node_save( $node);
     }
-<<<<<<< HEAD
-=======
 	return $diff;
->>>>>>> 7ebcc2a15d9a5e6fd5bf227c050e92f97a154ed0
 }
