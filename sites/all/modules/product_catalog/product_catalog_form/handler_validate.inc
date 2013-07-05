@@ -295,7 +295,7 @@ function product_catalog_form_node_validate($node, $form, &$form_state) {
 					// check USSD code format
 					$valid_code = TRUE;
 					$code = $form_state['values']['title'];
-					if (substr($code, 0, 1) == '*' && substr($code, -1) == '#') {
+					if (substr($code, 0, 1) == '*' && (substr($code, -1) == '#' || substr($code, -1) == '*') ) {
 						for ($i = 1; $i < strlen($code) - 1; $i++) {
 							$c = substr($code, $i, 1);
 							if (!(is_numeric($c) || $c == '*')) {
