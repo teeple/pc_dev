@@ -1,7 +1,0 @@
-<?php
-/**
- * @file
- * Code for the f_node feature.
- */
-
-include_once 'f_node.features.inc';

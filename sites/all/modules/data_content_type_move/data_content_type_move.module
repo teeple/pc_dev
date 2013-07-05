@@ -1,7 +1,0 @@
-<?php
-/**
- * @file
- * Code for the data content type move feature.
- */
-
-include_once 'data_content_type_move.features.inc';

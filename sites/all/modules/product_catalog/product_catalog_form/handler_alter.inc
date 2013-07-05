@@ -659,8 +659,18 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 
 			$parentNode = node_load($form['#node'] -> field_parent_node['und'][0]['nid']);
 			$productNode = find_parent_product($parentNode);
-			$args = array('0' => $productNode -> field_service_type_of_provider['und'][0]['tid'], '1' => $productNode -> field_service_operator['und'][0]['tid'], '2' => $productNode -> field_billing_type['und'][0]['tid'], '3' => $productNode -> field_customer_type['und'][0]['tid']);
 
+			$args = array();
+			$args = array('0' => $productNode -> field_service_type_of_provider['und'][0]['tid'], '1' => $productNode -> field_service_operator['und'][0]['tid'], '2' => $productNode -> field_billing_type['und'][0]['tid'], '3' => $productNode -> field_customer_type['und'][0]['tid']);
+			
+			$productBillingType = taxonomy_term_load($productNode -> field_billing_type['und'][0]['tid']);
+			dsm($productBillingType, 'productBillingType');
+			if($productBillingType->name == 'Hybrid') {
+				$args[2] = 'all';
+			}
+			
+			dsm($args, 'args');
+			
 			$tempView = views_get_view('list_product_for_cond_main_product');
 			$tempView -> set_display('panel_pane_1');
 			$tempView -> set_arguments($args);
