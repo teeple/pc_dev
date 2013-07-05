@@ -372,6 +372,11 @@ function set_rating_type_info($field_name , &$type_info)
 				$type_info['type'] = 'int';
 				//$type_info['size'] = 0;
 			}
+			else if($field_info['type'] == 'number_bigint')
+			{
+				$type_info['type'] = 'double';
+				//$type_info['size'] = 0;
+			}
 			else if($field_info['type'] == 'number_float')
 			{
 				$type_info['type'] = 'double';
