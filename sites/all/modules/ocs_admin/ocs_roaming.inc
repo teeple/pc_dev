@@ -400,8 +400,8 @@ function _ocs_roaming_save_country( $delete, $reset, $json)
 			$rm->field_country_code_3['und'][0]['value'] = $country['COUNTRY_CD'];
 			$rm->field_time_zone['und'][0]['value'] = $country['GMT_OFFSET'];
 
-			if ( ! empty( $country['ExitCode']) && array_search( $country['ExitCode'], array_get_value( $rm->field_exit_code, FALSE)) === FALSE) {
-				$rm->field_exit_code['und'][] = array( 'value' => $country['ExitCode']); 
+			if ( ! empty( $country['PPS_EXIT_CD']) && array_search( $country['PPS_EXIT_CD'], array_get_value( $rm->field_exit_code, FALSE)) === FALSE) {
+				$rm->field_exit_code['und'][] = array( 'value' => $country['PPS_EXIT_CD']); 
 			}
 			node_save( $rm);
 		}

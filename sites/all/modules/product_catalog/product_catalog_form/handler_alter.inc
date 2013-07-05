@@ -1141,35 +1141,23 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			
 			$allCountersBelongsTo = _select_treenodecounterforvoucherprd($treeNodeProductForVoucherPrdNid);
 			
-			foreach($form['field_ref_counter']['und']['#options'] as $key => $value) {
-				if(in_array($key, $allCountersBelongsTo)) {
-					$options[$key] = $value;
-				}
-			}
-			
-			$form['field_ref_counter']['und']['#options']= $options;
-			
-			/*
-			$counterNids = array();
-			foreach($allCountersBelongsTo as $item) {
-				$counterNids[] = $item->node_field_data_field_ref_counter_nid;
-			}
-			
-			// 해당 service domain에 속한 모든 basic counter를 가져온다.
-			$args = array('0' => $svcDomainTerm->name,
-						'1' => join('+', $counterNids));
-						
 			$view = views_get_view('list_counter_for_vouchercardtype');
-			$view->set_display('panel_pane_7');
-			$view->set_arguments($args);
+			$view->set_display('panel_pane_8');
+			$view->set_arguments(array('0'=>join('+',$allCountersBelongsTo)));
 			$view->execute();
 			$availableCounters = $view->result;
 			
+			$voucherCounters = array();
 			foreach($availableCounters as $item) {
-				$options[$item->nid] = view_get_field_value_by_label($view, 'PHP', $item);
+				$voucherCounters[$item->nid] = view_get_field_value_by_label($view, 'PHP', $item);
 			}
-			$form['field_ref_counter']['und']['#options'] = $options;
-			*/
+									
+			foreach($form['field_ref_counter']['und']['#options'] as $key => $value) {
+				if(in_array($key, $allCountersBelongsTo)) {
+					$options[$key] = $voucherCounters[$key];
+				}
+			}
+			$form['field_ref_counter']['und']['#options']= $options;
 			
 			_unset_menu_items($form, $form_id);
 			break;
@@ -1183,6 +1171,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			$options = _get_call_type_options();
 			$form['field_ref_type_of_call']['und']['#options'] = $options;
 			break;
+			
 		case 'prddowngradepenalty_node_form' :
 			$form['field_ref_product']['#type'] = 'hidden';
 			_unset_menu_items($form, $form_id);

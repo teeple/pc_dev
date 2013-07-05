@@ -32,7 +32,9 @@ function _array_lifecycle_scheme($exportItemNids=NULL){
 			dpm( $view_perm, 'view perm');
 			
 			$state_period = array();
-			$state_noti_before = array();
+			$state_noti_before_sms = array();
+			$state_noti_before_ivr = array();
+			
 			$perm = array();
 			foreach( $view_perm as $node) {
 				$state_name = $node->field_field_lifecycle_state[0]['rendered']['#markup'];
@@ -51,18 +53,18 @@ function _array_lifecycle_scheme($exportItemNids=NULL){
 				if ( !empty( $node->field_field_max_duration)) {
 					$state_period[ $state_name] = intval( $node->field_field_max_duration[0]['raw']['value']);
 				}
-				if ( !empty( $node->field_field_notification_before)) {
-					$state_noti_before[ $state_name] = intval( $node->field_field_notification_before[0]['raw']['value']);
+				if ( !empty( $node->field_field_notification_before_sms_)) {
+					$state_noti_before_sms[ $state_name] = intval( $node->field_field_notification_before_sms_[0]['raw']['value']);
 				}
-				if ( !empty( $node->field_field_notification_by)) {
-					$state_noti_by[ $state_name] = $node->field_field_notification_by[0]['rendered']['#title'];	
+				if ( !empty( $node->field_field_notification_before_ivr_)) {
+					$state_noti_before_ivr[ $state_name] = intval( $node->field_field_notification_before_ivr_[0]['raw']['value']);
 				}
 			}
 			
 			$scheme['permission'] = $perm;
 			$scheme['state_period'] = $state_period;
-			$scheme['noti_before'] = $state_noti_before;
-			$scheme['noti_by'] = $state_noti_by;
+			$scheme['noti_before_sms'] = $state_noti_before_sms;
+			$scheme['noti_before_ivr'] = $state_noti_before_ivr;
 			
 			// get state transition rules
 			$view_transition = views_get_view_result('ocs_state_machine', 'panel_json', $record->nid);

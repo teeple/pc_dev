@@ -273,6 +273,8 @@ function product_catalog_form_node_validate($node, $form, &$form_state) {
 				case 'actionsetcounter_node_form' :
 				case 'actionsetcounteronbonus_node_form' :
 				case 'actionsetbonusonrecurringcharge_node_form' :
+				case 'treenodecounterforvoucher_node_form' :
+				case 'treenodecounterforvoucherprd_node_form' :
 					$counter = node_load($form_state['values']['field_ref_counter']['und'][0]['nid']);
 
 					$inputCounterSubUnitTypeTid = $form_state['values']['field_counter_sub_unit_type']['und'][0]['tid'];

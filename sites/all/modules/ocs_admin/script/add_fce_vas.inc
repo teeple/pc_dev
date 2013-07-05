@@ -8,91 +8,92 @@ $data = array(
 'MSL_P,Missed call log,Active,Daily,40,MSL',
 'HOLD_P,Call Hold supplementary services for a susscriber,Active,Free,0,HOLD',
 'GPRS_P,GPRS Service,Active,Free,0,GPRS',
-'IV_P,Intl voice,Active,Free,0,',
-'CID_P,Caller ID (Call Screening),Active,per each,0,',
-'CH_P,Call Holding Service(Aaaoa? aooaeaaa oeeo),Active,Free,0,',
+'IV_P,Intl voice,Active,Free,0,IV',
+'CID_P,Caller ID (Call Screening),Active,per each,0,CID',
+'CH_P,Call Holding Service(Aaaoa? aooaeaaa oeeo),Active,Free,0,CH',
 'RV_P,Roaming Voice,Active,Free,0,',
-'VMS_P,Voice Message Service,Active,Free,0,',
-'COLR_P,Supplemantary Service ,Active,Free,0,',
-'SMSMT_P,Terminating SMS,Active,per each,0,',
-'CRBT_P,Uni Music (Ayeaooo aioei ?a?o),Active,Daily,40,',
-'SPINI_2_P,Call Restrict (Aa?ao aooaeaaaa eia oeeo),Active,Free,0,',
-'CFNRC_P,Call Forwarding on Mobile Subscriber Not Reachable,Active,per each,0,',
-'CFU_P,Call Forwarding-Unconditinal (Aooaeaaa oee?vveyo-oooa),Active,per each,0,',
-'ODBINFO_P,Barring Information Call,Active,Free,0,',
-'CWAIT_P,Call Waiting,Active,Free,0,',
-'BOPRC_2_P,BOPRC(ENT) (entertainment),Active,per each,0,',
-'CLIR_P,Identification restriction service,Active,per each,20,',
-'DND_1_P,Incoming Call Suspension directly  (I?io aooaeaaa oaao),Active,Free,0,',
-'ECT_P,Explicit Call Transfer,Active,Free,0,',
-'PLMNSS_P,PLMN specific supplementary services (PLMN specific SS),Active,Free,0,',
-'TPLGPRS_P,Modify subscriber\'s GPRS service parameters with 160,Active,Free,0,',
-'MPTY_P,Multiparty Service,Active,per each,0,',
-'CFB_P,Call Forwarding-Busy (Aooaeaaa oee?vveyo-caaave),Active,per each,0,',
-'CFNRY_P,Call Forwarding No Answer (Aooaeaaa oee?vveyo-oa?eoeaaave),Active,per each,0,',
+'VMS_P,Voice Message Service,Active,Free,0,VMS',
+'COLR_P,Supplemantary Service ,Active,Free,0,COLR',
+'SMSMT_P,Terminating SMS,Active,per each,0,SMSMT',
+'CRBT_P,Uni Music (Ayeaooo aioei ?a?o),Active,Daily,40,CRBT',
+'SPINI_2_P,Call Restrict (Aa?ao aooaeaaaa eia oeeo),Active,Free,0,SPINI_2',
+'CFNRC_P,Call Forwarding on Mobile Subscriber Not Reachable,Active,per each,0,CFNRC',
+'CFU_P,Call Forwarding-Unconditinal (Aooaeaaa oee?vveyo-oooa),Active,per each,0,CFU',
+'ODBINFO_P,Barring Information Call,Active,Free,0,ODBINFO',
+'CWAIT_P,Call Waiting,Active,Free,0,CWAIT',
+'BOPRC_2_P,BOPRC(ENT) (entertainment),Active,per each,0,BOPRC',
+'CLIR_P,Identification restriction service,Active,per each,20,CLIR',
+'DND_1_P,Incoming Call Suspension directly  (I?io aooaeaaa oaao),Active,Free,0,DND',
+'ECT_P,Explicit Call Transfer,Active,Free,0,ECT',
+'PLMNSS_P,PLMN specific supplementary services (PLMN specific SS),Active,Free,0,PLMNSS',
+'TPLGPRS_P,Modify subscriber\'s GPRS service parameters with 160,Active,Free,0,TPLGPRS',
+'MPTY_P,Multiparty Service,Active,per each,0,MPTY',
+'CFB_P,Call Forwarding-Busy (Aooaeaaa oee?vveyo-caaave),Active,per each,0,CFB',
+'CFNRY_P,Call Forwarding No Answer (Aooaeaaa oee?vveyo-oa?eoeaaave),Active,per each,0,CFNRY',
 'WAP_P,Wireless Application Protocol,Active,Free,0,',
-'BOIC_EXHC_P,Conference Call(Oaeaoii oo?ae),Active,Free,0,',
-'BOPRC_P,BOPRC(INFO),Active,per each,0,',
-'COLP_P,Connected Line Identification,Active,Free,0,',
-'CLIP_P,Calling Line Identification ,Active,Free,0,',
-'FAX_P,Fax Data,Active,Monthly,0,',
-'SMSMO_P,Originate SMS,Active,per each,0,',
-'DBIC_P,Barring Of Incoming Call,Active,Free,0,',
-'DBOC_P,Barring Of Outgoing Call,Active,Free,0,',
+'BOIC_EXHC_P,Conference Call(Oaeaoii oo?ae),Active,Free,0,BOIC_EXHC',
+'BOPRC_P,BOPRC(INFO),Active,per each,0,BOPRC',
+'COLP_P,Connected Line Identification,Active,Free,0,COLP',
+'CLIP_P,Calling Line Identification ,Active,Free,0,CLIP',
+'FAX_P,Fax Data,Active,Monthly,0,FAX',
+'SMSMO_P,Originate SMS,Active,per each,0,SMSMO',
+'DBIC_P,Barring Of Incoming Call,Active,Free,0,DBIC',
+'DBOC_P,Barring Of Outgoing Call,Active,Free,0,DBOC',
 'WSC_P,WebSelfCare,Active,per each,1000,',
 'WSCS_P,WebSelfCare Secure,Active,Monthly,0,',
-'CRBTP_P,CRBT Plus,Active,Daily,15,',
-'CRBTF_P,CRBT Free,Active,Monthly,0,',
-'CRBTPF_P,CRBT Plus Free,Active,Monthly,0,',
+'CRBTP_P,CRBT Plus,Active,Daily,15,CRBT',
+'CRBTF_P,CRBT Free,Active,Monthly,0,CRBT',
+'CRBTPF_P,CRBT Plus Free,Active,Monthly,0,CRBT',
 'VCALL_P,Video Call,Active,Free,0,',
 'PDOWN_P,Package Upgrade fee,Active,Free,0,',
 'ULOAN_P,UnitLoan/UnitGift,Active,Free,0,',
-'USSD_P,USSD Checking,Active,Free,0,',
-'ACT BAOC_P,Action Barring Of Outgoing Call,Active,Free,0,',
-'MSL_R,Missed call log,Active,Monthly,1200,',
-'HOLD_R,Call Hold supplementary services for a susscriber,Active,Free,0,',
-'GPRS_R,GPRS Service,Active,Free,0,',
-'IV_R,Intl voice,Active,Free,0,',
-'CID_R,Caller ID (Call Screening),Active,per each,0,',
-'CH_R,Call Holding Service(Aaaoa? aooaeaaa oeeo),Active,Free,0,',
+'USSD_P,USSD Checking,Active,Free,0,USSD',
+'ACT BAOC_P,Action Barring Of Outgoing Call,Active,Free,0,ACT BAOC',
+'MSL_R,Missed call log,Active,Monthly,1200,MSL',
+'HOLD_R,Call Hold supplementary services for a susscriber,Active,Free,0,HOLD',
+'GPRS_R,GPRS Service,Active,Free,0,GPRS',
+'IV_R,Intl voice,Active,Free,0,IV',
+'CID_R,Caller ID (Call Screening),Active,per each,0,CID',
+'CH_R,Call Holding Service(Aaaoa? aooaeaaa oeeo),Active,Free,0,CH',
 'RV_R,Roaming Voice,Active,Free,0,',
-'VMS_R,Voice Message Service,Active,Free,0,',
-'COLR_R,Supplemantary Service ,Active,Free,0,',
-'SMSMT_R,Terminating SMS,Active,per each,0,',
-'CRBT_R,Uni Music (Ayeaooo aioei ?a?o),Active,Monthly,1200,',
-'SPINI_2_R,Call Restrict (Aa?ao aooaeaaaa eia oeeo),Active,Free,0,',
-'CFNRC_R,Call Forwarding on Mobile Subscriber Not Reachable,Active,per each,0,',
-'CFU_R,Call Forwarding-Unconditinal (Aooaeaaa oee?vveyo-oooa),Active,per each,0,',
-'ODBINFO_R,Barring Information Call,Active,Free,0,',
-'CWAIT_R,Call Waiting,Active,Free,0,',
-'BOPRC_2_R,BOPRC(ENT) (entertainment),Active,per each,0,',
-'CLIR_R,Identification restriction service,Active,per each,20,',
-'DND_1_R,Incoming Call Suspension directly  (I?io aooaeaaa oaao),Active,Free,0,',
-'ECT_R,Explicit Call Transfer,Active,Free,0,',
-'PLMNSS_R,PLMN specific supplementary services (PLMN specific SS),Active,Free,0,',
-'TPLGPRS_R,Modify subscriber\'s GPRS service parameters with 160,Active,Free,0,',
-'MPTY_R,Multiparty Service,Active,per each,0,',
-'CFB_R,Call Forwarding-Busy (Aooaeaaa oee?vveyo-caaave),Active,per each,0,',
-'CFNRY_R,Call Forwarding No Answer (Aooaeaaa oee?vveyo-oa?eoeaaave),Active,per each,0,',
+'VMS_R,Voice Message Service,Active,Free,0,VMS',
+'COLR_R,Supplemantary Service ,Active,Free,0,COLR',
+'SMSMT_R,Terminating SMS,Active,per each,0,SMSMT',
+'CRBT_R,Uni Music (Ayeaooo aioei ?a?o),Active,Monthly,1200,CRBT',
+'SPINI_2_R,Call Restrict (Aa?ao aooaeaaaa eia oeeo),Active,Free,0,SPINI_2',
+'CFNRC_R,Call Forwarding on Mobile Subscriber Not Reachable,Active,per each,0,CFNRC',
+'CFU_R,Call Forwarding-Unconditinal (Aooaeaaa oee?vveyo-oooa),Active,per each,0,CFU',
+'ODBINFO_R,Barring Information Call,Active,Free,0,ODBINFO',
+'CWAIT_R,Call Waiting,Active,Free,0,CWAIT',
+'BOPRC_2_R,BOPRC(ENT) (entertainment),Active,per each,0,BOPRC',
+'CLIR_R,Identification restriction service,Active,per each,20,CLIR',
+'DND_1_R,Incoming Call Suspension directly  (I?io aooaeaaa oaao),Active,Free,0,DND',
+'ECT_R,Explicit Call Transfer,Active,Free,0,ECT',
+'PLMNSS_R,PLMN specific supplementary services (PLMN specific SS),Active,Free,0,PLMNSS',
+'TPLGPRS_R,Modify subscriber\'s GPRS service parameters with 160,Active,Free,0,TPLGPRS',
+'MPTY_R,Multiparty Service,Active,per each,0,MPTY',
+'CFB_R,Call Forwarding-Busy (Aooaeaaa oee?vveyo-caaave),Active,per each,0,CFB',
+'CFNRY_R,Call Forwarding No Answer (Aooaeaaa oee?vveyo-oa?eoeaaave),Active,per each,0,CFNRY',
 'WAP_R,Wireless Application Protocol,Active,Free,0,',
-'BOIC_EXHC_R,Conference Call(Oaeaoii oo?ae),Active,Free,0,',
-'BOPRC_R,BOPRC(INFO),Active,per each,0,',
-'COLP_R,Connected Line Identification,Active,Free,0,',
-'CLIP_R,Calling Line Identification ,Active,Free,0,',
-'FAX_R,Fax Data,Active,Monthly,0,',
-'SMSMO_R,Originate SMS,Active,per each,0,',
-'DBIC_R,Barring Of Incoming Call,Active,Free,0,',
-'DBOC_R,Barring Of Outgoing Call,Active,Free,0,',
+'BOIC_EXHC_R,Conference Call(Oaeaoii oo?ae),Active,Free,0,BOIC_EXHC',
+'BOPRC_R,BOPRC(INFO),Active,per each,0,BOPRC',
+'COLP_R,Connected Line Identification,Active,Free,0,COLP',
+'CLIP_R,Calling Line Identification ,Active,Free,0,CLIP',
+'FAX_R,Fax Data,Active,Monthly,0,FAX',
+'SMSMO_R,Originate SMS,Active,per each,0,SMSMO',
+'DBIC_R,Barring Of Incoming Call,Active,Free,0,DBIC',
+'DBOC_R,Barring Of Outgoing Call,Active,Free,0,DBOC',
 'WEBSMS_R,Web to SMS ,Active,Monthly,1200,',
 'WSC_R,WebSelfCare,Active,Monthly,1000,',
 'WSCS_R,WebSelfCare Secure,Active,Monthly,0,',
-'CRBTP_R,CRBT Plus,Active,Monthly,450,',
-'CRBTF_R,CRBT Free,Active,Monthly,0,',
-'CRBTPF_R,CRBT Plus Free,Active,Monthly,0,',
+'CRBTP_R,CRBT Plus,Active,Monthly,450,CRBT',
+'CRBTF_R,CRBT Free,Active,Monthly,0,CRBT',
+'CRBTPF_R,CRBT Plus Free,Active,Monthly,0,CRBT',
 'VCALL_R,Video Call,Active,Free,0,',
 'ULOAN_R,UnitLoan/UnitGift,Active,Free,0,',
-'USSD_R,USSD Checking,Active,Free,0,',
-'ACT BAOC_R,Action Barring Of Outgoing Call,Active,Free,0,',
+'USSD_R,USSD Checking,Active,Free,0,USSD',
+'ACT BAOC_R,Action Barring Of Outgoing Call,Active,Free,0,ACT BAOC',
+	/*
 'SIM_REF_P,SIM  Card Refresh,NO,per each,3000,',
 'TST_1_P,TUMUR_SVC,NO,Free,0,',
 'TEST_P,TEST Service,NO,per each,20,',
@@ -101,6 +102,7 @@ $data = array(
 'TST_1_R,TUMUR_SVC,NO,Free,0,',
 'TEST_R,TEST Service,NO,per each,20,',
 'PDOWN_R,Package Downgrade fee,NO,Free,5000,',
+*/
 	);
 
 $attr = array(
@@ -117,8 +119,35 @@ $attr = array(
 
 		);
 
+$mandatory = 'CFB,CH,CLIP,CLIR,COLP,CWAIT,GPRS,HOLD,MSL,SMSMO,SMSMT,ULOAN,USSD,VCALL,GPRS';
+    
+$main_products = array(
+'X,Mobile,Main,CPPS Fam90,cpps_fam90,Group,Prepaid,c1',
+'W,Mobile,Main,CPPS 86,cpps_86,Group,Prepaid,c2',
+'O,Mobile,Main,Okta Experience Zone O,okta_experience_zone_o,Personal,Prepaid,o1',
+'I,Mobile,Main,Univision I,univision_i,Personal,Prepaid,u1',
+'G,Mobile,Main,ID Offnet 40SMS,id_offnet_40sms,Personal,Prepaid,i1',
+'F,Mobile,Main,DOPIN 86C,dopin_86c,Personal,Prepaid,d1',
+'D,Mobile,Main,DOPIN Old,dopin_old,Personal,Prepaid,d2',
+'A,Mobile,Main,CPPS Onnet Free,cpps_onnet_free,Group,Prepaid,c3',
+'C,Mobile,Main,CDOPIN,61,Group,Prepaid,c4',
+'Z,Mobile,Main,CPPS,40,Group,Prepaid,c5',
+'K,Mobile,Main,VoIP 77 -2,voip_77_2,Personal,Prepaid,v1',
+'J,Mobile,Main,VoIP 77-1,voip_77_1,Personal,Prepaid,v2',
+'R,Mobile,Main,Second Tariff,28,Personal,Prepaid,s1',
+'P,Mobile,Main,PPS Live Modem,16,Personal,Prepaid,p1',
+'Q,Mobile,Main,Easy Tour,33,Personal,Prepaid,e1',
+'S,Mobile,Main,New Life,4,Personal,Prepaid,n1',
+'Y,Mobile,Main,ID,30,Personal,Prepaid,i2',
+'E,Mobile,Main,DOPIN Valid 90 Days,34,Personal,Prepaid,d3',
+'B,Mobile,Main,DOPIN,12,Personal,Prepaid,d4',
+'M,Mobile,Main,Happy Life Valid 90 Days,27,Personal,Prepaid,h1',
+'N,Mobile,Main,Happy Life,1,Personal,Prepaid,h2',
+	);
+
+
 // get voca terms
-$voca_list = array( 'custdvcd', 'billtype', 'prdtype', 'featurecode', 'tpl_default_tree_mobile', 
+$voca_list = array( 'custdvcd4prod', 'billtype', 'prdtype', 'featurecode', 'tpl_default_tree_mobile', 
 		'prdexpiredate', 'countermainoraccu', 'specialdateoptions', 'specialenddateoptions', 
 		'counterset_addorreplace', 'unitofmeasure_enddate');
 $term = array();
@@ -134,11 +163,14 @@ foreach( $voca_list as $voca) {
 	}
 }
 
+print_r( $term['featurecode']);
+
 // check argument
 $arg_product_id = drush_shift();
 
 //print_r( $header);
 $idx = 0;
+/*
 foreach( $data as $item) {
 	$d = explode( ',', $item);
 
@@ -189,7 +221,7 @@ foreach( $data as $item) {
 	// market : default value (unitel)
 
 	// customer type : personal (default)
-	$p->field_customer_type['und'][0]['tid'] = $term['custdvcd'][$d[$h['custtype']]];
+	$p->field_customer_type['und'][0]['tid'] = $term['custdvcd4prod']['Group_and_Personal'];
 
 	// customer sub type : personal 
 
@@ -199,6 +231,7 @@ foreach( $data as $item) {
 	$feature = $d[$h['Feature']];
 	if ( ! empty( $feature) && strlen( $feature) > 0) {
 		if ( isset( $term['featurecode'][$feature])) {
+			printf("  Set feature code : %s\n", $feature);
 			$node = get_attr( $p, 'prdattributefeaturecode', 
 				$term['tpl_default_tree_mobile']['attribute_featurecode'], $feature);
 			$node->field_ref_service_feature_code['und'][0]['tid'] = $term['featurecode'][$feature];
@@ -220,34 +253,50 @@ foreach( $data as $item) {
 		node_save( $node);
 	}
 }
+*/
+
+// add mandatory prodcuts
+foreach( $main_products as $data) {
+    $d = explode( ',', $data);
+    $product_name = $d[3];
+
+    $prd = ocs_get_node_by_cond( 'simpleproductoffering', NULL, array(
+        array( 'property', 'title', $product_name)));
+    if ( isset( $prd->nid)) {
+
+        foreach( explode( ',', $mandatory) as $vas_name) {
+            $vas_name .= '_P';
+            $vas = ocs_get_node_by_cond( 'simpleproductoffering', NULL, array(
+                array('property', 'title', $vas_name)));
+            if ( ! isset( $vas->nid)) {
+                printf("Product not found : %s\n", $vas_name);
+                continue;
+            }
+
+            $rel = ocs_get_node_by_cond( 'prdattributepackaged', $title, array(
+                array( 'field_ref_product', 'nid', $prd->nid),
+                array( 'field_ref_tree_tid', 'value', 6535),
+                array( 'field_ref_prdrelationtype', 'tid', 787),
+                array( 'field_ref_connected_product', 'nid', $vas_nid),
+            ));
+
+            if ( ! isset( $rel->nid)) {
+                $rel->title = $vas_name . '_P (VAS)';
+                $rel->field_ref_product['und'][0]['nid'] = $prd->nid;
+                $rel->field_ref_tree_tid['und'][0]['value'] = 6535;
+                $rel->field_ref_prdrelationtype['und'][0]['tid'] = 787;
+                $rel->field_ref_connected_product['und'][0]['nid'] = $vas_nid;
+                //node_save( $rel);
+            }
+        }
+    }
+    else {
+        printf("Product not found : %s\n", $product_name);
+    }
+}
 
 return;
 
-
-function get_attr_cond( $type, $title, $field_cond)
-{
-	// find the attribute
-	$query = new EntityFieldQuery();
-	$query->entityCondition('entity_type', 'node')
-		->entityCondition('bundle', $type);
-
-	if ( $field_cond) {
-		foreach( $field_cond as $cond) {
-			$query->fieldCondition( $cond[0], $cond[1], $cond[2]);
-		}
-	}
-	$result = $query->execute();
-
-	if ( empty( $result)) {
-		$node = ocs_admin_get_new_node( $type);
-		printf("  New attribute type=%s title=%s\n", $type, $title);
-	}
-	else {
-		$node = node_load( array_pop( array_keys( $result['node'])));
-	}
-
-	return $node;
-}
 
 function get_attr( $product, $type, $tree_tid, $title = NULL, $field_cond = NULL)
 {
