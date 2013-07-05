@@ -1283,8 +1283,16 @@ function view_get_field_value($view , $field_name , $record)
 	}
 	else
 	{
-		$value = $field_handler->render($record);
-		return $value;
+		try
+		{
+			$value = $field_handler->render($record);
+			return $value;
+		}
+		catch(Exception $e)
+		{
+			dsm("render error field $field_name");
+			throw $e;
+		}
 	}
 }
 
@@ -1523,7 +1531,15 @@ function rating_rules_export_from_view($title, $view_name, $display_name, $nid=N
                     }
                     else
                     {
-                        $rule[$factor_name] = view_get_field_value($view , $field_name , $record);
+						try
+						{
+							$rule[$factor_name] = view_get_field_value($view , $field_name , $record);
+						}
+						catch(Exception $e)
+						{
+							dsm("view_get_field_value error factor=$factor_name , view=$view_name");
+							throw $e;
+						}
                     }
 
 					if($nid!=NULL)
