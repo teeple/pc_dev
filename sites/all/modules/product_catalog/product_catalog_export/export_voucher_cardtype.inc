@@ -52,11 +52,13 @@ function _array_voucher_cardtype($exportItemNids = NULL, $isExternalAPI = FALSE)
         $jsonRecord['valid_for'] = $validFor;
 
         if ($record -> field_field_ref_voucher_type[0]['rendered']['#title'] == 'Discount') {
-            $mappingProduct = node_load($record -> field_field_ref_product_for_disvoucher[0]['raw']['nid']);
+            if ( isset($record->field_field_ref_product_for_disvoucher[0]['raw']['nid'])) {
+				$mappingProduct = node_load($record -> field_field_ref_product_for_disvoucher[0]['raw']['nid']);
 
             //dsm($mappingProduct, 'mappingProduct');
             // $jsonRecord['mapping_product'] = !empty($record->field_field_product_id) ? $record->field_field_product_id[0]['raw']['value']: null;
-            $jsonRecord['mapping_product'] = !empty($mappingProduct -> field_product_id) ? $mappingProduct -> field_product_id['und'][0]['value'] : null;
+				$jsonRecord['mapping_product'] = !empty($mappingProduct -> field_product_id) ? $mappingProduct -> field_product_id['und'][0]['value'] : null;
+			}
 
             $saleTypeArr = array();
             if (!empty($record -> field_field_sale_type)) {
