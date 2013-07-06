@@ -41,7 +41,7 @@ function _product_change_scheme_for_export($exportItemNids = NULL, $isExternalAP
 		$graceDate = array();
 		$graceDate['options'] = isset($record->field_field_gracedate_options[0]['rendered']['#title'])? $record->field_field_gracedate_options[0]['rendered']['#title']: NULL;
 		
-		if($record->field_field_gracedate_options[0]['rendered']['#options']['entity']->tid != 7768) {
+		if($record->field_field_gracedate_options[0]['rendered']['#options']['entity']->name != 'Fixed Date') {
 			$graceDate['ndays'] = isset($record->field_field_gracedate_ndays[0]['raw']['value'])? $record->field_field_gracedate_ndays[0]['raw']['value']: NULL;
 			$graceDate['fixed_date'] = NULL;
 		} else {
@@ -53,7 +53,7 @@ function _product_change_scheme_for_export($exportItemNids = NULL, $isExternalAP
 		$expireDate = array();
 		$expireDate['options'] = isset($record->field_field_expiredate_options[0]['rendered']['#title'])? $record->field_field_expiredate_options[0]['rendered']['#title']: NULL;
 		
-		if($record->field_field_expiredate_options[0]['rendered']['#options']['entity']->tid != 7768) {
+		if($record->field_field_expiredate_options[0]['rendered']['#options']['entity']->name != 'Fixed Date') {
 			$expireDate['ndays'] = isset($record->field_field_expiredate_ndays[0]['raw']['value'])? $record->field_field_expiredate_ndays[0]['raw']['value']: NULL;
 			$expireDate['fixed_date'] = NULL;			
 		} else {
