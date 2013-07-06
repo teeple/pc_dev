@@ -1,8 +1,14 @@
 <?php
 
-function deploy_all( $type, $prd_list, $target)
+function deploy_all( $type, $prd_list, $target, $redirectFlag = TRUE)
 {
 	$_SESSION['http_request_count'] = 0; // reset counter for debug information.
+	if ( isset( $redirectFlag)) {
+		$_SESSION['redirect_after_batch'] = 'lifecycles/history/'.$type;
+	}
+	else {
+		unset( $_SESSION['redirect_after_batch']);
+	}
 
 	$operations = array();
 	foreach( $prd_list as $nid => $prd) {
@@ -26,10 +32,10 @@ function batch_deploy_product_op( $type, $nid, $obj, $target, &$context)
 	$result = export_deploy( $type, array( $nid => $obj), $target, FALSE);
 
 	$resultData = json_decode( $result[0]->data);
-	$context['results'][] = t('Result : @result<br>'.
+	$context['results'][] = t('<p>Result : @result</p><br><p>'.
 			'<ul><li>OCS : @ocs (@ocs_r)</li>'.
 			'<li>CS : @cs (@cs_r)</li>'.
-			'<li>CRM : @crm (@crm_r)</li></ul>',
+			'<li>CRM : @crm (@crm_r)</li></ul></p>',
 			array( 
 				'@result' => ($result[0]->code === '200') ? 'SUCCESS' : 'FAIL',
 				'@ocs' => isset($resultData->OCS->result_code) ? $resultData->OCS->result_code : '',
@@ -39,7 +45,7 @@ function batch_deploy_product_op( $type, $nid, $obj, $target, &$context)
 				'@crm' => isset($resultData->CRM->result_code) ? $resultData->CRM->result_code : '',
 				'@crm_r' => isset($resultData->CRM->result_reason) ? $resultData->CRM->result_reason : ''));
 
-	$context['message'] = t('Deploy @type "@title" <br>', 
+	$context['message'] = t('<br>Deploy @type "@title" <br>', 
 		array( '@type' => $type, '@title' => check_plain($obj->title))) . end($context['results']);
 
 	_batch_update_http_requests();
@@ -61,6 +67,10 @@ function batch_deploy_product_finished($success, $results, $operations)
 		$error_operation = reset($operations);
 		drupal_set_message(t('An error occurred while processing @operation with arguments : @args', 
 			array('@operation' => $error_operation[0], '@args' => print_r($error_operation[0], TRUE))));
+	}
+
+	if ( isset($_SESSION['redirect_after_batch'])) {
+		drupal_goto($_SESSION['redirect_after_batch']);
 	}
 }
 
