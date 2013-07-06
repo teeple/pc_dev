@@ -108,4 +108,27 @@ function product_catalog_form_views_pre_build(&$view) {
 		break;
 	}
 }
+
+function product_catalog_product_group_list( $nid, $field) 
+{
+	$rows = array();
+	$scheme = node_load( $nid);
+	foreach( $scheme->{$field}['und'] as $grp_nid) {
+		$grp = node_load( $grp_nid);
+		$nids = ocs_get_nids_by_cond( 'productgroupmainselected', array(
+			array( 'field_ref_product_group', 'nid', $grp_nid)));
+		$output = '';
+		$idx = 0;
+		foreach( $nids as $nid) {
+			$ref_grp = node_load( $nid);
+			$prd = node_load( $ref_grp->field_ref_product['und'][0]['nid']);
+			if ( $idx > 0) $output .= ' , ';
+			$output .= l( $prd->title, 'node/'.$prd->nid);
+			$idx ++;
+		}
+		$rows[] = array( $grp->title, $output);
+	}
+	print theme( 'table', array( 'rows' => $rows, 'header' => array( 'Group', 'Product')));
+}
+
 ?>
