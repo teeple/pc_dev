@@ -148,6 +148,8 @@ function export_deploy($export_type, $export_item_list = NULL, $target, $redirec
 		       }
 					break;
     }
+
+	$result_list = array();
     
     if($failedValidation == TRUE){
         $message = 'FAIL!! '.$checkValid['base_type'] . ' '. $checkValid['title'] . ':' . $checkValid['reason'];
@@ -207,7 +209,9 @@ function export_deploy($export_type, $export_item_list = NULL, $target, $redirec
             
             dsm($url,'url');		 
             dsm($result,'deploy result');
-    
+
+			$result_list[] = $result;
+
     		if($result->code === '200'){
     		    $resultData = json_decode($result->data);
                 //dsm($resultData,'result data');
@@ -237,6 +241,8 @@ function export_deploy($export_type, $export_item_list = NULL, $target, $redirec
 	    	drupal_goto($redirect_url);
 	    }
    }
+
+	return $result_list;
 }
 
 function _get_export_type_by_content_type($content_type) {

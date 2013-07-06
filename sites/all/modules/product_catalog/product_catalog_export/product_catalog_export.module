@@ -23,6 +23,7 @@ module_load_include('inc', 'product_catalog_export', 'export_unittransfer_scheme
 module_load_include('inc', 'product_catalog_export', 'export_lifecycle_status');
 module_load_include('inc', 'product_catalog_export', 'export_product_group');
 module_load_include('inc', 'product_catalog_export', 'export_product_change_scheme');
+module_load_include('inc', 'product_catalog_export', 'batch_deploy');
 
 
 function export_product_group($export_item_nids=NULL){
