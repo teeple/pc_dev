@@ -728,7 +728,7 @@ function product_catalog_form_node_validate($node, $form, &$form_state) {
 
 				case 'productchange_node_form' :
 					$productChangeId = $form_state['values']['field_product_change_id']['und'][0]['value'];
-
+					
 					// Create
 					if (!isset($form['nid']['#value'])) {
 						if (!is_machine_name($productChangeId)) {
