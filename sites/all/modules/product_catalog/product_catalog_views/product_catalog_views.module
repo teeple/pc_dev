@@ -111,24 +111,67 @@ function product_catalog_form_views_pre_build(&$view) {
 
 function product_catalog_product_group_list( $nid, $field) 
 {
-	$rows = array();
+	$output = '';
 	$scheme = node_load( $nid);
 	foreach( $scheme->{$field}['und'] as $grp_nid) {
 		$grp = node_load( $grp_nid);
 		$nids = ocs_get_nids_by_cond( 'productgroupmainselected', array(
 			array( 'field_ref_product_group', 'nid', $grp_nid)));
-		$output = '';
-		$idx = 0;
-		foreach( $nids as $nid) {
-			$ref_grp = node_load( $nid);
-			$prd = node_load( $ref_grp->field_ref_product['und'][0]['nid']);
-			if ( $idx > 0) $output .= ' , ';
-			$output .= l( $prd->title, 'node/'.$prd->nid);
-			$idx ++;
+		if ( ! empty( $nids)) {
+			$idx = 0;
+			foreach( $nids as $nid) {
+				$ref_grp = node_load( $nid);
+				$prd = node_load( $ref_grp->field_ref_product['und'][0]['nid']);
+				if ( $idx > 0) $output .= ' , ';
+				$output .= l( $prd->title, 'node/'.$prd->nid);
+				$idx ++;
+			}
 		}
-		$rows[] = array( $grp->title, $output);
+//		$rows[] = array( $grp->title, $output);
 	}
-	print theme( 'table', array( 'rows' => $rows, 'header' => array( 'Group', 'Product')));
+//	print theme( 'table', array( 'rows' => $rows, 'header' => array( 'Group', 'Product')));
+	print $output;
+}
+
+function product_catalog_exclusive_list( $nid)
+{
+	$prd = node_load( $nid);
+	$ex_list = array();
+
+	//dpm( $prd, $prd->title);
+	if ( isset($prd->field_exclusiveness_others['und'])) {
+		foreach( $prd->field_exclusiveness_others['und'] as $prd_nid) {
+			$ex_prd = node_load( $prd_nid);
+			if ( isset($ex_prd->field_product_type['und'][0]['tid']))
+				$ex_list[$ex_prd->field_product_type['und'][0]['tid']][] = $ex_prd;
+		}
+	}
+	if ( isset($prd->field_exclusiveness['und'])) {
+		foreach( $prd->field_exclusiveness['und'] as $prd_nid) {
+			$ex_prd = node_load( $prd_nid);
+			if ( isset($ex_prd->field_product_type['und'][0]['tid']))
+				$ex_list[$ex_prd->field_product_type['und'][0]['tid']][] = $ex_prd;
+		}
+	}
+
+	$rows = array();
+	foreach( $ex_list as $type => $list) {
+		$term = taxonomy_term_load( $type);
+		$obj_list = '';
+		$idx = 0;
+		foreach( $list as $obj) {
+			if ( $idx ++ > 0) $obj_list .= ' , ';
+			$obj_list .= l( $obj->title, 'node/'. $obj->nid);
+		}
+		$rows[] = array( $term->name, $obj_list);
+	}
+
+	if ( count( $rows) > 0) {
+		print theme( 'table', array( 'rows' => $rows));
+	}
+	else {
+		print 'No Exculsive Products';
+	}
 }
 
 ?>
