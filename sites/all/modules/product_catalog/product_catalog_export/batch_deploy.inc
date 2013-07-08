@@ -31,24 +31,33 @@ function batch_deploy_product_op( $type, $nid, $obj, $target, &$context)
 {
 	$result = export_deploy( $type, array( $nid => $obj), $target, FALSE);
 
-	$resultData = json_decode( $result[0]->data);
-	$context['results'][] = t('<p>Result : @result</p><br><p>'.
-			'<ul><li>OCS : @ocs (@ocs_r)</li>'.
-			'<li>CS : @cs (@cs_r)</li>'.
-			'<li>CRM : @crm (@crm_r)</li></ul></p>',
-			array( 
-				'@result' => ($result[0]->code === '200') ? 'SUCCESS' : 'FAIL',
-				'@ocs' => isset($resultData->OCS->result_code) ? $resultData->OCS->result_code : '',
-				'@ocs_r' => isset($resultData->OCS->result_reason) ? $resultData->OCS->result_reason : '',
-				'@cs' => isset($resultData->CS->result_code) ? $resultData->CS->result_code : '',
-				'@cs_r' => isset($resultData->CS->result_reason) ? $resultData->CS->result_reason : '',
-				'@crm' => isset($resultData->CRM->result_code) ? $resultData->CRM->result_code : '',
-				'@crm_r' => isset($resultData->CRM->result_reason) ? $resultData->CRM->result_reason : ''));
-
+	$result[0]['title'] = $obj->title;
+	$context['results'][] = $result[0];
 	$context['message'] = t('<br>Deploy @type "@title" <br>', 
-		array( '@type' => $type, '@title' => check_plain($obj->title))) . end($context['results']);
+		array( '@type' => $type, '@title' => check_plain($obj->title))) . batch_deploy_result( end($context['results']));
 
 	_batch_update_http_requests();
+}
+
+function batch_deploy_result( $param)
+{
+	$result = $param['result'];
+
+	$rows = array();
+	$rows[] = array( 'Name', $param['title']);
+	$rows[] = array( 'URL', $param['url']);
+	$rows[] = array( 'RESULT', $result->code . ' ' . $result->status_message);
+
+	$resultData = json_decode( $result->data, TRUE);
+	$r = array();
+	foreach( array( 'OCS', 'CS', 'CRM') as $sys) {
+		if ( isset($resultData[$sys])) {
+			$r[] = array( $sys, $resultData[$sys]['result_code'], $resultData[$sys]['result_reason']);
+		}
+	}
+	$rows[] = array( '', theme( 'table', array( 'rows' => $r)));
+
+	return theme( 'table', array( 'rows' => $rows));
 }
 
 function batch_deploy_product_finished($success, $results, $operations) 
@@ -59,7 +68,11 @@ function batch_deploy_product_finished($success, $results, $operations)
 		drupal_set_message(t('@count results processed in @requests HTTP requests.', 
 			array('@count' => count($results), 
 				'@requests' => _batch_get_http_requests())));
-		drupal_set_message(t('The final result was '. end($results)));
+
+		$idx = 1;
+		foreach( $results as $r) {
+			drupal_set_message( t( 'Request : @i', array( '@i' => $idx++)) . batch_deploy_result( $r));
+		}
 	}
 	else {
 		// An error occurred.
