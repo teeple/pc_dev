@@ -116,7 +116,7 @@ function export_deploy($export_type, $export_item_list = NULL, $target, $redirec
 	
 	$exportItemNids = !empty($export_item_list)? array_keys($export_item_list): array();
 	
-	dsm($exportItemNids, 'exportItemNids');
+	//dsm($exportItemNids, 'exportItemNids');
 	
 	$failedValidation = FALSE;
     switch($export_type){
@@ -154,6 +154,7 @@ function export_deploy($export_type, $export_item_list = NULL, $target, $redirec
     if($failedValidation == TRUE){
         $message = 'FAIL!! '.$checkValid['base_type'] . ' '. $checkValid['title'] . ':' . $checkValid['reason'];
         drupal_set_message($message, 'error');
+		$result_list[] = array( 'error' => $message);
         
     }else{
     
@@ -208,9 +209,9 @@ function export_deploy($export_type, $export_item_list = NULL, $target, $redirec
     		$result = drupal_http_request($url, $options);
             
             dsm($url,'url');		 
-            dsm($result,'deploy result');
+            //dsm($result,'deploy result');
 
-			$result_list[] = $result;
+			$result_list[] = array( 'url' => $url, 'result' => $result);
 
     		if($result->code === '200'){
     		    $resultData = json_decode($result->data);

@@ -40,100 +40,100 @@ $data = array(
 	'70|Recharge||150000||365|14|IJK|Univision 150000|||||||||||',
 	'75|Recharge||5000||60|14|IJK|Univision New 10000 хоногтой|||||||||||',
 	'76|Recharge||5000||0|14|IJK|Univision New 5000|||||||||||',
-	'81|Entry|1000000||50000|30|14|B|DOPIN BRILL 8XAAAAAA|0|0|0|0|0|0|12|U|0|0|',
-	'82|Entry|100000||10000|30|14|B|"DOPIN Gold for MCS20-100000,10000,30 20130522-0630"|0|0|0|0|0|1|12|U|0|0|',
-	'83|Entry|10000||6000|120|14|N|Happy normal 10000|0|0|0|0|0|1|1|U|0|0|',
-	'85|Entry|100000||20000|120|14|N|"HAPPY SILV 8Xab8Xab,8Xaa8Xaa,8Xaaaa8X,aabb,abab"|0|0|0|0|0|0|1|U|0|0|',
-	'87|Entry|500000||20000|30|14|B|"Dopin GOLD 8XXA-AAAA, 8XXX-AAAA"|0|0|0|3|0|0|12|U|0|0|',
-	'88|Entry|100000||20000|30|14|B|"Dopin SILV 8Xab8Xab,8Xaa8Xaa,8Xaaaa8X,aabb,abab"|0|0|0|0|0|0|12|U|0|0|',
-	'89|Entry|500000||20000|120|14|N|"HAPPY GOLD 8XXA-AAAA, 8XXX-AAAA"|0|0|0|0|0|0|1|U|0|0|',
-	'93|Entry|10000||6000|120|14|M|"Happy-90days Normal 10000,6000,120"|0|0|0|0|0|1|27|U|0|0|',
-	'94|Entry|3500||2000|90|14|N|"HappyLife MCS-3Khos 3500,2000, 20130522-0630"|0|0|0|0|0|1|1|U|0|0|',
-	'95|Entry|20000||0|30|14|P|PPS Live 3GB 20000 2011.08.22~|0|0|0|0|0|1|16|U|0|3145728|',
-	'98|Entry|50000||10000|30|14|Z|CorpPPS 51-ees deesh AABB ABAB 20120523151932|0|0|0|0|0|0|40|U|0|0|',
-	'99|Entry|13000||8000|30|14|Z|"CorpPPS 5-20, 13000"|0|0|0|0|0|1|40|U|0|0|',
-	'101|Entry|0||0|90|14|P|PPS Live 150000 365 DAY|0|0|0|0|0|1|16|U|0|1048576|',
-	'105|Entry|1000000||50000|120|14|N|HAPPY BRILL 8XAAAAAA|0|0|0|0|0|0|1|U|0|0|',
-	'106|Entry|3000||500|60|14|M|Happy-90days MobileDealer 3000.500.60|0|0|0|0|0|1|27|U|0|0|',
-	'107|Entry|3000||2000|90|14|N|"HappyLife MCS-3Khos 3000,2000, 20130522-0630"|0|0|0|0|0|1|1|U|0|0|',
-	'108|Entry|10000||5000|30|14|B|"Dopin MCS-3Khos 10000,5000,30 20130522-0630"|0|0|0|0|0|1|12|U|0|0|',
-	'109|Entry|0||0|90|14|N|Happy Life New.Gereet 20110926~|0|0|0|0|0|1|1|U|0|0|',
-	'113|Entry|14900||10000|30|14|N|HappyLife-Normal_Roaming|0|0|0|0|0|1|1|U|0|0|',
-	'114|Entry|2000||1000|30|14|N|Standart for Neg angiinhan 20121220-20130630|0|0|0|0|0|1|1|U|0|0|',
-	'115|Entry|12500||5000|30|14|B|"Dopin MCS-2Khos 12500,5000,30 20130522-0630"|0|0|0|0|0|0|12|U|0|0|',
-	'116|Entry|30000||5000|30|14|B|"DOPIN SILV for MCS20-30000,5000,30 20130522-0630"|0|0|0|0|0|1|12|U|0|0|',
-	'118|Entry|2500||1000|100|14|N|ShineSumd HappyLife-2 2500 2011.10.03-12.31|0|0|0|0|0|1|1|U|0|0|',
-	'119|Entry|15000||5000|30|14|C|CDOPIN Engiin |0|0|0|0|0|1|61|U|0|0|',
-	'120|Entry|3000||500|60|14|N|HappyLife for MobileDealer 2011.12.08|0|0|0|0|0|1|1|U|0|0|',
-	'125|Entry|5000||2000|90|14|M|Happy-90days Normal for new subs 0301-0430|0|0|0|0|0|1|27|U|0|0|',
-	'126|Entry|20000||5000|30|14|E|"Dopin-90days Normal 20000,5000,30"|0|0|0|0|0|1|34|U|0|0|',
-	'127|Entry|15000||5000|30|14|E|Dopin-90days Normal for new subs 0301-0430|0|0|0|0|0|1|34|U|0|0|',
-	'129|Entry|5000||1000|7|14|B|"Dopin New Subs Normal 5000, 1000,7 - 0415-0630"|0|0|0|0|0|1|12|U|0|0|',
-	'132|Entry|88000||10000|365|14|B|"Dopin New Subs Normal 88000, 10000,365 - 0415-0630"|0|0|0|0|0|1|12|U|0|0|',
-	'133|Entry|1088000||50000|365|14|B|"Dopin New Subs Brill 1088000, 50000,365-0415-0630"|0|0|0|0|0|1|12|U|0|0|',
-	'134|Entry|588000||20000|365|14|B|"Dopin New Subs Gold 588000, 20000,365-0415-0630"|0|0|0|0|0|1|12|U|0|0|',
-	'135|Entry|4000||2000|90|14|N|"HappyLife MCS-2Khos 8000,2000,90 20130522-0630"|0|0|0|0|0|1|1|U|0|0|',
-	'136|Entry|188000||20000|365|14|B|"Dopin New Subs SILV 188000, 20000,365-0415-0630"|0|0|0|0|0|1|12|U|0|0|',
-	'137|Entry|88000||10000|365|14|E|"Dopin-90days New Subs 88000, 10000,365-0415-0630"|0|0|0|0|0|1|34|U|0|0|',
-	'138|Entry|108000||5000|365|14|B|"Dopin + Stone handset 108000, 2012.08.20-12.31"|0|0|0|0|0|0|12|U|0|0|',
-	'139|Entry|5000||1000|7|14|E|"Dopin-90days New Subs 5000, 1000,7-0415-0630"|0|0|0|0|0|1|34|U|0|0|',
-	'142|Entry|0||0|1|0|N|Standart Lucky - SCPgrace for CRM-0415-0702|0|0|0|0|0|0|1|U|0|0|',
-	'143|Entry|18000||5000|30|14|B|"Dopin for Eunitel 18000,5000,30"|0|0|0|0|0|1|12|U|0|0|',
-	'144|Entry|9000||6000|120|14|N|Standart for Eunitel 9000.6000.120|0|0|0|0|0|1|1|U|0|0|',
-	'151|Entry|100000||20000|30|14|C|"CDOPIN 88AAAA88,8XA(A)B8XA(A)B, AABB,ABAB,Silver"|0|0|0|0|0|0|61|U|0|0|',
-	'152|Entry|500000||20000|30|14|C|"CDOPIN 8XxAAAAA , 8XAAAAAx, 8XxxAAAA Gold"|0|0|0|0|0|1|61|U|0|0|',
-	'153|Entry|1000000||50000|30|14|C|"CDOPIN 88,89AAAAAA  Brilliant"|0|0|0|0|0|1|61|U|0|0|',
-	'156|Entry|20000||5000|30|14|B|"Dopin 20000,5000,30"|0|0|0|0|0|1|12|U|0|0|',
-	'158|Entry|10000||500|60|14|N|"Happy life for greet 10000,500,30 20121115-1215"|0|0|0|0|0|1|1|U|0|0|',
-	'159|Entry|2000||2000|90|14|N|Happy Chain beleg 2000.2000.90 - 130422-512|0|0|0|0|0|1|1|U|0|0|',
-	'160|Entry|1000||1000|30|14|N|"Standart for Dopin 1 year 1000, 1000, 30 ~20121231"|0|0|0|0|0|1|1|U|0|0|',
-	'165|Entry|0||0|1|0|B|Dopin Lucky - SCPgrace for CRM-0415-0702|0|0|0|0|0|1|12|U|0|0|',
-	'168|Entry|5000||2000|90|14|N|"Standart Normal MCS20 5000,2000,90 0422-0531"|0|0|0|0|0|0|1|U|0|0|',
+	'81|Entry|1000000|50000||30|14|B|DOPIN BRILL 8XAAAAAA|0|0|0|0|0|0|12|U|0|0|',
+	'82|Entry|100000|10000||30|14|B|"DOPIN Gold for MCS20-100000,10000,30 20130522-0630"|0|0|0|0|0|1|12|U|0|0|',
+	'83|Entry|10000|6000||120|14|N|Happy normal 10000|0|0|0|0|0|1|1|U|0|0|',
+	'85|Entry|100000|20000||120|14|N|"HAPPY SILV 8Xab8Xab,8Xaa8Xaa,8Xaaaa8X,aabb,abab"|0|0|0|0|0|0|1|U|0|0|',
+	'87|Entry|500000|20000||30|14|B|"Dopin GOLD 8XXA-AAAA, 8XXX-AAAA"|0|0|0|3|0|0|12|U|0|0|',
+	'88|Entry|100000|20000||30|14|B|"Dopin SILV 8Xab8Xab,8Xaa8Xaa,8Xaaaa8X,aabb,abab"|0|0|0|0|0|0|12|U|0|0|',
+	'89|Entry|500000|20000||120|14|N|"HAPPY GOLD 8XXA-AAAA, 8XXX-AAAA"|0|0|0|0|0|0|1|U|0|0|',
+	'93|Entry|10000|6000||120|14|M|"Happy-90days Normal 10000,6000,120"|0|0|0|0|0|1|27|U|0|0|',
+	'94|Entry|3500|2000||90|14|N|"HappyLife MCS-3Khos 3500,2000, 20130522-0630"|0|0|0|0|0|1|1|U|0|0|',
+	'95|Entry|20000|0||30|14|P|PPS Live 3GB 20000 2011.08.22~|0|0|0|0|0|1|16|U|0|3145728|',
+	'98|Entry|50000|10000||30|14|Z|CorpPPS 51-ees deesh AABB ABAB 20120523151932|0|0|0|0|0|0|40|U|0|0|',
+	'99|Entry|13000|8000||30|14|Z|"CorpPPS 5-20, 13000"|0|0|0|0|0|1|40|U|0|0|',
+	'101|Entry|0|0||90|14|P|PPS Live 150000 365 DAY|0|0|0|0|0|1|16|U|0|1048576|',
+	'105|Entry|1000000|50000||120|14|N|HAPPY BRILL 8XAAAAAA|0|0|0|0|0|0|1|U|0|0|',
+	'106|Entry|3000|500||60|14|M|Happy-90days MobileDealer 3000.500.60|0|0|0|0|0|1|27|U|0|0|',
+	'107|Entry|3000|2000||90|14|N|"HappyLife MCS-3Khos 3000,2000, 20130522-0630"|0|0|0|0|0|1|1|U|0|0|',
+	'108|Entry|10000|5000||30|14|B|"Dopin MCS-3Khos 10000,5000,30 20130522-0630"|0|0|0|0|0|1|12|U|0|0|',
+	'109|Entry|0|0||90|14|N|Happy Life New.Gereet 20110926~|0|0|0|0|0|1|1|U|0|0|',
+	'113|Entry|14900|10000||30|14|N|HappyLife-Normal_Roaming|0|0|0|0|0|1|1|U|0|0|',
+	'114|Entry|2000|1000||30|14|N|Standart for Neg angiinhan 20121220-20130630|0|0|0|0|0|1|1|U|0|0|',
+	'115|Entry|12500|5000||30|14|B|"Dopin MCS-2Khos 12500,5000,30 20130522-0630"|0|0|0|0|0|0|12|U|0|0|',
+	'116|Entry|30000|5000||30|14|B|"DOPIN SILV for MCS20-30000,5000,30 20130522-0630"|0|0|0|0|0|1|12|U|0|0|',
+	'118|Entry|2500|1000||100|14|N|ShineSumd HappyLife-2 2500 2011.10.03-12.31|0|0|0|0|0|1|1|U|0|0|',
+	'119|Entry|15000|5000||30|14|C|CDOPIN Engiin |0|0|0|0|0|1|61|U|0|0|',
+	'120|Entry|3000|500||60|14|N|HappyLife for MobileDealer 2011.12.08|0|0|0|0|0|1|1|U|0|0|',
+	'125|Entry|5000|2000||90|14|M|Happy-90days Normal for new subs 0301-0430|0|0|0|0|0|1|27|U|0|0|',
+	'126|Entry|20000|5000||30|14|E|"Dopin-90days Normal 20000,5000,30"|0|0|0|0|0|1|34|U|0|0|',
+	'127|Entry|15000|5000||30|14|E|Dopin-90days Normal for new subs 0301-0430|0|0|0|0|0|1|34|U|0|0|',
+	'129|Entry|5000|1000||7|14|B|"Dopin New Subs Normal 5000, 1000,7 - 0415-0630"|0|0|0|0|0|1|12|U|0|0|',
+	'132|Entry|88000|10000||365|14|B|"Dopin New Subs Normal 88000, 10000,365 - 0415-0630"|0|0|0|0|0|1|12|U|0|0|',
+	'133|Entry|1088000|50000||365|14|B|"Dopin New Subs Brill 1088000, 50000,365-0415-0630"|0|0|0|0|0|1|12|U|0|0|',
+	'134|Entry|588000|20000||365|14|B|"Dopin New Subs Gold 588000, 20000,365-0415-0630"|0|0|0|0|0|1|12|U|0|0|',
+	'135|Entry|4000|2000||90|14|N|"HappyLife MCS-2Khos 8000,2000,90 20130522-0630"|0|0|0|0|0|1|1|U|0|0|',
+	'136|Entry|188000|20000||365|14|B|"Dopin New Subs SILV 188000, 20000,365-0415-0630"|0|0|0|0|0|1|12|U|0|0|',
+	'137|Entry|88000|10000||365|14|E|"Dopin-90days New Subs 88000, 10000,365-0415-0630"|0|0|0|0|0|1|34|U|0|0|',
+	'138|Entry|108000|5000||365|14|B|"Dopin + Stone handset 108000, 2012.08.20-12.31"|0|0|0|0|0|0|12|U|0|0|',
+	'139|Entry|5000|1000||7|14|E|"Dopin-90days New Subs 5000, 1000,7-0415-0630"|0|0|0|0|0|1|34|U|0|0|',
+	'142|Entry|0|0||1|0|N|Standart Lucky - SCPgrace for CRM-0415-0702|0|0|0|0|0|0|1|U|0|0|',
+	'143|Entry|18000|5000||30|14|B|"Dopin for Eunitel 18000,5000,30"|0|0|0|0|0|1|12|U|0|0|',
+	'144|Entry|9000|6000||120|14|N|Standart for Eunitel 9000.6000.120|0|0|0|0|0|1|1|U|0|0|',
+	'151|Entry|100000|20000||30|14|C|"CDOPIN 88AAAA88,8XA(A)B8XA(A)B, AABB,ABAB,Silver"|0|0|0|0|0|0|61|U|0|0|',
+	'152|Entry|500000|20000||30|14|C|"CDOPIN 8XxAAAAA , 8XAAAAAx, 8XxxAAAA Gold"|0|0|0|0|0|1|61|U|0|0|',
+	'153|Entry|1000000|50000||30|14|C|"CDOPIN 88,89AAAAAA  Brilliant"|0|0|0|0|0|1|61|U|0|0|',
+	'156|Entry|20000|5000||30|14|B|"Dopin 20000,5000,30"|0|0|0|0|0|1|12|U|0|0|',
+	'158|Entry|10000|500||60|14|N|"Happy life for greet 10000,500,30 20121115-1215"|0|0|0|0|0|1|1|U|0|0|',
+	'159|Entry|2000|2000||90|14|N|Happy Chain beleg 2000.2000.90 - 130422-512|0|0|0|0|0|1|1|U|0|0|',
+	'160|Entry|1000|1000||30|14|N|"Standart for Dopin 1 year 1000, 1000, 30 ~20121231"|0|0|0|0|0|1|1|U|0|0|',
+	'165|Entry|0|0||1|0|B|Dopin Lucky - SCPgrace for CRM-0415-0702|0|0|0|0|0|1|12|U|0|0|',
+	'168|Entry|5000|2000||90|14|N|"Standart Normal MCS20 5000,2000,90 0422-0531"|0|0|0|0|0|0|1|U|0|0|',
 	'169|Recharge|3000|3000||30|14|NPSYGUHMQR|Rural 3000 + 1500|||||||||||"1500 FreeRemains; If Admin recharges, 3 FreeSmsFF to FF members (Valid for 3 days); Loyalty Point Bonus"',
 	'170|Recharge|5000|5000||50|14|NPSYGUHMQR|Rural 5000 + 2500|||||||||||"2500 FreeRemains; If Admin recharges, 5 FreeSmsFF to FF members (Valid for 3 days); Loyalty Point Bonus"',
 	'171|Recharge|120000|10000||365|14|AZBXCDFEW|Rural Dopin 120000 + GG/2|||||||||||Loyalty Point Bonus will be added 2 times lower than usual 120000 card (20)',
 	'172|Recharge|10000|10000||100|14|NPSYGUHMQR|Rural 10000 + 5000|||||||||||"5000 FreeRemains;  If Admin recharges, 10 FreeSmsFF to FF members (Valid for 3 days); Loyalty Point Bonus"',
-	'173|Entry|15000||5000|30|14|B|Dopin Normal  NewSubs & MCS20 20130630hurtel|0|0|0|0|0|0|12|U|0|0|',
-	'174|Entry|1060000||50000|365|14|B|Dopin MCS20 BRILL 1060000.50000.365- 130422-0531|0|0|0|0|0|1|12|U|0|0|',
-	'175|Entry|560000||20000|365|14|B|Dopin MCS20 Gold 560000.20000.365- 130422-0531|0|0|0|0|0|1|12|U|0|0|',
-	'176|Entry|160000||20000|365|14|B|Dopin MCS20 Silv 160000.20000.365- 130422-0531|0|0|0|0|0|1|12|U|0|0|',
-	'177|Entry|5000||1000|7|14|C|CDopin New Subs Normal 5000.1000.7 - 0419-0630|0|0|0|0|0|1|61|U|0|0|',
-	'178|Entry|88000||10000|365|14|C|"CDopin New Subs Normal 88000, 10000,365 -0419-0630"|0|0|0|0|0|1|61|U|0|0|',
-	'180|Entry|10000||5000|30|14|Q|"PackageSim 10000,5000,30"|0|0|0|0|0|1|33|U|0|0|',
-	'186|Entry|60000||2000|180|14|C|"CDOPIN Normal-Nomads 60000,2000,180 0501~"|0|0|0|0|0|1|61|U|0|0|',
-	'188|Entry|160000||20000|180|14|C|"CDOPIN SILV-Nomads 160000,20000,180 0501~"|0|0|0|0|0|1|61|U|0|0|',
-	'189|Entry|1060000||50000|180|14|C|"CDOPIN BRILL-Nomads 1060000,50000,180 0501~"|0|0|0|0|0|1|61|U|0|0|',
-	'191|Entry|560000||20000|180|14|C|"CDOPIN GOLD-Nomads 560000,20000,180 0501~"|0|0|0|0|0|1|61|U|0|0|',
-	'197|Entry|60000||10000|365|14|B|Dopin MCS20 normal 60000.10000.365- 130422-0531|0|0|0|0|0|1|12|U|0|0|',
-	'198|Entry|20000||5000|30|14|C|"CDOPIN 20000,5000,30 "|0|0|0|0|0|0|61|U|0|0|',
-	'202|Entry|60000||5000|365|14|B|"Dopin 60000,5000,365 20120820~20121231"|0|0|0|0|0|0|12|U|0|0|',
-	'203|Entry|88000||5000|365|14|B|"Dopin 88000,5000,365 20120820~20121231"|0|0|0|0|0|0|12|U|0|0|',
-	'210|Entry|15000||5000|30|14|B|"Dopin Chain 15000,5000,30 130422-0512"|0|0|0|0|0|1|12|U|0|0|',
-	'211|Entry|10000||8000|30|14|Z|"CorpPPS  20-50,10000"|0|0|0|0|0|1|40|U|0|0|',
-	'212|Entry|10000||10000|30|14|Z|CorpPPS 51-s deesh 10000|0|0|0|0|0|1|40|U|0|0|',
-	'213|Entry|1000000||50000|120|14|Z|"CorpPPS 88,89AAAAAA  Brilliant "|0|0|0|0|0|1|40|U|0|0|',
-	'214|Entry|500000||20000|120|14|Z|"CorpPPS 8xxAAAAA , 8xAAAAAx, 8xxxAAAA Gold"|0|0|0|0|0|1|40|U|0|0|',
-	'215|Entry|100000||20000|120|14|Z|"CorpPPS 88AAAA88,8XA(A)B8XA(A)B, AABB,ABAB,Silver"|0|0|0|0|0|0|40|U|0|0|',
-	'216|Entry|100000||20000|120|14|Z|"CorpPPS 8XABBA8X,8XXXABBA,AAAB,BAAA "|0|0|0|0|0|1|40|U|0|0|',
-	'217|Entry|50000||20000|30|14|N|"HAPPY 88XXAABA, 89XXAABA, 88XXABAA, 89XXABAA"|0|0|0|0|0|1|1|U|0|0|',
-	'219|Entry|0||0|180|14|P|30GB for iPad3|0|0|0|0|0|1|16|U|0|31457280|',
-	'220|Entry|188000||20000|365|14|C|"CDopin New Subs Gold 188000, 20000,365-0419-0630"|0|0|0|0|0|1|61|U|0|0|',
-	'221|Entry|588000||20000|365|14|C|"CDopin New Subs Gold 588000, 20000,365-0419-0630"|0|0|0|0|0|1|61|U|0|0|',
-	'222|Entry|1088000||50000|365|14|C|"CDopin New Subs Brill 1088000, 50000,365-0419-0630"|0|0|0|0|0|1|61|U|0|0|',
-	'224|Entry|10000||5000|120|14|N|MSC Electronix Promo|0|0|0|0|0|1|1|U|0|0|',
-	'228|Entry|10000||5000|120|14|R|Second NORMAL 10 000|0|0|0|0|0|1|28|U|0|0|',
-	'229|Entry|100000||20000|120|14|R|Second SILVER 100 000|0|0|0|0|0|1|28|U|0|0|',
-	'230|Entry|500000||20000|120|14|R|Second GOLD 500 000|0|0|0|0|0|1|28|U|0|0|',
-	'231|Entry|1000000||50000|120|14|R|Second BRILLIANT 1 000 000|0|0|0|0|0|1|28|U|0|0|',
-	'232|Entry|6500||0|60|365|P|PPSLive-CEX-6500MNT-Free-200MB-A60-G365|0|0|0|0|0|1|16|U|0|204800|',
-	'233|Entry|5000||2000|90|14|N|PresidentElection-5000MNT-2000MNT-90D|0|0|0|0|0|1|1|U|0|0|',
-	'234|Entry|5000||2000|90|14|N|Pattern Standart Single 0601-0631|0|0|0|0|0|1|1|U|0|0|',
-	'235|Entry|15000||5000|30|14|B|Pattern Dopin Single 0601-0631|0|0|0|0|0|1|12|U|0|0|',
-	'236|Entry|4000||2000|90|14|N|Pattern Standart Double 0601-0631|0|0|0|0|0|1|1|U|0|0|',
-	'237|Entry|12500||2000|30|14|B|Pattern Dopin Double 0601-0631|0|0|0|0|0|1|12|U|0|0|',
-	'238|Entry|3000||2000|90|14|N|Pattern Standart Triple A 0601-0631|0|0|0|0|0|1|1|U|0|0|',
-	'239|Entry|4000||2000|90|14|N|Pattern Standart Triple B 0601-0631|0|0|0|0|0|1|1|U|0|0|',
-	'240|Entry|10000||2000|30|14|B|Pattern Dopin Triple 0601-0631|0|0|0|0|0|1|12|U|0|0|',
+	'173|Entry|15000|5000||30|14|B|Dopin Normal  NewSubs & MCS20 20130630hurtel|0|0|0|0|0|0|12|U|0|0|',
+	'174|Entry|1060000|50000||365|14|B|Dopin MCS20 BRILL 1060000.50000.365- 130422-0531|0|0|0|0|0|1|12|U|0|0|',
+	'175|Entry|560000|20000||365|14|B|Dopin MCS20 Gold 560000.20000.365- 130422-0531|0|0|0|0|0|1|12|U|0|0|',
+	'176|Entry|160000|20000||365|14|B|Dopin MCS20 Silv 160000.20000.365- 130422-0531|0|0|0|0|0|1|12|U|0|0|',
+	'177|Entry|5000|1000||7|14|C|CDopin New Subs Normal 5000.1000.7 - 0419-0630|0|0|0|0|0|1|61|U|0|0|',
+	'178|Entry|88000|10000||365|14|C|"CDopin New Subs Normal 88000, 10000,365 -0419-0630"|0|0|0|0|0|1|61|U|0|0|',
+	'180|Entry|10000|5000||30|14|Q|"PackageSim 10000,5000,30"|0|0|0|0|0|1|33|U|0|0|',
+	'186|Entry|60000|2000||180|14|C|"CDOPIN Normal-Nomads 60000,2000,180 0501~"|0|0|0|0|0|1|61|U|0|0|',
+	'188|Entry|160000|20000||180|14|C|"CDOPIN SILV-Nomads 160000,20000,180 0501~"|0|0|0|0|0|1|61|U|0|0|',
+	'189|Entry|1060000|50000||180|14|C|"CDOPIN BRILL-Nomads 1060000,50000,180 0501~"|0|0|0|0|0|1|61|U|0|0|',
+	'191|Entry|560000|20000||180|14|C|"CDOPIN GOLD-Nomads 560000,20000,180 0501~"|0|0|0|0|0|1|61|U|0|0|',
+	'197|Entry|60000|10000||365|14|B|Dopin MCS20 normal 60000.10000.365- 130422-0531|0|0|0|0|0|1|12|U|0|0|',
+	'198|Entry|20000|5000||30|14|C|"CDOPIN 20000,5000,30 "|0|0|0|0|0|0|61|U|0|0|',
+	'202|Entry|60000|5000||365|14|B|"Dopin 60000,5000,365 20120820~20121231"|0|0|0|0|0|0|12|U|0|0|',
+	'203|Entry|88000|5000||365|14|B|"Dopin 88000,5000,365 20120820~20121231"|0|0|0|0|0|0|12|U|0|0|',
+	'210|Entry|15000|5000||30|14|B|"Dopin Chain 15000,5000,30 130422-0512"|0|0|0|0|0|1|12|U|0|0|',
+	'211|Entry|10000|8000||30|14|Z|"CorpPPS  20-50,10000"|0|0|0|0|0|1|40|U|0|0|',
+	'212|Entry|10000|10000|30|14|Z|CorpPPS 51-s deesh 10000|0|0|0|0|0|1|40|U|0|0|',
+	'213|Entry|1000000|50000||120|14|Z|"CorpPPS 88,89AAAAAA  Brilliant "|0|0|0|0|0|1|40|U|0|0|',
+	'214|Entry|500000|20000||120|14|Z|"CorpPPS 8xxAAAAA , 8xAAAAAx, 8xxxAAAA Gold"|0|0|0|0|0|1|40|U|0|0|',
+	'215|Entry|100000|20000||120|14|Z|"CorpPPS 88AAAA88,8XA(A)B8XA(A)B, AABB,ABAB,Silver"|0|0|0|0|0|0|40|U|0|0|',
+	'216|Entry|100000|20000||120|14|Z|"CorpPPS 8XABBA8X,8XXXABBA,AAAB,BAAA "|0|0|0|0|0|1|40|U|0|0|',
+	'217|Entry|50000|20000||30|14|N|"HAPPY 88XXAABA, 89XXAABA, 88XXABAA, 89XXABAA"|0|0|0|0|0|1|1|U|0|0|',
+	'219|Entry|0|0||180|14|P|30GB for iPad3|0|0|0|0|0|1|16|U|0|31457280|',
+	'220|Entry|188000|20000||365|14|C|"CDopin New Subs Gold 188000, 20000,365-0419-0630"|0|0|0|0|0|1|61|U|0|0|',
+	'221|Entry|588000|20000||365|14|C|"CDopin New Subs Gold 588000, 20000,365-0419-0630"|0|0|0|0|0|1|61|U|0|0|',
+	'222|Entry|1088000|50000||365|14|C|"CDopin New Subs Brill 1088000, 50000,365-0419-0630"|0|0|0|0|0|1|61|U|0|0|',
+	'224|Entry|10000|5000||120|14|N|MSC Electronix Promo|0|0|0|0|0|1|1|U|0|0|',
+	'228|Entry|10000|5000||120|14|R|Second NORMAL 10 000|0|0|0|0|0|1|28|U|0|0|',
+	'229|Entry|100000|20000||120|14|R|Second SILVER 100 000|0|0|0|0|0|1|28|U|0|0|',
+	'230|Entry|500000|20000||120|14|R|Second GOLD 500 000|0|0|0|0|0|1|28|U|0|0|',
+	'231|Entry|1000000|50000||120|14|R|Second BRILLIANT 1 000 000|0|0|0|0|0|1|28|U|0|0|',
+	'232|Entry|6500|0||60|365|P|PPSLive-CEX-6500MNT-Free-200MB-A60-G365|0|0|0|0|0|1|16|U|0|204800|',
+	'233|Entry|5000|2000||90|14|N|PresidentElection-5000MNT-2000MNT-90D|0|0|0|0|0|1|1|U|0|0|',
+	'234|Entry|5000|2000||90|14|N|Pattern Standart Single 0601-0631|0|0|0|0|0|1|1|U|0|0|',
+	'235|Entry|15000|5000||30|14|B|Pattern Dopin Single 0601-0631|0|0|0|0|0|1|12|U|0|0|',
+	'236|Entry|4000|2000||90|14|N|Pattern Standart Double 0601-0631|0|0|0|0|0|1|1|U|0|0|',
+	'237|Entry|12500|2000||30|14|B|Pattern Dopin Double 0601-0631|0|0|0|0|0|1|12|U|0|0|',
+	'238|Entry|3000|2000||90|14|N|Pattern Standart Triple A 0601-0631|0|0|0|0|0|1|1|U|0|0|',
+	'239|Entry|4000|2000||90|14|N|Pattern Standart Triple B 0601-0631|0|0|0|0|0|1|1|U|0|0|',
+	'240|Entry|10000|2000||30|14|B|Pattern Dopin Triple 0601-0631|0|0|0|0|0|1|12|U|0|0|',
 	);
 
 $category_data = array(
@@ -164,6 +164,8 @@ $voucher_id = drush_shift();
 	
 $term = array();
 $term['vouchertype'] = ocs_get_terms_tid( 'vouchertype');
+$term['countersubunit'] = ocs_get_terms_tid( 'countersubunit');
+print_r( $term);
 foreach( ocs_get_terms( 'tpl_vouchercardtype') as $t) {
 	$term['tpl_vouchercardtype'][$t->field_rel_type['und'][0]['value']] = $t->tid;
 }
@@ -213,6 +215,7 @@ foreach( $data as $item) {
 	*/
 
 
+	/*
 	$price = empty( $d[$h['Selling Price']]) ? '0' : $d[$h['Selling Price']];
 	$voucher->field_price_amount_float['und'][0]['value'] = $price;
 	$voucher->field_active_period['und'][0]['value'] = $d[$h['Active Days']];
@@ -236,6 +239,7 @@ foreach( $data as $item) {
 	$voucher->field_tree_child_voca_name['und'][0]['value'] = 'tpl_vouchercardtype';
 
 	node_save( $voucher);
+	*/
 //	printf("voucher type saved\n");
 
 	// 자동으로 voucher를 위한 counter를 생성시킨다.
@@ -245,38 +249,31 @@ foreach( $data as $item) {
 		$node = get_voucher_attr( $voucher, 'treenodecounterforvoucher', $counter);
 		unset( $node->field_amount['und']);
 
-		$amount = NULL;
-		if ( $counter->title == 'PacketPackage') {
-			// set data
-			if ( !empty( $d[$h['Data']])) {
-				$amount = $d[$h['Data']];
-				if ( substr( $amount, -2) == 'MB') $amount = substr( $amount, 0, -2) * 1024 * 1024;
-				$node->field_amount['und'][0]['value'] = $amount;
-				printf("  %s : %d\n", $counter->title, $amount);
-			}
-		}
-		else {
-			$mapping = array( 
-				'Remains' => 'Remains',
-				'FreeCallTime' => 'FREE_TIME',
-				'FreeSms' => 'FREE_SMS',
-				'FreeMms' => 'FREE_MMS',
-				'FreeCrbt' => 'FREE_CRBT',
-				'FreeGprs' => 'FREE_GPRS',
-				'FreeVideoCallTime' => 'FREE_VCALL_TIME',
-				);
+		$mapping = array( 
+			'Remains' => array( 'Remains', 'Money'),
+			'FreeCallTime' => array( 'FREE_TIME', 'Sec'),
+			'FreeSms' => array( 'FREE_SMS', 'Count'),
+			'FreeMms' => array( 'FREE_MMS', 'Count'),
+			'FreeCrbt' => array( 'FREE_CRBT', 'Count'),
+			'FreeGprs' => array( 'FREE_GPRS', 'Byte'),
+			'FreeVideoCallTime' => array( 'FREE_VCALL_TIME', 'Sec'),
+			'PacketPackage' => array( 'PACKET_PACKAGE', 'KByte'),
+			);
 
-			// set remains
-			if ( isset( $mapping[$counter->title]) ) {
-				if ( !empty( $d[$h[$mapping[$counter->title]]])) {
-					$node->field_amount['und'][0]['value'] = $d[$h[$mapping[$counter->title]]];
-					printf("  %s : %d\n", $counter->title, $node->field_amount['und'][0]['value']);
-				}
+		// set remains
+		if ( isset( $mapping[$counter->title]) ) {
+			if ( !empty( $d[$h[$mapping[$counter->title][0]]])) {
+				$node->field_amount['und'][0]['value'] = $d[$h[$mapping[$counter->title][0]]];
+				printf("  %s : %d\n", $counter->title, $node->field_amount['und'][0]['value']);
 			}
+			$node->field_counter_sub_unit_type['und'][0]['tid'] = $term['countersubunit'][$mapping[$counter->title][1]];
 		}
+		$node->field_ref_tree_tid['und'][0]['tid'] = 796;
 
 		node_save($node);
 	}
+
+	continue;
 
 	// loyaltypoint content type을 자동으로 생성해준다.
 	$node = get_voucher_attr( $voucher, 'loyaltypoint');
