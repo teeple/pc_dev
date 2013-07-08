@@ -11,8 +11,7 @@ function _product_change_scheme_for_export($exportItemNids = NULL, $isExternalAP
     }
     
     $viewResult = views_get_view_result('list_product_change', 'panel_pane_3', join(',', $exportItemNids));
-    
-	foreach ($viewResult as $record) {
+  foreach ($viewResult as $record) {
 		$productChange = array();
 		
 		$productChange['product_change_scheme_id'] = $record->field_field_product_change_id[0]['raw']['value'];
@@ -41,7 +40,7 @@ function _product_change_scheme_for_export($exportItemNids = NULL, $isExternalAP
 		$graceDate = array();
 		$graceDate['options'] = isset($record->field_field_gracedate_options[0]['rendered']['#title'])? $record->field_field_gracedate_options[0]['rendered']['#title']: NULL;
 		
-		if($record->field_field_gracedate_options[0]['rendered']['#options']['entity']->tid != 7768) {
+		if(isset($record->field_field_gracedate_options[0]) &&  $record->field_field_gracedate_options[0]['rendered']['#options']['entity']->name != 'Fixed Date') {
 			$graceDate['ndays'] = isset($record->field_field_gracedate_ndays[0]['raw']['value'])? $record->field_field_gracedate_ndays[0]['raw']['value']: NULL;
 			$graceDate['fixed_date'] = NULL;
 		} else {
@@ -53,7 +52,7 @@ function _product_change_scheme_for_export($exportItemNids = NULL, $isExternalAP
 		$expireDate = array();
 		$expireDate['options'] = isset($record->field_field_expiredate_options[0]['rendered']['#title'])? $record->field_field_expiredate_options[0]['rendered']['#title']: NULL;
 		
-		if($record->field_field_expiredate_options[0]['rendered']['#options']['entity']->tid != 7768) {
+		if(isset($record->field_field_expiredate_options[0]) && $record->field_field_expiredate_options[0]['rendered']['#options']['entity']->name != 'Fixed Date') {
 			$expireDate['ndays'] = isset($record->field_field_expiredate_ndays[0]['raw']['value'])? $record->field_field_expiredate_ndays[0]['raw']['value']: NULL;
 			$expireDate['fixed_date'] = NULL;			
 		} else {
@@ -74,7 +73,9 @@ function _product_change_scheme_for_export($exportItemNids = NULL, $isExternalAP
 		
 		$selctedCounters = array();
 		foreach($viewResultCounterSelected as $item) {
-			$selctedCounters[] = array('counter_id' => $item->field_field_counter_id[0]['raw']['value']);
+			if(isset($item->field_field_counter_id[0])){
+				$selctedCounters[] = array('counter_id' => $item->field_field_counter_id[0]['raw']['value']);
+			}
 		}
 		$productChange['transferable_counters'] = $selctedCounters;
 		

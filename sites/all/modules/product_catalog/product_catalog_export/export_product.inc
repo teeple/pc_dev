@@ -807,8 +807,6 @@ function _get_attribute_exceptions($product) {
     
     if(isset($expireDateTypeTerm)) {
     
-    	dsm($product, 'product');
-    	
     	if($expireDateTypeTerm->name == 'Hour') {
     		$retArray['expire_date'] = isset($product->field_expire_date_for_hour['und'][0]['value'])? $product->field_expire_date_for_hour['und'][0]['value']: NULL;
     	
