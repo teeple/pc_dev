@@ -1,7 +1,64 @@
 <?php
 
+function _validate_product_change_scheme( $prd_list)
+{
+	$list = array();
+
+	foreach( $prd_list as $scheme_nid => $scheme) {
+		if ( ! isset( $scheme->field_from_product_group['und']) || ! isset( $scheme->field_to_product_group['und'])) 
+			continue;
+
+		$from_grp_nid = $scheme->field_from_product_group['und'][0]['nid'];
+		$to_grp_nid = $scheme->field_to_product_group['und'][0]['nid'];
+		$from_nids = ocs_get_nids_by_cond( 'productgroupmainselected', array(
+			array( 'field_ref_product_group', 'nid', $from_grp_nid)));
+		$to_nids = ocs_get_nids_by_cond( 'productgroupmainselected', array(
+			array( 'field_ref_product_group', 'nid', $to_grp_nid)));
+
+		if ( empty( $from_nids) || empty( $to_nids)) continue;
+
+		foreach( $from_nids as $from_nid) {
+			$from = node_load( $from_nid);
+			$from_grp = $from->field_ref_product['und'][0]['nid'];
+			foreach( $to_nids as $to_nid) {
+				$to = node_load( $to_nid);
+				$to_grp = $to->field_ref_product['und'][0]['nid'];
+				if ( isset( $list[$from_grp][$to_grp])) {
+					$list[$from_grp][$to_grp] ++;
+				}
+				else {
+					$list[$from_grp][$to_grp] = 1;
+				}
+			}
+		}
+	}
+
+	$duplicated = FALSE;
+	foreach( $list as $from => $sub_list) {
+		foreach( $sub_list as $to => $count) {
+			if ( $count > 1) {
+				$from_p = node_load( $from);
+				$to_p = node_load( $to);
+				drupal_set_message(t( 'Product change scheme from "@1" to "@2" is defined @t times.', 
+					array( '@1' => $from_p->title, '@2' => $to_p->title, '@t' => $count)), 'error');
+
+				$duplicated = TRUE;
+			}
+		}
+	}
+
+	return ($duplicated === FALSE);
+}
+
 function deploy_all( $type, $prd_list, $target, $redirectFlag = TRUE)
 {
+	if ( $type === 'PRODUCT_CHANGE_SCHEME') {
+		if ( _validate_product_change_scheme( $prd_list) === FALSE) {
+			drupal_set_message('FATAL : Invalid Product Change Scheme', 'error');
+			return;
+		}
+	}
+
 	$_SESSION['http_request_count'] = 0; // reset counter for debug information.
 	if ( isset( $redirectFlag)) {
 		$_SESSION['redirect_after_batch'] = 'lifecycles/history/'.$type;
@@ -41,21 +98,25 @@ function batch_deploy_product_op( $type, $nid, $obj, $target, &$context)
 
 function batch_deploy_result( $param)
 {
-	$result = $param['result'];
-
 	$rows = array();
 	$rows[] = array( 'Name', $param['title']);
-	$rows[] = array( 'URL', $param['url']);
-	$rows[] = array( 'RESULT', $result->code . ' ' . $result->status_message);
-
-	$resultData = json_decode( $result->data, TRUE);
-	$r = array();
-	foreach( array( 'OCS', 'CS', 'CRM') as $sys) {
-		if ( isset($resultData[$sys])) {
-			$r[] = array( $sys, $resultData[$sys]['result_code'], $resultData[$sys]['result_reason']);
-		}
+	if ( isset( $param['error'])) {
+		$rows[] = array( 'Error', $param['error']);
 	}
-	$rows[] = array( '', theme( 'table', array( 'rows' => $r)));
+	else {
+		$result = $param['result'];
+		$rows[] = array( 'URL', $param['url']);
+		$rows[] = array( 'RESULT', $result->code . ' ' . $result->status_message);
+
+		$resultData = json_decode( $result->data, TRUE);
+		$r = array();
+		foreach( array( 'OCS', 'CS', 'CRM') as $sys) {
+			if ( isset($resultData[$sys])) {
+				$r[] = array( $sys, $resultData[$sys]['result_code'], $resultData[$sys]['result_reason']);
+			}
+		}
+		$rows[] = array( '', theme( 'table', array( 'rows' => $r)));
+	}
 
 	return theme( 'table', array( 'rows' => $rows));
 }
