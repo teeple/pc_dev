@@ -516,6 +516,14 @@ function product_catalog_form_node_validate($node, $form, &$form_state) {
 						form_set_error('field_prefix', 'Duplicated Prefix found!');
 					}
 					break;
+				
+				case 'unittransfer_node_form':
+					if( !empty($form_state['values']['field_test_limit_amount']['und'])) {
+						if($form_state['values']['field_test_limit_amount']['und'][0]['value'] > 999999999999 ) {
+							form_set_error('field_test_limit_amount', 'Limit Amount should be smallter than or eqaul to 999999999999');
+						}
+					}
+					break;
 
 				case 'carrier_mobile_node_form' :
 					$isDuplicated = FALSE;
@@ -527,7 +535,7 @@ function product_catalog_form_node_validate($node, $form, &$form_state) {
 							$prefixs[] = $item['value'];
 						}
 					}
-
+					
 					$countPrefixs = array_count_values($prefixs);
 					foreach ($countPrefixs as $item) {
 						if ($item > 1) {
@@ -895,7 +903,7 @@ function product_catalog_form_node_validate($node, $form, &$form_state) {
 						case 'Monthly' :
 							$charging_day_month = $form_state['values']['field_rcrr_charging_day_monthly'];
 							if (empty($charging_day_month) || empty($charging_day_month['und'][0]['value'])) {
-								form_set_error('field_rcrr_charging_day_monthly', "Day of Monthl should be selected");
+								form_set_error('field_rcrr_charging_day_monthly', "Day of Monthy should be selected");
 							}
 
 							break;

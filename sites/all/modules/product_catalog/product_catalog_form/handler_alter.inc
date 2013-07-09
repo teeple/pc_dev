@@ -1049,9 +1049,11 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 				unset($form['#group_children']);
 
 			} else if ($refTreeTerm -> name == 'Accumulating') {
+			
 				$form['field_unlimited_threshold']['#type'] = 'hidden';
 				$form['field_threshold_limit_amount']['#type'] = 'hidden';
-
+				$form['field_counter_sub_unit_type']['#type'] = 'hidden';
+				
 				$productNid = $form['#node'] -> field_ref_product['und'][0]['nid'];
 
 				$tempView = views_get_view('list_treenodecounter');
