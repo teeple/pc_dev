@@ -423,7 +423,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 				$serviceDomainTid = $form['field_service_domain']['und']['#default_value'][0];
 				$billTypeTid = $form['field_billing_type']['und']['#default_value'][0];
 				$viewResult = views_get_view_result('list_product_group', 'panel_pane_3', $serviceDomainTid, $billTypeTid);
-				$options = array();
+
 				foreach ($viewResult as $item) {
 					$options[$item -> nid] = $item -> node_title;
 				}
@@ -661,7 +661,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			$productNode = find_parent_product($parentNode);
 
 			$args = array();
-			$args = array('0' => $productNode -> field_service_type_of_provider['und'][0]['tid'], '1' => $productNode -> field_service_operator['und'][0]['tid'], '2' => $productNode -> field_billing_type['und'][0]['tid'], '3' => $productNode -> field_customer_type['und'][0]['tid']);
+			$args = array('0' => $productNode -> field_service_type_of_provider['und'][0]['tid'], '1' => $productNode -> field_service_operator['und'][0]['tid'], '2' => $productNode -> field_billing_type['und'][0]['tid'], '3' => $productNode -> field_custdvcd4prod['und'][0]['tid']);
 			
 			$productBillingType = taxonomy_term_load($productNode -> field_billing_type['und'][0]['tid']);
 			dsm($productBillingType, 'productBillingType');
@@ -1252,10 +1252,6 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 				
 				$viewResult = views_get_view_result('list_product_for_nextjoin', 'panel_pane_2', $serviceDomainTid, $productTypeTid, $billingTypeTid, $svcOperatorTid);
 				
-				// $customerTypeTid = $form['field_customer_type']['und']['#default_value'][0];
-
-				//$viewResult = views_get_view_result('list_product_for_nextjoin', 'panel_pane_2', $serviceDomainTid, $productTypeTid, $billingTypeTid, $svcOperatorTid, $customerTypeTid);
-
 				$options = array();
 				foreach ($viewResult as $item) {
 					$options[$item -> nid] = $item -> node_title;
@@ -1276,7 +1272,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 
 				$form['field_billing_type']['und']['#ajax'] = array('callback' => 'nextjoin_product_ajax_callback', 'wrapper' => 'next_join_product_div');
 				$form['field_service_operator']['und']['#ajax'] = array('callback' => 'nextjoin_product_ajax_callback', 'wrapper' => 'next_join_product_div');
-				$form['field_customer_type']['und']['#ajax'] = array('callback' => 'nextjoin_product_ajax_callback', 'wrapper' => 'next_join_product_div');
+				$form['field_custdvcd4prod']['und']['#ajax'] = array('callback' => 'nextjoin_product_ajax_callback', 'wrapper' => 'next_join_product_div');
 
 				// in case Edit
 			} else {
@@ -1303,10 +1299,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 				$svcDomainTid = $form['field_service_type_of_provider']['und']['#default_value'][0];
 				$billingTypeTid = $form['field_billing_type']['und']['#default_value'];
 				$svcOperatorTid = $form['field_service_operator']['und']['#default_value'];
-				// $customerTypeTid = $form['field_customer_type']['und']['#default_value'][0];
-
-				// $viewResult = views_get_view_result('list_product_for_nextjoin', 'panel_pane_2', $svcDomainTid, $productTypeTid, $billingTypeTid, $svcOperatorTid, $customerTypeTid);
-
+				
 				$viewResult = views_get_view_result('list_product_for_nextjoin', 'panel_pane_2', $svcDomainTid, $productTypeTid, $billingTypeTid, $svcOperatorTid);
 
 				$options = array();
@@ -1336,7 +1329,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			if ($firstPathName == 'relation') {
 				$form['title']['#type'] = 'hidden';
 
-				$unsetItems = array_merge($unsetItems, array('field_expire_date_for_hour', 'field_description', 'field_offering_status', 'field_version', 'field_billing_type', 'field_validfor_product', 'field_service_operator', 'field_billing_cycle', 'field_product_id', 'field_custdvcd4prod', 'field_customer_group_type', 'field_is_bundle', 'field_deferred_subscription_flag', 'field_price_units', 'field_treatment_price_amount', 'field_treatment_day', 'field_contract_period', 'field_roaming_allowed', 'field_cug_member_counter', 'field_short_code', 'field_next_join_product', 'field_expire_date_type', 'field_expire_date', 'field_field_deferred_subscriptio', 'field_hlr_template_id', 'field_point_for_subscription', 'field_next_join_confirm', 'field_resubscription_flag', 'field_cug_customer_type', 'field_cug_group_type'));
+				$unsetItems = array_merge($unsetItems, array('field_product_sub_type', 'field_expire_date_for_hour', 'field_description', 'field_offering_status', 'field_version', 'field_billing_type', 'field_validfor_product', 'field_service_operator', 'field_billing_cycle', 'field_product_id', 'field_custdvcd4prod', 'field_customer_group_type', 'field_is_bundle', 'field_deferred_subscription_flag', 'field_price_units', 'field_treatment_price_amount', 'field_treatment_day', 'field_contract_period', 'field_roaming_allowed', 'field_cug_member_counter', 'field_short_code', 'field_next_join_product', 'field_expire_date_type', 'field_expire_date', 'field_field_deferred_subscriptio', 'field_hlr_template_id', 'field_point_for_subscription', 'field_next_join_confirm', 'field_resubscription_flag', 'field_cug_customer_type', 'field_cug_group_type'));
 
 				$options = _get_product_exclusive_list($form['nid']['#value']);
 				$form['field_exclusiveness']['und']['#options'] = $options['list'];
@@ -2651,9 +2644,6 @@ function nextjoin_product_ajax_callback(&$form, &$form_state) {
 	$svcOperatorTid = isset($form_state['values']['field_service_operator']) ? $form_state['values']['field_service_operator']['und'][0]['tid'] : NULL;
 	
 	$viewResult = views_get_view_result('list_product_for_nextjoin', 'panel_pane_2', $svcDomainTid, $productTypeTid, $billingTypeTid, $svcOperatorTid);
-	// $customerTypeTid = isset($form_state['values']['field_customer_type']) ? $form_state['values']['field_customer_type']['und'][0]['tid'] : NULL;
-
-	// $viewResult = views_get_view_result('list_product_for_nextjoin', 'panel_pane_2', $svcDomainTid, $productTypeTid, $billingTypeTid, $svcOperatorTid, $customerTypeTid);
 
 	$options = array();
 	foreach ($viewResult as $item) {
@@ -3003,13 +2993,15 @@ function _get_call_type_options() {
 
 function _get_product_exclusive_list($productNid) {
 	$product = node_load($productNid);
-
+	
+	dsm($product, 'product');
+	
 	$productTypeTerm = taxonomy_term_load($product -> field_product_type['und'][0]['tid']);
-
+	
 	$svcDomainTid = $product -> field_service_type_of_provider['und'][0]['tid'];
 	$billingTypeTid = $product -> field_billing_type['und'][0]['tid'];
 	$svcOperatorTid = $product -> field_service_operator['und'][0]['tid'];
-	$customerTypeTid = $product -> field_customer_type['und'][0]['tid'];
+	$customerTypeTid = $product -> field_custdvcd4prod['und'][0]['tid'];
 
 	$options = array();
 
