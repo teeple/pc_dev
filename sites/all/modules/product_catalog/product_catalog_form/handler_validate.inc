@@ -7,15 +7,15 @@ function validate_voucher($voucher_nid) {
 	$voucher_type_term = taxonomy_term_load($voucher_node -> field_ref_voucher_type['und'][0]['tid']);
 	$voucher_type = $voucher_type_term -> field_common_code['und'][0]['value'];
 
-	if ($voucher_type == 1) {//Entry Type일 때만 체크. Common Code 1 이 Entry
-		$list_mobile_domain_remains = views_get_view_result('list_counter_for_vouchercardtype', 'panel_pane_5', $voucher_nid);
-		if (empty($list_mobile_domain_remains)) {//if mobile domains does not have remains, than go further to find remains of product specific
+	if ($voucher_type != 4) {//Discount 가 아닐 때 체크. Common Code 4 가 Discount
+		$list_mobile_domain = views_get_view_result('list_counter_for_vouchercardtype', 'panel_pane_5', $voucher_nid);
+		if (empty($list_mobile_domain)) {//if mobile domains does not have any amount set, than go further to find amount set of product specific
 			$list_mobile_product = views_get_view_result('list_treenodeproductforvoucher', 'panel_pane_3', $voucher_nid);
 			if (empty($list_mobile_product)) {
 				$result['is_valid'] = FALSE;
 				$result['base_type'] = 'Vouhcer Card Type';
 				$result['title'] = $voucher_node -> title;
-				$result['reason'] = 'There is no remains set of Remains Counter Group for the mobile domain';
+				$result['reason'] = 'There is no amount set for the mobile domain';
 			} else {
 				foreach ($list_mobile_product as $tree_node_product) {
 					$tree_node_product_nid = $tree_node_product -> nid;
@@ -24,7 +24,7 @@ function validate_voucher($voucher_nid) {
 						$result['is_valid'] = FALSE;
 						$result['base_type'] = 'Vouhcer Card Type';
 						$result['title'] = $voucher_node -> title;
-						$result['reason'] = 'There is no remains set of Remains Counter Group for ' . $tree_node_product -> node_title . ' product';
+						$result['reason'] = 'There is no amount set for ' . $tree_node_product -> node_title . ' product';
 						break;
 					}
 				}
