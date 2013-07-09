@@ -664,12 +664,9 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			$args = array('0' => $productNode -> field_service_type_of_provider['und'][0]['tid'], '1' => $productNode -> field_service_operator['und'][0]['tid'], '2' => $productNode -> field_billing_type['und'][0]['tid'], '3' => $productNode -> field_custdvcd4prod['und'][0]['tid']);
 			
 			$productBillingType = taxonomy_term_load($productNode -> field_billing_type['und'][0]['tid']);
-			dsm($productBillingType, 'productBillingType');
 			if($productBillingType->name == 'Hybrid') {
 				$args[2] = 'all';
 			}
-			
-			dsm($args, 'args');
 			
 			$tempView = views_get_view('list_product_for_cond_main_product');
 			$tempView -> set_display('panel_pane_1');
@@ -2066,33 +2063,6 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 
 			_unset_menu_items($form, $form_id);
 
-			// Edit
-			/*
-			 dsm($form_state['values'], 'form_state_values');
-			 if(isset($form['nid']['#value'])) {
-
-			 $counterNode = node_load($form['field_ref_counter']['und']['#default_value'][0]);
-			 $counterTypeTerm = taxonomy_term_load($counterNode->field_counter_type['und'][0]['tid']);
-			 $counterUnitTypeTerm = taxonomy_term_load($counterNode->field_counter_unit_type['und'][0]['tid']);
-
-			 $options = array();
-			 foreach($counterUnitTypeTerm->field_ref_counter_sub_unit_type['und'] as $item) {
-			 $options[$item['tid']] = taxonomy_term_load($item['tid'])->name;
-			 }
-			 $form['field_counter_sub_unit_type']['und']['#options'] = $options;
-
-			 }
-
-			 // $form['field_enddate_option1']['#prefix'] = '<div id="actionsetcounter_fields_wrapper">';
-			 $form['field_counter_sub_unit_type']['#prefix'] = '<div id="actionsetcounter_fields_wrapper">';
-			 $form['field_enddate_option2']['#postfix'] = '</div>';
-
-			 $form['field_ref_counter']['und']['#ajax'] = array(
-			 'callback' => 'actionsetcounter_ajax_callback',
-			 'wrapper' => 'actionsetcounter_fields_wrapper'
-			 );
-			 */
-
 			break;
 
 		case 'roaming_ratinggroup_node_form' :
@@ -2655,11 +2625,6 @@ function nextjoin_product_ajax_callback(&$form, &$form_state) {
 	$returnStr .= drupal_render($form['field_next_join_product']);
 	$returnStr .= '</div>';
 	
-	dsm($form_state['values'], 'values');
-	
-	dsm($form_state['values']['field_expire_date_type']['und'][0]['tid'], 'fieldx_expire_date_type');
-	dsm($form_state['values']['field_next_join_confirm']['und'][0]['tid'], 'field_next_join_confirm');
-	
 	if( !in_array($form_state['values']['field_expire_date_type']['und'][0]['tid'], array('7155', '7156', '7780')) 
 		&& !in_array($form_state['values']['field_next_join_confirm']['und'][0]['tid'], array('7791', '7792'))
 		) {
@@ -2721,8 +2686,6 @@ function actionsetcounter_ajax_callback($form, &$form_state) {
 			$returnStr .= '</div>';
 		}
 	}
-	// dsm($options, 'options_in_ajax');
-
 	$form_state['rebuild'] = TRUE;
 
 	return $returnStr;
@@ -2993,8 +2956,6 @@ function _get_call_type_options() {
 
 function _get_product_exclusive_list($productNid) {
 	$product = node_load($productNid);
-	
-	dsm($product, 'product');
 	
 	$productTypeTerm = taxonomy_term_load($product -> field_product_type['und'][0]['tid']);
 	
