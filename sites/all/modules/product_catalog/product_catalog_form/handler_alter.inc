@@ -423,7 +423,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 				$serviceDomainTid = $form['field_service_domain']['und']['#default_value'][0];
 				$billTypeTid = $form['field_billing_type']['und']['#default_value'][0];
 				$viewResult = views_get_view_result('list_product_group', 'panel_pane_3', $serviceDomainTid, $billTypeTid);
-
+				$options = array();
 				foreach ($viewResult as $item) {
 					$options[$item -> nid] = $item -> node_title;
 				}
