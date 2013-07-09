@@ -735,6 +735,12 @@ function product_catalog_form_node_validate($node, $form, &$form_state) {
 							form_set_error('field_product_change_id', "Only letters and underscore is allowed for product change scheme id");
 						}
 					}
+					if(!isset($form_state['values']['field_from_product_group']['und'][0]['nid'])){
+						form_set_error('field_from_product_group','From Group is required');
+					}
+					if(!isset($form_state['values']['field_to_product_group']['und'][0]['nid'])){
+						form_set_error('field_to_product_group','To Group is required');
+					}
 					break;
 
 				case 'counter_node_form' :
