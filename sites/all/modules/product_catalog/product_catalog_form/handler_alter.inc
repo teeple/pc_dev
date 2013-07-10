@@ -1250,7 +1250,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 						unset($form['field_billing_type']['und']['#options'][680]);
 					}
 				}
-
+				
 				$serviceDomainTid = $form['field_service_type_of_provider']['und']['#default_value'][0];
 				$productTypeTid = $form['field_product_type']['und']['#default_value'][0];
 				$billingTypeTid = $form['field_billing_type']['und']['#default_value'];
@@ -1339,26 +1339,44 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 
 				$options = _get_product_exclusive_list($form['nid']['#value']);
 				$form['field_exclusiveness']['und']['#options'] = $options['list'];
-
+				
+				$args = $options['args'];
+				
 				$view = views_get_view('list_product_in_exclusive');
 				$view -> set_display('panel_pane_3');
-				$view -> set_arguments($options['args']);
+				$view -> set_arguments($args);
 				$view -> execute();
 
 				$viewResult = $view -> result;
-
+				
 				// $options = array('- None -');
 				$options = array();
 				foreach ($viewResult as $item) {
 					$options[$item -> nid] = view_get_field_value_by_label($view, 'PHP', $item);
 				}
+				
+				$view = views_get_view('list_product_in_exclusive');
+				$view -> set_display('panel_pane_9');
+				$args[2] = 'all'; // change billing type option = 'all';
+				$view -> set_arguments($args);
+				$view -> execute();
+
+				$viewResult = $view -> result;
+				
+				// $options = array('- None -');
+				foreach ($viewResult as $item) {
+					$options[$item -> nid] = view_get_field_value_by_label($view, 'PHP', $item);
+				}
 				$productTypeTerm = taxonomy_term_load($productTypeTid);
 
+				// Main 상품에서는 exclusiveness others를 사용
 				if ($productTypeTerm -> name == 'Main') {
 					$form['field_exclusiveness_others']['und']['#options'] = $options;
-
 					unset($form['field_exclusiveness']);
+				
+				// Other 상품에서는 exclusiveness를 사용
 				} else {
+					$form['field_exclusiveness']['und']['#options'] = $options;
 					$unsetItems = array_merge($unsetItems, array('field_exclusiveness_others'));
 				}
 
