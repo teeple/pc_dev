@@ -1059,7 +1059,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 				$tempView -> set_display('panel_pane_5');
 				$tempView -> set_arguments(array('0' => $productNid, '1' => 'Main'));
 				$tempView -> execute();
-
+				
 				$options = array();
 				foreach ($tempView->result as $treeNodeCounterItem) {
 					$options[$treeNodeCounterItem -> node_field_data_field_ref_counter_nid] = $treeNodeCounterItem -> node_field_data_field_ref_counter_title;

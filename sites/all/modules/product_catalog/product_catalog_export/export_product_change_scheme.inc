@@ -36,6 +36,8 @@ function _product_change_scheme_for_export($exportItemNids = NULL, $isExternalAP
 			$productChange['first_change_fee_free'] = TRUE;		
 		}
 		
+		$productChange['restiction_by_prefix'] = FALSE;
+		
 		// Grace Date Setting
 		$graceDate = array();
 		$graceDate['options'] = isset($record->field_field_gracedate_options[0]['rendered']['#title'])? $record->field_field_gracedate_options[0]['rendered']['#title']: NULL;
