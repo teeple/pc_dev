@@ -214,7 +214,7 @@ function product_catalog_form_node_validate($node, $form, &$form_state) {
 						$is_empty = TRUE;
 						for ($i = 0; $i < $value_count; $i++) {
 							$value = $form_state['values']['field_value']['und'][$i]['value'];
-							if (!empty($value)) {
+							if (!empty($value) || $value == '0') {
 								$is_empty = FALSE;
 								break;
 							}
@@ -230,7 +230,7 @@ function product_catalog_form_node_validate($node, $form, &$form_state) {
 						for ($i = 0; $i < $value_count; $i++) {
 							$value = $form_state['values']['field_value']['und'][$i]['value'];
 							$target_element = 'field_value][und][' . $i . '][value';
-							if (!empty($value) && !is_integer_string($value)) {
+							if ($value != '0' && !empty($value) && !is_integer_string($value)) {
 								$is_valid = FALSE;
 								$fail_rasion = 'Only Integer value is allowed';
 								break;
