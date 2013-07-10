@@ -392,7 +392,7 @@ function product_catalog_form_node_validate($node, $form, &$form_state) {
 							break;
 						}
 
-						if (intval($start) >= intval($end)) {
+						if (intval($start) > intval($end)) {
 							$targetElement .= $i . '][field_prefix_range_start';
 							$isValid = FALSE;
 							$failReason = 'Rang Start should be smaller than Range End';
