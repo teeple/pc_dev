@@ -50,12 +50,8 @@ function _product_for_export($exportItemNids = NULL, $isExternalAPI = FALSE, $ta
         $recurringTypes = array(1 => 'Daily', 3 => '1/3 Monthly', 4 => 'Monthly');
         
         if(!empty($nonUsage['recurring_scheme']['charge_scheme']['rcrr_period_type'])) {
-        	dsm('here1');
-        	
         	$nonUsage['recurring_charge']['period_type'] = $recurringTypes[$nonUsage['recurring_scheme']['charge_scheme']['rcrr_period_type']];
         } else {
-        	dsm('here2');
-        
  	       $nonUsage['recurring_charge']['period_type'] = NULL;
         }
         
@@ -140,7 +136,6 @@ function _get_deposit_scheme($product,$target=NULL) {
 			$prdAttributeDeposit = current($viewResult);
 			$depositAmount = $prdAttributeDeposit->field_field_deposit_amount[0]['raw']['value'];
 			
-			dsm($prdAttributeDeposit, 'prdAttributeDeposit');
 			$thresholdCounterNid = $prdAttributeDeposit->field_field_threshold_counter[0]['raw']['nid'];
 			
 			if($thresholdCounterNid > 0) {
@@ -469,8 +464,9 @@ function _get_onetime_charge($productNid) {
         $onetimeChargeTerm = taxonomy_term_load($item -> taxonomy_term_data_field_data_field_ref_otherontimecharge_ti);
         $onetimeChargeNode = node_load($item -> nid);
         $chargeType = _get_common_code($onetimeChargeTerm);
-        if (isset($onetimeChargeNode -> field_price_amount_float['und'][0]['value'])) {
-            $price = $onetimeChargeNode -> field_price_amount_float['und'][0]['value'];
+				
+        if (isset($onetimeChargeNode -> field_price_amount_decimal['und'][0]['value'])) {
+            $price = $onetimeChargeNode -> field_price_amount_decimal['und'][0]['value'];
         } else {
             $price = NULL;
         }
