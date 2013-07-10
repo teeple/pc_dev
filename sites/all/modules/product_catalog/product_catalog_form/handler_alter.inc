@@ -35,11 +35,13 @@ function _unset_menu_items(&$form, $formId) {
 		case 'productchange_node_form' :
 		case 'number_special_node_form':
 		case 'simpleproductoffering_node_form':
-			$unsetDeleteButton = FALSE;
+			$firstPathName = current(explode('/', current_path()));
+			if ($firstPathName != 'relation') {
+				$unsetDeleteButton = FALSE;
+			}
 			break;
 	}
-	if ($unsetDeleteButton)
-		unset($form['actions']['delete']);
+	if ($unsetDeleteButton)	unset($form['actions']['delete']);
 }
 
 function _disable_form_elements(&$form, $fields) {
