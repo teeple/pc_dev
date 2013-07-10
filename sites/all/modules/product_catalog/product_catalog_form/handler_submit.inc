@@ -445,6 +445,58 @@ function _create_default_prdattributes($product, $voca_name) {
 	}
 }
 
+// 해당 상품 type의 basic counter를 return 한다.
+function _get_default_basic_counters_without_receive($productNid) {
+	global $user;
+	$retArray = array();
+	  
+	$product = node_load($productNid);
+
+    $term_service_domain_tid = $product->field_service_type_of_provider['und'][0]['tid'];
+    $term_counter_type = taxonomy_get_term_by_name('Basic', 'countertype');
+	$term_bill_type_product = taxonomy_term_load($product->field_billing_type['und'][0]['tid']);
+	
+	$args = array();
+	$args[0] = current($term_counter_type)->tid;
+	$args[1] = $term_service_domain_tid;
+	
+	switch($term_bill_type_product->name) {
+		case 'Prepaid':
+		case 'Postpaid':
+			$term_bill_type_counter = taxonomy_get_term_by_name($term_bill_type_product->name, 'billtypecounter');
+			$billTypeCounter = current($term_bill_type_counter);
+			$args[2] = $billTypeCounter->tid;
+			break;
+		case 'Hybrid':
+			$args[2] = 'all';
+			break;
+	}
+	
+    // 예) POSTPAID/MOBILE로 view검색
+    $view = views_get_view('query_list_counter');
+    $view->set_display('panel_pane_7');
+    $view->set_arguments($args);
+	$view->execute();
+	
+	$retArray = array();
+    foreach ($view->result as $record) {
+		$retArray[$record -> nid] = view_get_field_value_by_label($view, 'PHP', $record);
+    }
+    
+    // 후불 상품에서는 선불 basic counter에 FREE_, POINT를 포함한다.
+    if($term_bill_type_product->name == 'Postpaid') {
+		$term_bill_type_counter = taxonomy_get_term_by_name('Prepaid', 'billtypecounter');
+		$billTypeCounter = current($term_bill_type_counter);
+		$args[2] = $billTypeCounter->tid;
+	}
+	$viewResult = views_get_view_result('query_list_counter', 'panel_pane_6', $args[0], $args[1], $args[2]);
+	foreach ($viewResult as $record) {
+		$retArray[$record -> nid] = view_get_field_value_by_label($view, 'PHP', $record);
+	}
+	
+	return $retArray;
+	// return $view->result;
+}
 
 // 해당 상품 type의 basic counter를 return 한다.
 function _get_default_basic_counters($productNid) {

@@ -831,14 +831,6 @@ function product_catalog_ajax_upload_modal_content($js = NULL, $content_type, $a
 	
 	$output = ctools_modal_form_wrapper($formName, $form_state);
 	
-	/*
-	dsm($formName, 'upload_formName');
-	dsm($form_state, 'upload_form_state');
-	
-	dsm('upload_here');
-	dsm($output, 'upload_output');
-	*/
-	
 	if (!empty($form_state['executed'])) {
 		$output = array();
 		//$output[] = ctools_modal_command_display(t('Node created'),'<div class="modal-message">Node creation successful.</div>');
@@ -1445,9 +1437,15 @@ function _remove_existing_children($root_nid, $refTreeTid) {
 	
 }
 
+// 해당 voucher 용 product에서 사용 가능한 counter를 모두 가져온다.
+// 주의 : basic counter에서 receive_ 는 제외
 function _select_treenodecounterforvoucherprd($treenodeproductforvoucher) {
 
-	$params = array('0' => $treenodeproductforvoucher);
+	// 해당 voucher card type for product에 속한 counter를 모두 선택한다.
+	$voucherPrd = node_load($treenodeproductforvoucher);
+	$refProductNid = $voucherPrd->field_ref_product['und'][0]['nid'];
+	
+	$params = array('0' => $refProductNid);
 	$view = views_get_view('list_prdcounterlist');
 	$view->set_display('panel_pane_2');
 	$view->set_arguments($params);
@@ -1455,7 +1453,6 @@ function _select_treenodecounterforvoucherprd($treenodeproductforvoucher) {
 	
 	$counterNids = array();
 	foreach($view->result as $record) {
-		//$counterList[] = view_get_field_value_by_label($view, 'qtabConfigNid', $record);
 		$counterNids[] = view_get_field_value_by_label($view, 'qtabConfigNid', $record);
 	}
 	
@@ -1472,7 +1469,7 @@ function _select_treenodecounterforvoucherprd($treenodeproductforvoucher) {
 	
 	// 해당 상품의 basic counter를 가져옴.
 	// $product = node_load($productNid);
-	$counter_list = _get_default_basic_counters($productNid);
+	$counter_list = _get_default_basic_counters_without_receive($productNid);
 	foreach($counter_list as $key => $value) {
 		$counterList[] = $key;
 	}

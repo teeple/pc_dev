@@ -1148,11 +1148,19 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			
 			$treeNodeProductForVoucherPrdNid = $form['field_ref_treenodeproductforvouc']['und'][0]['nid']['#default_value'];
 			
-			$allCountersBelongsTo = _select_treenodecounterforvoucherprd($treeNodeProductForVoucherPrdNid);
+			$selectableCounters = _select_treenodecounterforvoucherprd($treeNodeProductForVoucherPrdNid);
+			
+			$viewsResult = views_get_view_result('list_treenodecounterforvoucherprd', 'panel_pane_1', $treeNodeProductForVoucherPrdNid);
+			$existingCounters = array();
+			foreach($viewsResult as $item) {
+				$existingCounters[] = $item->node_field_data_field_ref_counter_nid;
+			}
+			
+			$selectableCounters = array_diff($selectableCounters, $existingCounters);
 			
 			$view = views_get_view('list_counter_for_vouchercardtype');
 			$view->set_display('panel_pane_8');
-			$view->set_arguments(array('0'=>join('+',$allCountersBelongsTo)));
+			$view->set_arguments(array('0'=>join('+',$selectableCounters)));
 			$view->execute();
 			$availableCounters = $view->result;
 			
@@ -1160,12 +1168,13 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			foreach($availableCounters as $item) {
 				$voucherCounters[$item->nid] = view_get_field_value_by_label($view, 'PHP', $item);
 			}
-									
+			
 			foreach($form['field_ref_counter']['und']['#options'] as $key => $value) {
-				if(in_array($key, $allCountersBelongsTo)) {
+				if(in_array($key, $selectableCounters)) {
 					$options[$key] = $voucherCounters[$key];
 				}
 			}
+			
 			$form['field_ref_counter']['und']['#options']= $options;
 			
 			_unset_menu_items($form, $form_id);
