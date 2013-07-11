@@ -813,85 +813,89 @@ function product_catalog_form_node_validate($node, $form, &$form_state) {
 					break;
 
 				case 'simpleproductoffering_node_form' :
-					if (!is_machine_name($form_state['values']['field_product_id']['und'][0]['value'])) {
-						form_set_error('field_product_id', "Only lowercase letter, number and underscore are allowed for product id");
-					}
-
-					$fieldShortCode = $form_state['values']['field_short_code']['und'][0]['value'];
-					if (!is_machine_name($fieldShortCode)) {
-						form_set_error('field_short_code', "Only lowercase letter, number and underscore are allowed for short code");
-					}
-
-					$fieldBillingTypeTid = $form_state['values']['field_billing_type']['und'][0]['tid'];
-
-					// create 시에만 확인
-					if (!isset($form['nid']['#value'])) {
-						$viewResult = views_get_view_result('list_product', 'panel_pane_2', $fieldBillingTypeTid, $fieldShortCode);
-
-						if (count($viewResult) > 0) {
-							form_set_error('field_short_code', "this short code value is already used. Try different ");
+					
+					// Relation쪽 메뉴가 아닐 경우에만 validate 체크
+					if(isset($form_state['values']['field_product_id'])) {
+						if (!is_machine_name($form_state['values']['field_product_id']['und'][0]['value'])) {
+							form_set_error('field_product_id', "Only lowercase letter, number and underscore are allowed for product id");
 						}
-					}
-
-					$prdTypeTerm = taxonomy_term_load($form_state['values']['field_product_type']['und'][0]['tid']);
-					if (empty($prdTypeTerm)) {
-						$paths = explode('/', $_SERVER['HTTP_REFERER']);
-						$prdTypeTerm = current(taxonomy_get_term_by_name($paths[5], 'prdtype'));
-					}
-
-					if ($prdTypeTerm -> name == 'CUG') {
-						if (empty($form_state['values']['field_cug_group_type']) || empty($form_state['values']['field_cug_group_type']['und']) || empty($form_state['values']['field_cug_group_type']['und'][0]) || empty($form_state['values']['field_cug_group_type']['und'][0]['tid'])) {
-							form_set_error('field_cug_group_type', "CUG Group Type is required");
+	
+						$fieldShortCode = $form_state['values']['field_short_code']['und'][0]['value'];
+						if (!is_machine_name($fieldShortCode)) {
+							form_set_error('field_short_code', "Only lowercase letter, number and underscore are allowed for short code");
 						}
-
-						if (empty($form_state['values']['field_cug_customer_type']) || empty($form_state['values']['field_cug_customer_type']['und']) || empty($form_state['values']['field_cug_customer_type']['und'][0]) || empty($form_state['values']['field_cug_customer_type']['und'][0]['tid'])) {
-							form_set_error('field_cug_customer_type', "CUG Customer Type field is required");
-						}
-					}
-
-					// expire date type이 설정되어있는데, expire date값이 없으면 에러
-					$expireDateTypeTerm = isset($form_state['values']['field_expire_date_type']['und'][0]['tid']) ? taxonomy_term_load($form_state['values']['field_expire_date_type']['und'][0]['tid']) : NULL;
-
-					if (isset($expireDateTypeTerm)) {
-
-						if ($expireDateTypeTerm -> name == 'Hour') {
-
-							if (empty($form_state['values']['field_expire_date_for_hour']['und'][0]['value'])) {
-								form_set_error('field_expire_date_for_hour', "Expire Time Value is required");
-							}
-
-						} else {
-
-							if (empty($form_state['values']['field_expire_date']['und'][0]['value'])) {
-								form_set_error('field_expire_date', "Expire Time Value is required");
+	
+						$fieldBillingTypeTid = $form_state['values']['field_billing_type']['und'][0]['tid'];
+	
+						// create 시에만 확인
+						if (!isset($form['nid']['#value'])) {
+							$viewResult = views_get_view_result('list_product', 'panel_pane_2', $fieldBillingTypeTid, $fieldShortCode);
+	
+							if (count($viewResult) > 0) {
+								form_set_error('field_short_code', "this short code value is already used. Try different ");
 							}
 						}
-					}
-					// next join confirm이 설정되어있는데, next join product값이 없으면 에러
-
-					//check exclusivessness and downgrade penalty
-					if (isset($form_state['values']['field_exclusiveness']['und'])) {
-						$isExist = FALSE;
-						$downgradePenaltyViewResult = views_get_view_result('list_product_downgrade_penalty', 'panel_pane_2', $form['#node'] -> nid);
-
-						foreach ($form_state['values']['field_exclusiveness']['und'] as $item) {
-							$selectedNids[] = $item['nid'];
+	
+						$prdTypeTerm = taxonomy_term_load($form_state['values']['field_product_type']['und'][0]['tid']);
+						if (empty($prdTypeTerm)) {
+							$paths = explode('/', $_SERVER['HTTP_REFERER']);
+							$prdTypeTerm = current(taxonomy_get_term_by_name($paths[5], 'prdtype'));
 						}
-
-						foreach ($downgradePenaltyViewResult as $item) {
-							if (in_array($item -> field_field_ref_target_product[0]['raw']['nid'], $selectedNids)) {
-								$isExist = TRUE;
-								$existName = $item -> field_field_ref_target_product[0]['raw']['node'] -> title;
-								break;
+	
+						if ($prdTypeTerm -> name == 'CUG') {
+							if (empty($form_state['values']['field_cug_group_type']) || empty($form_state['values']['field_cug_group_type']['und']) || empty($form_state['values']['field_cug_group_type']['und'][0]) || empty($form_state['values']['field_cug_group_type']['und'][0]['tid'])) {
+								form_set_error('field_cug_group_type', "CUG Group Type is required");
+							}
+	
+							if (empty($form_state['values']['field_cug_customer_type']) || empty($form_state['values']['field_cug_customer_type']['und']) || empty($form_state['values']['field_cug_customer_type']['und'][0]) || empty($form_state['values']['field_cug_customer_type']['und'][0]['tid'])) {
+								form_set_error('field_cug_customer_type', "CUG Customer Type field is required");
 							}
 						}
-
-						if ($isExist) {
-							drupal_set_message($existName . " is defined in Product Downgrade Penlaty", 'error');
-							form_set_error("hhh");
+	
+						// expire date type이 설정되어있는데, expire date값이 없으면 에러
+						$expireDateTypeTerm = isset($form_state['values']['field_expire_date_type']['und'][0]['tid']) ? taxonomy_term_load($form_state['values']['field_expire_date_type']['und'][0]['tid']) : NULL;
+	
+						if (isset($expireDateTypeTerm)) {
+	
+							if ($expireDateTypeTerm -> name == 'Hour') {
+	
+								if (empty($form_state['values']['field_expire_date_for_hour']['und'][0]['value'])) {
+									form_set_error('field_expire_date_for_hour', "Expire Time Value is required");
+								}
+	
+							} else {
+	
+								if (empty($form_state['values']['field_expire_date']['und'][0]['value'])) {
+									form_set_error('field_expire_date', "Expire Time Value is required");
+								}
+							}
+						}
+						// next join confirm이 설정되어있는데, next join product값이 없으면 에러
+	
+						//check exclusivessness and downgrade penalty
+						if (isset($form_state['values']['field_exclusiveness']['und'])) {
+							$isExist = FALSE;
+							$downgradePenaltyViewResult = views_get_view_result('list_product_downgrade_penalty', 'panel_pane_2', $form['#node'] -> nid);
+	
+							foreach ($form_state['values']['field_exclusiveness']['und'] as $item) {
+								$selectedNids[] = $item['nid'];
+							}
+	
+							foreach ($downgradePenaltyViewResult as $item) {
+								if (in_array($item -> field_field_ref_target_product[0]['raw']['nid'], $selectedNids)) {
+									$isExist = TRUE;
+									$existName = $item -> field_field_ref_target_product[0]['raw']['node'] -> title;
+									break;
+								}
+							}
+	
+							if ($isExist) {
+								drupal_set_message($existName . " is defined in Product Downgrade Penlaty", 'error');
+								form_set_error("hhh");
+							}
 						}
 					}
-
+					
 					break;
 				case 'prdnonusagerecurringbonusscheme_node_form' :
 					$bonus_cycle_types = array('0' => 'None', '1' => 'Daily', '2' => 'Weekly', '4' => 'Monthly');
