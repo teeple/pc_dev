@@ -1018,8 +1018,8 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 				 */
 
 			} else {
-				$disabledFields = array(// 'field_scale',
-				'field_counter_type', 'field_service_domain', 'field_billing_type_counter', 'field_counter_unit_type', 'field_counter_group');
+				$disabledFields = array('field_scale', 'field_counter_type', 'field_service_domain', 
+										'field_billing_type_counter', 'field_counter_unit_type', 'field_counter_group');
 				foreach ($disabledFields as $field) {
 					$command = '$form[\'' . $field . "']['und']['#disabled'] = TRUE;";
 					eval($command);

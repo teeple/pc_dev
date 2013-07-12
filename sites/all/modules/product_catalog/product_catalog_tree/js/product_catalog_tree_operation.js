@@ -61,7 +61,7 @@
 			url : loadLink,
 			success : function(data) {
 				//console.log('loadSelectForm');
-    		//console.log(data);
+	    		//console.log(data);
 				var output = $.parseJSON(data);
 				//console.log(output);
 				var settings = output[0].settings;
@@ -74,9 +74,15 @@
 				
 				$.fn.behaviorAttach(settings);
 				
-				$('#tree_content_div').append('<div style="clear:both;"><input id="vbo-select-button" type="button" value="Select"/></div>');
-				$('#vbo-select-button').bind('click',{rootId:rootId, node: node},$.fn.selectItemHandler);
-
+				$isNotEmpty = $('#tree_content_div').find('.view');
+				console.log('isEmpty');
+				console.log($isNotEmpty);
+				
+				if($isNotEmpty.length != 0) {
+					$('#tree_content_div').append('<div style="clear:both;"><input id="vbo-select-button" type="button" value="Select"/></div>');
+					$('#vbo-select-button').bind('click',{rootId:rootId, node: node},$.fn.selectItemHandler);
+				}
+				
 				$.fn.unmasking();
 			}
 		});
