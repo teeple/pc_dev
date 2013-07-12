@@ -1779,11 +1779,8 @@ function product_catalog_ajax_load_select_form($nid,$eventType,$rootNid,$relType
 	
     $quicktabs = quicktabs_build_quicktabs('qtab_dummy',$qtoptions,$qtabs);
     
-    dsm($quicktabs, 'quicktabs');
     $qtRender =  drupal_render($quicktabs['content']);
     $renderOutput = '<div id="tree_content_div" style="overflow:scroll;height:700px;">'.$qtRender.'</div>';
-    
-    dsm($renderOutput, 'renderOutput');
     
     $output[] = $renderOutput;
     $output = ajax_render($output);
