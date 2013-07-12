@@ -432,16 +432,35 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 
 				$form['field_from_product_group']['und']['#options'] = $options;
 				$form['field_to_product_group']['und']['#options'] = $options;
+				
+				$bill_type_term = taxonomy_term_load($billTypeTid);
+				if($bill_type_term->name != 'Prepaid'){
+					unset($form['field_first_change_fee_free_']);
+					unset($form['field_product_change_fee']);
+				}
+			}else{
+				$form['field_from_product_group']['#type'] = 'hidden';
+				$form['field_to_product_group']['#type'] = 'hidden';
+				$form['field_product_change_fee']['#type'] = 'hidden';
+				$form['field_first_change_fee_free_']['#type'] = 'hidden';
+				$form['field_expiredate_options']['#type'] = 'hidden';
+				$form['field_expiredate_ndays']['#type'] = 'hidden';
+				$form['field_expiredate_fixeddate']['#type'] = 'hidden';
+				$form['field_gracedate_options']['#type'] = 'hidden';
+				$form['field_gracedate_ndays']['#type'] = 'hidden';
+				$form['field_gracedate_fixeddate']['#type'] = 'hidden';
+				
+				unset($form['#fieldgroups']);
 			}
-
+			/*
 			$form['field_from_product_group']['#prefix'] = '<div id="product_group_change_div">';
 			$form['field_to_product_group']['#suffix'] = '</div>';
 
 			$form['field_service_domain']['und']['#ajax'] = array('callback' => 'product_group_change_ajax_callback', 'wrapper' => 'product_group_change_div');
 
 			$form['field_billing_type']['und']['#ajax'] = array('callback' => 'product_group_change_ajax_callback', 'wrapper' => 'product_group_change_div');
+			*/
 			break;
-
 		case 'user_register_form' :
 			unset($form['account']['notify']);
 			unset($form['account']['roles']['#options'][3]);
