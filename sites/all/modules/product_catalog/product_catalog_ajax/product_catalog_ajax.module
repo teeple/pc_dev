@@ -988,6 +988,7 @@ function product_catalog_ajax_add_modal_content($js = NULL, $contentType, $refNo
 			case 'holidaylist_repeatable':
 			case 'holidaylist_specific':
 			case 'locationfactor':
+			case 'tvchannel':
 			case 'homezonefactor':
             case 'roaming_zone':
             case 'prddowngradepenalty':
@@ -2206,6 +2207,7 @@ function product_catalog_modal_form_edit_modal_content($js = NULL, $contentType,
         	case 'area_code':
         	case 'article':
 			case 'locationfactor':
+			case 'tvchannel':
 			case 'homezonefactor':
             case 'roaming_zone':
             case 'prddowngradepenalty':
@@ -2263,6 +2265,7 @@ function product_catalog_ajax_delete_from_view($nodeNid, $refNodeNid, $additiona
 		case 'thresholdschemefactors':
 		case 'area_code':
 		case 'locationfactor':
+		case 'tvchannel':
 		case 'holidaylist_repeatable':
 		case 'holidaylist_specific':
         case 'prddowngradepenalty':
