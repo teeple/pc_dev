@@ -1037,6 +1037,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 				 */
 
 			} else {
+				$form['title']['#disabled'] = TRUE;
 				$disabledFields = array('field_scale', 'field_counter_type', 'field_service_domain', 
 										'field_billing_type_counter', 'field_counter_unit_type', 'field_counter_group');
 				foreach ($disabledFields as $field) {
@@ -1397,6 +1398,8 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 				
 				// Other 상품에서는 exclusiveness를 사용
 				} else {
+					// 자신은 Exclusiveness List에서 제외 
+					unset($options[$product_nid]);
 					$form['field_exclusiveness']['und']['#options'] = $options;
 					$unsetItems = array_merge($unsetItems, array('field_exclusiveness_others'));
 				}

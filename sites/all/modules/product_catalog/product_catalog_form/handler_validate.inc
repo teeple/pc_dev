@@ -579,11 +579,10 @@ function product_catalog_form_node_validate($node, $form, &$form_state) {
 					foreach ($form_state['values']['field_cell_id']['und'] as $cellId) {
 						if (!isset($cellId))
 							continue;
-						if (!ctype_xdigit($cellId['value'])) {
+						if (!empty($cellId['value']) && !ctype_xdigit($cellId['value'])) {
 							form_set_error('field_cellid', 'Cell ID should be hexa decimal');
 						};
 					}
-
 					break;
 				case 'packetdynamicl4_node_form' :
 					//check ip address is valid or not.
