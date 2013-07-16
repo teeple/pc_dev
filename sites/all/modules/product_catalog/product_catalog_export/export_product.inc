@@ -158,6 +158,10 @@ function _get_deposit_scheme($product,$target=NULL) {
 				
 					// 해당 deposit scheme을 deploy한다.
 					export_deploy('DEPOSIT_SCHEME', array($depositScheme->nid => $depositScheme), $target, $redirectFlag);
+					
+					node_delete($depositScheme->nid);
+					node_delete($thresholdScheme->nid);
+					
 				}
 				$scheme['deposit_scheme_id'] = $depositScheme->nid;
 			}

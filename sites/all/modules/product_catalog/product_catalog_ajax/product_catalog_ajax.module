@@ -2271,6 +2271,12 @@ function product_catalog_ajax_delete_from_view($nodeNid, $refNodeNid, $additiona
         case 'prddowngradepenalty':
         case 'timetable':
         case 'vouchercardtype':
+        case 'unittransfer':
+        case 'packetpredefinedchargingrule':
+        case 'packetdynamicchargingrule':
+        case 'packetdynamicl4':
+        case 'packetsgsn':
+        case 'packetsgsnip':
         case 'ocs_ussd_code':
 			$output[] = ctools_ajax_command_reload();
 			break;

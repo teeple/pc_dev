@@ -773,7 +773,7 @@ function _get_redirect_url_in_view_n_delete($viewOrDel, $node) {
 	case 'roaming_country':
     case 'roaming_carrier':
 	case 'roaming_plan':
-		$fragments = array('roaming_country' =>  'quickset-roaming=0',
+		$fragments = array('roaming_country' =>  '',
 		                   'roaming_carrier' =>  'quickset-roaming=1',
 						   'roaming_plan' =>  'quickset-roaming=2');
 	
@@ -922,7 +922,7 @@ function _get_redirect_url_in_create_n_list($addOrList, $content_type, $params) 
 	case 'roaming_country':
     case 'roaming_carrier':
 	case 'roaming_plan':
-        $fragments = array('roaming_country' =>  'quickset-roaming=0',
+        $fragments = array('roaming_country' =>  '',
 							'roaming_carrier' =>  'quickset-roaming=1',
 							'roaming_plan' => 'quickset-roaming=2');
 					
