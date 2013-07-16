@@ -43,7 +43,6 @@ function _array_export_counter($exportItemNids=NULL){
     $counterTypeTerm = $record->field_field_counter_type[0]['raw']['taxonomy_term'];
     
     if($counterTypeTerm->name === 'Rollover'){
-    		dsm($record, 'record');
     		$jsonCounter['rollover_month'] = $record->field_field_rollover_months[0]['raw']['value'];
     }
     $jsonCounter['description'] = !empty($record->field_field_description) ? $record->field_field_description[0]['rendered']['#markup']: null;
@@ -53,14 +52,10 @@ function _array_export_counter($exportItemNids=NULL){
 		
 		$counterIds[] = $record->field_field_counter_id[0]['raw']['value'];
   }
-  dsm($counterIds, 'counterIds');
-  
   if(!empty($exportItemNids)) {
-  	  	dsm($counterIds, 'counterIds_1');
   	
   	$jsonData_common['resources'] = $counterIds;
 	} else {
-	dsm($counterIds, 'counterIds_1');
 	
     $jsonData_common['resources'] = array();
 	}
