@@ -125,7 +125,7 @@ function product_catalog_form_node_validate($node, $form, &$form_state) {
 				}
 				break;
 			case 'roaming_country_node_form' :
-				$view_result = views_get_view_result('list_roaming_country_reference', 'panel_pane_1', $node -> nid);
+				$view_result = views_get_view_result('list_roaming_counry_reference', 'panel_pane_1', $node -> nid);
 				if (count($view_result) > 0) {
 					form_set_error('title', "You should remove the items referencing this country in roaming plan or roaming carrier first!");
 				}
