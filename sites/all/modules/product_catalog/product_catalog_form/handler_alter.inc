@@ -165,6 +165,7 @@ function _add_ajax_submit_callback($form_id, &$form) {
 		case 'conditionwhensubscriptionday_node_form' :
 		case 'conditionwhentodaysubscriptionda_node_form' :
 		case 'conditionwhatincomingcall_node_form' :
+		case 'conditionwhatisvideo_node_form':
 		case 'conditionwhatisgroupcall_node_form' :
 		case 'conditionwhatisclir_node_form' :
 		case 'conditionwhatgroupmembercount_node_form' :
@@ -820,19 +821,23 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			break;
 
 		case 'loyaltypoint_node_form' :
-
-			// loyaltypoint���ъ���� counter��point��counter留�蹂������濡����.
-			// counter_group��Point��寃��留�由ъ������
-			//
 			$viewResult = views_get_view_result('list_counter_for_vouchercardtype', 'panel_pane_3');
-
 			$counters = array();
-			$counters['_none'] = '- None -';
 			foreach ($viewResult as $record) {
 				$counters[$record -> nid] = $record -> node_title;
 			}
 			$form['field_ref_counter']['und']['#options'] = $counters;
-
+			
+			$voucherCardTypeNid = $form['field_ref_vouchercardtype']['und'][0]['nid']['#default_value'];
+			
+			// field_target_product
+			$targetProducts = array();
+			$viewResult = views_get_view_result('list_treenodeproductforvoucher', 'panel_pane_2', $voucherCardTypeNid);
+			foreach ($viewResult as $record) { 
+				$targetProducts[$record->node_field_data_field_ref_product_nid] = $record->node_title;
+			}
+			$form['field_target_product']['und']['#options'] = $targetProducts;
+			
 			unset($form['field_ref_vouchercardtype']);
 			_unset_menu_items($form, $form_id);
 			break;
@@ -1373,7 +1378,6 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 
 				$viewResult = $view -> result;
 				
-				// $options = array('- None -');
 				$options = array();
 				foreach ($viewResult as $item) {
 					$options[$item -> nid] = view_get_field_value_by_label($view, 'PHP', $item);
@@ -1387,7 +1391,6 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 
 				$viewResult = $view -> result;
 				
-				// $options = array('- None -');
 				foreach ($viewResult as $item) {
 					$options[$item -> nid] = view_get_field_value_by_label($view, 'PHP', $item);
 				}
@@ -1447,6 +1450,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 		case 'conditionwhatnonusagetypefactors_node_form' :
 		case 'conditionwhatcustomfactors_node_form' :
 		case 'conditionwhatincomingcall_node_form' :
+		case 'conditionwhatisvideo_node_form' :
 		case 'conditionwhatisgroupcall_node_form' :
 		case 'conditionwhatisclir_node_form' :
 		case 'conditionwhatgroupmembercount_node_form' :

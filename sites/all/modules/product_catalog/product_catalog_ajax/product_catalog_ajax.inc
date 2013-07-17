@@ -158,7 +158,10 @@ function _load_tree_item_mixed_with_node_and_term($rootNode,$grandParentNode=NUL
 					$childNode = node_load($child->nid);
 					$itemArray['children'][] = _load_tree_item_mixed_with_node_and_term($childNode,$rootNode);
 				} else {
-					$itemArray['children'][] = get_children_stored_procedure($child->nid,'term_'.$item->tid.'_'.$rootNode->nid);
+					$tempItem = get_children_stored_procedure($child->nid,'term_'.$item->tid.'_'.$rootNode->nid);
+					if(!empty($tempItem)) {
+						$itemArray['children'][] = get_children_stored_procedure($child->nid,'term_'.$item->tid.'_'.$rootNode->nid);
+					}
 				}
 			}
 		}

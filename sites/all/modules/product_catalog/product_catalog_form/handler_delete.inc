@@ -12,6 +12,20 @@ function product_catalog_form_node_delete($node){
     $childNodes = get_nested_children_nids($node->nid);
 
 	switch($node->type){
+		case 'treenodeproductforvoucher':
+			$refProductNid = $node->field_ref_product['und'][0]['nid'];
+			$viewResult = views_get_view_result('list_loyaltypoint', 'panel_pane_2',  $node->field_ref_vouchercardtype['und'][0]['nid']);
+			$currentItem = current($viewResult);
+			$loyaltyPoint = node_load($currentItem->nid);
+			
+			foreach($loyaltyPoint->field_target_product['und'] as $key => $value) {
+				if($value['nid'] == $refProductNid) {
+					unset($loyaltyPoint->field_target_product['und'][$key]);
+				}
+			}
+			node_save($loyaltyPoint);
+			
+			break;
 		case 'productgroup':
 			$viewResultMainSelected = views_get_view_result('list_product_group_main_selected', 'panel_pane_4', $node->nid);
 			foreach($viewResultMainSelected as $item) {
@@ -50,6 +64,7 @@ function product_catalog_form_node_delete($node){
 					node_save($numberingplan_node);
 				}
 				break;
+				
 	    case 'idd_ratinggroup':
 			  $rating_group = $node->field_rating_group['und'][0]['value'];
 	      $numberingplan_nid = $node->field_ref_numberingplan_idd['und'][0]['nid'];
@@ -162,14 +177,12 @@ function product_catalog_form_node_delete($node){
 		case 'counter':
 			
 			/*
-			//dsm($node, 'node');
 			// 지울려는 해당 counter를 참조하고 있는 content type이 존재하는지 
 			$view = views_get_view('list_reverse_reference_items');
 			$view->set_display('panel_pane_1');
 			$view->set_arguments($node->nid);
 			$view->execute();
 			
-			//dsm($view->result, 'view_result');
 			if(!empty($view->resut)) {
 				drupal_set_message("You should remove the items referencing this counter",'error');
 				drupal_form_error("You should remove the items referencing this counter");
