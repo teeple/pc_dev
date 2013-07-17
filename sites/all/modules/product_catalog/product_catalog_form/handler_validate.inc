@@ -118,6 +118,12 @@ function is_machine_name($argStr) {
 function product_catalog_form_node_validate($node, $form, &$form_state) {
 	if ($form_state['values']['op'] == 'Delete') {
 		switch($form['form_id']['#value']) {
+			case 'roaming_zone_node_form':
+				$view_result = views_get_view_result('list_roaming_zone_reference', 'panel_pane_1', $node -> nid);
+				if (count($view_result) > 0) {
+					form_set_error('title', "You should remove the items referencing this roaming zone!");
+				}
+				break;
 			case 'packetdynamicchargingrule_node_form':
 				$view_result = views_get_view_result('list_packet_dynamic_charging_rule_reference', 'panel_pane_1', $node -> nid);
 				if (count($view_result) > 0) {
