@@ -75,7 +75,7 @@
 			case "vouchercardtype_tree":
 				var relType = obj.attr("rel");
 				switch (relType) {
-					case "vouchercardtype":
+					//case "vouchercardtype":
 					case "treenodeproductfordisvoucher":
 					case "treenodeproductforvoucher":
 						menus.custom_delete._disabled = false;

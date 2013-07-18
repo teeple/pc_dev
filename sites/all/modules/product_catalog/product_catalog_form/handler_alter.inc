@@ -37,6 +37,7 @@ function _unset_menu_items(&$form, $formId) {
 		case 'simpleproductoffering_node_form':
 		case 'packetsgsn_node_form' :
 		case 'packetsgsnip_node_form' :
+    case 'vouchercardtype_node_form':
 			$firstPathName = current(explode('/', current_path()));
 			if ($firstPathName != 'relation') {
 				$unsetDeleteButton = FALSE;
