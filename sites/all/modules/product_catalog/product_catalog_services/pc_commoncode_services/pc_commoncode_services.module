@@ -39,11 +39,16 @@ function pc_commoncode_services_update($code) {
     $user = $account;
     
     $commonCode = _services_arg_value($code, 'code');
-    
-    //error_log('code raw: '.json_encode($code));
+
+	watchdog('CommonCode', 'commonCode : %commonCode', array('%commonCode' => $commonCode));
+	error_log('code raw: '.json_encode($code));
+    // $commonCode = '{"code":{"svcDomain":"2","sourceLang":"en","description":"Voice(Unitel-Mobile)1","codeGroup":"CallType","meaning":"MOBILE_UNT_TEST","code":"15115","language":"mn","subGrp2":"MOBILE_OFFNET","subGrp1":"VOICE"}}';
     
     $code_list = array();
     $code_list[] = (object)$commonCode;
+    
+    watchdog('CommonCode', 'code_list : %code_list', array('%code_list' => $code_list));
+    
     _commoncode_update_or_create($code_list, $commonCode['codeGroup']);
     
     $ret_array['result'] = 'success';

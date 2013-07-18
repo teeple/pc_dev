@@ -17,8 +17,8 @@ function pc_code_menu() {
 
 function pc_code_update_in_views($code_group) {
 
-    $url = 'http://202.70.46.180:8001/openapi/code/' . $code_group;
-    // $url = 'http://10.21.8.20:8001/openapi/code/' . $code_group;
+    // $url = 'http://202.70.46.180:8001/openapi/code/' . $code_group;
+    $url = 'http://10.21.8.20:8001/openapi/code/' . $code_group;
     $result = drupal_http_request($url);
     dsm($result,'result');
     $codes_list = json_decode($result -> data);
@@ -62,6 +62,8 @@ function _commoncode_update_or_create($code_list, $code_group) {
     $vocabulary = taxonomy_vocabulary_machine_name_load($voca_machine_name);
 
     if ($vocabulary == NULL) {
+    	error_log('here1');
+    
 
         // PCatalog에서 사용하지 않는 taxonomy는 만들지 않음.
         $codeGroupVoca = taxonomy_vocabulary_machine_name_load('COMMON_CODE_GROUP_LIST');
@@ -86,7 +88,9 @@ function _commoncode_update_or_create($code_list, $code_group) {
                          );
         field_create_instance($field_instance);
     }
-
+    
+    error_log('here2');
+    
     $terms = taxonomy_get_tree($vocabulary -> vid);
     $tids = array();
     foreach ($terms as $term) {
@@ -104,8 +108,13 @@ function _commoncode_update_or_create($code_list, $code_group) {
       $svcDomainTermsCommonCode[$tempTerm->field_common_code['und'][0]['safe_value']] = $tempTerm->tid;
     }
     
+    error_log('here3');
+    
     foreach ($code_list as $code) {
         $foundFlag = FALSE;
+        
+        error_log($code->language, 'code_langugage');
+        error_log($code->sourceLang, 'sourceLang');
 
         if ($code -> language != 'en')
             continue;
