@@ -903,15 +903,8 @@ function product_catalog_form_node_validate($node, $form, &$form_state) {
 						$expireDateTypeTerm = isset($form_state['values']['field_expire_date_type']['und'][0]['tid']) ? taxonomy_term_load($form_state['values']['field_expire_date_type']['und'][0]['tid']) : NULL;
 	
 						if (isset($expireDateTypeTerm)) {
-	
-							if ($expireDateTypeTerm -> name == 'Hour') {
-	
-								if (empty($form_state['values']['field_expire_date_for_hour']['und'][0]['value'])) {
-									form_set_error('field_expire_date_for_hour', "Expire Time Value is required");
-								}
-	
-							} else {
-	
+						
+							if($expireDateTypeTerm->name != 'Specific Date') {
 								if (empty($form_state['values']['field_expire_date']['und'][0]['value'])) {
 									form_set_error('field_expire_date', "Expire Time Value is required");
 								}
