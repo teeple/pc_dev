@@ -38,6 +38,7 @@ function _unset_menu_items(&$form, $formId) {
 		case 'packetsgsn_node_form' :
 		case 'packetsgsnip_node_form' :
     case 'vouchercardtype_node_form':
+		case 'roaming_zone_node_form':
 			$firstPathName = current(explode('/', current_path()));
 			if ($firstPathName != 'relation') {
 				$unsetDeleteButton = FALSE;
@@ -2475,7 +2476,6 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			break;
 
 		case 'roaming_zone_node_form' :
-			unset($form['field_roaming_carrier']);
 			_unset_menu_items($form, $form_id);
 			break;
 		case 'treenodeotheronetimecharge_node_form' :

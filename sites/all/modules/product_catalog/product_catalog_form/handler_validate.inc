@@ -378,31 +378,40 @@ function product_catalog_form_node_validate($node, $form, &$form_state) {
 					break;
 				case 'roaming_zone_node_form' :
 					$isValid = TRUE;
-					$targetElement = 'field_roaming_countries';
-
-					$selectedCountries = array();
-					foreach ($form_state['values']['field_roaming_countries']['und'] as $item) {
-						if (isset($item['nid']))
-							$selectedCountries[] = $item['nid'];
-					}
-					if (empty($selectedCountries)) {
-						$failReason = 'Country is required information';
+					$targetElement = 'field_roaming_carrier';
+					if(!isset($form_state['values']['field_roaming_carrier']['und'][0]['nid'])){
 						$isValid = FALSE;
-					} else {
-						//check duplicated in other zone
-						$view = views_get_view('list_roaming_zone');
-						$view -> set_display('panel_pane_1');
-						$selectedCountries = join('+', $selectedCountries);
-						$args = array('0' => $selectedCountries);
-
-						if (isset($form['nid']['#value'])) {
-							$args['1'] = $form['nid']['#value'];
+						$failReason = 'Roaming Carrier is required';
+					}
+					
+					if($isValid){
+						$carrier_nid = $form_state['values']['field_roaming_carrier']['und'][0]['nid'];
+						$targetElement = 'field_roaming_countries';
+	
+						$selectedCountries = array();
+						foreach ($form_state['values']['field_roaming_countries']['und'] as $item) {
+							if (isset($item['nid']))
+								$selectedCountries[] = $item['nid'];
 						}
-						$view -> set_arguments($args);
-						$view -> execute();
-						if (count($view -> result) > 0) {
-							$failReason = 'Selected countries is already taken by another zone';
+						if (empty($selectedCountries)) {
+							$failReason = 'Country is required information';
 							$isValid = FALSE;
+						} else {
+							//check duplicated in other zone
+							$view = views_get_view('list_roaming_zone');
+							$view -> set_display('panel_pane_1');
+							$selectedCountries = join('+', $selectedCountries);
+							$args = array('0' => $carrier_nid, '1' => $selectedCountries);
+	
+							if (isset($form['nid']['#value'])) {
+								$args['2'] = $form['nid']['#value'];
+							}
+							$view -> set_arguments($args);
+							$view -> execute();
+							if (count($view -> result) > 0) {
+								$failReason = 'Selected countries is already taken by another zone';
+								$isValid = FALSE;
+							}
 						}
 					}
 
