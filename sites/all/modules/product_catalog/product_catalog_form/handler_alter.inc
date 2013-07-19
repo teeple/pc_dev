@@ -2127,63 +2127,12 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 		case 'roaming_ratinggroup_node_form' :
 			$form['field_ref_roaming_plan']['#type'] = 'hidden';
 			$form['field_ref_roaming_type']['und']['#options']['_none'] = 'SMS Outgoing';
-
-			_unset_menu_items($form, $form_id);
-			$carrierOptions = array();
-			$carrierOptions['_none'] = ' - None -';
-			$zoneOptions = array();
-			$zoneOptions['_none'] = ' - None -';
-
-			$roamingCountryNid = NULL;
-			$roamingCarrierNid = NULL;
-			$roamingTypeTid = NULL;
-			if (isset($form_state['values'])) {
-				$roamingCarrierNid = $form_state['values']['field_ref_roaming_carrier']['und'][0]['nid'];
-				$roamingCountryNid = $form_state['values']['field_ref_roaming_country']['und'][0]['nid'];
-				$roamingTypeTid = $form_state['values']['field_ref_roaming_type']['und'][0]['tid'];
-			} else {
-				if (isset($form['nid']['#value'])) {
-					$roamingCarrierNid = $form_state['build_info']['args'][0] -> field_ref_roaming_carrier['und'][0]['nid'];
-					$roamingCountryNid = $form_state['build_info']['args'][0] -> field_ref_roaming_country['und'][0]['nid'];
-					$roamingTypeTid = $form_state['build_info']['args'][0] -> field_ref_roaming_type['und'][0]['tid'];
-				}
-			}
-
-			$view = views_get_view('list_roaming_carrier');
-			$view -> set_display('panel_pane_3');
-			$view -> set_arguments(array('0' => $roamingCountryNid));
-			$view -> execute();
-			foreach ($view->result as $item) {
-				$carrierOptions[$item -> nid] = $item -> node_title;
-			}
-			$form['field_ref_roaming_carrier']['und']['#options'] = $carrierOptions;
-			//$form['field_ref_roaming_carrier']['und']['#default_value'] = $form_state['values']['field_ref_roaming_carrier']['und'][0]['nid'];
-			if (isset($roamingTypeTid)) {
-				$roamingTypeTerm = taxonomy_term_load($roamingTypeTid);
-				switch($roamingTypeTerm->name) {
-					case 'Other PLMN' :
-						$options = array();
-						$options['_none'] = '- None -';
-
-						$view = views_get_view('list_roaming_zone');
-						$view -> set_display('panel_pane_3');
-						$view -> set_arguments(array('0' => $roamingCarrierNid));
-						$view -> execute();
-						foreach ($view->result as $item) {
-							$zoneOptions[$item -> nid] = $item -> node_title;
-						}
-						$form['field_roaming_zone']['und']['#options'] = $zoneOptions;
-						break;
-					default :
-						unset($form['field_roaming_zone']);
-						break;
-				}
-			}
-
 			//calltype
 			$options = _get_call_type_options();
 			$form['field_ref_type_of_call']['und']['#options'] = $options;
-
+			_unset_menu_items($form, $form_id);
+			 
+			/*
 			// add custom id for ajax
 			$form['field_ref_roaming_carrier']['und']['#prefix'] = '<div id="custom_roaming_ratinggroup_carrier">';
 			$form['field_ref_roaming_carrier']['und']['#postfix'] = '</div>';
@@ -2196,7 +2145,16 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 
 			$form['field_ref_roaming_type']['und']['#ajax'] = array('callback' => 'roaming_options_callback_zone', 'wrapper' => 'custom_roaming_ratinggroup_zone');
 			$form['field_ref_roaming_carrier']['und']['#ajax'] = array('callback' => 'roaming_options_callback_zone', 'wrapper' => 'custom_roaming_ratinggroup_zone');
-
+			*/
+			
+			$form['field_ref_roaming_country']['#prefix'] = '<div id="custom_roaming_ratinggroup">';
+			$form['field_ref_type_of_call']['#suffix'] = '</div>';
+			
+			$form['field_ref_roaming_country']['und']['#ajax'] = array('callback' => 'custom_roaming_ratinggroup_callback','wrapper' => 'custom_roaming_ratinggroup');
+			$form['field_ref_roaming_carrier']['und']['#ajax'] = array('callback' => 'custom_roaming_ratinggroup_callback','wrapper' => 'custom_roaming_ratinggroup');
+			
+			_rendering_filter_roaming_ratinggroup($form,$form_state);
+			//dsm($form);
 			break;
 
 		case 'actionsetbonusonrecurringcharge_node_form' :
@@ -2776,6 +2734,84 @@ function deposit_counter_callback($form, $form_state) {
 
 	$form_state['rebuild'] = TRUE;
 
+	return $renderStr;
+}
+
+function _rendering_filter_roaming_ratinggroup(&$form,&$form_state){
+	$carrierOptions = array();
+	$carrierOptions['_none'] = ' - None -';
+	$zoneOptions = array();
+	$zoneOptions['_none'] = ' - None -';
+
+	$roamingCountryNid = NULL;
+	$roamingCarrierNid = NULL;
+	$roamingTypeTid = NULL;
+	if (isset($form_state['values'])) {
+		$roamingCarrierNid = $form_state['values']['field_ref_roaming_carrier']['und'][0]['nid'];
+		$roamingCountryNid = $form_state['values']['field_ref_roaming_country']['und'][0]['nid'];
+		$roamingTypeTid = $form_state['values']['field_ref_roaming_type']['und'][0]['tid'];
+	} else {
+		if (isset($form['nid']['#value'])) {
+			$roamingCarrierNid = $form_state['build_info']['args'][0] -> field_ref_roaming_carrier['und'][0]['nid'];
+			$roamingCountryNid = $form_state['build_info']['args'][0] -> field_ref_roaming_country['und'][0]['nid'];
+			$roamingTypeTid = $form_state['build_info']['args'][0] -> field_ref_roaming_type['und'][0]['tid'];
+		}
+	}
+	
+	$view = views_get_view('list_roaming_carrier');
+	$view -> set_display('panel_pane_3');
+	$view -> set_arguments(array('0' => $roamingCountryNid));
+	$view -> execute();
+	foreach ($view->result as $item) {
+		$carrierOptions[$item -> nid] = $item -> node_title;
+	}
+	$form['field_ref_roaming_carrier']['und']['#options'] = $carrierOptions;
+	if(count($view->result) == 0){
+		$roamingCarrierNid = NULL;
+	}
+	
+	if (isset($roamingTypeTid)) {
+		$roamingTypeTerm = taxonomy_term_load($roamingTypeTid);
+		switch($roamingTypeTerm->name) {
+			case 'Other PLMN' :
+				//dsm($form,'form');
+				$options = array();
+				$options['_none'] = '- None -';
+				
+				$view = views_get_view('list_roaming_zone');
+				$view -> set_display('panel_pane_5');
+				$view -> set_arguments(array('0' => $roamingCarrierNid));
+				$view -> execute();
+				foreach ($view->result as $item) {
+					$zoneOptions[$item -> nid] = $item -> node_title;
+				}
+				$form['field_roaming_zone']['und']['#options'] = $zoneOptions;
+				//$form['field_roaming_zone']['#type'] = 'container';
+				break;
+			default :
+				$form['field_roaming_zone']['und']['#options']= array('_none' => '- None -');
+				//$form['field_roaming_zone']['#type'] = 'hidden';
+				break;
+		}
+	}else{
+		$form['field_roaming_zone']['und']['#options']= array('_none' => '- None -');
+		//$form['field_roaming_zone']['#type'] = 'hidden';
+	}
+}
+
+function custom_roaming_ratinggroup_callback($form,&$form_state){
+	_rendering_filter_roaming_ratinggroup($form,$form_state);
+	//$form['field_ref_roaming_country']['#prefix'] = '<div id="custom_roaming_ratinggroup">';
+	//$form['field_ref_type_of_call']['#suffix'] = '</div>';
+	
+	$renderStr = '<div id="custom_roaming_ratinggroup">';
+	$renderStr .= drupal_render($form['field_ref_roaming_country']);
+	$renderStr .= drupal_render($form['field_ref_roaming_carrier']);
+	$renderStr .= drupal_render($form['field_ref_roaming_type']);
+	$renderStr .= drupal_render($form['field_roaming_zone']);
+	$renderStr .= drupal_render($form['field_rating_group']);
+	$renderStr .= drupal_render($form['field_ref_type_of_call']);
+	$renderStr .= '</div>';
 	return $renderStr;
 }
 
