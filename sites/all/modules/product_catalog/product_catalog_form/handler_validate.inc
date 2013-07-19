@@ -912,10 +912,32 @@ function product_catalog_form_node_validate($node, $form, &$form_state) {
 						$expireDateTypeTerm = isset($form_state['values']['field_expire_date_type']['und'][0]['tid']) ? taxonomy_term_load($form_state['values']['field_expire_date_type']['und'][0]['tid']) : NULL;
 	
 						if (isset($expireDateTypeTerm)) {
-						
-							if($expireDateTypeTerm->name != 'Specific Date') {
+							
+							switch($expireDateTypeTerm->name) {
+							
+							case 'Hour':
 								if (empty($form_state['values']['field_expire_date']['und'][0]['value'])) {
 									form_set_error('field_expire_date', "Expire Time Value is required");
+								}
+								break;
+							case 'Day':
+							case 'Month':
+								if (empty($form_state['values']['field_expire_date']['und'][0]['value'])) {
+									form_set_error('field_expire_date', "Expire Time Value is required");
+								}
+								if (empty($form_state['values']['field_valid_date_hour']['und'][0]['value'])) {
+									form_set_error('field_valid_date_hour', "Expire Hour Value is required");
+								}
+								break;
+							case 'End of This Week':
+							case 'End of This Month':
+								break;
+							case 'Specific Date':
+								if (empty($form_state['values']['field_valid_date_hour']['und'][0]['value'])) {
+										form_set_error('field_valid_date_hour', "Expire Hour Value is required");
+								}
+								if (empty($form_state['values']['field_specific_date']['und'][0]['value'])) {
+										form_set_error('field_specific_date', "Expire Date Value is required");
 								}
 							}
 						}

@@ -807,11 +807,28 @@ function _get_attribute_exceptions($product) {
     
     if(isset($expireDateTypeTerm)) {
     
+    	switch($expireDateTypeTerm->name) {
+    		case 'Hour':
+    			$retArray['expire_date'] = isset($product->field_expire_date['und'][0]['value'])? $product->field_expire_date['und'][0]['value']: NULL;
+				break;
+    		case 'Day':
+    		case 'Month':
+    			$retArray['expire_date'] = isset($product->field_expire_date['und'][0]['value'])? $product->field_expire_date['und'][0]['value']: NULL;
+    			$retArray['expire_date_hour'] = isset($product->field_valid_date_hour['und'][0]['value'])? $product->field_valid_date_hour['und'][0]['value'].":00": NULL;
+    			break;
+    		case 'End of This Week':
+    		case 'End of This Month':
+    			break;
+    		case 'Specific Date':
+    			$specificHour = $product->field_valid_date_hour['und'][0]['value'].":00:00";
+    			$tmpDates = explode(' ', $product->field_specific_date['und'][0]['value']);
+    			$specificDate = $tmpDates[0].' '.$specificHour;
+    			$retArray['expire_date'] = $specificDate;
+    			break;
+    	}
     	if($expireDateTypeTerm->name == 'Hour') {
-    		$retArray['expire_date'] = isset($product->field_expire_date_for_hour['und'][0]['value'])? $product->field_expire_date_for_hour['und'][0]['value']: NULL;
     	
     	} else {
-    		$retArray['expire_date'] = isset($product->field_expire_date['und'][0]['value'])? $product->field_expire_date['und'][0]['value']: NULL;
     	
     	}
     	
