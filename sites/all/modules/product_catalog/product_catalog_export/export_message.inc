@@ -33,8 +33,9 @@ function _array_message($exportItemNids = NULL)
 			$msg['delivery_date'] = isset($record->_field_data['nid']['entity']->field_value['und'][0]['value'])
 									?$record->_field_data['nid']['entity']->field_value['und'][0]['value']:NULL;
 		}
-	//	$msg['delivery_date'] = $record->field_field_value[0]['raw']['value'];
-		$msg['delivery_time'] = $record->field_field_valid_date_hour[0]['raw']['value'];
+		//	$msg['delivery_date'] = $record->field_field_value[0]['raw']['value'];
+		$msg['delivery_time'] = isset($record->field_field_valid_date_hour)
+								?$record->field_field_valid_date_hour[0]['raw']['value']:NULL;
 
 		$messageIds[] = $msg['message_id'];
 		
