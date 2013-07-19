@@ -27,8 +27,10 @@ function _array_message($exportItemNids = NULL)
 		foreach( $record->field_field_ocs_export_format as $export) {
 			$msg['ui_param'][] = $export['rendered']['#markup'];
 		}
+
+		$msg['scheduled_delivery'] = !empty($record->field_field_scheduled_delivery)
+						?$record->field_field_scheduled_delivery[0]['raw']['value']:NULL;
 		
-		$msg['scheduled_delivery'] = $record->field_field_scheduled_delivery[0]['raw']['value'];
 		if($msg['scheduled_delivery']){
 			$msg['delivery_date'] = isset($record->_field_data['nid']['entity']->field_value['und'][0]['value'])
 									?$record->_field_data['nid']['entity']->field_value['und'][0]['value']:NULL;
