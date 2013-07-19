@@ -209,6 +209,7 @@
 			case 'treenodeunittransferscheme':
 			case 'treenodelifecyclescheme':
 			case 'conditionwhatincomingcall':
+			case 'conditionwhatisvideo':
 			case 'conditionwhatisgroupcall':
 			case 'conditionwhatmainproduct':
 			case 'conditionwhatmainproductforpeer':
