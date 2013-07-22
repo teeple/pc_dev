@@ -726,6 +726,15 @@ function _get_redirect_url_in_view_n_delete($viewOrDel, $node) {
 			}
 			$url['fragment'] = $fragments[$node -> type];
 			break;
+		case 'locationfactor':
+			$fragments = array('locationfactor' => 'quickset-qtabs_common_data=7');
+			if ($viewOrDel == 'view') {
+				$url['path'] = 'common/locations/' . $node -> nid;
+			} else {
+				$url['path'] = 'common/locations/list';
+			}
+			$url['fragment'] = $fragments[$node -> type];
+			break;
 	}
 
 	return $url;
@@ -813,6 +822,11 @@ function _get_redirect_url_in_create_n_list($addOrList, $content_type, $params) 
 			$fragments = array('packetpredefinedchargingrule' => '', 'packetdynamicchargingrule' => 'quickset-packet=1', 'packetdynamicl4' => 'quickset-packet=2', 'packetsgsn' => 'quickset-packet=3', 'packetsgsnip' => 'quickset-packet=4');
 
 			$url['path'] = 'common/' . $paths[$content_type] . '/' . $addOrList;
+			$url['fragment'] = $fragments[$content_type];
+			break;
+		case 'locationfactor':
+			$fragments = array('locationfactor' => 'quickset-qtabs_common_data=7');
+			$url['path'] = 'common/locations/' . $addOrList;
 			$url['fragment'] = $fragments[$content_type];
 			break;
 	}

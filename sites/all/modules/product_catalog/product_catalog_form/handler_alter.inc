@@ -39,6 +39,7 @@ function _unset_menu_items(&$form, $formId) {
 		case 'packetsgsnip_node_form' :
     case 'vouchercardtype_node_form':
 		case 'roaming_zone_node_form':
+		case 'locationfactor_node_form':
 			$firstPathName = current(explode('/', current_path()));
 			if ($firstPathName != 'relation') {
 				$unsetDeleteButton = FALSE;
