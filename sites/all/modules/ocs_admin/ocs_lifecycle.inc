@@ -223,17 +223,13 @@ function ocs_lifecycle_transition_form($form, &$form_state, $scheme_nid, $transi
 		$form['event']['#default_value'] = $action_node->field_ocs_trigger_events['und'][0]['target_id'];
 
 		// load related actions
-		$query = new EntityFieldQuery();
-		$result = $query->entityCondition('entity_type', 'node')
-			->entityCondition('bundle', 'ocs_transition_actions')
-			->fieldCondition('field_ocs_transition', 'nid', $transition_nid)
-			->execute();
-
+		$view_result = views_get_view_result('ocs_list_transition_actions', 'default', $transition_nid);
+		
 		// action_list = array of nid of actions
 		$action_list = array();
-		if (count($result) > 0) {
-			foreach (array_keys( $result['node']) as $nid) {
-				$action_list[] = node_load($nid);
+		if (count($view_result) > 0) {
+			foreach($view_result as $item){
+				$action_list[] = node_load($item->nid);
 			}
 		}
 
@@ -267,13 +263,11 @@ function ocs_lifecycle_transition_form($form, &$form_state, $scheme_nid, $transi
 	else if (isset($form_state['triggering_element']) && $form_state['triggering_element']['#name'] == 'add_more') {
 		$form_state['num_actions']++;
 	}
-
 	$actions = new OcsAction;
 	//     dpm( $actions->select_options(), 'select options');
 
 	$options = $actions->select_options();
-	//    dpm( $options, 'actions');
-
+	
 	for ($i = 1; $i <= $form_state['num_actions']; $i++) {
 		$form['action_list'][$i] = array(
 			'#type' => 'fieldset',
@@ -285,12 +279,17 @@ function ocs_lifecycle_transition_form($form, &$form_state, $scheme_nid, $transi
 			(($form['#op'] == 'edit') ? 		// // edit mode
 				$action_list[$i - 1]->field_ocs_action['und'][0]['nid'] : 0);
 
-		//        dpm( $selected_action, 'sel');
+		 //       dpm( $selected_action, 'sel');
 		//        dpm( $options, 'options');
-
+		if(isset($selected_action)){
+			$action_weight = $action_list[$i - 1]->field_weight['und'][0]['value'];
+		}else{
+			$action_weight = $i;
+		}
+		
 		$form['action_list'][$i]['action_' . $i] = array(
 			'#type' => 'select',
-			'#title' => t('Action #' . $i),
+			'#title' => t('Action'),
 			'#options' => $options,
 			'#default_value' => $selected_action,
 			'#ajax' => array(
@@ -300,6 +299,14 @@ function ocs_lifecycle_transition_form($form, &$form_state, $scheme_nid, $transi
 				//'wrapper' => 'ocs_lifecycle_actions_div',
 			),
 			'#prefix' => '<div class="inner-box-header">',
+			//'#suffix' => '</div>',
+		);
+		
+		$form['action_list'][$i]['weight_' . $i] = array(
+			'#type' => 'textfield',
+			'#title' => t('Weight'),
+			'#default_value' => $action_weight,
+			//'#prefix' => '<div class="inner-box-header">',
 			'#suffix' => '</div>',
 		);
 
@@ -470,6 +477,7 @@ function ocs_lifecycle_transition_form_submit($form, &$form_state)
 		// store actions
 		// format of $values['action_list']
 		//      $values['action_list'][$i]['action_'.$i]
+		//dsm($values,'values');
 		foreach ($values['action_list'] as $key => $value) {
 			if (is_numeric($key)) {
 
@@ -485,6 +493,7 @@ function ocs_lifecycle_transition_form_submit($form, &$form_state)
 					// new action
 					$action = ocs_admin_get_new_node('ocs_transition_actions');
 					$action->title = 'action for transition ' . $node->nid;
+					$action->field_weight['und'][0]['value'] = $value['weight_' . $key];
 				}
 
 				if ($value['action_' . $key] == 0) {
@@ -495,6 +504,7 @@ function ocs_lifecycle_transition_form_submit($form, &$form_state)
 					// update the contents otherwise
 					$action->field_ocs_transition['und'][0]['nid'] = $node->nid;
 					$action->field_ocs_action['und'][0]['nid'] = $value['action_' . $key];
+					$action->field_weight['und'][0]['value'] = $value['weight_' . $key];
 					unset($action->field_ocs_action_param_values);
 					
 					// store parameter values
