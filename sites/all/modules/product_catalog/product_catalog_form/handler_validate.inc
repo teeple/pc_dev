@@ -318,6 +318,12 @@ function product_catalog_form_node_validate($node, $form, &$form_state) {
 						form_set_error($target_element, $fail_rasion);
 					}
 					break;
+					
+				case 'treenodecounter_node_form':
+				
+					dsm($form_state['values'], 'values');
+					
+					break;
 
 				case 'actionsetcounter_node_form' :
 				case 'actionsetcounteronbonus_node_form' :

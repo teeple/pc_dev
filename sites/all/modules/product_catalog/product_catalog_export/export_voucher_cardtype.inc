@@ -112,6 +112,7 @@ function _array_voucher_cardtype($exportItemNids = NULL, $isExternalAPI = FALSE)
                 if (!empty($originalProductNode)) {
                     $tmpProduct['product_id'] = $originalProductNode -> field_product_id['und'][0]['safe_value'];
                     $tmpProduct['product_name'] = $product -> node_title;
+                    $tmpProduct['valid_period'] = !empty($product -> field_field_valid_period) ? $product -> field_field_valid_period[0]['raw']['value'] : null;
                     $tmpProduct['active_period'] = !empty($product -> field_field_active_period) ? $product -> field_field_active_period[0]['raw']['value'] : null;
                     $tmpProduct['grace_period'] = !empty($product -> field_field_grace_period) ? $product -> field_field_grace_period[0]['raw']['value'] : null;
                     

@@ -1064,8 +1064,9 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			break;
 
 		case 'treenodecounter_node_form' :
+			
 			$refTreeTerm = taxonomy_term_load($form['field_ref_tree_tid']['und'][0]['value']['#default_value']);
-
+			
 			if ($refTreeTerm -> name == 'Charging') {
 				$form['field_counter']['#type'] = 'hidden';
 				$form['field_startdate_option1']['#type'] = 'hidden';
@@ -1076,7 +1077,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 				unset($form['#groups']);
 				unset($form['#fieldgroups']);
 				unset($form['#group_children']);
-
+				
 			} else if ($refTreeTerm -> name == 'Accumulating') {
 			
 				$form['field_unlimited_threshold']['#type'] = 'hidden';
