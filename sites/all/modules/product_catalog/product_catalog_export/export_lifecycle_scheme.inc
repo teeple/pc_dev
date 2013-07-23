@@ -59,7 +59,7 @@ function _array_lifecycle_scheme($exportItemNids=NULL){
 				if ( !empty( $node->field_field_notification_before_ivr_)) {
 					$state_noti_before_ivr[ $state_name] = intval( $node->field_field_notification_before_ivr_[0]['raw']['value']);
 				}
-			}
+			} 
 			
 			$scheme['permission'] = $perm;
 			$scheme['state_period'] = $state_period;
