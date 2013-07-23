@@ -65,7 +65,7 @@ function _array_lifecycle_scheme($exportItemNids=NULL){
 			$scheme['state_period'] = $state_period;
 			$scheme['noti_before_sms'] = $state_noti_before_sms;
 			$scheme['noti_before_ivr'] = $state_noti_before_ivr;
-			
+			 
 			// get state transition rules
 			$view_transition = views_get_view_result('ocs_state_machine', 'panel_json', $record->nid);
 			//dpm( $view_transition, 'transition');
