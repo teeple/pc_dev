@@ -141,14 +141,14 @@ function product_catalog_exclusive_list( $nid)
 	//dpm( $prd, $prd->title);
 	if ( isset($prd->field_exclusiveness_others['und'])) {
 		foreach( $prd->field_exclusiveness_others['und'] as $prd_nid) {
-			$ex_prd = node_load( $prd_nid);
+			$ex_prd = node_load( $prd_nid['nid']);
 			if ( isset($ex_prd->field_product_type['und'][0]['tid']))
 				$ex_list[$ex_prd->field_product_type['und'][0]['tid']][] = $ex_prd;
 		}
 	}
 	if ( isset($prd->field_exclusiveness['und'])) {
 		foreach( $prd->field_exclusiveness['und'] as $prd_nid) {
-			$ex_prd = node_load( $prd_nid);
+			$ex_prd = node_load( $prd_nid['nid']);
 			if ( isset($ex_prd->field_product_type['und'][0]['tid']))
 				$ex_list[$ex_prd->field_product_type['und'][0]['tid']][] = $ex_prd;
 		}
