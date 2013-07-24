@@ -1064,7 +1064,6 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			break;
 
 		case 'treenodecounter_node_form' :
-			
 			$refTreeTerm = taxonomy_term_load($form['field_ref_tree_tid']['und'][0]['value']['#default_value']);
 			
 			if ($refTreeTerm -> name == 'Charging') {
@@ -1077,12 +1076,24 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 				unset($form['#groups']);
 				unset($form['#fieldgroups']);
 				unset($form['#group_children']);
+
+				$refCounter = node_load($form['field_ref_counter']['und'][0]['nid']['#default_value']);
+				$billingTypeCounterTerm = taxonomy_term_load($refCounter->field_billing_type_counter['und'][0]['tid']);
 				
+				if($billingTypeCounterTerm->name == 'Prepaid') {
+					$form['field_unlimited_threshold']['#type'] = 'hidden';
+					$form['field_threshold_limit_amount']['#type'] = 'hidden';
+					
+				} else {
+					$form['field_amount_corresponding']['#type'] = 'hidden';
+				}
+					
 			} else if ($refTreeTerm -> name == 'Accumulating') {
 			
 				$form['field_unlimited_threshold']['#type'] = 'hidden';
 				$form['field_threshold_limit_amount']['#type'] = 'hidden';
 				$form['field_counter_sub_unit_type']['#type'] = 'hidden';
+				$form['field_amount_corresponding']['#type'] = 'hidden';
 				
 				$productNid = $form['#node'] -> field_ref_product['und'][0]['nid'];
 

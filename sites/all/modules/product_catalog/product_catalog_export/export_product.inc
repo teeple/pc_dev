@@ -282,17 +282,17 @@ function _get_counter_list($product) {
 
     $productType = taxonomy_term_load($product -> field_product_type['und'][0]['tid']);
     $voca_name = _get_vocabulary_name('simpleproductoffering', $product);
-
+    
+    $counters = array();
+    $optionalCounters = array();
     if ($productType -> name == 'CUG') {
         $sharedBalanceTerm = taxonomy_get_term_by_name('Shared Balance', $voca_name);
         $refTreeTid =  current($sharedBalanceTerm) -> tid;
 
-        $counters = array();
         $view = views_get_view('list_tree_term_child_node_for_product');
         $view -> set_display('panel_pane_1');
         $view -> set_arguments(array('0' => $product -> nid, '1' => $refTreeTid));
         $view -> execute();
-        $counters = array();
         $counterNids = array();
 
         foreach ($view->result as $item) {
@@ -302,28 +302,63 @@ function _get_counter_list($product) {
         $viewResult = views_get_view_result('list_counter_all', 'panel_pane_3', join('+', $counterNids));
 
         foreach ($viewResult as $item) {
-            $counters[] = array('counter_id' => $item -> field_field_counter_id[0]['raw']['value']);
+            $optionalCounters[] = array('counter_id' => $item -> field_field_counter_id[0]['raw']['value']);
         }
 
     } else {
-        $counters = array();
         $view = views_get_view('list_prdcounterlist');
         $view -> set_display('panel_pane_3');
         $view -> set_arguments(array('0' => $product -> nid));
         $view -> execute();
         $counters = array();
         foreach ($view->result as $item) {
-            // $countersNids[] = array('counter_id'=> $item->field_data_field_counter_list_field_counter_list_nid);
             $counterNids[] = $item -> field_data_field_counter_list_field_counter_list_nid;
         }
-
+        
         $viewResult = views_get_view_result('list_counter_all', 'panel_pane_2', join('+', $counterNids));
 
         foreach ($viewResult as $item) {
-            $counters[] = array('counter_id' => $item -> field_field_counter_id[0]['raw']['value']);
+            $optionalCounters[] = array('counter_id' => $item -> field_field_counter_id[0]['raw']['value']);
         }
     }
-
+    
+    
+    // json of counter for charging 
+    $viewResult = views_get_view_result('list_treenodecounter', 'panel_pane_9', $product->nid);
+    dsm($viewResult, 'viewResult');
+    
+    $chargingCounters = array();
+    foreach($viewResult as $item) {
+    	$chargingCounter = array();
+    	$chargingCounter['counter_id'] = $item->field_field_counter_id[0]['raw']['value'];
+    	
+    	$billingTypeName = $item->field_field_billing_type_counter[0]['rendered']['#markup'];
+    	$counterSubUnitType = !empty($item->field_field_counter_sub_unit_type)? $item->field_field_counter_sub_unit_type[0]['rendered']['#markup']: null;
+    	$conversionUnit = !empty($item->field_field_counter_sub_unit_type[0]['raw']['taxonomy_term']->field_converting_rule['und'])?
+    				$item->field_field_counter_sub_unit_type[0]['raw']['taxonomy_term']->field_converting_rule['und'][0]['value']: null;
+    				
+    	if($billingTypeName == 'Prepaid') {
+    		$limitAmount = !empty($item->field_field_amount_corresponding) ? $item->field_field_amount_corresponding[0]['raw']['value']: null;
+    		
+    	} else {
+    		$unlimitedOption = ($item->field_field_unlimited_threshold[0]['raw']['value'] == 1)? 'unlimited': 'limited';
+    		$limitAmount = !empty($item->field_field_threshold_limit_amount) ? $item->field_field_threshold_limit_amount[0]['raw']['value']: null;
+    	}
+    	
+    	$chargingCounter['amount_to_action'] = $limitAmount;
+    	
+    	if( !empty($limitAmount) ){
+    		$actionResults = views_get_view_result('list_actionsetonthreshold', 'panel_pane_2', $item->nid);
+    		
+    		dsm($actionResults, 'actionResults');
+    		
+    	}
+    	
+    	$chargingCounters[] = $chargingCounter;
+    }
+    $counters['optional_counters'] = $optionalCounters;
+    $counters['charging_counters'] = $chargingCounters;
+    
     return $counters;
 }
 
