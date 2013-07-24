@@ -33,6 +33,9 @@ function ocs_admin_get_param_type( $name)
         'account_status' => OCS_PARAM_TYPE_ACCOUNT_STATUS,
         'pivot_date' => OCS_PARAM_TYPE_PIVOT_DATE,
         'days_to_add' => OCS_PARAM_TYPE_DAYS_TO_ADD,
+        'days_list' => OCS_PARAM_TYPE_DAYS_LIST,
+        'month_list' => OCS_PARAM_TYPE_MONTH_LIST,
+        'operator_list' => OCS_PARAM_TYPE_OPERATOR_LIST,
     );
 
     if (isset( $optype[$name])) return $optype[$name];
