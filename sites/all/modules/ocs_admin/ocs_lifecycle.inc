@@ -477,7 +477,7 @@ function ocs_lifecycle_transition_form_submit($form, &$form_state)
 		// store actions
 		// format of $values['action_list']
 		//      $values['action_list'][$i]['action_'.$i]
-		dsm($values,'values');
+		//dsm($values,'values');
 		foreach ($values['action_list'] as $key => $value) {
 			if (is_numeric($key)) {
 
