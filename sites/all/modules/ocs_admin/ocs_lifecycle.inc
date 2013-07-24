@@ -477,7 +477,7 @@ function ocs_lifecycle_transition_form_submit($form, &$form_state)
 		// store actions
 		// format of $values['action_list']
 		//      $values['action_list'][$i]['action_'.$i]
-		//dsm($values,'values');
+		dsm($values,'values');
 		foreach ($values['action_list'] as $key => $value) {
 			if (is_numeric($key)) {
 
@@ -493,7 +493,7 @@ function ocs_lifecycle_transition_form_submit($form, &$form_state)
 					// new action
 					$action = ocs_admin_get_new_node('ocs_transition_actions');
 					$action->title = 'action for transition ' . $node->nid;
-					$action->field_weight['und'][0]['value'] = isset($value['weight_' . $key])?$value['weight_' . $key]:0;
+					$action->field_weight['und'][0]['value'] = $value['weight_' . $key];
 				}
 
 				if ($value['action_' . $key] == 0) {
@@ -504,7 +504,7 @@ function ocs_lifecycle_transition_form_submit($form, &$form_state)
 					// update the contents otherwise
 					$action->field_ocs_transition['und'][0]['nid'] = $node->nid;
 					$action->field_ocs_action['und'][0]['nid'] = $value['action_' . $key];
-					$action->field_weight['und'][0]['value'] = isset($value['weight_' . $key])?$value['weight_' . $key]:0;
+					$action->field_weight['und'][0]['value'] = $value['weight_' . $key];
 					unset($action->field_ocs_action_param_values);
 					
 					// store parameter values
@@ -514,7 +514,7 @@ function ocs_lifecycle_transition_form_submit($form, &$form_state)
 							$action->field_ocs_action_param_values['und'][] = array('value' => $p . '=' . $v);
 						}
 					}
-
+					if (is_empty_string($action->field_weight['und'][0]['value'])) $action->field_weight['und'][0]['value'] = 0;
 					node_save($action);
 				}
 			}
