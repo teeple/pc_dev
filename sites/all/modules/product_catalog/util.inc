@@ -27,6 +27,11 @@ function find_parent_product($childNode) {
 	return NULL;
 }
 
+function is_empty_string($str){
+	if (strlen(trim($str)) == 0) return TRUE;
+	else FALSE;
+}
+
 function is_macaddress($val) {
 	return (bool)preg_match('/^([0-9a-fA-F][0-9a-fA-F]:){2}([0-9a-fA-F][0-9a-fA-F])$/', $val);
 }

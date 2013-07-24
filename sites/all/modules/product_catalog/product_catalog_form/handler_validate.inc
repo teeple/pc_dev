@@ -109,7 +109,7 @@ function _is_condition_duplicated($args) {
 
 function is_machine_name($argStr) {
 	// if (preg_match('/[^0-9a-zA-Z_]/', $argStr)) {
-	if (preg_match('/[^0-9a-z_]/', $argStr)) {
+	if (preg_match('/[^0-9a-zA-Z_]/', $argStr)) {
 		return FALSE;
 	}
 	return TRUE;
@@ -326,9 +326,23 @@ function product_catalog_form_node_validate($node, $form, &$form_state) {
 					break;
 					
 				case 'treenodecounter_node_form':
-				
-					dsm($form_state['values'], 'values');
 					
+					$counter = node_load($form_state['values']['field_ref_counter']['und'][0]['nid']);
+					$inputCounterSubUnitTypeTid = $form_state['values']['field_counter_sub_unit_type']['und'][0]['tid'];
+					$counterUnitTypeTerm = taxonomy_term_load($counter -> field_counter_unit_type['und'][0]['tid']);
+					$counterSubUnitTypes = $counterUnitTypeTerm -> field_ref_counter_sub_unit_type['und'];
+					
+					$foundFlag = FALSE;
+					foreach ($counterSubUnitTypes as $key => $value) {
+						if ($value['tid'] == $inputCounterSubUnitTypeTid) {
+							$foundFlag = TRUE;
+						}
+					}
+
+					if (!$foundFlag) {
+						form_set_error('field_counter_sub_unit_type', "Unit Type should be matched to counter's unit type");
+					}
+
 					break;
 
 				case 'actionsetcounter_node_form' :
@@ -885,12 +899,12 @@ function product_catalog_form_node_validate($node, $form, &$form_state) {
 					// Relation쪽 메뉴가 아닐 경우에만 validate 체크
 					if(isset($form_state['values']['field_product_id'])) {
 						if (!is_machine_name($form_state['values']['field_product_id']['und'][0]['value'])) {
-							form_set_error('field_product_id', "Only lowercase letter, number and underscore are allowed for product id");
+							form_set_error('field_product_id', "Only letters, numbers and underscore are allowed for product id");
 						}
 	
 						$fieldShortCode = $form_state['values']['field_short_code']['und'][0]['value'];
 						if (!is_machine_name($fieldShortCode)) {
-							form_set_error('field_short_code', "Only lowercase letter, number and underscore are allowed for short code");
+							form_set_error('field_short_code', "Only letters, numbers and underscore are allowed for short code");
 						}
 	
 						$fieldBillingTypeTid = $form_state['values']['field_billing_type']['und'][0]['tid'];

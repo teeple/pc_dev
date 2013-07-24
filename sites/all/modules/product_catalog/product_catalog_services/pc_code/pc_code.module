@@ -122,7 +122,7 @@ function _commoncode_update_or_create($code_list, $code_group) {
         foreach ($local_terms as $term) {
 
             // dsm($term, 'term');
-            //dsm($code, 'code');
+            // dsm($code, 'code');
             //error_log('code before: ' . $code -> code);
             // error_log('term common code before: ' . json_encode($term));
 
@@ -146,7 +146,9 @@ function _commoncode_update_or_create($code_list, $code_group) {
                     $term -> field_sub_group2['und'][0]['value'] = $code->subGrp2;
                     $term -> field_sub_group2['und'][0]['safe_value'] = $code->subGrp2;
                 }
-                
+                if(isset($code->description)){
+                	$term -> description = $code->description;
+                }
                 taxonomy_term_save($term);
                 $foundFlag = TRUE;
                 break;
@@ -166,6 +168,9 @@ function _commoncode_update_or_create($code_list, $code_group) {
                 if(isset($code->subGrp2)){
                     $term -> field_sub_group2['und'][0]['value'] = $code->subGrp2;
                     $term -> field_sub_group2['und'][0]['safe_value'] = $code->subGrp2;
+                }
+								if(isset($code->description)){
+                	$term -> description = $code->description;
                 }
                 
                 //error_log('meaning is same');
@@ -193,6 +198,9 @@ function _commoncode_update_or_create($code_list, $code_group) {
             if(isset($code->subGrp2)){
                 $term -> field_sub_group2['und'][0]['value'] = $code->subGrp2;
                 $term -> field_sub_group2['und'][0]['safe_value'] = $code->subGrp2;
+            }
+						if(isset($code->description)){
+            	$term -> description = $code->description;
             }
             taxonomy_term_save($term);
         }

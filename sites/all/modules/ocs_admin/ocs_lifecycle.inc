@@ -514,7 +514,7 @@ function ocs_lifecycle_transition_form_submit($form, &$form_state)
 							$action->field_ocs_action_param_values['und'][] = array('value' => $p . '=' . $v);
 						}
 					}
-
+					if (is_empty_string($action->field_weight['und'][0]['value'])) $action->field_weight['und'][0]['value'] = 0;
 					node_save($action);
 				}
 			}
