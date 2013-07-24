@@ -497,18 +497,10 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			$lifecycleScheme = node_load($form_state['build_info']['args'][0] -> args[0]);
 			$svcDomainTid = $lifecycleScheme -> field_service_domain['und'][0]['tid'];
 
-			$vid = taxonomy_vocabulary_machine_name_load( 'calltype');
-			$query = new EntityFieldQuery;
-			$result = $query->entityCondition('entity_type', 'taxonomy_term')
-				->propertyCondition('vid', $vid->vid)
-				->fieldCondition('field_service_domain', 'tid', $svcDomainTid)
-				->execute();
-
-			$options = array();
-			foreach( array_keys( $result['taxonomy_term']) as $tid) {
-				$term = taxonomy_term_load( $tid);
-				$options[$tid] = $term->name . ' : ' . $term->description;
-			}
+			$options = _handler_get_term_options( 'calltype', array(
+				array('field_service_domain', 'tid', $svcDomainTid),
+				array('field_sub_group1', 'value', array('VOICE', 'SMS', 'DATA', 'VIDEO'), 'IN'),
+				));
 
 			/*
 			$view = views_get_view('list_calltype');
@@ -551,19 +543,9 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			}
 
 			// filter feature codes
-			$vid = taxonomy_vocabulary_machine_name_load( 'featurecode');
-			$query = new EntityFieldQuery;
-			$result = $query->entityCondition('entity_type', 'taxonomy_term')
-				->propertyCondition('vid', $vid->vid)
-				->fieldCondition('field_service_domain', 'tid', $svcDomainTid)
-				->fieldCondition('field_sub_group1', 'value', 'Lifecycle')
-				->execute();
-
-			$options = array();
-			foreach( array_keys( $result['taxonomy_term']) as $tid) {
-				$term = taxonomy_term_load( $tid);
-				$options[$tid] = $term->name . ' : ' . $term->description;
-			}
+			$options = _handler_get_term_options( 'featurecode', array(
+				array('field_service_domain', 'tid', $svcDomainTid),
+				array('field_sub_group1', 'value', 'Lifecycle')));
 
 			/*
 			$view = views_get_view('list_service_feature_code');
@@ -582,6 +564,13 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			 foreach( array_keys( $form['field_feature_codes']) as $key) {
 				 $form['field_feature_codes'][$key]['field_feature_codes']['und']['#options'] = $options;
 			 }
+
+			// filter nonusage permission
+			$options = _handler_get_term_options( 'nonusagetype', array());
+			 foreach( array_keys( $form['field_nonusage_permission']) as $key) {
+				 $form['field_nonusage_permission'][$key]['field_nonusage_permission']['und']['#options'] = $options;
+			 }
+
 
 			break;
 		case 'backup_migrate_ui_manual_backup_load_profile_form' :
@@ -3126,6 +3115,30 @@ function _get_product_exclusive_list($productNid) {
 		$options['list'][$item -> nid] = view_get_field_value_by_label($view, 'PHP', $item);
 	}
 	unset($options['list'][$productNid]);
+
+	return $options;
+}			
+
+
+function _handler_get_term_options( $voca, $cond_list) 
+{
+	$vid = taxonomy_vocabulary_machine_name_load( $voca);
+	$query = new EntityFieldQuery;
+	$query->entityCondition('entity_type', 'taxonomy_term')
+		->propertyCondition('vid', $vid->vid);
+
+	foreach( $cond_list as $cond) {
+		$query->fieldCondition( $cond[0], $cond[1], $cond[2], isset($cond[3]) ? $cond[3] : NULL);
+	}
+	$result = $query->execute();
+
+	$options = array();
+	foreach( array_keys( $result['taxonomy_term']) as $tid) {
+		$term = taxonomy_term_load( $tid);
+		$name = $term->name;
+		if ( ! empty( $term->description)) $name .= ' (' . $term->description . ')';
+		$options[$tid] = $name;
+	}
 
 	return $options;
 }
