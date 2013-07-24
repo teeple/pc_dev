@@ -493,7 +493,7 @@ function ocs_lifecycle_transition_form_submit($form, &$form_state)
 					// new action
 					$action = ocs_admin_get_new_node('ocs_transition_actions');
 					$action->title = 'action for transition ' . $node->nid;
-					$action->field_weight['und'][0]['value'] = $value['weight_' . $key];
+					$action->field_weight['und'][0]['value'] = isset($value['weight_' . $key])?$value['weight_' . $key]:0;
 				}
 
 				if ($value['action_' . $key] == 0) {
@@ -504,7 +504,7 @@ function ocs_lifecycle_transition_form_submit($form, &$form_state)
 					// update the contents otherwise
 					$action->field_ocs_transition['und'][0]['nid'] = $node->nid;
 					$action->field_ocs_action['und'][0]['nid'] = $value['action_' . $key];
-					$action->field_weight['und'][0]['value'] = $value['weight_' . $key];
+					$action->field_weight['und'][0]['value'] = isset($value['weight_' . $key])?$value['weight_' . $key]:0;
 					unset($action->field_ocs_action_param_values);
 					
 					// store parameter values

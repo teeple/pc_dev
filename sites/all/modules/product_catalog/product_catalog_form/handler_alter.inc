@@ -497,12 +497,25 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			$lifecycleScheme = node_load($form_state['build_info']['args'][0] -> args[0]);
 			$svcDomainTid = $lifecycleScheme -> field_service_domain['und'][0]['tid'];
 
+			$vid = taxonomy_vocabulary_machine_name_load( 'calltype');
+			$query = new EntityFieldQuery;
+			$result = $query->entityCondition('entity_type', 'taxonomy_term')
+				->propertyCondition('vid', $vid->vid)
+				->fieldCondition('field_service_domain', 'tid', $svcDomainTid)
+				->execute();
+
+			$options = array();
+			foreach( array_keys( $result['taxonomy_term']) as $tid) {
+				$term = taxonomy_term_load( $tid);
+				$options[$tid] = $term->name . ' : ' . $term->description;
+			}
+
+			/*
 			$view = views_get_view('list_calltype');
 			$view -> set_display('panel_pane_2');
 			$view -> set_arguments(array('0' => $svcDomainTid));
 			$view -> execute();
 
-			$options = array();
 			$group = array();
 			foreach ($view->result as $record) {
 				$subgroup1 = $record -> field_field_sub_group1[0]['raw']['value'];
@@ -510,6 +523,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 				$options[$record -> tid] = t('<span class="@class">@svc</span>', array('@class' => t('ocs_svc_perm @1 @2', array('@1' => $subgroup1, '@2' => $subgroup2)), '@svc' => $record -> taxonomy_term_data_name));
 				$group[$subgroup1][$subgroup2] = 1;
 			}
+			*/
 
 			/*
 			 $legend = '';
@@ -519,6 +533,9 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			 }
 			 }
 			 */
+
+			//dpm( $options, 'options');
+			//dpm( $svcDomainTid, 'svcDomainTid');
 
 			foreach (array_keys( $form['field_service_permission']) as $key) {
 				/*
@@ -534,6 +551,21 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			}
 
 			// filter feature codes
+			$vid = taxonomy_vocabulary_machine_name_load( 'featurecode');
+			$query = new EntityFieldQuery;
+			$result = $query->entityCondition('entity_type', 'taxonomy_term')
+				->propertyCondition('vid', $vid->vid)
+				->fieldCondition('field_service_domain', 'tid', $svcDomainTid)
+				->fieldCondition('field_sub_group1', 'value', 'Lifecycle')
+				->execute();
+
+			$options = array();
+			foreach( array_keys( $result['taxonomy_term']) as $tid) {
+				$term = taxonomy_term_load( $tid);
+				$options[$tid] = $term->name . ' : ' . $term->description;
+			}
+
+			/*
 			$view = views_get_view('list_service_feature_code');
 			$view -> set_display('list_feature_code');
 			$view -> set_arguments(array('0' => $svcDomainTid, '1' => 'Lifecycle'));
@@ -545,6 +577,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 				$subgroup2 = $record -> field_field_sub_group2[0]['raw']['value'];
 				$options[$record -> tid] = t('<span class="@class">@svc</span>', array('@class' => t('ocs_svc_perm @1 @2', array('@1' => $subgroup1, '@2' => $subgroup2)), '@svc' => $record -> taxonomy_term_data_name));
 			}
+			*/
 
 			 foreach( array_keys( $form['field_feature_codes']) as $key) {
 				 $form['field_feature_codes'][$key]['field_feature_codes']['und']['#options'] = $options;
