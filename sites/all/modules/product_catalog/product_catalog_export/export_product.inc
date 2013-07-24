@@ -325,7 +325,6 @@ function _get_counter_list($product) {
     
     // json of counter for charging 
     $viewResult = views_get_view_result('list_treenodecounter', 'panel_pane_9', $product->nid);
-    dsm($viewResult, 'viewResult');
     
     $chargingCounters = array();
     foreach($viewResult as $item) {
@@ -337,6 +336,7 @@ function _get_counter_list($product) {
     	$conversionUnit = !empty($item->field_field_counter_sub_unit_type[0]['raw']['taxonomy_term']->field_converting_rule['und'])?
     				$item->field_field_counter_sub_unit_type[0]['raw']['taxonomy_term']->field_converting_rule['und'][0]['value']: null;
     				
+		$limitAmount = null;
     	if($billingTypeName == 'Prepaid') {
     		$limitAmount = !empty($item->field_field_amount_corresponding) ? $item->field_field_amount_corresponding[0]['raw']['value']: null;
     		
@@ -345,17 +345,29 @@ function _get_counter_list($product) {
     		$limitAmount = !empty($item->field_field_threshold_limit_amount) ? $item->field_field_threshold_limit_amount[0]['raw']['value']: null;
     	}
     	
-    	$chargingCounter['amount_to_action'] = $limitAmount;
+    	$chargingCounter['amount_to_action'] = isset($limitAmount)? $limitAmount * $conversionUnit: null;
     	
+   		$actions = array();
     	if( !empty($limitAmount) ){
     		$actionResults = views_get_view_result('list_actionsetonthreshold', 'panel_pane_2', $item->nid);
     		
-    		dsm($actionResults, 'actionResults');
-    		
+    		foreach($actionResults as $actionItem) {
+    			$action = array();
+    			$action['action'] = $actionItem->field_field_threshold_action_wo_block[0]['rendered']['#markup'];
+				$action['parameters']['orig'] = !empty($actionItem->field_field_message_orig)? $actionItem->field_field_message_orig[0]['raw']['value']: null;
+				$action['parameters']['dest'] = !empty($actionItem->field_field_message_dest)? $actionItem->field_field_message_dest[0]['raw']['taxonomy_term']->name:null;
+				$action['parameters']['message'] = !empty($actionItem->field_field_ref_messages)? $actionItem->field_field_ref_messages[0]['raw']['nid']: null;
+				
+				$actions[] = $action;
+    		}
+    	}
+    	if(!empty($actions) ) {
+			$chargingCounter['actions'] = $actions;
     	}
     	
     	$chargingCounters[] = $chargingCounter;
     }
+    
     $counters['optional_counters'] = $optionalCounters;
     $counters['charging_counters'] = $chargingCounters;
     
