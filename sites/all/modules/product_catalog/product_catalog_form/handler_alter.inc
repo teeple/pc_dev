@@ -152,6 +152,7 @@ function _add_ajax_submit_callback($form_id, &$form) {
 		case 'prdnonusagerecurringbonusscheme_node_form' :
 		case 'prdnonusagerollover_node_form' :
 		case 'prdnonusagerechargeblock_node_form' :
+		case 'prdnonusagegroupbonusblock_node_form' :
 		case 'unittransferfactor_node_form' :
 		case 'conditionwhatusagetypefactors_node_form' :
 		case 'conditionwhatnonusagetypefactors_node_form' :
@@ -945,6 +946,14 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			_unset_menu_items($form, $form_id);
 			break;
 
+		case 'prdnonusagegroupbonusblock_node_form':
+			$form['title']['#type'] = 'hidden';
+			unset($form['field_ref_product']);
+			unset($form['field_ref_tree_tid']);
+
+			_unset_menu_items($form, $form_id);			
+			break;
+
 		case 'prdnonusagerecurringchargescheme_node_form' :
 			$productNode = node_load($form['#node'] -> field_ref_product['und'][0]['nid']);
 			$productTypeTerm = taxonomy_term_load($productNode -> field_product_type['und'][0]['tid']);
@@ -1401,7 +1410,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			if ($firstPathName == 'relation') {
 				$form['title']['#type'] = 'hidden';
 
-				$unsetItems = array_merge($unsetItems, array('field_product_sub_type', 'field_expire_date_for_hour', 'field_description', 'field_offering_status', 'field_version', 'field_billing_type', 'field_validfor_product', 'field_service_operator', 'field_billing_cycle', 'field_product_id', 'field_custdvcd4prod', 'field_customer_group_type', 'field_is_bundle', 'field_deferred_subscription_flag', 'field_price_units', 'field_treatment_price_amount', 'field_treatment_day', 'field_contract_period', 'field_roaming_allowed', 'field_cug_member_counter', 'field_short_code', 'field_next_join_product', 'field_expire_date_type', 'field_expire_date', 'field_field_deferred_subscriptio', 'field_hlr_template_id', 'field_point_for_subscription', 'field_next_join_confirm', 'field_resubscription_flag', 'field_cug_customer_type', 'field_cug_group_type', 'field_specific_date', 'field_valid_date_hour'));
+				$unsetItems = array_merge($unsetItems, array('field_product_sub_type', 'field_expire_date_for_hour', 'field_description', 'field_offering_status', 'field_version', 'field_billing_type', 'field_validfor_product', 'field_service_operator', 'field_billing_cycle', 'field_product_id', 'field_custdvcd4prod', 'field_customer_group_type', 'field_is_bundle', 'field_deferred_subscription_flag', 'field_price_units', 'field_treatment_price_amount', 'field_treatment_day', 'field_contract_period', 'field_roaming_allowed', 'field_cug_member_counter', 'field_short_code', 'field_next_join_product', 'field_expire_date_type', 'field_expire_date', 'field_field_deferred_subscriptio', 'field_hlr_template_id', 'field_point_for_subscription', 'field_next_join_confirm', 'field_resubscription_flag', 'field_cug_customer_type', 'field_cug_group_type'));
 
 				$options = _get_product_exclusive_list($form['nid']['#value']);
 				$form['field_exclusiveness']['und']['#options'] = $options['list'];
