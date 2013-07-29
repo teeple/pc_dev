@@ -638,7 +638,8 @@
 			"Main Product" : $.fn.getSubMenuAddNodeWithoutWrapper("Main Product", "conditionwhatmainproduct"),
 			"Callee Main Product" : $.fn.getSubMenuAddNodeWithoutWrapper("Callee's Main Product", "conditionwhatmainproductforpeer"),
 			"Group Member Count" : $.fn.getSubMenuAddNodeWithoutWrapper("Group Member Count", "conditionwhatgroupmembercount"),			
-			"Content Price" : $.fn.getSubMenuAddNodeWithoutWrapper("Content Price", "conditionwhatcontentprice")			
+			"Content Price" : $.fn.getSubMenuAddNodeWithoutWrapper("Content Price", "conditionwhatcontentprice"),
+			"Rating Group" : $.fn.getSubMenuAddNodeWithoutWrapper("Rating Group", "conditionwhatratinggroup"),
 		};
 		return obj;
 	};
