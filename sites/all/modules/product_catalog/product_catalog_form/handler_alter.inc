@@ -130,6 +130,7 @@ function _add_ajax_submit_callback($form_id, &$form) {
 		case 'conditioncommoncarrieridd_node_form' :
 		case 'conditionwhatcardtype_node_form' :
 		case 'conditionwhatmainproduct_node_form' :
+		case 'conditionwhatusagedomain_node_form' :
 		case 'conditionwhatmainproductforpeer_node_form' :
 		case 'conditioncommoncarrierdomestic_node_form' :
 		case 'conditioncommonratinggroup_node_form' :
@@ -152,6 +153,7 @@ function _add_ajax_submit_callback($form_id, &$form) {
 		case 'prdnonusagerecurringbonusscheme_node_form' :
 		case 'prdnonusagerollover_node_form' :
 		case 'prdnonusagerechargeblock_node_form' :
+		case 'prdnonusagegroupbonusblock_node_form' :
 		case 'unittransferfactor_node_form' :
 		case 'conditionwhatusagetypefactors_node_form' :
 		case 'conditionwhatnonusagetypefactors_node_form' :
@@ -497,18 +499,10 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			$lifecycleScheme = node_load($form_state['build_info']['args'][0] -> args[0]);
 			$svcDomainTid = $lifecycleScheme -> field_service_domain['und'][0]['tid'];
 
-			$vid = taxonomy_vocabulary_machine_name_load( 'calltype');
-			$query = new EntityFieldQuery;
-			$result = $query->entityCondition('entity_type', 'taxonomy_term')
-				->propertyCondition('vid', $vid->vid)
-				->fieldCondition('field_service_domain', 'tid', $svcDomainTid)
-				->execute();
-
-			$options = array();
-			foreach( array_keys( $result['taxonomy_term']) as $tid) {
-				$term = taxonomy_term_load( $tid);
-				$options[$tid] = $term->name . ' : ' . $term->description;
-			}
+			$options = _handler_get_term_options( 'calltype', array(
+				array('field_service_domain', 'tid', $svcDomainTid),
+				array('field_sub_group1', 'value', array('VOICE', 'SMS', 'DATA', 'VIDEO'), 'IN'),
+				));
 
 			/*
 			$view = views_get_view('list_calltype');
@@ -551,19 +545,9 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			}
 
 			// filter feature codes
-			$vid = taxonomy_vocabulary_machine_name_load( 'featurecode');
-			$query = new EntityFieldQuery;
-			$result = $query->entityCondition('entity_type', 'taxonomy_term')
-				->propertyCondition('vid', $vid->vid)
-				->fieldCondition('field_service_domain', 'tid', $svcDomainTid)
-				->fieldCondition('field_sub_group1', 'value', 'Lifecycle')
-				->execute();
-
-			$options = array();
-			foreach( array_keys( $result['taxonomy_term']) as $tid) {
-				$term = taxonomy_term_load( $tid);
-				$options[$tid] = $term->name . ' : ' . $term->description;
-			}
+			$options = _handler_get_term_options( 'featurecode', array(
+				array('field_service_domain', 'tid', $svcDomainTid),
+				array('field_sub_group1', 'value', 'Lifecycle')));
 
 			/*
 			$view = views_get_view('list_service_feature_code');
@@ -582,6 +566,13 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			 foreach( array_keys( $form['field_feature_codes']) as $key) {
 				 $form['field_feature_codes'][$key]['field_feature_codes']['und']['#options'] = $options;
 			 }
+
+			// filter nonusage permission
+			$options = _handler_get_term_options( 'nonusagetype', array());
+			 foreach( array_keys( $form['field_nonusage_permission']) as $key) {
+				 $form['field_nonusage_permission'][$key]['field_nonusage_permission']['und']['#options'] = $options;
+			 }
+
 
 			break;
 		case 'backup_migrate_ui_manual_backup_load_profile_form' :
@@ -707,6 +698,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 		case 'conditionwhereapn_node_form' :
 		case 'conditionwhenvaliddate_node_form' :
 		case 'conditionwhatservicedomain_node_form' :
+		case 'conditionwhatusagedomain_node_form' :
 			_unset_menu_items($form, $form_id);
 			$form['field_weight']['#type'] = 'hidden';
 			$form['field_parent_node']['#type'] = 'hidden';
@@ -723,9 +715,15 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			$args = array();
 			$args = array('0' => $productNode -> field_service_type_of_provider['und'][0]['tid'], '1' => $productNode -> field_service_operator['und'][0]['tid'], '2' => $productNode -> field_billing_type['und'][0]['tid'], '3' => $productNode -> field_custdvcd4prod['und'][0]['tid']);
 			
+			
 			$productBillingType = taxonomy_term_load($productNode -> field_billing_type['und'][0]['tid']);
 			if($productBillingType->name == 'Hybrid') {
 				$args[2] = 'all';
+			}
+			
+			$customerType = taxonomy_term_load($productNode -> field_custdvcd4prod['und'][0]['tid']);
+			if($productBillingType->name == 'Group_and_Personal') {
+				$args[3] = 'all';
 			}
 			
 			$tempView = views_get_view('list_product_for_cond_main_product');
@@ -956,6 +954,14 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			_unset_menu_items($form, $form_id);
 			break;
 
+		case 'prdnonusagegroupbonusblock_node_form':
+			$form['title']['#type'] = 'hidden';
+			unset($form['field_ref_product']);
+			unset($form['field_ref_tree_tid']);
+
+			_unset_menu_items($form, $form_id);			
+			break;
+
 		case 'prdnonusagerecurringchargescheme_node_form' :
 			$productNode = node_load($form['#node'] -> field_ref_product['und'][0]['nid']);
 			$productTypeTerm = taxonomy_term_load($productNode -> field_product_type['und'][0]['tid']);
@@ -1097,7 +1103,6 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			break;
 
 		case 'treenodecounter_node_form' :
-			
 			$refTreeTerm = taxonomy_term_load($form['field_ref_tree_tid']['und'][0]['value']['#default_value']);
 			
 			if ($refTreeTerm -> name == 'Charging') {
@@ -1110,12 +1115,24 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 				unset($form['#groups']);
 				unset($form['#fieldgroups']);
 				unset($form['#group_children']);
+
+				$refCounter = node_load($form['field_ref_counter']['und'][0]['nid']['#default_value']);
+				$billingTypeCounterTerm = taxonomy_term_load($refCounter->field_billing_type_counter['und'][0]['tid']);
 				
+				if($billingTypeCounterTerm->name == 'Prepaid') {
+					$form['field_unlimited_threshold']['#type'] = 'hidden';
+					$form['field_threshold_limit_amount']['#type'] = 'hidden';
+					
+				} else {
+					$form['field_amount_corresponding']['#type'] = 'hidden';
+				}
+					
 			} else if ($refTreeTerm -> name == 'Accumulating') {
 			
 				$form['field_unlimited_threshold']['#type'] = 'hidden';
 				$form['field_threshold_limit_amount']['#type'] = 'hidden';
 				$form['field_counter_sub_unit_type']['#type'] = 'hidden';
+				$form['field_amount_corresponding']['#type'] = 'hidden';
 				
 				$productNid = $form['#node'] -> field_ref_product['und'][0]['nid'];
 
@@ -1352,7 +1369,9 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 				$hiddenItems = array_merge($hiddenItems, array('field_product_type', 'field_service_type_of_provider'));
 
 				// $disabledItems = array_merge($disabledItems, array('field_billing_type', 'field_service_operator', 'field_price_units', 'field_product_id', 'field_custdvcd4prod', 'field_customer_group_type'));
-				$disabledItems = array_merge($disabledItems, array('field_billing_type', 'field_service_operator', 'field_price_units', 'field_product_id', 'field_customer_group_type'));
+				// $disabledItems = array_merge($disabledItems, array('field_billing_type', 'field_service_operator', 'field_price_units', 'field_product_id', 'field_customer_group_type'));
+
+				$disabledItems = array_merge($disabledItems, array('field_billing_type', 'field_service_operator', 'field_price_units','field_customer_group_type'));
 
 				$productTypeTid = $form['field_product_type']['und']['#default_value'][0];
 				$productTypeName = $form['field_product_type']['und']['#options'][$productTypeTid];
@@ -3115,6 +3134,30 @@ function _get_product_exclusive_list($productNid) {
 		$options['list'][$item -> nid] = view_get_field_value_by_label($view, 'PHP', $item);
 	}
 	unset($options['list'][$productNid]);
+
+	return $options;
+}			
+
+
+function _handler_get_term_options( $voca, $cond_list) 
+{
+	$vid = taxonomy_vocabulary_machine_name_load( $voca);
+	$query = new EntityFieldQuery;
+	$query->entityCondition('entity_type', 'taxonomy_term')
+		->propertyCondition('vid', $vid->vid);
+
+	foreach( $cond_list as $cond) {
+		$query->fieldCondition( $cond[0], $cond[1], $cond[2], isset($cond[3]) ? $cond[3] : NULL);
+	}
+	$result = $query->execute();
+
+	$options = array();
+	foreach( array_keys( $result['taxonomy_term']) as $tid) {
+		$term = taxonomy_term_load( $tid);
+		$name = $term->name;
+		if ( ! empty( $term->description)) $name .= ' (' . $term->description . ')';
+		$options[$tid] = $name;
+	}
 
 	return $options;
 }

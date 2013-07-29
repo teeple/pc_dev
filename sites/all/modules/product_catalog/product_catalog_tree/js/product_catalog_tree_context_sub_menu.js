@@ -610,6 +610,7 @@
 			"Is Video Call" : $.fn.getSubMenuAddNodeWithoutWrapper("Is Video Call", "conditionwhatisvideo"),
 			"Is CLIR" : $.fn.getSubMenuAddNodeWithoutWrapper("Is CLIR", "conditionwhatisclir"),
 			"Group Member Count" : $.fn.getSubMenuAddNodeWithoutWrapper("Group Member Count", "conditionwhatgroupmembercount"),			
+			"Usage Domain" : $.fn.getSubMenuAddNodeWithoutWrapper("Usage Domain", "conditionwhatusagedomain"),
 			"Call Type" : $.fn.getSubMenuAddNodeWithoutWrapper("Call Type", "conditionwhatcalltype"),
 			"Counter" : $.fn.getSubMenuAddNodeWithoutWrapper("Counter", "conditionwhatcounter"),
 			"Rating Group" : $.fn.getSubMenuAddNodeWithoutWrapper("Rating Group", "conditionwhatratinggroup"),
@@ -632,6 +633,7 @@
 	$.fn.getConditionWhatType3 = function() {
 		var obj = {
 			"Counter" : $.fn.getSubMenuAddNodeWithoutWrapper("Counter", "conditionwhatcounter"),
+			"Usage Domain" : $.fn.getSubMenuAddNodeWithoutWrapper("Usage Domain", "conditionwhatusagedomain"),
 			"Call Type" : $.fn.getSubMenuAddNodeWithoutWrapper("Call Type", "conditionwhatcalltype"),
 			"Main Product" : $.fn.getSubMenuAddNodeWithoutWrapper("Main Product", "conditionwhatmainproduct"),
 			"Callee Main Product" : $.fn.getSubMenuAddNodeWithoutWrapper("Callee's Main Product", "conditionwhatmainproductforpeer"),
@@ -650,6 +652,7 @@
 			"Is Video Call" : $.fn.getSubMenuAddNodeWithoutWrapper("Is Video Call", "conditionwhatisvideo"),
 			"Is CLIR" : $.fn.getSubMenuAddNodeWithoutWrapper("Is CLIR", "conditionwhatisclir"),
 			"Group Member Count" : $.fn.getSubMenuAddNodeWithoutWrapper("Group Member Count", "conditionwhatgroupmembercount"),			
+			"Usage Domain" : $.fn.getSubMenuAddNodeWithoutWrapper("Usage Domain", "conditionwhatusagedomain"),			
 			"Call Type" : $.fn.getSubMenuAddNodeWithoutWrapper("Call Type", "conditionwhatcalltype"),
 			"Counter" : $.fn.getSubMenuAddNodeWithoutWrapper("Counter", "conditionwhatcounter"),
 			"Main Product" : $.fn.getSubMenuAddNodeWithoutWrapper("Main Product", "conditionwhatmainproduct"),
@@ -664,7 +667,8 @@
 			"Is Group Call" : $.fn.getSubMenuAddNodeWithoutWrapper("Is Group Call", "conditionwhatisgroupcall"),						
 			"Is Video Call" : $.fn.getSubMenuAddNodeWithoutWrapper("Is Video Call", "conditionwhatisvideo"),			
 			"Is CLIR" : $.fn.getSubMenuAddNodeWithoutWrapper("Is CLIR", "conditionwhatisclir"),
-			"Group Member Count" : $.fn.getSubMenuAddNodeWithoutWrapper("Group Member Count", "conditionwhatgroupmembercount"),					
+			"Group Member Count" : $.fn.getSubMenuAddNodeWithoutWrapper("Group Member Count", "conditionwhatgroupmembercount"),
+			"Usage Domain" : $.fn.getSubMenuAddNodeWithoutWrapper("Usage Domain", "conditionwhatusagedomain"),			
 			"Call Type" : $.fn.getSubMenuAddNodeWithoutWrapper("Call Type", "conditionwhatcalltype"),
 			"RoamingType" : $.fn.getSubMenuAddNodeWithoutWrapper("RoamingType", "conditionwhatroamingtype"),
 			"Counter" : $.fn.getSubMenuAddNodeWithoutWrapper("Counter", "conditionwhatcounter"),
@@ -705,6 +709,7 @@
 			"Is Video Call" : $.fn.getSubMenuAddNodeWithoutWrapper("Is Video Call", "conditionwhatisvideo"),			
 			"Is CLIR" : $.fn.getSubMenuAddNodeWithoutWrapper("Is CLIR", "conditionwhatisclir"),
 			"Group Member Count" : $.fn.getSubMenuAddNodeWithoutWrapper("Group Member Count", "conditionwhatgroupmembercount"),					
+			"Usage Domain" : $.fn.getSubMenuAddNodeWithoutWrapper("Usage Domain", "conditionwhatusagedomain"),			
 			"Call Type" : $.fn.getSubMenuAddNodeWithoutWrapper("Call Type", "conditionwhatcalltype"),
 			"Counter" : $.fn.getSubMenuAddNodeWithoutWrapper("Counter", "conditionwhatcounter"),
 			"Rating Group" : $.fn.getSubMenuAddNodeWithoutWrapper("Rating Group", "conditionwhatratinggroup"),
@@ -737,6 +742,7 @@
 			"Is Video Call" : $.fn.getSubMenuAddNodeWithoutWrapper("Is Video Call", "conditionwhatisvideo"),			
 			"Is CLIR" : $.fn.getSubMenuAddNodeWithoutWrapper("Is CLIR", "conditionwhatisclir"),
 			"Group Member Count" : $.fn.getSubMenuAddNodeWithoutWrapper("Group Member Count", "conditionwhatgroupmembercount"),					
+			"Usage Domain" : $.fn.getSubMenuAddNodeWithoutWrapper("Usage Domain", "conditionwhatusagedomain"),			
 			"Call Type" : $.fn.getSubMenuAddNodeWithoutWrapper("Call Type", "conditionwhatcalltype"),
 			"Counter" : $.fn.getSubMenuAddNodeWithoutWrapper("Counter", "conditionwhatcounter"),
 		};
@@ -752,6 +758,7 @@
 			"Is Video Call" : $.fn.getSubMenuAddNodeWithoutWrapper("Is Video Call", "conditionwhatisvideo"),			
 			"Is CLIR" : $.fn.getSubMenuAddNodeWithoutWrapper("Is CLIR", "conditionwhatisclir"),
 			"Group Member Count" : $.fn.getSubMenuAddNodeWithoutWrapper("Group Member Count", "conditionwhatgroupmembercount"),					
+			"Usage Domain" : $.fn.getSubMenuAddNodeWithoutWrapper("Usage Domain", "conditionwhatusagedomain"),			
 			"Call Type" : $.fn.getSubMenuAddNodeWithoutWrapper("Call Type", "conditionwhatcalltype"),
 			"Counter" : $.fn.getSubMenuAddNodeWithoutWrapper("Counter", "conditionwhatcounter"),
 			"Rating Group" : $.fn.getSubMenuAddNodeWithoutWrapper("Rating Group", "conditionwhatratinggroup"),
@@ -763,6 +770,7 @@
 		var obj = {
 			"Service Domain" : $.fn.getSubMenuAddNodeWithoutWrapper("Service Domain", "conditionwhatservicedomain"),
 			"Counter" : $.fn.getSubMenuAddNodeWithoutWrapper("Counter", "conditionwhatcounter"),
+			"Usage Domain" : $.fn.getSubMenuAddNodeWithoutWrapper("Usage Domain", "conditionwhatusagedomain"),			
 			"Call Type" : $.fn.getSubMenuAddNodeWithoutWrapper("Call Type", "conditionwhatcalltype"),
 			"Main Product" : $.fn.getSubMenuAddNodeWithoutWrapper("Main Product", "conditionwhatmainproduct"),
 			"Callee Main Product" : $.fn.getSubMenuAddNodeWithoutWrapper("Callee's Main Product", "conditionwhatmainproductforpeer")
@@ -781,6 +789,7 @@
 			"Is Video Call" : $.fn.getSubMenuAddNodeWithoutWrapper("Is Video Call", "conditionwhatisvideo"),			
 			"Is CLIR" : $.fn.getSubMenuAddNodeWithoutWrapper("Is CLIR", "conditionwhatisclir"),
 			"Group Member Count" : $.fn.getSubMenuAddNodeWithoutWrapper("Group Member Count", "conditionwhatgroupmembercount"),					
+			"Usage Domain" : $.fn.getSubMenuAddNodeWithoutWrapper("Usage Domain", "conditionwhatusagedomain"),			
 			"Call Type" : $.fn.getSubMenuAddNodeWithoutWrapper("Call Type", "conditionwhatcalltype"),
 			"Counter" : $.fn.getSubMenuAddNodeWithoutWrapper("Counter", "conditionwhatcounter"),
 			"Main Product" : $.fn.getSubMenuAddNodeWithoutWrapper("Main Product", "conditionwhatmainproduct"),

@@ -59,6 +59,9 @@ function _product_for_export($exportItemNids = NULL, $isExternalAPI = FALSE, $ta
         $nonUsage['onetime_charge'] = _get_onetime_charge($node -> nid);
         $nonUsage['onetime_charge_discount_on_main'] = _get_onetime_charge_discount($node -> nid);
 
+		// bhtak add group bonus
+        $nonUsage['group_bonus'] = _get_group_bonus($node -> nid);
+
         $product['nonusage'] = $nonUsage;
         $product['usage'] = array();
 
@@ -282,17 +285,17 @@ function _get_counter_list($product) {
 
     $productType = taxonomy_term_load($product -> field_product_type['und'][0]['tid']);
     $voca_name = _get_vocabulary_name('simpleproductoffering', $product);
-
+    
+    $counters = array();
+    $optionalCounters = array();
     if ($productType -> name == 'CUG') {
         $sharedBalanceTerm = taxonomy_get_term_by_name('Shared Balance', $voca_name);
         $refTreeTid =  current($sharedBalanceTerm) -> tid;
 
-        $counters = array();
         $view = views_get_view('list_tree_term_child_node_for_product');
         $view -> set_display('panel_pane_1');
         $view -> set_arguments(array('0' => $product -> nid, '1' => $refTreeTid));
         $view -> execute();
-        $counters = array();
         $counterNids = array();
 
         foreach ($view->result as $item) {
@@ -302,28 +305,75 @@ function _get_counter_list($product) {
         $viewResult = views_get_view_result('list_counter_all', 'panel_pane_3', join('+', $counterNids));
 
         foreach ($viewResult as $item) {
-            $counters[] = array('counter_id' => $item -> field_field_counter_id[0]['raw']['value']);
+            $optionalCounters[] = array('counter_id' => $item -> field_field_counter_id[0]['raw']['value']);
         }
 
     } else {
-        $counters = array();
         $view = views_get_view('list_prdcounterlist');
         $view -> set_display('panel_pane_3');
         $view -> set_arguments(array('0' => $product -> nid));
         $view -> execute();
         $counters = array();
         foreach ($view->result as $item) {
-            // $countersNids[] = array('counter_id'=> $item->field_data_field_counter_list_field_counter_list_nid);
             $counterNids[] = $item -> field_data_field_counter_list_field_counter_list_nid;
         }
-
+        
         $viewResult = views_get_view_result('list_counter_all', 'panel_pane_2', join('+', $counterNids));
 
         foreach ($viewResult as $item) {
-            $counters[] = array('counter_id' => $item -> field_field_counter_id[0]['raw']['value']);
+            $optionalCounters[] = array('counter_id' => $item -> field_field_counter_id[0]['raw']['value']);
         }
     }
-
+    
+    
+    // json of counter for charging 
+    $viewResult = views_get_view_result('list_treenodecounter', 'panel_pane_9', $product->nid);
+    
+    $chargingCounters = array();
+    foreach($viewResult as $item) {
+    	$chargingCounter = array();
+    	$chargingCounter['counter_id'] = $item->field_field_counter_id[0]['raw']['value'];
+    	
+    	$billingTypeName = $item->field_field_billing_type_counter[0]['rendered']['#markup'];
+    	$counterSubUnitType = !empty($item->field_field_counter_sub_unit_type)? $item->field_field_counter_sub_unit_type[0]['rendered']['#markup']: null;
+    	$conversionUnit = !empty($item->field_field_counter_sub_unit_type[0]['raw']['taxonomy_term']->field_converting_rule['und'])?
+    				$item->field_field_counter_sub_unit_type[0]['raw']['taxonomy_term']->field_converting_rule['und'][0]['value']: null;
+    				
+		$limitAmount = null;
+    	if($billingTypeName == 'Prepaid') {
+    		$limitAmount = !empty($item->field_field_amount_corresponding) ? $item->field_field_amount_corresponding[0]['raw']['value']: null;
+    		
+    	} else {
+    		$unlimitedOption = ($item->field_field_unlimited_threshold[0]['raw']['value'] == 1)? 'unlimited': 'limited';
+    		$limitAmount = !empty($item->field_field_threshold_limit_amount) ? $item->field_field_threshold_limit_amount[0]['raw']['value']: null;
+    	}
+    	
+    	$chargingCounter['amount_to_action'] = isset($limitAmount)? $limitAmount * $conversionUnit: null;
+    	
+   		$actions = array();
+    	if( !empty($limitAmount) ){
+    		$actionResults = views_get_view_result('list_actionsetonthreshold', 'panel_pane_2', $item->nid);
+    		
+    		foreach($actionResults as $actionItem) {
+    			$action = array();
+    			$action['action'] = $actionItem->field_field_threshold_action_wo_block[0]['rendered']['#markup'];
+				$action['parameters']['orig'] = !empty($actionItem->field_field_message_orig)? $actionItem->field_field_message_orig[0]['raw']['value']: null;
+				$action['parameters']['dest'] = !empty($actionItem->field_field_message_dest)? $actionItem->field_field_message_dest[0]['raw']['taxonomy_term']->name:null;
+				$action['parameters']['message'] = !empty($actionItem->field_field_ref_messages)? $actionItem->field_field_ref_messages[0]['raw']['nid']: null;
+				
+				$actions[] = $action;
+    		}
+    	}
+    	if(!empty($actions) ) {
+			$chargingCounter['actions'] = $actions;
+    	}
+    	
+    	$chargingCounters[] = $chargingCounter;
+    }
+    
+    $counters['optional_counters'] = $optionalCounters;
+    $counters['charging_counters'] = $chargingCounters;
+    
     return $counters;
 }
 
@@ -547,6 +597,7 @@ function _get_attribute($product) {
                       'cug_member_counter' => array('through_common_code' => FALSE, 'field' => 'field_cug_member_counter', 'field_value' => "field_cug_member_counter['und'][0]['value']", 'field_value_default' => NULL, ), 
                       'cug_group_type' => array('through_common_code' => TRUE, 'field' => 'field_cug_group_type', 'field_value' => "field_cug_group_type['und'][0]['tid']", 'field_value_default' => NULL, ), 
                       'cug_customer_type' => array('through_common_code' => TRUE, 'field' => 'field_cug_customer_type', 'field_value' => "field_cug_customer_type['und'][0]['tid']", 'field_value_default' => NULL, ), 
+                      'cug_need_member_product' => array('through_common_code' => FALSE, 'field' => 'field_cug_need_member_product', 'field_value' => "field_cug_need_member_product['und'][0]['value']", 'field_value_default' => NULL, ), 
                       'treatment_day' => array('through_common_code' => FALSE, 'field' => 'field_treatment_day', 'field_value' => "field_treatment_day['und'][0]['value']", 'field_value_default' => NULL), 
                       'treatment_price' => array('through_common_code' => FALSE, 'field' => 'field_treatment_price_amount', 'field_value' => "field_treatment_price_amount['und'][0]['value']", 'field_value_default' => 0), 
                       'field_point_for_subscription' => array('through_common_code' => FALSE, 'field' => 'field_point_for_subscription', 'field_value' => "field_point_for_subscription['und'][0]['value']", 'field_value_default' => 0), 
@@ -617,9 +668,9 @@ function _get_attribute_exceptions($product) {
 
     $retArray = array();
     
-    $validStart = isset($product -> field_validfor_product['und'][0]['value']) ? $product -> field_validfor_product['und'][0]['value'] : '0001-01-01 00:00:00';
+    $validStart = isset($product -> field_validfor_product['und'][0]['value']) ? $product -> field_validfor_product['und'][0]['value'] : '2013-01-01 00:00:00';
 
-    $validEnd = isset($product -> field_validfor_product['und'][0]['value2']) ? $product -> field_validfor_product['und'][0]['value2'] : '0001-01-01 00:00:00';
+    $validEnd = isset($product -> field_validfor_product['und'][0]['value2']) ? $product -> field_validfor_product['und'][0]['value2'] : '2013-01-01 00:00:00';
     
     if ($validStart === $validEnd) {
     	$validEnd = '9999-12-31 23:59:59';
@@ -869,4 +920,24 @@ function _get_common_code($term) {
     $data['code'] = isset($term -> field_common_code['und'][0]['safe_value']) ? $term -> field_common_code['und'][0]['safe_value'] : $term -> name;
     $data['meaning'] = $term -> name;
     return $data;
+}
+
+function _get_group_bonus( $nid) 
+{
+	$data = array( 'adm_message' => null);
+
+	$nids = ocs_get_nids_by_cond( 'prdnonusagegroupbonusblock', array(
+				array('field_ref_product', 'nid', $nid),
+				// TODO : check tree_tid ?
+//				array('field_ref_tree_tid', 'value', $nid),
+				));
+
+	if ( empty( $nids)) {
+		return $data;
+	}
+
+	$attr = node_load( $nids[0]);
+	$data['adm_message'] = array( 'message_id' => $attr->field_ref_messages['und'][0]['nid']);
+
+	return $data;
 }

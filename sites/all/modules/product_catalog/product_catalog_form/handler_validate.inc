@@ -326,9 +326,23 @@ function product_catalog_form_node_validate($node, $form, &$form_state) {
 					break;
 					
 				case 'treenodecounter_node_form':
-				
-					dsm($form_state['values'], 'values');
 					
+					$counter = node_load($form_state['values']['field_ref_counter']['und'][0]['nid']);
+					$inputCounterSubUnitTypeTid = $form_state['values']['field_counter_sub_unit_type']['und'][0]['tid'];
+					$counterUnitTypeTerm = taxonomy_term_load($counter -> field_counter_unit_type['und'][0]['tid']);
+					$counterSubUnitTypes = $counterUnitTypeTerm -> field_ref_counter_sub_unit_type['und'];
+					
+					$foundFlag = FALSE;
+					foreach ($counterSubUnitTypes as $key => $value) {
+						if ($value['tid'] == $inputCounterSubUnitTypeTid) {
+							$foundFlag = TRUE;
+						}
+					}
+
+					if (!$foundFlag) {
+						form_set_error('field_counter_sub_unit_type', "Unit Type should be matched to counter's unit type");
+					}
+
 					break;
 
 				case 'actionsetcounter_node_form' :
