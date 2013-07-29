@@ -293,7 +293,7 @@ function product_catalog_ajax_clone_product($targetProductId){
     $output = $productNode->nid;
     print json_encode($output);
     exit;
-};
+}
 
 function _paste_tariffplan($targetNode,$productNid,$baseTid,$weight){
     global $user;
@@ -431,7 +431,60 @@ function _paste_tariffplan($targetNode,$productNid,$baseTid,$weight){
     }  
 
     return $output;
-};
+}
+
+function _paste_action($targetNode,$productNid,$baseTid,$weight){
+    global $user;
+    $targetRefTreeTid = $targetNode->field_ref_tree_tid['und'][0]['value'];
+    if($targetRefTreeTid != $baseTid){//error diffrent voca
+        $output['success'] = FALSE;
+        $output['reason'] = 'Different event type item can not be pasted';
+    }else{
+        $oldProductNode = node_load($targetNode->field_ref_product['und'][0]['nid']);
+        $newProductNode = node_load($productNid);
+				
+				if($oldProductNode->nid != $newProductNode->nid){
+					$output['success'] = FALSE;
+					$output['reason'] = 'Only action item in same product can be pasted';
+				}else{//success
+            //create action node
+            $cloneNode = clone $targetNode;
+            $cloneNode->uid = $user->uid;
+            $cloneNode->field_weight['und'][0]['value'] = $weight;
+            $cloneNode->field_ref_product['und'][0]['nid'] = $productNid;
+            if($cloneNode->type == 'actionpricechargerecurring'){
+							$recurring_charge_id = $newProductNode -> field_product_id['und'][0]['value'] . '_' . time();
+							$cloneNode->field_recurring_charge_id['und'][0]['value'] = $recurring_charge_id;
+							$cloneNode->field_recurring_charge_id['und'][0]['safe_value'] = $recurring_charge_id;
+							//$cloneNode->title = 'temp';
+						}
+						_unset_unused_field_of_cloned_node($cloneNode); 
+            node_save($cloneNode);   
+						_clone_nested_child_node($targetNode,$cloneNode);     
+						
+						//covers for actionsetcounter,actionsetnotification,actionsetcounteronbonus,actionsetbonusonrecurringcharge
+						$view = views_get_view('list_actions');
+            $view->set_display('panel_pane_1');
+            $view->set_arguments(array('0' => $targetNode->nid));
+            $view->execute(); 
+            foreach($view->result as $record){
+               $targetActionNid = $record->nid;
+               $targetActionNode = node_load($targetActionNid);
+                
+               $childNode = clone $targetActionNode;
+               $childNode->uid = $user->uid;
+               $childNode->field_ref_source_action['und'][0]['nid'] = $cloneNode->nid;
+               _unset_unused_field_of_cloned_node($childNode);
+               node_save($childNode);
+            }
+						
+						$output['success'] = TRUE;   
+            $output['product_catalog_ajax_result_node'] = $cloneNode;
+        }
+    }  
+
+    return $output;
+}
 
 function _clone_nested_child_node($oldParentNode,$newParentNode){
     global $user;    
@@ -481,6 +534,14 @@ function product_catalog_ajax_paste_node($nodeId,$productId,$weight){
                     $output['product_catalog_ajax_result'] = add_js_settings_after_node_save($output['product_catalog_ajax_result_node']);
                     unset($output['product_catalog_ajax_result_node']);
                     break;
+							  case "actionpricechargeonetime":
+								case "actionpricediscount":
+								case "actionpriceallowanceonetime":
+								case "actionpricechargerecurring":
+										$output = _paste_action($targetNode,$productNid,$baseTid,$weight);
+										$output['product_catalog_ajax_result'] = add_js_settings_after_node_save($output['product_catalog_ajax_result_node']);
+                    unset($output['product_catalog_ajax_result_node']);
+									break;
             }
         }
     }

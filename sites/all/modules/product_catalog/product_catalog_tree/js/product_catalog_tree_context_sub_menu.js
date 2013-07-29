@@ -40,15 +40,11 @@
 			case "tree_node_counter_accumulated_basic_prepaid":
 			case "tree_node_counter_accumulated_basic_postpaid":
 			case 'actionblockfactors':
-			case "actionpricechargeonetime":
 			case 'tree_node_counter_accumulated_optional_prepaid':
 			case 'tree_node_counter_accumulated_optional_postpaid':
 			case 'tree_node_counter_accumulated_rollover_prepaid':
 			case 'tree_node_counter_accumulated_rollover_postpaid':
-			case "actionpriceallowanceonetime":
-			case "actionpricechargerecurring":
 			case "actionpriceallowancerecurring":
-			case "actionpricediscount":
 			case "actionpriceallowance":
 			case "actionpricechargefactors":
 			case "actionpricediscountfactors":
@@ -129,34 +125,64 @@
 				menus.custom_create.submenu = $.fn.getSubMenuAddNode("Allowance Factors", "actionpriceallowancefactors");
 				break;
 			case 'nonusage_fee_onetime':
-			case "nonusage_subscription_charge":
+			
 			case "nonusage_unsubscription_charge":
 			case "nonusage_unsubscription_penalty":
 			case "nonusage_unittransfer_charge":
 				menus.custom_create._disabled = false;
 				menus.custom_create.submenu = $.fn.getSubMenuAddNode("Charge Item", "actionpricechargeonetime");
 				break;
+			case "nonusage_subscription_charge":
+				menus.custom_create._disabled = false;
+				menus.custom_create.submenu = $.fn.getSubMenuAddNode("Charge Item", "actionpricechargeonetime");
+				menus.custom_paste._disabled = false;
+				menus.custom_paste.action = function(node) {
+					$.fn.pasteNode(node);
+				};
+				break;
 			case 'nonusage_fee_recurring_custom':
-			case 'nonusage_recurring_charge':
+			//case 'nonusage_recurring_charge':
 				menus.custom_create._disabled = false;
 				menus.custom_create.submenu = $.fn.getSubMenuAddNode("Charge Item", "actionpricechargerecurring");
+				menus.custom_paste._disabled = false;
+				menus.custom_paste.action = function(node) {
+					$.fn.pasteNode(node);
+				};
 				break;
 			case "nonusage_subscription_bonus":
 			case "nonusage_activation_bonus":
-			case "nonusage_group_bonus_bonus":
 			case "nonusage_recharge_bonus":
 			case "nonusage_usageend_bonus":
 			case "nonusage_recurring_bonus":
+			case "nonusage_group_bonus_bonus":
 				menus.custom_create._disabled = false;
 				menus.custom_create.submenu = $.fn.getSubMenuAddNode("Bonus Item", "actionpriceallowanceonetime");
+				menus.custom_paste._disabled = false;
+				menus.custom_paste.action = function(node) {
+					$.fn.pasteNode(node);
+				};
 				break;
-			case "nonusage_subscription_discount":
-			case "nonusage_unsubscription_discount":
-			case "nonusage_recurring_discount":
-			case "nonusage_recurring_discount_on_main":
 			case "nonusage_unittransfer_discount":
 				menus.custom_create._disabled = false;
 				menus.custom_create.submenu = $.fn.getSubMenuAddNode("Discount", "actionpricediscount");
+				break;
+			case "nonusage_unsubscription_discount":
+			case "nonusage_recurring_discount_on_main":
+				menus.custom_create._disabled = false;
+				menus.custom_create.submenu = $.fn.getSubMenuAddNode("Discount", "actionpricediscount");
+				menus.custom_paste._disabled = false;
+				menus.custom_paste.action = function(node) {
+					$.fn.pasteNode(node);
+				};
+				break;
+			case "nonusage_subscription_discount":
+			case "nonusage_recurring_discount":
+				menus.custom_create._disabled = false;
+				menus.custom_create.submenu = $.fn.getSubMenuAddNode("Discount", "actionpricediscount");
+				menus.custom_paste._disabled = false;
+				menus.custom_paste.action = function(node) {
+					$.fn.pasteNode(node);
+				};
 				break;
 			case "conditionwhatqos":
 			case "conditionwhaturlgroupfactors":
@@ -325,6 +351,21 @@
 					$.fn.deleteNode(node);
 				};
 				menus.custom_copy._disabled = false;
+				menus.custom_copy.action = function(node) {
+					$.fn.copyNode(node);
+				};
+			  break;
+			case "actionpricechargeonetime":
+			case "actionpricediscount":
+			case "actionpriceallowanceonetime":
+			case "actionpricechargerecurring":
+				menus.custom_delete._disabled = false;
+				menus.custom_delete.action = function(node) {
+					$.fn.deleteNode(node);
+				};
+				menus.custom_create._disabled = false;
+     		menus.custom_create.submenu = $.fn.getSubMenuAddNode("Condition Set", "conditioncommonand");
+ 				menus.custom_copy._disabled = false;
 				menus.custom_copy.action = function(node) {
 					$.fn.copyNode(node);
 				};
