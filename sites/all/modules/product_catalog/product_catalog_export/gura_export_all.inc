@@ -268,6 +268,10 @@ function to_rating_rule_string($value)
 	{
 		return '\'' . $value . '\'';
 	}
+	else if(strstr($value, ',') != FALSE)
+	{
+		return '\'' . $value . '\'';
+	}
 	else if(strstr($value, ':') != FALSE)
 	{
 		return '\'' . $value . '\'';
@@ -1162,7 +1166,8 @@ function view_get_field_value($view , $field_name , $record)
 							if($field_handler->field_info['settings']['granularity']['minute'] !== 0)
 							{
 								$format_str = '%Y-%m-%dT%H:%M';
-								$value = '\''. strftime($format_str, strtotime($value)) . '\'';
+								//$value = '\''. strftime($format_str, strtotime($value)) . '\'';
+								$value = strftime($format_str, strtotime($value));
 							}
 							else
 							{
@@ -1190,7 +1195,7 @@ function view_get_field_value($view , $field_name , $record)
 								$value = "false";
 						}
 
-
+						$value = to_rating_rule_string($value);
 						if(array_key_exists('value2' , $raw_item['raw']))
 						{
 							$value2 = $raw_item['raw']['value2'];
