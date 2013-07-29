@@ -1238,7 +1238,9 @@ function view_get_field_value($view , $field_name , $record)
 					else if(array_key_exists('nid' , $raw_item['raw']) && array_key_exists('node' , $raw_item['raw']))
 					{
 						//dsm($raw_items[0]['raw']['node']);
-						$arr[]= $raw_item['raw']['node']->title;
+						$value= $raw_item['raw']['node']->title;
+						$value = to_rating_rule_string($value);
+						$arr[]= $value;
 					}
 					else if(get_field_type_string($field_name) == 'partial_date' && array_key_exists('from' , $raw_item['raw']))
 					{
@@ -1270,8 +1272,10 @@ function view_get_field_value($view , $field_name , $record)
 					else
 					{
 						// dsm($raw_items);
-						$arr[] = $raw_item['rendered']['#markup'];
+						$value = $raw_item['rendered']['#markup'];
 						// return "unknown";
+						$value = to_rating_rule_string($value);
+						$arr[]= $value;
 					}
 				}
 				else
@@ -1291,7 +1295,7 @@ function view_get_field_value($view , $field_name , $record)
 		try
 		{
 			$value = $field_handler->render($record);
-			return $value;
+			return to_rating_rule_string($value);
 		}
 		catch(Exception $e)
 		{
