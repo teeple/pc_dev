@@ -59,6 +59,9 @@ function _product_for_export($exportItemNids = NULL, $isExternalAPI = FALSE, $ta
         $nonUsage['onetime_charge'] = _get_onetime_charge($node -> nid);
         $nonUsage['onetime_charge_discount_on_main'] = _get_onetime_charge_discount($node -> nid);
 
+		// bhtak add group bonus
+        $nonUsage['group_bonus'] = _get_group_bonus($node -> nid);
+
         $product['nonusage'] = $nonUsage;
         $product['usage'] = array();
 
@@ -594,6 +597,7 @@ function _get_attribute($product) {
                       'cug_member_counter' => array('through_common_code' => FALSE, 'field' => 'field_cug_member_counter', 'field_value' => "field_cug_member_counter['und'][0]['value']", 'field_value_default' => NULL, ), 
                       'cug_group_type' => array('through_common_code' => TRUE, 'field' => 'field_cug_group_type', 'field_value' => "field_cug_group_type['und'][0]['tid']", 'field_value_default' => NULL, ), 
                       'cug_customer_type' => array('through_common_code' => TRUE, 'field' => 'field_cug_customer_type', 'field_value' => "field_cug_customer_type['und'][0]['tid']", 'field_value_default' => NULL, ), 
+                      'cug_need_member_product' => array('through_common_code' => FALSE, 'field' => 'field_cug_need_member_product', 'field_value' => "field_cug_need_member_product['und'][0]['value']", 'field_value_default' => NULL, ), 
                       'treatment_day' => array('through_common_code' => FALSE, 'field' => 'field_treatment_day', 'field_value' => "field_treatment_day['und'][0]['value']", 'field_value_default' => NULL), 
                       'treatment_price' => array('through_common_code' => FALSE, 'field' => 'field_treatment_price_amount', 'field_value' => "field_treatment_price_amount['und'][0]['value']", 'field_value_default' => 0), 
                       'field_point_for_subscription' => array('through_common_code' => FALSE, 'field' => 'field_point_for_subscription', 'field_value' => "field_point_for_subscription['und'][0]['value']", 'field_value_default' => 0), 
@@ -916,4 +920,24 @@ function _get_common_code($term) {
     $data['code'] = isset($term -> field_common_code['und'][0]['safe_value']) ? $term -> field_common_code['und'][0]['safe_value'] : $term -> name;
     $data['meaning'] = $term -> name;
     return $data;
+}
+
+function _get_group_bonus( $nid) 
+{
+	$data = array( 'adm_message' => null);
+
+	$nids = ocs_get_nids_by_cond( 'prdnonusagegroupbonusblock', array(
+				array('field_ref_product', 'nid', $nid),
+				// TODO : check tree_tid ?
+//				array('field_ref_tree_tid', 'value', $nid),
+				));
+
+	if ( empty( $nids)) {
+		return $data;
+	}
+
+	$attr = node_load( $nids[0]);
+	$data['adm_message'] = array( 'message_id' => $attr->field_ref_messages['und'][0]['nid']);
+
+	return $data;
 }

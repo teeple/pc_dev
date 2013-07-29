@@ -54,7 +54,7 @@
 .myform .form-textarea-wrapper ,
 .myform .form-select {
     left: clear;
-    width: 200px;
+/*    width: 200px; */
 }
 
 .myform .form-type-textarea label, 
