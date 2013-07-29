@@ -1274,7 +1274,7 @@ function view_get_field_value($view , $field_name , $record)
 						// dsm($raw_items);
 						$value = $raw_item['rendered']['#markup'];
 						// return "unknown";
-						$value = to_rating_rule_string($value);
+						//$value = to_rating_rule_string($value);
 						$arr[]= $value;
 					}
 				}
@@ -1295,7 +1295,8 @@ function view_get_field_value($view , $field_name , $record)
 		try
 		{
 			$value = $field_handler->render($record);
-			return to_rating_rule_string($value);
+			//$value = to_rating_rule_string($value);
+			return $value;
 		}
 		catch(Exception $e)
 		{
