@@ -637,6 +637,7 @@
 			"Call Type" : $.fn.getSubMenuAddNodeWithoutWrapper("Call Type", "conditionwhatcalltype"),
 			"Main Product" : $.fn.getSubMenuAddNodeWithoutWrapper("Main Product", "conditionwhatmainproduct"),
 			"Callee Main Product" : $.fn.getSubMenuAddNodeWithoutWrapper("Callee's Main Product", "conditionwhatmainproductforpeer"),
+			"Group Member Count" : $.fn.getSubMenuAddNodeWithoutWrapper("Group Member Count", "conditionwhatgroupmembercount"),			
 			"Content Price" : $.fn.getSubMenuAddNodeWithoutWrapper("Content Price", "conditionwhatcontentprice")			
 		};
 		return obj;
