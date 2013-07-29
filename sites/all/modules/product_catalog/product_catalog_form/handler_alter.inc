@@ -726,8 +726,6 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 				$args[3] = 'all';
 			}
 			
-			dsm($args, 'args');
-			
 			$tempView = views_get_view('list_product_for_cond_main_product');
 			$tempView -> set_display('panel_pane_1');
 			$tempView -> set_arguments($args);
