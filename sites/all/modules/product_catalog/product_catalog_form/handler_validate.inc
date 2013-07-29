@@ -115,6 +115,13 @@ function is_machine_name($argStr) {
 	return TRUE;
 }
 
+function included_special_char($title) {
+	if (strpos($title, ',') ) {
+		return TRUE;
+	} 
+	return FALSE;
+}
+
 function product_catalog_form_node_validate($node, $form, &$form_state) {
 	if ($form_state['values']['op'] == 'Delete') {
 		switch($form['form_id']['#value']) {
@@ -872,6 +879,11 @@ function product_catalog_form_node_validate($node, $form, &$form_state) {
 					break;
 
 				case 'vouchercardtype_node_form' :
+				
+					if (included_special_char($form_state['values']['title'])) {
+						form_set_error('title', " , is not allowed for voucher card type name");
+					}
+					
 					if (!is_machine_name($form_state['values']['field_voucher_id']['und'][0]['value'])) {
 						form_set_error('field_voucher_id', "Only letters and underscore is allowed for voucher card type id");
 					}
