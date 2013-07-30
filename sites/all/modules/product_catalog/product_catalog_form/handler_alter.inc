@@ -2971,14 +2971,18 @@ function _get_available_counter_list($productNid, $existingCounterNids) {
 	 $temp2Term = taxonomy_get_term_by_name('Rollover', 'countertype');
 	 $args[0] =  current($temp1Term) -> tid . '+' .  current($temp2Term) -> tid;
 	 }
-	 */
-
-	// counter type : 모든 counter가 보이도록 함
-	$temp1Term = taxonomy_get_term_by_name('Optional', 'countertype');
-	$temp2Term = taxonomy_get_term_by_name('Rollover', 'countertype');
-	$args[0] =   current($temp1Term) -> tid . '+' .   current($temp2Term) -> tid;
-	// $args[0] = 'all';
-
+	*/
+	
+	if($term_product_type->name != 'Main') {
+		$args[0] = 'all';
+		
+	} else {
+		// counter type : 모든 counter가 보이도록 함
+		$temp1Term = taxonomy_get_term_by_name('Optional', 'countertype');
+		$temp2Term = taxonomy_get_term_by_name('Rollover', 'countertype');
+		$args[0] .=   current($temp1Term) -> tid . '+' .   current($temp2Term) -> tid;
+	}
+	
 	// service domain
 	$args[1] = $product -> field_service_type_of_provider['und'][0]['tid'];
 
