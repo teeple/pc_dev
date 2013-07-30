@@ -2947,7 +2947,6 @@ function _get_existing_counter_list($productNid) {
 	foreach ($view->result as $record) {
 		$retArray[$record -> nid] = view_get_field_value_by_label($view, 'PHP', $record);
 		// $retArray[$record -> nid] = '';
-
 	}
 
 	return $retArray;
