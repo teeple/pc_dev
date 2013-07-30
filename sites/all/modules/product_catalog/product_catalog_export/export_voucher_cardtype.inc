@@ -34,6 +34,7 @@ function _array_voucher_cardtype($exportItemNids = NULL, $isExternalAPI = FALSE)
 
         $jsonRecord['service_operator'] = _add_commoncode($record -> field_field_service_operator);
         $jsonRecord['use_area'] = !empty($record -> field_field_use_area) ? $record -> field_field_use_area[0]['rendered']['#markup'] : null;
+        $jsonRecord['charge'] = _voucher_cardtype_charge( $record->nid);
         
         $node = node_load($record->nid);
         
@@ -173,4 +174,30 @@ function _json_voucher_cardtype($exportItemNids = NULL) {
     }
 
     return json_encode($retArray);
+}
+
+function _voucher_cardtype_charge( $nid)
+{
+	$charge = array();
+
+	$nids = ocs_get_nids_by_cond('treenodecounterforvoucher', array(
+		array( 'field_ref_vouchercardtype', 'nid', $nid),
+	));
+	if ( ! empty( $nids)) {
+		foreach( $nids as $nid) {
+			$c = node_load( $nid);
+			if ( isset($c->field_amount['und']) && $c->field_amount['und'][0]['value'] > 0) {
+				$t = taxonomy_term_load($c->field_counter_sub_unit_type['und'][0]['tid']);
+				if ( $t->name == 'Money') {
+					$charge[] = $c->field_amount['und'][0]['value'] . ' MNT';
+				}
+				else {
+					$counter = node_load( $c->field_ref_counter['und'][0]['nid']);
+					$charge[] = $c->field_amount['und'][0]['value'] . ' ' . $counter->title;
+				}
+			}
+		}
+	}
+
+	return implode( ', ', $charge);
 }
