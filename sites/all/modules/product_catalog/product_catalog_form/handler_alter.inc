@@ -839,7 +839,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 				// Edit
 			} else {
 				$form['field_ref_voucher_type']['und']['#disabled'] = TRUE;
-				$form['field_voucher_id']['und']['#disabled'] = TRUE;
+				// $form['field_voucher_id']['und']['#disabled'] = TRUE;
 				$form['field_service_operator']['und']['#disabled'] = TRUE;
 			}
 			$form['field_valid_date_ymd_w_enddate']['und']['#required'] = FALSE;
