@@ -1296,7 +1296,10 @@ function view_get_field_value($view , $field_name , $record)
 		{
 			//dsm($field_handler);
 			$value = $field_handler->render($record);
-			//$value = to_rating_rule_string($value);
+			if($field_handler->field!='php')
+			{
+				$value = to_rating_rule_string($value);
+			}
 			return $value;
 		}
 		catch(Exception $e)
@@ -1472,6 +1475,12 @@ function rating_rules_export_from_view($title, $view_name, $display_name, $nid=N
                         else if($field_handler->handler_type == 'field')
 						{
 							set_rating_type_info($field['field'] , $factorMeta);
+							/*
+							if(!array_key_exists('drupal_type', $factorMeta))
+							{
+								dsm($field);
+							}
+							*/
                         }
                         else
                         {
