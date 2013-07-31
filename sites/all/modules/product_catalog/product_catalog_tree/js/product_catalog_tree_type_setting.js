@@ -1017,7 +1017,7 @@
 				"voucher_loyalty_point": {
 					"valid_children" : ["none"],
 					"icon" : {
-						"image" : "/sites/default/files/file.png"
+						"image" : "/sites/default/files/applications.png"
 					},
 				},
 				"treenodeproductforvoucher" : {
