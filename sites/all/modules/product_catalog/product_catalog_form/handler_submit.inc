@@ -938,31 +938,20 @@ function _vouchercardtype_submit_handler($form, $form_state) {
 	}
 	node_save($node);
 	
-	// 자동으로 voucher를 위한 counter를 생성시킨다.
-	// 
-	/*
-	$allCounters = views_get_view_result('list_counter_for_vouchercardtype', 'panel_pane_1');
-	foreach($allCounters as $counter) {
-		$treeNodeCounterForVoucher = new StdClass();
-		$treeNodeCounterForVoucher->type = 'treenodecounterforvoucher';
-		$treeNodeCounterForVoucher->language= 'und';
-		$treeNodeCounterForVoucher->uid = $user->uid;
-		
-		$treeNodeCounterForVoucher->field_ref_counter['und'][0]['nid'] = $counter->nid;
-		$treeNodeCounterForVoucher->field_ref_vouchercardtype['und'][0]['nid'] = $node->nid;
-		
-		node_save($treeNodeCounterForVoucher);
+	// taxonomy_get_tree
+	$voca = taxonomy_vocabulary_machine_name_load('tpl_vouchercardtype');
+	$terms = taxonomy_get_tree($voca->vid);
+	foreach($terms as $domainTerm) {
+		if($domainTerm->name == 'Loyalty Point') {
+			$loyaltyPoint = new StdClass();
+			$loyaltyPoint->type = 'loyaltypoint';
+			$loyaltyPoint->language= 'und';
+			$loyaltyPoint->uid = $user->uid;
+			$loyaltyPoint->field_ref_vouchercardtype['und'][0]['nid'] = $node->nid;
+			$loyaltyPoint->field_ref_tree_tid['und'][0]['value'] = $domainTerm->tid;
+			node_save($loyaltyPoint);
+		}
 	}
-	*/
-	
-	// loyaltypoint content type을 자동으로 생성해준다.
-	// 
-	$loyaltyPoint = new StdClass();
-	$loyaltyPoint->type = 'loyaltypoint';
-	$loyaltyPoint->language= 'und';
-	$loyaltyPoint->uid = $user->uid;
-	$loyaltyPoint->field_ref_vouchercardtype['und'][0]['nid'] = $node->nid;
-	node_save($loyaltyPoint);
 	
 }
 

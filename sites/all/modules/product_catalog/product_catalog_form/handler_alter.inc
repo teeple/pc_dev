@@ -761,6 +761,8 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			$form['field_weight']['#type'] = 'hidden';
 			$form['field_parent_node']['#type'] = 'hidden';
 			_unset_menu_items($form, $form_id);
+			
+			
 			/*
 			 unset($form['actions']);
 
@@ -855,7 +857,9 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			break;
 
 		case 'loyaltypoint_node_form' :
-			$viewResult = views_get_view_result('list_counter_for_vouchercardtype', 'panel_pane_3');
+			$serviceDomainName = $form_state[1];
+			
+			$viewResult = views_get_view_result('list_counter_for_vouchercardtype', 'panel_pane_3', $serviceDomainName);
 			$counters = array();
 			foreach ($viewResult as $record) {
 				$counters[$record -> nid] = $record -> node_title;
@@ -866,13 +870,14 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			
 			// field_target_product
 			$targetProducts = array();
-			$viewResult = views_get_view_result('list_treenodeproductforvoucher', 'panel_pane_2', $voucherCardTypeNid);
+			$viewResult = views_get_view_result('list_treenodeproductforvoucher', 'panel_pane_2', $voucherCardTypeNid, $serviceDomainName);
 			foreach ($viewResult as $record) { 
 				$targetProducts[$record->node_field_data_field_ref_product_nid] = $record->node_title;
 			}
 			$form['field_target_product']['und']['#options'] = $targetProducts;
 			
 			unset($form['field_ref_vouchercardtype']);
+			unset($form['field_ref_tree_tid']);
 			_unset_menu_items($form, $form_id);
 			break;
 
