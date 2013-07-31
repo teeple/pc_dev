@@ -366,7 +366,7 @@ function ocs_get_node_by_cond( $type, $title, $field_cond)
             if ( $cond[0] == 'property')
                 $query->propertyCondition( $cond[1], $cond[2]);
             else
-                $query->fieldCondition( $cond[0], $cond[1], $cond[2]);
+                $query->fieldCondition( $cond[0], $cond[1], $cond[2], isset($cond[3]) ? $cond[3] : NULL);
 		}
 	}
 	$result = $query->execute();
