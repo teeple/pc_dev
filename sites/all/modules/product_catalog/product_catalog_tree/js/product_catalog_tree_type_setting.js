@@ -1014,12 +1014,7 @@
 						"image" : "/sites/default/files/folder.png"
 					},
 				},
-				"voucher_loyalty_point": {
-					"valid_children" : ["none"],
-					"icon" : {
-						"image" : "/sites/default/files/applications.png"
-					},
-				},
+				
 				"treenodeproductforvoucher" : {
 					"valid_children" : ["none"],
 					"icon" : {
