@@ -1004,9 +1004,9 @@
 				},
 				"voucher_product_specific": {
 					"valid_children" : ["treenodeproductforvoucher"],
-					"icon" : {
-						"image" : "/sites/default/files/folder.png"
-					},
+					//"icon" : {
+					//	"image" : "/sites/default/files/folder.png"
+					//},
 				},
 				"discount_voucher_product_specific": {
 					"valid_children" : ["treenodeproductfordisvoucher"],
