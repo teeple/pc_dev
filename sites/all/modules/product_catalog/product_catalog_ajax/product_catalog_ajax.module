@@ -945,7 +945,7 @@ function product_catalog_ajax_add_modal_content($js = NULL, $contentType, $refNo
 			$node->field_ref_thresholdscheme['und'][0]['nid'] = $refNodeNid;
 			break;
 		case 'loyaltypointfactors':
-			$viewResult = views_get_view_result('list_loyaltypoint', 'panel_pane_1',$refNodeNid);
+			$viewResult = views_get_view_result('list_loyaltypoint', 'panel_pane_1',$refNodeNid,$refTreeTid);
 			$node->field_ref_loyaltypoint['und'][0]['nid'] = current($viewResult)->nid;
 			break;
 		case 'ocs_state_machine':
