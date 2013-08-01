@@ -585,8 +585,34 @@ function _get_redirect_url_in_view_n_delete($viewOrDel, $node) {
 			} else {
 				$url['path'] = 'product_designer/' . $serviceDomain -> name . '/' . $productType -> name . '/list';
 			}
-
-			$fragment = array('Mobile' => array('Main' => '', 'Additional' => 'quickset-products_with_cug=1', 'VAS' => 'quickset-products_with_cug=2', 'Package' => 'quickset-products_with_cug=3', 'CUG' => 'quickset-products_with_cug=4'), 'IPTV' => array('Main' => '', 'Additional' => 'quickset-products=1', 'VAS' => 'quickset-products=2', 'Package' => 'quickset-products=3'), 'Broadband' => array('Main' => '', 'Additional' => 'quickset-products=1', 'VAS' => 'quickset-products=2', 'Package' => 'quickset-products=3'), 'VoIP' => array('Main' => '', 'Additional' => 'quickset-products_with_cug=1', 'VAS' => 'quickset-products_with_cug=2', 'Package' => 'quickset-products_with_cug=3', 'CUG' => 'quickset-products_with_cug=4'), 'Satellite' => array('Main' => '', 'Additional' => 'quickset-products=1', 'VAS' => 'quickset-products=2', 'Package' => 'quickset-products=3'), 'Dummy' => array('Main' => '', 'Additional' => 'quickset-products=1', 'VAS' => 'quickset-products=2', 'Package' => 'quickset-products=3'), 'Cross' => array('Main' => '', 'Additional' => 'quickset-products=1', 'VAS' => 'quickset-products=2', 'Package' => 'quickset-products=3'), );
+			
+			$fragment = array(	'Mobile' => 
+								array('Main' => '', 
+									'VAS' => 'quickset-products_with_cug=1', 
+									'Package' => 'quickset-products_with_cug=2', 
+									'CUG' => 'quickset-products_with_cug=3'), 
+								'IPTV' => array('Main' => '', 
+									'VAS' => 'quickset-products=1', 
+									'Package' => 'quickset-products=2'), 
+								'Broadband' => array('Main' => '', 
+									'VAS' => 'quickset-products=1', 
+									'Package' => 'quickset-products=2'), 
+								'VoIP' => array('Main' => '', 
+									'VAS' => 'quickset-products_with_cug=1', 
+									'Package' => 'quickset-products_with_cug=2', 
+									'CUG' => 'quickset-products_with_cug=3'), 
+								'Satellite' => array('Main' => '', 
+									'VAS' => 'quickset-products=1', 
+									'Package' => 'quickset-products=2'), 
+								'Dummy' => array('Main' => '', 
+									'VAS' => 'quickset-products=1', 
+									'Package' => 'quickset-products=2'), 
+								'Cross' => array('Main' => '', 
+									'VAS' => 'quickset-products=1', 
+									'Package' => 'quickset-products=2'), 
+							);
+			
+			//$fragment = array('Mobile' => array('Main' => '', 'Additional' => 'quickset-products_with_cug=1', 'VAS' => 'quickset-products_with_cug=2', 'Package' => 'quickset-products_with_cug=3', 'CUG' => 'quickset-products_with_cug=4'), 'IPTV' => array('Main' => '', 'Additional' => 'quickset-products=1', 'VAS' => 'quickset-products=2', 'Package' => 'quickset-products=3'), 'Broadband' => array('Main' => '', 'Additional' => 'quickset-products=1', 'VAS' => 'quickset-products=2', 'Package' => 'quickset-products=3'), 'VoIP' => array('Main' => '', 'Additional' => 'quickset-products_with_cug=1', 'VAS' => 'quickset-products_with_cug=2', 'Package' => 'quickset-products_with_cug=3', 'CUG' => 'quickset-products_with_cug=4'), 'Satellite' => array('Main' => '', 'Additional' => 'quickset-products=1', 'VAS' => 'quickset-products=2', 'Package' => 'quickset-products=3'), 'Dummy' => array('Main' => '', 'Additional' => 'quickset-products=1', 'VAS' => 'quickset-products=2', 'Package' => 'quickset-products=3'), 'Cross' => array('Main' => '', 'Additional' => 'quickset-products=1', 'VAS' => 'quickset-products=2', 'Package' => 'quickset-products=3'), );
 			$url['fragment'] = $fragment[$serviceDomain -> name][$productType -> name];
 
 			break;
@@ -759,7 +785,31 @@ function _get_redirect_url_in_create_n_list($addOrList, $content_type, $params) 
 			$serviceDomain = $tempArray[0];
 			$productType = $tempArray[1];
 
-			$fragment = array('Mobile' => array('Main' => '', 'Additional' => 'quickset-products_with_cug=1', 'VAS' => 'quickset-products_with_cug=2', 'Package' => 'quickset-products_with_cug=3', 'CUG' => 'quickset-products_with_cug=4'), 'IPTV' => array('Main' => '', 'Additional' => 'quickset-products=1', 'VAS' => 'quickset-products=2', 'Package' => 'quickset-products=3'), 'Broadband' => array('Main' => '', 'Additional' => 'quickset-products=1', 'VAS' => 'quickset-products=2', 'Package' => 'quickset-products=3'), 'VoIP' => array('Main' => '', 'Additional' => 'quickset-products_with_cug=1', 'VAS' => 'quickset-products_with_cug=2', 'Package' => 'quickset-products_with_cug=3', 'CUG' => 'quickset-products_with_cug=4'), 'Satellite' => array('Main' => '', 'Additional' => 'quickset-products=1', 'VAS' => 'quickset-products=2', 'Package' => 'quickset-products=3'), 'Dummy' => array('Main' => '', 'Additional' => 'quickset-products=1', 'VAS' => 'quickset-products=2', 'Package' => 'quickset-products=3'), 'Bundle' => array('Main' => '', 'Additional' => 'quickset-products=1', 'VAS' => 'quickset-products=2', 'Package' => 'quickset-products=3'), );
+			$fragment = array(
+						'Mobile' => array('Main' => '', 
+							'VAS' => 'quickset-products_with_cug=1', 
+							'Package' => 'quickset-products_with_cug=2', 
+							'CUG' => 'quickset-products_with_cug=3'), 
+						'IPTV' => array('Main' => '', 
+							'VAS' => 'quickset-products=1', 
+							'Package' => 'quickset-products=2'), 
+						'Broadband' => array('Main' => '', 
+							'VAS' => 'quickset-products=1', 
+							'Package' => 'quickset-products=2'), 
+						'VoIP' => array('Main' => '', 
+							'VAS' => 'quickset-products_with_cug=1', 
+							'Package' => 'quickset-products_with_cug=2', 
+							'CUG' => 'quickset-products_with_cug=3'), 
+						'Satellite' => array('Main' => '', 
+							'VAS' => 'quickset-products=1', 
+							'Package' => 'quickset-products=2'), 
+						'Dummy' => array('Main' => '', 
+							'VAS' => 'quickset-products=1', 
+							'Package' => 'quickset-products=2'), 
+						'Bundle' => array('Main' => '', 
+							'VAS' => 'quickset-products=1', 
+							'Package' => 'quickset-products=2'), 
+						);
 
 			$url['fragment'] = $fragment[$serviceDomain][$productType];
 			break;
