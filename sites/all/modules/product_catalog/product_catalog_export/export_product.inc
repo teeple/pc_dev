@@ -130,7 +130,7 @@ function _get_deposit_scheme($product,$target=NULL) {
 	$scheme = NULL;
 	
 	// Additional / Postpaid type product
-	if( ($productTypeTerm->name == 'Additional') && ($billingTypeTerm->name == 'Postpaid') ) {
+	if( ($productTypeTerm->name == 'VAS') && ($billingTypeTerm->name == 'Postpaid') ) {
 		
 		// get deposit amount
 		$viewResult = views_get_view_result('list_prdattributedeposit', 'panel_pane_1', $product->nid);
