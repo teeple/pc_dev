@@ -208,7 +208,7 @@ function ocs_lifecycle_transition_form($form, &$form_state, $scheme_nid, $transi
 		'#type' => 'radios',
 		'#title' => t('Event'),
 		'#options' => $events,
-		'#required' => TRUE,
+		//'#required' => TRUE,
 	);
 
 	// edit mode
@@ -414,7 +414,10 @@ function ocs_lifecycle_transition_form_validate($form, &$form_state)
 			form_set_error('to_state', t('Invalid state : same as "from state"'));
 		}
         */
-
+		if(!isset($values['event'])){
+			form_set_error('event', t('Event is required'));
+		}
+    
 		// from, to state�� �̹� �����ϸ� ����
 		$scheme_nid = $form['#scheme_nid'];
 
