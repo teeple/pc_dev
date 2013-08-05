@@ -15,16 +15,17 @@ function product_catalog_form_node_delete($node){
 		case 'treenodeproductforvoucher':
 			$refProductNid = $node->field_ref_product['und'][0]['nid'];
 			$viewResult = views_get_view_result('list_loyaltypoint', 'panel_pane_2',  $node->field_ref_vouchercardtype['und'][0]['nid']);
-			$currentItem = current($viewResult);
-			$loyaltyPoint = node_load($currentItem->nid);
+			if(!empty($viewResult)){
+				$currentItem = current($viewResult);
+				$loyaltyPoint = node_load($currentItem->nid);
 			
-			foreach($loyaltyPoint->field_target_product['und'] as $key => $value) {
-				if($value['nid'] == $refProductNid) {
-					unset($loyaltyPoint->field_target_product['und'][$key]);
+				foreach($loyaltyPoint->field_target_product['und'] as $key => $value) {
+					if($value['nid'] == $refProductNid) {
+						unset($loyaltyPoint->field_target_product['und'][$key]);
+					}
 				}
+				node_save($loyaltyPoint);
 			}
-			node_save($loyaltyPoint);
-			
 			break;
 		case 'productgroup':
 			$viewResultMainSelected = views_get_view_result('list_product_group_main_selected', 'panel_pane_4', $node->nid);
@@ -418,6 +419,7 @@ function _cleanup_tariffplan($planNid){
     $view->execute(); 
     foreach($view->result as $record){
        $deleteNids[] = $record->nid;
+			// 밑에 달린 Condition 들은 tree에서 delete할 때, 같이 넘겨서 지워지므로 무시해도 됨. 
     }
 
     return $deleteNids;
