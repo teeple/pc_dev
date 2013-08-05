@@ -7,28 +7,55 @@ function validate_voucher($voucher_nid) {
 	$voucher_type_term = taxonomy_term_load($voucher_node -> field_ref_voucher_type['und'][0]['tid']);
 	$voucher_type = $voucher_type_term -> field_common_code['und'][0]['value'];
 
+	$skip_total_validation = FALSE;
+	
 	if ($voucher_type != 4) {//Discount 가 아닐 때 체크. Common Code 4 가 Discount
-		$list_mobile_domain = views_get_view_result('list_counter_for_vouchercardtype', 'panel_pane_5', $voucher_nid);
-		if (empty($list_mobile_domain)) {//if mobile domains does not have any amount set, than go further to find amount set of product specific
-			$list_mobile_product = views_get_view_result('list_treenodeproductforvoucher', 'panel_pane_3', $voucher_nid);
-			if (empty($list_mobile_product)) {
-				$result['is_valid'] = FALSE;
-				$result['base_type'] = 'Vouhcer Card Type';
-				$result['title'] = $voucher_node -> title;
-				$result['reason'] = 'There is no amount set for the mobile domain';
-			} else {
-				foreach ($list_mobile_product as $tree_node_product) {
-					$tree_node_product_nid = $tree_node_product -> nid;
-					$amount_result = views_get_view_result('list_treenodecounterforvoucherprd', 'panel_pane_4', $tree_node_product_nid);
-					if (empty($amount_result)) {
-						$result['is_valid'] = FALSE;
-						$result['base_type'] = 'Vouhcer Card Type';
-						$result['title'] = $voucher_node -> title;
-						$result['reason'] = 'There is no amount set for ' . $tree_node_product -> node_title . ' product';
-						break;
-					}
+		$service_domain = array('Mobile','IPTV','VoIP','Broadband','Satellite','Dummy');
+		foreach($service_domain as $domain){
+			// available 상품이 있는지 없는 지 확인. 없으면 에러
+			$list_available_product = views_get_view_result('list_treenodeproductforvoucher', 'panel_pane_4', $voucher_nid, $domain);
+			if(empty($list_available_product)){
+				//avilable 이 없는데 default amount가 있으면 에러
+				$list_domain_amount = views_get_view_result('list_counter_for_vouchercardtype', 'panel_pane_5', $voucher_nid, $domain);
+				if(!empty($list_domain_amount)){
+					$skip_total_validation = TRUE;
+					$result['is_valid'] = FALSE;
+					$result['base_type'] = 'Vouhcer Card Type';
+					$result['title'] = $voucher_node -> title;
+					$result['reason'] = 'There is no available product for ' . $domain;
+					break;
 				}
+				$is_valid[$domain] = FALSE;
+			}else{
+				// available 상품이 있으면 default amount 체크 
+			  $list_domain_amount = views_get_view_result('list_counter_for_vouchercardtype', 'panel_pane_5', $voucher_nid, $domain);
+		  	if (empty($list_domain_amount)) {
+		  		//default 에 값이 없으면 각 상품별로 값 설정 되있는 지 체크 
+		  		$list_product = views_get_view_result('list_treenodeproductforvoucher', 'panel_pane_3', $voucher_nid, $domain);
+					foreach ($list_product as $tree_node_product) {
+						$tree_node_product_nid = $tree_node_product -> nid;
+						$amount_result = views_get_view_result('list_treenodecounterforvoucherprd', 'panel_pane_4', $tree_node_product_nid);
+						if (empty($amount_result)) {
+							$skip_total_validation = TRUE;
+							$result['is_valid'] = FALSE;
+							$result['base_type'] = 'Vouhcer Card Type';
+							$result['title'] = $voucher_node -> title;
+							$result['reason'] = 'There is no amount set for ' . $tree_node_product -> node_title . ' product';
+							break 2;
+						}
+					}
+					$is_valid[$domain] = TRUE;
+		 		}else{
+		 			$is_valid[$domain] = TRUE;
+		 		}
 			}
+		}
+
+		if(!$skip_total_validation && !in_array(TRUE,$is_valid)){
+			$result['is_valid'] = FALSE;
+			$result['base_type'] = 'Vouhcer Card Type';
+			$result['title'] = $voucher_node -> title;
+			$result['reason'] = 'There is no available product for ' . $voucher_node -> title;
 		}
 	}
 
