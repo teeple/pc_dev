@@ -63,6 +63,9 @@ function _make_json_string($termName,$exportItemNids = NULL,$target=NULL){
 		case 'MESSAGES':
 			$jsonString = export_message($exportItemNids);
 			break;
+		case 'PRIORITY_HIERARCHY':
+			$jsonString = export_priority_hierarchy($exportItemNids);
+			break;
 		case 'LIFECYCLE_STATUS':	// bhtak 13/3/24 for CRM, export status list
 			$jsonString = export_lifecycle_status($exportItemNids);
 			break;
