@@ -386,6 +386,11 @@ function set_rating_type_info($field_name , &$type_info)
 				$type_info['type'] = 'double';
 				//$type_info['size'] = 0;
 			}
+			else if($field_info['type'] == 'number_decimal')
+			{
+				$type_info['type'] = 'double';
+				//$type_info['size'] = 0;
+			}
 			else if($field_info['type'] == 'list_boolean')
 			{
 				$type_info['type'] = 'string';
