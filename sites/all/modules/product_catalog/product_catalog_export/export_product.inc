@@ -825,7 +825,6 @@ function _get_attribute_exceptions($product) {
         */
         $retArray['number_saving'] = null;
 
-
 		foreach ($view->result as $record) {
 			$serviceSavingNode = node_load($record->nid);
 			$serviceSavingInfo = array();
