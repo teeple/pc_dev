@@ -264,6 +264,12 @@ function product_catalog_ajax_clone_product($targetProductId){
                 $childNode = clone $targetChildNode;
                 $childNode->uid = $user->uid;
                 $childNode->field_ref_product['und'][0]['nid'] = $productNode->nid;
+								if($childNode->type == 'actionpricechargerecurring' || $childNode->type == 'actionpricechargerecurringdefaul'){
+									$recurring_charge_id = $productNode -> field_product_id['und'][0]['value'] . '_' . time();
+									$childNode->field_recurring_charge_id['und'][0]['value'] = $recurring_charge_id;
+									$childNode->field_recurring_charge_id['und'][0]['safe_value'] = $recurring_charge_id;
+									//$cloneNode->title = 'temp';
+								}
                 _unset_unused_field_of_cloned_node($childNode);
                 node_save($childNode);
                 if(isset($targetChildNode->field_charge_collection)){
@@ -283,6 +289,19 @@ function product_catalog_ajax_clone_product($targetProductId){
                     $actionSetNode = clone $targetActionSetNode;
                     $actionSetNode->uid = $user->uid;
                     $actionSetNode->field_ref_source_action['und'][0]['nid'] = $childNode->nid;
+                    _unset_unused_field_of_cloned_node($actionSetNode);
+                    node_save($actionSetNode);
+                }
+								
+								$actionThresholdSetView = views_get_view('list_actions');
+                $actionThresholdSetView->set_display('panel_pane_2');
+                $actionThresholdSetView->set_arguments(array('0' => $targetChildNode->nid));
+                $actionThresholdSetView->execute(); 
+                foreach($actionThresholdSetView->result as $actionSetRecord){
+                    $targetActionSetNode = node_load($actionSetRecord->nid);
+                    $actionSetNode = clone $targetActionSetNode;
+                    $actionSetNode->uid = $user->uid;
+                    $actionSetNode->field_ref_treenodecounter['und'][0]['nid'] = $childNode->nid;
                     _unset_unused_field_of_cloned_node($actionSetNode);
                     node_save($actionSetNode);
                 }

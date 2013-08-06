@@ -1406,6 +1406,12 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 					}
 				}
 				$form['field_next_join_product']['und']['#options'] = $options;
+				
+				$form['product_clone_button'] = array(
+					'#type' => 'markup',
+					'#markup' => '<input type="button" value="Clone Product" id="product_clone_button"/>',
+					'#weight' => 1000
+				);
 			}
 
 			$productTypeTid = $form['field_product_type']['und']['#default_value'][0];
