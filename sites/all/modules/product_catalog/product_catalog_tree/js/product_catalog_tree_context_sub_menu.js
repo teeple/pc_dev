@@ -313,10 +313,6 @@
 				menus.custom_create._disabled = false;
 				menus.custom_create.submenu = $.fn.getSubMenuLoadSelectForm("Select Required Device");
 				break;
-			case "attribute_number_saving":
-				menus.custom_create._disabled = false;
-				menus.custom_create.submenu = $.fn.getSubMenuAddNode("Number Saving", "prdattributenumbersaving");
-				break;
 			case "attribute_available_channel":
 				menus.custom_create._disabled = false;
 				menus.custom_create.submenu = $.fn.getSubMenuLoadSelectForm("Select Available Channel");
