@@ -408,7 +408,8 @@ function ocs_admin_message_form_validate($form, &$form_state)
 function ocs_admin_message_form_submit($form, &$form_state)
 {
 	$values = $form_state['values'];
-	//dpm($values, 'submit values');
+	$isNew = FALSE;
+	// dpm($values, 'submit values');
 	// dpm( $form, 'form');
 
 	if ($values['op'] == 'Save') {
@@ -417,13 +418,16 @@ function ocs_admin_message_form_submit($form, &$form_state)
 		}
 		else {
 			$node = ocs_admin_get_new_node('ocs_messages');
+			$isNew = TRUE;
 		}
 		$node->title = $values['title'];
 
 		$node->field_scheduled_delivery['und'][0]['value'] = $values['flag'];
-		$node->field_value['und'][0]['value'] = $values['delivery_date'];
-		$node->field_valid_date_hour['und'][0]['value'] = $values['delivery_time'];
-
+		$node->field_value['und'][0]['value'] = isset($values['delivery_date'])? $values['delivery_date']:3;
+		$node->field_valid_date_hour['und'][0]['value'] = isset($values['delivery_time'])? $values['delivery_time']:'00';
+		
+		$delivery_time = isset($node->field_valid_date_hour['und'][0]['value'])?$node->field_valid_date_hour['und'][0]['value']:"00";
+		
 		$options = $form['#options'];
 		// flatten $options[1], counter
 		$options[1] = array_get_value($options[1]);
@@ -477,8 +481,9 @@ function ocs_admin_message_form_submit($form, &$form_state)
 			}
 			$lang_idx ++;
 		}
-
 		node_save($node);
+		$msg_create_or_update = ($isNew == TRUE)? 'created.':'updated.';
+		drupal_set_message($node->type. ' ' . $node->title . ' has been '. $msg_create_or_update);
 	}
 }
 
@@ -647,8 +652,7 @@ function ocs_admin_message_group_form_submit($form, &$form_state)
 		for ($i = 1; $i <= $values['num_values']; $i++) {
 			$node->field_ocs_message_list['und'][$i - 1]['nid'] = $values['value' . $i];
 		}
-
-		node_save($node);
+		// node_save($node);
 	}
 }
 

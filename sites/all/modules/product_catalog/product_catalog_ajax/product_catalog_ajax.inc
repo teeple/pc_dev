@@ -21,7 +21,13 @@ function _load_tree_item_mixed_with_node_and_term($rootNode,$grandParentNode=NUL
             
             if($productTypeTerm->name == 'CUG') {
             	$cugCustomerTypeTerm = taxonomy_term_load($rootNode->field_cug_customer_type['und'][0]['tid']);
+
             	$notAllowedCombinationStr .= '_' . $cugCustomerTypeTerm->name;
+            	
+            	if($cugCustomerTypeTerm->name == 'Admin') {
+	            	$cugNeedMemberProduct = ($rootNode->field_cug_need_member_product['und'][0]['value'] == 1)? 'NeedMember': 'NotNeedMember';            	
+	            	$notAllowedCombinationStr .= '_'. $cugNeedMemberProduct;
+            	}
             }
             
             break;			
