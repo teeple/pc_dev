@@ -250,13 +250,37 @@ function product_catalog_form_node_delete($node){
             $view = views_get_view('list_unit_transfer_factor');
             $view->set_display('panel_pane_1');
             $view->set_arguments(array('0' => $node->nid));
-            $view->execute();
-            
-            foreach($view->result as $item){
-                $childNodes[] = $item->nid;
-            }
-            break;
-        case 'vouchercardtype':
+						$view->execute();
+
+						foreach($view->result as $item){
+							$childNodes[] = $item->nid;
+						}
+						break;
+				case 'actionpriceallowanceonetime':
+				case 'actionpriceallowancerecurring':
+				case 'actionpricechargeonetime':
+				case 'actionpricechargerecurring':
+				case 'actionpricechargerecurringdefaul':
+				case 'actionpricecugdiscountfactors':
+				case 'actionsetbonusonrecurringcharge':
+					$view = views_get_view('list_actions');
+          $view->set_display('panel_pane_1');
+          $view->set_arguments(array('0' => $node->nid));
+					$view->execute();
+					foreach($view->result as $item){
+						$childNodes[] = $item->nid;
+					}
+					break;
+				case 'treenodecounter':
+					$view = views_get_view('list_actions');
+          $view->set_display('panel_pane_2');
+          $view->set_arguments(array('0' => $node->nid));
+					$view->execute();
+					foreach($view->result as $item){
+						$childNodes[] = $item->nid;
+					}
+					break;
+				case 'vouchercardtype':
         case 'tariffplan':
         case 'roaming_plan':
         case 'number_special':
