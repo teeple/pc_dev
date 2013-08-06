@@ -811,6 +811,7 @@ function _get_attribute_exceptions($product) {
     $numberSavings = array();
 
     if (!empty($view -> result)) {
+    	/*
         foreach ($view->result as $record) {
             $numberSavingNode = node_load($record -> nid);
             $numberSavingInfo = array();
@@ -821,8 +822,23 @@ function _get_attribute_exceptions($product) {
             $numberSavings[] = $numberSavingInfo;
         }
         $retArray['number_saving'] = $numberSavings;
-    }
+        */
+        $retArray['number_saving'] = null;
 
+
+		foreach ($view->result as $record) {
+			$serviceSavingNode = node_load($record->nid);
+			$serviceSavingInfo = array();
+			$serviceSavingInfo['saving_fee'] = isset($serviceSavingNode -> field_price['und'][0]['value']) ? $serviceSavingNode -> field_price['und'][0]['value'] : 0;
+			$serviceSavingInfo['minimum_period'] = isset($serviceSavingNode -> field_minimum_period['und'][0]['value'])? $serviceSavingNode -> field_minimum_period['und'][0]['value'] : 0;
+			$serviceSavingInfo['free_month'] = isset($serviceSavingNode -> field_free_of_charge_month['und'][0]['value'])? $serviceSavingNode -> field_free_of_charge_month['und'][0]['value'] : 0;
+			$serviceSavingInfo['maximum_period'] = isset($serviceSavingNode -> field_maximum_period_1st_['und'][0]['value'])? $serviceSavingNode -> field_maximum_period_1st_['und'][0]['value'] : 0;
+			$serviceSavingInfo['maximum_extend_period'] = isset($serviceSavingNode -> field_maximum_period_2nd_['und'][0]['value'])? $serviceSavingNode -> field_maximum_period_2nd_['und'][0]['value'] : 0;
+			$serviceSavingInfo['using_condition'] = isset($serviceSavingNode -> field_using_condition['und'][0]['value'])? $serviceSavingNode -> field_using_condition['und'][0]['value'] : 0;
+		}
+		$retArray['service_saving'] = empty($serviceSavingInfo)? NULL: $serviceSavingInfo;        
+    }
+    
     //allowed device
     $view = views_get_view('list_product_child_node');
     $view -> set_display('panel_pane_2');

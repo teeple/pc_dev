@@ -2443,7 +2443,6 @@ div.div_float_left {
 .jstree-default li[rel="attribute_required_device"] > a:after {content: " >> ";font-weight: bold;}
 .jstree-default li[rel="attribute_available_channel"] > a:after {content: " >> ";font-weight: bold;}
 .jstree-default li[rel="attribute_subscriber_lifecycle_scheme"] > a:after {content: " >> ";font-weight: bold;}
-.jstree-default li[rel="attribute_number_saving"] > a:after {content: " >> ";font-weight: bold;}
 .jstree-default li[rel="data_tariffplan_predefined"] > a:after {content: " >> ";font-weight: bold;}
 .jstree-default li[rel="data_tariffplan_dynamic"] > a:after {content: " >> ";font-weight: bold;}
 .jstree-default li[rel="data_tariffplan_qos"] > a:after {content: " >> ";font-weight: bold;}
