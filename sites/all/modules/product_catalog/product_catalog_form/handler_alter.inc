@@ -1919,6 +1919,8 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			//for select all area
 			$form['field_ref_area_code_from']['und']['#options']['_none'] = 'All';
 			$form['field_ref_area_code_to']['und']['#options']['_none'] = 'All';
+			
+			$form['field_is_samezone']['und']['#options']['_none'] = 'All';
 			break;
 		case 'country_code_node_form' :
 			$form['actions']['submit']['#submit'][] = 'product_catalog_form_form_redirect_handler';
