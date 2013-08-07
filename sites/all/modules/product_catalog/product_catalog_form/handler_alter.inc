@@ -1918,13 +1918,16 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			$form['field_area_code_of_the_callee']['und']['#suffix'] = '<div/>';
 			
 			$carrier_nid = NULL;
+			
 			if(isset($form_state['values']['field_ref_carrier_mobile']['und'][0]['nid'])){
+				
 				$carrier_nid = $form_state['values']['field_ref_carrier_mobile']['und'][0]['nid'];
-			}else if(isset($form_state['build_info']['args'][0]->field_ref_carrier_mobile['und'][0]['nid'])){
+			}else if(isset($form_state['build_info']['args'][0]->field_ref_carrier_mobile['und'][0]['nid']) && !isset($form_state['values'])){
 				$carrier_nid = $form_state['build_info']['args'][0]->field_ref_carrier_mobile['und'][0]['nid'];
+			
 			}
 			
-			if(isset($carrier_nid)){
+			//if(isset($carrier_nid)){
 				$newOption = array();
 				$newOption['_none'] = 'All';
 				$view = views_get_view('list_area_code');
@@ -1935,7 +1938,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 					$newOption[$item->nid] = $item->node_title;
 				}
 				$form['field_area_code_of_the_callee']['und']['#options'] = $newOption;
-			}
+			//}
 			
 			//calltype
 			$options = _get_call_type_options();
