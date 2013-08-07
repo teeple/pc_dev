@@ -1911,14 +1911,39 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 				$newOptions[$item -> nid] = $item -> node_title;
 			}
 			$form['field_ref_carrier_mobile']['und']['#options'] = $newOptions;
-
+			
+			//carrier에 따라 Area Code of callee 필터링..
+			$form['field_ref_carrier_mobile']['und']['#ajax'] = array('callback' => 'domestic_ratinggroup_carrier_callback' ,'wrapper' => 'div_area_code_of_callee');
+			$form['field_area_code_of_the_callee']['und']['#prefix'] = '<div id="div_area_code_of_callee">';
+			$form['field_area_code_of_the_callee']['und']['#suffix'] = '<div/>';
+			
+			$carrier_nid = NULL;
+			if(isset($form_state['values']['field_ref_carrier_mobile']['und'][0]['nid'])){
+				$carrier_nid = $form_state['values']['field_ref_carrier_mobile']['und'][0]['nid'];
+			}else if(isset($form_state['build_info']['args'][0]->field_ref_carrier_mobile['und'][0]['nid'])){
+				$carrier_nid = $form_state['build_info']['args'][0]->field_ref_carrier_mobile['und'][0]['nid'];
+			}
+			
+			if(isset($carrier_nid)){
+				$newOption = array();
+				$newOption['_none'] = 'All';
+				$view = views_get_view('list_area_code');
+				$view -> set_display('panel_pane_3');
+				$view -> set_arguments(array('0' => $carrier_nid));
+				$view -> execute();
+				foreach($view->result as $item){
+					$newOption[$item->nid] = $item->node_title;
+				}
+				$form['field_area_code_of_the_callee']['und']['#options'] = $newOption;
+			}
+			
 			//calltype
 			$options = _get_call_type_options();
 			$form['field_ref_type_of_call']['und']['#options'] = $options;
 
 			//for select all area
-			$form['field_area_code_from']['und']['#options']['_none'] = 'All';
-			$form['field_area_code_to']['und']['#options']['_none'] = 'All';
+			$form['field_area_code_of_the_caller']['und']['#options']['_none'] = 'All';
+			$form['field_area_code_of_the_callee']['und']['#options']['_none'] = 'All';
 			
 			$form['field_is_samezone']['und']['#options']['_none'] = 'All';
 			break;
@@ -2638,6 +2663,14 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 	}
 	_add_ajax_submit_callback($form_id, $form);
 	return $form;
+}
+
+function domestic_ratinggroup_carrier_callback($form, $form_state){
+	$returnStr = '<div id="div_area_code_of_callee">';
+	$returnStr .= drupal_render($form['field_area_code_of_the_callee']);
+	$returnStr .= '</div>';
+	
+	return $returnStr;
 }
 
 function counter_bill_type_change_callback($form, $form_state) {
