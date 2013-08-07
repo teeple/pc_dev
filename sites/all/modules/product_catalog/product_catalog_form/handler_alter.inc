@@ -549,21 +549,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 				array('field_service_domain', 'tid', $svcDomainTid),
 				array('field_sub_group1', 'value', 'Lifecycle')));
 
-			/*
-			$view = views_get_view('list_service_feature_code');
-			$view -> set_display('list_feature_code');
-			$view -> set_arguments(array('0' => $svcDomainTid, '1' => 'Lifecycle'));
-			$view -> execute();
-
-			$options = array();
-			foreach ($view->result as $record) {
-				$subgroup1 = $record -> field_field_sub_group1[0]['raw']['value'];
-				$subgroup2 = $record -> field_field_sub_group2[0]['raw']['value'];
-				$options[$record -> tid] = t('<span class="@class">@svc</span>', array('@class' => t('ocs_svc_perm @1 @2', array('@1' => $subgroup1, '@2' => $subgroup2)), '@svc' => $record -> taxonomy_term_data_name));
-			}
-			*/
-
-			 foreach( array_keys( $form['field_feature_codes']) as $key) {
+					 foreach( array_keys( $form['field_feature_codes']) as $key) {
 				 $form['field_feature_codes'][$key]['field_feature_codes']['und']['#options'] = $options;
 			 }
 
@@ -621,11 +607,12 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 					break;
 			}
 			// $form['field_ref_voucher_type_tid']
-
 			break;
 		case 'views_form_list_counter_for_vouchercardtype_panel_pane_2' :
 			unset($form['actions']['submit']);
 			break;
+
+
 
 		case 'views_form_list_basicrate_panel_pane_2' :
 			unset($form['actions']['submit']);
@@ -834,14 +821,15 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 				}
 
 				$form['field_voucher_id']['und'][0]['value']['#default_value'] = $maxVoucherId + 1;
-				$form['field_voucher_id']['und']['#disabled'] = TRUE;
+
+				// $form['field_voucher_id']['und']['#disabled'] = TRUE;
 
 				$form['actions']['submit']['#submit'][] = '_vouchercardtype_submit_handler';
 				$form['actions']['submit']['#submit'][] = 'product_catalog_form_form_redirect_handler';
 				// Edit
 			} else {
 				$form['field_ref_voucher_type']['und']['#disabled'] = TRUE;
-				// $form['field_voucher_id']['und']['#disabled'] = TRUE;
+				$form['field_voucher_id']['und']['#disabled'] = TRUE;
 				$form['field_service_operator']['und']['#disabled'] = TRUE;
 			}
 			$form['field_valid_date_ymd_w_enddate']['und']['#required'] = FALSE;
@@ -964,7 +952,8 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			unset($form['field_ref_product']);
 			unset($form['field_ref_tree_tid']);
 
-			_unset_menu_items($form, $form_id);			
+			_unset_menu_items($form, $form_id);
+			
 			break;
 
 		case 'prdnonusagerecurringchargescheme_node_form' :
@@ -3153,7 +3142,8 @@ function _get_product_exclusive_list($productNid) {
 	unset($options['list'][$productNid]);
 
 	return $options;
-}			
+}
+			
 
 
 function _handler_get_term_options( $voca, $cond_list) 
