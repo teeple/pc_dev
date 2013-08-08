@@ -19,7 +19,8 @@ function _array_priority_hierarchy($exportItemNids = NULL)
 	}
 
 	$jsonData['ifvalues']['resources'] = array();
-	$jsonData['relations'] = $relations;
+	// $jsonData['relations'] = $relations;
+	$jsonData['relations'] = null;
 	
     return $jsonData;
 }
