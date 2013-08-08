@@ -698,7 +698,6 @@ function _get_redirect_url_in_view_n_delete($viewOrDel, $node) {
 			}
 			$url['fragment'] = 'quickset-relation_manager=5';
 			break;
-
 		case 'productchange' :
 			if ($viewOrDel == 'view') {
 				$url['path'] = 'relation/' . $node -> type . '/edit/' . $node -> nid . '/0';

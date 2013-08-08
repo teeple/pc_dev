@@ -11,7 +11,6 @@ function _unset_menu_items(&$form, $formId) {
 	unset($form['revision_information']);
 
 	$unsetDeleteButton = TRUE;
-
 	switch($formId) {
 		case 'numberingplan_domestic_node_form' :
 		case 'numberingplan_idd_node_form' :
@@ -31,7 +30,6 @@ function _unset_menu_items(&$form, $formId) {
 		case 'servicefeaturecode_node_form' :
 		case 'servicefeaturecodescheme_node_form' :
 		case 'unittransfer_node_form' :
-		case 'productgroup_node_form' :
 		case 'productchange_node_form' :
 		case 'number_special_node_form':
 		case 'simpleproductoffering_node_form':
@@ -44,6 +42,9 @@ function _unset_menu_items(&$form, $formId) {
 			if ($firstPathName != 'relation') {
 				$unsetDeleteButton = FALSE;
 			}
+			break;
+		case 'productgroup_node_form':
+			$unsetDeleteButton = FALSE;
 			break;
 	}
 	if ($unsetDeleteButton)	unset($form['actions']['delete']);
