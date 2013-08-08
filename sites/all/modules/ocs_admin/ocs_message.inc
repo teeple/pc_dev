@@ -49,7 +49,7 @@ function ocs_admin_message_form($form, &$form_state, $nid = NULL, $op = NULL)
 	$format = array( 'MNG' => 'Mongolian Notification Text', 'ENG' => 'English Notification Text');
 	if ($op == 'edit') {
 		$node = node_load($nid);
-		//        dpm( $node, 'node');
+		//	dpm( $node, 'node');
 		if ($node) {
 			$title = $node->title;
 			$format['MNG'] = $node->field_ocs_format['und'][0]['value'];
@@ -71,7 +71,6 @@ function ocs_admin_message_form($form, &$form_state, $nid = NULL, $op = NULL)
 			'title' => '_ocs_noti_param_list'
 		));
 		if (count($items) != 1) {
-
 			drupal_set_message(t('Action "_ocs_noti_param_list" is not defined.'), 'error');
 			return $form;
 		}
@@ -148,9 +147,9 @@ function ocs_admin_message_form($form, &$form_state, $nid = NULL, $op = NULL)
 		);
 
 		$time_list = array(
-				"00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11",
-				"12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23",
-				);
+			"00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11",
+			"12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23",
+		);
 
 		$form['scheduled']['delivery_time'] = array(
 			'#type' => 'select',
@@ -338,6 +337,12 @@ function ocs_admin_message_form($form, &$form_state, $nid = NULL, $op = NULL)
 		'#type' => 'submit',
 		'#value' => t('Cancel'),
 	);
+	
+	$form_state['rebuild'] = TRUE;
+	$form_state['redirect'] = array('<front>');
+
+	dsm($form, 'form');
+	dsm($form_state, 'form_state');
 
 	return $form;
 }
