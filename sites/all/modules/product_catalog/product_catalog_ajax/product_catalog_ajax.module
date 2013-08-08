@@ -1881,14 +1881,12 @@ function product_catalog_ajax_load_product_relations($termName, $nid, $defaultTa
 	$qtabConfigs = _qtabconfig_loading($targetCollection, current($termInTree));
 	
 	$qtabs = array();
-    $weight = 0;
-    
-    $index = 0;
+  $weight = 0;
+  $index = 0;
 	$qtabIndex = 0;
 	
 	foreach($qtabConfigs[$targetCollection] as $qtabConfig) {
-	
-	
+
 		switch($qtabConfig['type']) {
             case 'node':
             	break;
@@ -1907,14 +1905,14 @@ function product_catalog_ajax_load_product_relations($termName, $nid, $defaultTa
             	);
             	break;
             case 'view':
-		    	$qtabs[] = array(
-                    'title' => $qtabConfig['title'],
-                    'type' => 'view',
-                    'vid' => $qtabConfig['content'],
-                    'display' => $qtabConfig['display'],
-                	'args' => $newArgs,
-                	'weight' => $weight
-                );
+              $qtabs[] = array(
+                'title' => $qtabConfig['title'],
+                'type' => 'view',
+                'vid' => $qtabConfig['content'],
+                'display' => $qtabConfig['display'],
+              	'args' => $newArgs,
+              	'weight' => $weight
+              );
             	break;
         }
         $weight = $weight + 1;

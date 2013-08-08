@@ -1367,9 +1367,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 				$hiddenItems = array_merge($hiddenItems, array('field_product_type', 'field_service_type_of_provider'));
 
 				// $disabledItems = array_merge($disabledItems, array('field_billing_type', 'field_service_operator', 'field_price_units', 'field_product_id', 'field_custdvcd4prod', 'field_customer_group_type'));
-				// $disabledItems = array_merge($disabledItems, array('field_billing_type', 'field_service_operator', 'field_price_units', 'field_product_id', 'field_customer_group_type'));
-
-				$disabledItems = array_merge($disabledItems, array('field_billing_type', 'field_service_operator', 'field_price_units','field_customer_group_type'));
+				$disabledItems = array_merge($disabledItems, array('field_billing_type', 'field_service_operator', 'field_price_units', 'field_product_id', 'field_custdvcd4prod', 'field_customer_group_type', 'field_short_code'));
 
 				$productTypeTid = $form['field_product_type']['und']['#default_value'][0];
 				$productTypeName = $form['field_product_type']['und']['#options'][$productTypeTid];
