@@ -26,10 +26,8 @@ function _array_priority_hierarchy($exportItemNids = NULL)
 
 function _json_priority_hierarchy($exportItemNids=NULL) {
   $retArray = array();
-  /*
   $jsonData  = _array_priority_hierarchy($exportItemNids);
   $retArray = $jsonData;
-  */
   
   $arr[] = rating_rules_export_by_content_type_and_item_name("rating_rule_export_product", "list_product_lifecycle");
   foreach($arr as $a)
