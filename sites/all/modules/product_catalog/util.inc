@@ -611,10 +611,7 @@ function _get_redirect_url_in_view_n_delete($viewOrDel, $node) {
 									'VAS' => 'quickset-products=1', 
 									'Package' => 'quickset-products=2'), 
 							);
-			
-			//$fragment = array('Mobile' => array('Main' => '', 'Additional' => 'quickset-products_with_cug=1', 'VAS' => 'quickset-products_with_cug=2', 'Package' => 'quickset-products_with_cug=3', 'CUG' => 'quickset-products_with_cug=4'), 'IPTV' => array('Main' => '', 'Additional' => 'quickset-products=1', 'VAS' => 'quickset-products=2', 'Package' => 'quickset-products=3'), 'Broadband' => array('Main' => '', 'Additional' => 'quickset-products=1', 'VAS' => 'quickset-products=2', 'Package' => 'quickset-products=3'), 'VoIP' => array('Main' => '', 'Additional' => 'quickset-products_with_cug=1', 'VAS' => 'quickset-products_with_cug=2', 'Package' => 'quickset-products_with_cug=3', 'CUG' => 'quickset-products_with_cug=4'), 'Satellite' => array('Main' => '', 'Additional' => 'quickset-products=1', 'VAS' => 'quickset-products=2', 'Package' => 'quickset-products=3'), 'Dummy' => array('Main' => '', 'Additional' => 'quickset-products=1', 'VAS' => 'quickset-products=2', 'Package' => 'quickset-products=3'), 'Cross' => array('Main' => '', 'Additional' => 'quickset-products=1', 'VAS' => 'quickset-products=2', 'Package' => 'quickset-products=3'), );
 			$url['fragment'] = $fragment[$serviceDomain -> name][$productType -> name];
-
 			break;
 
 		case 'counter' :
@@ -701,7 +698,6 @@ function _get_redirect_url_in_view_n_delete($viewOrDel, $node) {
 			}
 			$url['fragment'] = 'quickset-relation_manager=5';
 			break;
-
 		case 'productchange' :
 			if ($viewOrDel == 'view') {
 				$url['path'] = 'relation/' . $node -> type . '/edit/' . $node -> nid . '/0';
@@ -766,8 +762,25 @@ function _get_redirect_url_in_view_n_delete($viewOrDel, $node) {
 			}
 			$url['fragment'] = $fragments[$node -> type];
 			break;
+		case 'ocs_messages':
+			$fragments = array('ocs_messages' => 'quickset-ocs_quick_tab=1');
+			if ($viewOrDel == 'view') {
+				$url['path'] = 'config/ocs/message/edit' . $node -> nid;
+			} else {
+				$url['path'] = 'config/ocs/message';
+			}
+			$url['fragment'] = $fragments[$node -> type];
+			break;
+		case 'ocs_ussd_code':
+			$fragments = array('ocs_ussd_code' => 'quickset-ocs_quick_tab=2');
+			if ($viewOrDel == 'view') {
+				$url['path'] = 'config/ocs/ussd/edit' . $node -> nid;
+			} else {
+				$url['path'] = 'config/ocs/ussd/list';
+			}
+			$url['fragment'] = $fragments[$node -> type];
+			break;
 	}
-
 	return $url;
 }
 
@@ -882,6 +895,20 @@ function _get_redirect_url_in_create_n_list($addOrList, $content_type, $params) 
 		case 'locationfactor':
 			$fragments = array('locationfactor' => 'quickset-qtabs_common_data=7');
 			$url['path'] = 'common/locations/' . $addOrList;
+			$url['fragment'] = $fragments[$content_type];
+			break;
+		case 'ocs_messages':
+			$fragments = array('ocs_messages' => 'quickset-ocs_quick_tab=1');
+			if($addOrList == 'add') {
+				$url['path'] = 'config/ocs/message/' . $addOrList;
+			} else {
+				$url['path'] = 'config/ocs/message';
+			}
+			$url['fragment'] = $fragments[$content_type];
+			break;
+		case 'ocs_ussd_code':
+			$fragments = array('ocs_ussd_code' => 'quickset-ocs_quick_tab=2');
+			$url['path'] = 'config/ocs/ussd/' . $addOrList;
 			$url['fragment'] = $fragments[$content_type];
 			break;
 	}
