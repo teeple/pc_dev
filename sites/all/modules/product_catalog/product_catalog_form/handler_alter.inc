@@ -196,7 +196,7 @@ function _add_ajax_submit_callback($form_id, &$form) {
 		case 'conditionwhenvaliddate_node_form' :
 		case 'backupandmigrateconfiguration_node_form' :
 		case 'ocs_global_config_node_form' :
-			$change = TRUE;
+		case 'ocs_ussd_code_node_form':
 			break;
 
 		case 'views_form_list_treenodecounterforvoucher_panel_pane_1' :
@@ -306,7 +306,10 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 	
 	switch($form_id) {
 		case 'ocs_ussd_code_node_form' :
-			// $form['title']['#disabled'] = TRUE;
+			_unset_menu_items($form, $form_id);
+			break;
+		case 'ocs_admin_message_form' :
+			_unset_menu_items($form, $form_id);
 			break;
 		case 'mapbasicrateroaming_node_form' :
 			_unset_menu_items($form, $form_id);
@@ -3179,8 +3182,6 @@ function _get_product_exclusive_list($productNid) {
 
 	return $options;
 }
-			
-
 
 function _handler_get_term_options( $voca, $cond_list) 
 {

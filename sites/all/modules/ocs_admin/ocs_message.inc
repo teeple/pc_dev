@@ -327,7 +327,6 @@ function ocs_admin_message_form($form, &$form_state, $nid = NULL, $op = NULL)
 			}
 		}
 	}
-
 	$form['actions'] = array('#type' => 'actions');
 
 	$form['actions']['submit'] = array(
@@ -485,6 +484,10 @@ function ocs_admin_message_form_submit($form, &$form_state)
 		$msg_create_or_update = ($isNew == TRUE)? 'created.':'updated.';
 		drupal_set_message($node->type. ' ' . $node->title . ' has been '. $msg_create_or_update);
 	}
+	$form_state['rebuild'] = TRUE;
+	$destinationUrl = _get_redirect_url_in_create_n_list('list', 'ocs_messages', NULL);
+	$form_state['redirect'] = 'config/ocs/message';
+	return;
 }
 
 function ocs_admin_message_delete_confirm($form, &$form_state, $nid)

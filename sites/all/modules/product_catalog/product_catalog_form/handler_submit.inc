@@ -1006,3 +1006,16 @@ function set_exclusiveness_check($node_unchanged, $node_changed) {
 		}
 	}
 }
+
+function set_numbersaving(){
+	global $user;
+	$node = new StdClass();
+		$node->uid = $user->uid;
+		$node->type = 'prdattributenumbersaving';
+		$node->language = 'und';
+		$node->field_ref_product['und'][0]['nid'] = $entity->nid;
+		$node->field_ref_tree_tid['und'][0]['value'] = 6771;
+		node_save($node);
+
+}
+

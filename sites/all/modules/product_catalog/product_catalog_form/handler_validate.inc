@@ -948,11 +948,8 @@ function product_catalog_form_node_validate($node, $form, &$form_state) {
 
 						if (isset($form['nid']['#value'])) {
 							$viewResult = views_get_view_result('list_simple_product_offering', 'panel_pane_15', $productName, $svcDomainTid, $form['nid']['#value']);
-						
 						} else {
-
 							$viewResult = views_get_view_result('list_simple_product_offering', 'panel_pane_15', $productName, $svcDomainTid);
-						
 						}
 
 						if(count($viewResult) > 0) {
