@@ -31,6 +31,8 @@ function _unset_menu_items(&$form, $formId) {
 		case 'servicefeaturecode_node_form' :
 		case 'servicefeaturecodescheme_node_form' :
 		case 'unittransfer_node_form' :
+		case 'productgroup_node_form' :
+		case 'productchange_node_form' :
 		case 'number_special_node_form':
 		case 'simpleproductoffering_node_form':
 		case 'packetsgsn_node_form' :
@@ -42,10 +44,6 @@ function _unset_menu_items(&$form, $formId) {
 			if ($firstPathName != 'relation') {
 				$unsetDeleteButton = FALSE;
 			}
-			break;
-		case 'productgroup_node_form':
-		case 'productchange_node_form' :
-			$unsetDeleteButton = FALSE;
 			break;
 	}
 	if ($unsetDeleteButton)	unset($form['actions']['delete']);
@@ -301,6 +299,8 @@ function edit_pane_callback($form, &$form_state) {
 
 function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 
+	// dsm($form_id, 'form_id');
+		
 	load_required_js_css_before_ajax_load();
 
 	if ((isset($form['#attributes']) && isset($form['#attributes']['class'])) && gettype($form['#attributes']['class']) == 'array') {
@@ -439,8 +439,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 				$serviceDomainTid = $form['field_service_domain']['und']['#default_value'][0];
 				$billTypeTid = $form['field_billing_type']['und']['#default_value'][0];
 				$viewResult = views_get_view_result('list_product_group', 'panel_pane_3', $serviceDomainTid, $billTypeTid);
-				
-				$options = array();
+
 				foreach ($viewResult as $item) {
 					$options[$item -> nid] = $item -> node_title;
 				}

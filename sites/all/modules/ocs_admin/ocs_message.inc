@@ -338,12 +338,11 @@ function ocs_admin_message_form($form, &$form_state, $nid = NULL, $op = NULL)
 		'#value' => t('Cancel'),
 	);
 	
+	/*
 	$form_state['rebuild'] = TRUE;
 	$form_state['redirect'] = array('<front>');
-
-	dsm($form, 'form');
-	dsm($form_state, 'form_state');
-
+	*/
+	
 	return $form;
 }
 

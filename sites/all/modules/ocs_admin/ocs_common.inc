@@ -431,7 +431,8 @@ function ocs_ctools_link($title, $url, $opt)
 function ocs_log_changes( $before, $after)
 {
 	// dpm( $before, 'before');
-
+    if(!isset($before)) return;
+    
 	if ( get_class( $before) == 'FieldCollectionItemEntity') {
 		// field_collection 
 		$field = field_info_instances('field_collection_item', $before->field_name);
@@ -445,10 +446,33 @@ function ocs_log_changes( $before, $after)
 	}
 
 	$diff = _compare_content( $field, $before, $after);
-	if ( ! empty( $diff)) {
-		//dpm( $diff, 'diff');
-		watchdog( 'change log', 'Content %type (%id) changed %data', array( '%type' => $type, '%id' => $id, '%data' => json_encode( $diff)), WATCHDOG_NOTICE); 
+
+    if ( ! empty( $diff)) {
+        $current = current($diff);
+ 
+        $logMessage = t('Content @type (@id) changed [@label(@field_name): @from -> @to]', 
+            array( '@type' => $type, '@id' => $id, 
+                '@label' => key($diff),
+                '@field_name' => $current[2],
+                '@from' => $current[0],
+                '@to' => $current[1]
+                ));
+        _save_change_log($logMessage);
+        watchdog( 'change_log', 'Content %type (%id) changed %data', array( '%type' => $type, '%id' => $id, '%data' => json_encode( $diff)), WATCHDOG_NOTICE); 
 	}
+}
+
+function _save_change_log($logMessage)
+{
+    global $user;
+    $changeHistory = new stdClass;
+    $changeHistory->uid = $user->uid;
+    $changeHistory->type = 'changehistory';
+    $changeHistory->language = 'und';
+    $changeHistory->field_history_type['und'][0]['value'] = 'change_log';
+    $changeHistory->field_history_changed['und'][0]['value'] = $logMessage;
+
+    node_save($changeHistory);
 }
 
 function _compare_content( $field, $before, $after)
