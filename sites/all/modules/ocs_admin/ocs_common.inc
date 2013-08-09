@@ -427,12 +427,25 @@ function ocs_ctools_link($title, $url, $opt)
 	echo $link_string;
 }
 
+function ocs_log_new( $new)
+{
+    dsm($new);
+    if ( get_class( $new) == 'FieldCollectionItemEntity') {
+        $field = field_info_instances('field_collection_item', $new->field_name);
+        $type = 'FieldCollectionItemEntity:' . $new->field_name;
+        $id = 'item_id=' . $new->item_id;
+    }
+    else {
+        
+    }
+
+    // $field = field_info_instances('field_collection_item', $new->field_name);
+
+}
 
 function ocs_log_changes( $before, $after)
 {
-	// dpm( $before, 'before');
-    if(!isset($before)) return;
-    
+	dpm( $before, 'before');
 	if ( get_class( $before) == 'FieldCollectionItemEntity') {
 		// field_collection 
 		$field = field_info_instances('field_collection_item', $before->field_name);
@@ -441,22 +454,18 @@ function ocs_log_changes( $before, $after)
 	}
 	else {
 		$field = field_info_instances( 'node', $before->type);
-		$type = $before->type;
-		$id = 'nid=' . $before->nid;
+		// $type = $before->type;
+        $type = node_type_get_name($before);
+        $id = 'nid=' . $before->nid;
 	}
 
 	$diff = _compare_content( $field, $before, $after);
 
     if ( ! empty( $diff)) {
-        $current = current($diff);
- 
-        $logMessage = t('Content @type (@id) changed [@label(@field_name): @from -> @to]', 
-            array( '@type' => $type, '@id' => $id, 
-                '@label' => key($diff),
-                '@field_name' => $current[2],
-                '@from' => $current[0],
-                '@to' => $current[1]
-                ));
+        // $current = current($diff);
+        // dsm($diff, 'diff');
+        // $logMessage = t('Content @type (@id) changed @data', array( '@type' => $type, '@id' => $id, '@data' => drupal_json_encode( $diff)));
+        $logMessage = t('@type (@id) changed @data', array( '@type' => $type, '@id' => $id, '@data' => drupal_json_encode( $diff)));
         _save_change_log($logMessage);
         watchdog( 'change_log', 'Content %type (%id) changed %data', array( '%type' => $type, '%id' => $id, '%data' => json_encode( $diff)), WATCHDOG_NOTICE); 
 	}
@@ -477,17 +486,15 @@ function _save_change_log($logMessage)
 
 function _compare_content( $field, $before, $after)
 {
-	$diff = array();
+    $diff = array();
 	foreach( $field as $key => $value) {
 		$v1 = $before->$key;
 		$v2 = $after->$key;
 		$label = $value['label'];
 
-		/*
-		dpm( $key, 'key');
-		dpm( $v1, 'v1');
-		dpm( $value, 'value');
-		*/
+		// dpm( $key, 'key');
+		// dpm( $v1, 'v1');
+		// dpm( $value, 'value');
 
 		if ( is_array( $v1)) {
 			// field type
@@ -497,7 +504,7 @@ function _compare_content( $field, $before, $after)
 				$vv1 = _get_field_value( $v1, $i);
 				$vv2 = _get_field_value( $v2, $i);
 				if ( $vv1 !== $vv2) {
-					$diff[$label] = array( $vv1, $vv2, $key);
+					$diff[$label][] = array( $vv1, $vv2, $key);
 				}
 			}
 		}
