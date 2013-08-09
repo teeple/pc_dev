@@ -1380,7 +1380,6 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 					$disabledItems[] = 'field_short_code';
 				}
 				
-				
 				$productTypeTid = $form['field_product_type']['und']['#default_value'][0];
 				$productTypeName = $form['field_product_type']['und']['#options'][$productTypeTid];
 
