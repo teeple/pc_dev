@@ -299,8 +299,6 @@ function edit_pane_callback($form, &$form_state) {
 
 function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 
-	// dsm($form_id, 'form_id');
-		
 	load_required_js_css_before_ajax_load();
 
 	if ((isset($form['#attributes']) && isset($form['#attributes']['class'])) && gettype($form['#attributes']['class']) == 'array') {
@@ -477,23 +475,31 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			break;
 		case 'user_register_form' :
 			unset($form['account']['notify']);
+			// $form['account']['status'] = 1;
+			// $form['account']['status']['#type'] = 'hidden';
 			unset($form['account']['roles']['#options'][3]);
+			$form['account']['mail']['#description'] = 'Enter your current password to change the <em class="placeholder">E-mail address</em> or <em class="placeholder">Password</em>';
+
 			break;
 		case 'user_profile_form' :
 			global $user;
 			$form['account']['current_pass']['#description'] = 'Enter your current password to change the <em class="placeholder">E-mail address</em> or <em class="placeholder">Password</em>';
 			unset($form['account']['mail']['#description']);
 			unset($form['account']['notify']);
-			unset($form['account']['roles']['#options'][3]);
+			unset($form['account']['roles']['#options'][3]); // skip 'administrator' role
 			unset($form['actions']['cancel']);
-
+			unset($form['picture']);
+			unset($form['account']['status']);
 			$allowedAccountRoles = array('administrator', 'account manager');
 
 			$tempArray = array_intersect($user -> roles, $allowedAccountRoles);
+
 			if (sizeof($tempArray) == 0) {
 				$form['account']['roles']['#disabled'] = TRUE;
 				$form['account']['status']['#disabled'] = TRUE;
 			}
+			$form_state['redirect'] = array('<front>');
+			$form_state['rebuild'] = TRUE;
 
 			break;
 		case 'views_form_ocs_svc_perm_panel_pane_4' :
@@ -1370,15 +1376,8 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 				$hiddenItems = array_merge($hiddenItems, array('field_product_type', 'field_service_type_of_provider'));
 
 				// $disabledItems = array_merge($disabledItems, array('field_billing_type', 'field_service_operator', 'field_price_units', 'field_product_id', 'field_custdvcd4prod', 'field_customer_group_type'));
-				$disabledItems = array_merge($disabledItems, array('field_billing_type', 'field_service_operator', 'field_price_units', 'field_custdvcd4prod', 'field_customer_group_type'));
-				
-				// Commercial에 Deply 된 이력이 있으면 product_id, short code disable
-				$viewResult = views_get_view_result('list_export_history', 'panel_pane_6', $product_nid);
-				if(!empty($viewResult)){
-					$disabledItems[] = 'field_product_id';
-					$disabledItems[] = 'field_short_code';
-				}
-				
+				$disabledItems = array_merge($disabledItems, array('field_billing_type', 'field_service_operator', 'field_price_units', 'field_product_id', 'field_custdvcd4prod', 'field_customer_group_type', 'field_short_code'));
+
 				$productTypeTid = $form['field_product_type']['und']['#default_value'][0];
 				$productTypeName = $form['field_product_type']['und']['#options'][$productTypeTid];
 
