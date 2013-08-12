@@ -212,7 +212,7 @@ function rating_rules_export_from_view_has_nid_reference($title , $export_item ,
         }
         foreach($view->field as $field_name => $field_handler)
         {
-			$value = view_get_field_value($view , $field_name , $record);
+			$value = view_get_field_value($view , $field_name , $record, $field_name_map[$field_name]);
 			if($field_name == 'nid')
 			{
 				$nid = $value;
@@ -1111,7 +1111,7 @@ function view_get_field_value_by_label($view , $label , $record)
 		$factor_name = trim($splits[0]);
 		if($label == $factor_name)
 		{
-			return view_get_field_value($view , $field_name , $record);
+			return view_get_field_value($view , $field_name , $record, $factor_name);
 		}
     }
 }
@@ -1132,7 +1132,7 @@ function date_to_iso8601_date_str($value)
 	return strftime('%Y-%m-%dT%H:%M', strtotime($value));
 }
 
-function view_get_field_value($view , $field_name , $record)
+function view_get_field_value($view , $field_name , $record, $factor_name = NULL)
 {
     /*
     if($view->executed == FALSE)
@@ -1303,7 +1303,10 @@ function view_get_field_value($view , $field_name , $record)
 			$value = $field_handler->render($record);
 			if($field_handler->field!='php')
 			{
-				$value = to_rating_rule_string($value);
+				if($factor_name != 'rule_name')
+				{
+					$value = to_rating_rule_string($value);
+				}
 			}
 			return $value;
 		}
@@ -1518,7 +1521,7 @@ function rating_rules_export_from_view($title, $view_name, $display_name, $nid=N
                     $factor_name = $field_name_map[$field_name];
                     if(array_key_exists($factor_name, $factor_meta_map) && $factor_meta_map[$factor_name]['type'] == 'json_condition')
                     {
-                        $condition = json_decode(view_get_field_value($view , $field_name , $record));
+                        $condition = json_decode(view_get_field_value($view , $field_name , $record, $factor_name));
                         if($condition != NULL)
                         {
                             $count = 0;
@@ -1558,7 +1561,7 @@ function rating_rules_export_from_view($title, $view_name, $display_name, $nid=N
                     {
 						try
 						{
-							$rule[$factor_name] = view_get_field_value($view , $field_name , $record);
+							$rule[$factor_name] = view_get_field_value($view , $field_name , $record, $factor_name);
 						}
 						catch(Exception $e)
 						{
