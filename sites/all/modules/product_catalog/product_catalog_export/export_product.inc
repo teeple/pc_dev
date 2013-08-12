@@ -604,7 +604,7 @@ function _get_attribute($product) {
                       'contract_period' => array('through_common_code' => FALSE, 'field' => 'field_contract_period‎', 'field_value' => "field_contract_period‎['und'][0]['value']", 'field_value_default' => 0),
 //                      'expire_date' => array('through_common_code' => FALSE, 'field' => 'field_expire_date', 'field_value' => "field_expire_date['und'][0]['value']", 'field_value_default' => 0), 
                       'weight_for_priority' => array('through_common_code' => FALSE, 'field' => 'field_weight_for_ratingpriority', 'field_value' => "field_weight_for_ratingpriority['und'][0]['value']", 'field_value_default' => 0),
-                      'expire_date_type' => array('through_common_code' => TRUE, 'field' => 'field_expire_date_type', 'field_value' => "field_expire_date_type['und'][0]['tid']", 'field_value_default' => NULL), 
+                      //'expire_date_type' => array('through_common_code' => TRUE, 'field' => 'field_expire_date_type', 'field_value' => "field_expire_date_type['und'][0]['tid']", 'field_value_default' => NULL), 
                       'resubscription_flag' => array('through_common_code' => FALSE, 'field' => 'field_resubscription_flag', 'field_value' => "field_resubscription_flag['und'][0]['value']", 'field_value_default' => 0), 
                       'currency' => array('through_common_code' => TRUE, 'field' => 'field_price_units', 'field_value' => "field_price_units['und'][0]['tid']", 'field_value_default' => NULL), 
                 );
@@ -874,29 +874,25 @@ function _get_attribute_exceptions($product) {
     
     if(isset($expireDateTypeTerm)) {
     
-    	switch($expireDateTypeTerm->name) {
-    		case 'Hour':
+    	switch($expireDateTypeTerm->field_common_code['und'][0]['value']) {
+    		case '3': //Hour
     			$retArray['expire_date'] = isset($product->field_expire_date['und'][0]['value'])? $product->field_expire_date['und'][0]['value']: NULL;
 				break;
-    		case 'Day':
-    		case 'Month':
+    		case '1': //Day
+    		case '2': //Month
     			$retArray['expire_date'] = isset($product->field_expire_date['und'][0]['value'])? $product->field_expire_date['und'][0]['value']: NULL;
     			$retArray['expire_date_hour'] = isset($product->field_valid_date_hour['und'][0]['value'])? $product->field_valid_date_hour['und'][0]['value'].":00": NULL;
     			break;
-    		case 'End of This Week':
-    		case 'End of This Month':
+    		case '5': //End of This Week
+    		case '6': //End of This Month
     			break;
-    		case 'Specific Date':
+    		case '4': //SpecificDate
     			$specificHour = $product->field_valid_date_hour['und'][0]['value'].":00:00";
     			$tmpDates = explode(' ', $product->field_specific_date['und'][0]['value']);
-    			$specificDate = $tmpDates[0].' '.$specificHour;
+					$specificDate = $tmpDates[0].' '.$specificHour;
     			$retArray['expire_date'] = $specificDate;
+					//2013-05-12 16:00:00
     			break;
-    	}
-    	if($expireDateTypeTerm->name == 'Hour') {
-    	
-    	} else {
-    	
     	}
     	
     	$nextJoinConfirmTerm = isset($product->field_next_join_confirm['und'][0]['tid'])? taxonomy_term_load($product->field_next_join_confirm['und'][0]['tid']) : NULL;
