@@ -1046,7 +1046,23 @@ function product_catalog_form_node_validate($node, $form, &$form_state) {
 	
 							if ($isExist) {
 								drupal_set_message($existName . " is defined in Product Downgrade Penlaty", 'error');
-								form_set_error("hhh");
+							}
+						}
+					} else{ //relation일 경우
+						//exclusive 설정일 때,
+						if(isset($form_state['values']['field_exclusiveness_others'])){
+							$view_result = views_get_view_result('list_package_by_product_id', 'panel_pane_1', $node->nid);
+							$auto_join_products = array();
+							foreach($view_result as $item){
+								$auto_join_products[$item->node_field_data_field_ref_connected_product_nid] = $item->node_field_data_field_ref_connected_product_title;
+							}
+							
+							foreach($form_state['values']['field_exclusiveness_others']['und'] as $item){
+								if(isset($auto_join_products[$item['nid']])){
+									$error_message =  $auto_join_products[$item['nid']] .' can not be set as exclusive. It is already set as a Auto Join Product';
+									form_set_error('field_exclusiveness_others',$error_message);
+									break;
+								}
 							}
 						}
 					}
