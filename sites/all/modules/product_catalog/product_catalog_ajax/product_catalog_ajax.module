@@ -1813,12 +1813,16 @@ function product_catalog_ajax_load_select_form($nid,$eventType,$rootNid,$relType
 						case 'packaged_mandatory':
 						case 'packaged_optional':
 						case 'packaged_hidden':
+						case 'packaged_product':
 							//exclusiveness 에 설정 된 product 제외
 							$temp_new_args = explode('/',$newArgs);
-							
 							//find exclusive products
 							$product_node = node_load($rootId);
-							$temp_exclusive_products = isset($product_node->field_exclusiveness_others['und'])?$product_node->field_exclusiveness_others['und']:NULL;
+							if($relType == 'packaged_product'){
+								$temp_exclusive_products = isset($product_node->field_exclusiveness['und'])?$product_node->field_exclusiveness['und']:NULL;
+							}else{
+								$temp_exclusive_products = isset($product_node->field_exclusiveness_others['und'])?$product_node->field_exclusiveness_others['und']:NULL;
+							}
 							$exclusive_products = array();
 							foreach($temp_exclusive_products as $item){
 								$exclusive_products[] = $item['nid'];
@@ -1832,17 +1836,19 @@ function product_catalog_ajax_load_select_form($nid,$eventType,$rootNid,$relType
 							}
 							$exclusive_products = array_unique($exclusive_products);
 							$temp_new_args[1] = join(',',$exclusive_products);
-							$newArgs = join('/',$temp_new_args);
+							if(!empty($temp_new_args[1])){
+								$newArgs = join('/',$temp_new_args);
+							}
 							break;
 					}
 	      	$qtabs[] = array(
-	              'title' => $qtabConfig['title'],
-	              'type' => 'view',
-	              'vid' => $qtabConfig['content'],
-	              'display' => $qtabConfig['display'],
-	          	'args' => $newArgs,
-	          	'weight' => $weight
-	          );
+            'title' => $qtabConfig['title'],
+            'type' => 'view',
+            'vid' => $qtabConfig['content'],
+            'display' => $qtabConfig['display'],
+          	'args' => $newArgs,
+          	'weight' => $weight
+          );
 	      	break;
 	      case 'callback':
 					// treenodecounter에서 선불이 PostPaid일 때에는 필요없음.

@@ -1050,17 +1050,28 @@ function product_catalog_form_node_validate($node, $form, &$form_state) {
 						}
 					} else{ //relation일 경우
 						//exclusive 설정일 때,
+						$need_to_check_exclusive = FALSE;
 						if(isset($form_state['values']['field_exclusiveness_others'])){
+							$need_to_check_exclusive = TRUE;
+							$target_exclusive_field = 'field_exclusiveness_others';
+							$error_message_suffix = 'Auto Join Product';
+						}
+						if(isset($form_state['values']['field_exclusiveness'])){
+							$need_to_check_exclusive = TRUE;
+							$target_exclusive_field = 'field_exclusiveness';
+							$error_message_suffix = 'Packaged Product';
+						}
+						if($need_to_check_exclusive){
 							$view_result = views_get_view_result('list_package_by_product_id', 'panel_pane_1', $node->nid);
 							$auto_join_products = array();
 							foreach($view_result as $item){
 								$auto_join_products[$item->node_field_data_field_ref_connected_product_nid] = $item->node_field_data_field_ref_connected_product_title;
 							}
 							
-							foreach($form_state['values']['field_exclusiveness_others']['und'] as $item){
+							foreach($form_state['values'][$target_exclusive_field]['und'] as $item){
 								if(isset($auto_join_products[$item['nid']])){
-									$error_message =  $auto_join_products[$item['nid']] .' can not be set as exclusive. It is already set as a Auto Join Product';
-									form_set_error('field_exclusiveness_others',$error_message);
+									$error_message =  $auto_join_products[$item['nid']] .' can not be set as exclusive. It is already set as a '.$error_message_suffix;
+									form_set_error($target_exclusive_field,$error_message);
 									break;
 								}
 							}
