@@ -1480,11 +1480,13 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 
 			} else {
 				$unsetItems = array_merge($unsetItems, array('field_exclusiveness', 'field_exclusiveness_others'));
-				$form['product_clone_button'] = array(
-					'#type' => 'markup',
-					'#markup' => '<input type="button" value="Clone Product" id="product_clone_button"/>',
-					'#weight' => 1000
-				);
+				if(isset($form['nid']['#value'])){ //edit and not relation
+					$form['product_clone_button'] = array(
+						'#type' => 'markup',
+						'#markup' => '<input type="button" value="Clone Product" id="product_clone_button"/>',
+						'#weight' => 1000
+					);
+				}
 			}
 
 			switch($productTypeName) {
