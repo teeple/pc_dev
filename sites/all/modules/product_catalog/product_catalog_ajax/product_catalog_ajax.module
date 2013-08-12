@@ -1238,6 +1238,32 @@ function product_catalog_ajax_select_submit() {
       	node_save($child);
       	$js_data['append_to'] = 'inside';
       	break;
+			case 'packaged_optional':
+        $child->type = 'prdattributepackaged';
+        $child->field_weight['und'][0]['value'] = $weight;
+        $child->field_ref_product['und'][0]['nid'] = $tmpProductNid[1];
+        $child->field_ref_connected_product['und'][0]['nid'] = $childNid;
+        
+        $term = taxonomy_get_term_by_name('Optional', 'prdrelationtype');
+        $child->field_ref_prdrelationtype['und'][0]['tid'] = current($term)->tid;
+        
+        node_save($child);
+        $js_data['append_to'] = 'inside';
+        break;
+        
+    	case 'packaged_hidden':
+        $child->type = 'prdattributepackaged';
+        $child->field_weight['und'][0]['value'] = $weight;
+        $child->field_ref_product['und'][0]['nid'] = $tmpProductNid[1];
+        $child->field_ref_connected_product['und'][0]['nid'] = $childNid;
+        
+                $term = taxonomy_get_term_by_name('Mandatory_MarketHidden','prdrelationtype');
+        $child->field_ref_prdrelationtype['und'][0]['tid'] = current($term)->tid;
+        
+        node_save($child);
+        
+        $js_data['append_to'] = 'inside';
+        break;
      
     case 'member_product':
     		$child->type = 'prdattributepackaged';
@@ -1251,34 +1277,6 @@ function product_catalog_ajax_select_submit() {
 				node_save($child);
 				$js_data['append_to'] = 'inside';
 				break;
-    		  	
-	  case 'packaged_optional':
-        $child->type = 'prdattributepackaged';
-        $child->field_weight['und'][0]['value'] = $weight;
-        $child->field_ref_product['und'][0]['nid'] = $tmpProductNid[1];
-        $child->field_ref_connected_product['und'][0]['nid'] = $childNid;
-        
-        $term = taxonomy_get_term_by_name('Optional', 'prdrelationtype');
-        $child->field_ref_prdrelationtype['und'][0]['tid'] = current($term)->tid;
-        
-        node_save($child);
-        $js_data['append_to'] = 'inside';
-        break;
-        
-    case 'packaged_hidden':
-          
-        $child->type = 'prdattributepackaged';
-        $child->field_weight['und'][0]['value'] = $weight;
-        $child->field_ref_product['und'][0]['nid'] = $tmpProductNid[1];
-        $child->field_ref_connected_product['und'][0]['nid'] = $childNid;
-        
-                $term = taxonomy_get_term_by_name('Mandatory_MarketHidden','prdrelationtype');
-        $child->field_ref_prdrelationtype['und'][0]['tid'] = current($term)->tid;
-        
-        node_save($child);
-        
-        $js_data['append_to'] = 'inside';
-        break;
       case 'packaged_product':
         $child->type = 'prdattributepackaged';
         $child->field_weight['und'][0]['value'] = $weight;
@@ -1787,73 +1785,93 @@ function product_catalog_ajax_load_select_form($nid,$eventType,$rootNid,$relType
 	$qtabConfigs = _qtabconfig_loading($targetCollection, $termInTree);
 	
 	$qtabs = array();
-    $weight = 0;
-    
-    $index = 0;
+  $weight = 0;
+  
+  $index = 0;
 	$qtabIndex = 0;
 	
     foreach($qtabConfigs[$targetCollection] as $qtabConfig) {
-
-		if(isset($qtabConfig['args'])) {
-			$args = array(
-					'qtabIndex' => $qtabIndex,
-					'termInTree' => $termInTree,
-					'id' => $id,
-					'rootId' => $rootId
-			);
-            $newArgs = _replace_arguments($qtabConfig['args'],  $qtabConfig, $args);
-		}else {
-			$newArgs = array();
-		}
-		
-		switch($qtabConfig['type']) {
-            case 'node':
-            	break;
-            	
-            case 'block':
-            	break;
-            	
-            case 'view':
-				
-            	$qtabs[] = array(
-                    'title' => $qtabConfig['title'],
-                    'type' => 'view',
-                    'vid' => $qtabConfig['content'],
-                    'display' => $qtabConfig['display'],
-                	'args' => $newArgs,
-                	'weight' => $weight
-                );
-            	break;
-            	
-            case 'callback':
-				
-				// treenodecounter에서 선불이 PostPaid일 때에는 필요없음.
-				if($nodeOrTerm == 'node') {
-					if($relType == 'tree_node_counter_main_basic' || $relType == 'tree_node_counter_main_optional') {
-						$treeNodeCounter = node_load($id);
-						$refCounter = node_load($treeNodeCounter->field_ref_counter['und'][0]['nid']);
-						$billingTypeCounter = taxonomy_term_load($refCounter->field_billing_type_counter['und'][0]['tid']);
-						if($billingTypeCounter->name == 'Prepaid') continue;
-					}
-				}
+			if(isset($qtabConfig['args'])) {
 				$args = array(
-            			'qtabIndex' => $qtabIndex,
-            			'termInTree' => $termInTree,
-            			'id' => $id,
-            			'rootId' => $rootId
-            	);
-            	$newArgs = _replace_arguments($qtabConfig['content'], $qtabConfig, $args);
-				
-            	$qtabs[] = array(
-            		'title' => $qtabConfig['title'],
-            		'type' => 'callback',
-            		'path' => $newArgs,
-            		'weight' => $weight
-            	);				
-				break;
-        }
-        $weight = $weight + 1;
-        $qtabIndex = $qtabIndex + 1;
+						'qtabIndex' => $qtabIndex,
+						'termInTree' => $termInTree,
+						'id' => $id,
+						'rootId' => $rootId
+				);
+	            $newArgs = _replace_arguments($qtabConfig['args'],  $qtabConfig, $args);
+			}else {
+				$newArgs = array();
+			}
+			
+			switch($qtabConfig['type']) {
+	      case 'node':
+	      	break;
+	      case 'block':
+	      	break;
+	      case 'view':
+					switch($relType){
+						case 'packaged_mandatory':
+						case 'packaged_optional':
+						case 'packaged_hidden':
+							//exclusiveness 에 설정 된 product 제외
+							$temp_new_args = explode('/',$newArgs);
+							
+							//find exclusive products
+							$product_node = node_load($rootId);
+							$temp_exclusive_products = isset($product_node->field_exclusiveness_others['und'])?$product_node->field_exclusiveness_others['und']:NULL;
+							$exclusive_products = array();
+							foreach($temp_exclusive_products as $item){
+								$exclusive_products[] = $item['nid'];
+							}
+							
+							if(isset($temp_new_args[1])){
+								$temp_array = explode(',',$temp_new_args[1]);
+								foreach($temp_array as $item){
+									$exclusive_products[] = $item;
+								}
+							}
+							$exclusive_products = array_unique($exclusive_products);
+							$temp_new_args[1] = join(',',$exclusive_products);
+							$newArgs = join('/',$temp_new_args);
+							break;
+					}
+	      	$qtabs[] = array(
+	              'title' => $qtabConfig['title'],
+	              'type' => 'view',
+	              'vid' => $qtabConfig['content'],
+	              'display' => $qtabConfig['display'],
+	          	'args' => $newArgs,
+	          	'weight' => $weight
+	          );
+	      	break;
+	      case 'callback':
+					// treenodecounter에서 선불이 PostPaid일 때에는 필요없음.
+					if($nodeOrTerm == 'node') {
+						if($relType == 'tree_node_counter_main_basic' || $relType == 'tree_node_counter_main_optional') {
+							$treeNodeCounter = node_load($id);
+							$refCounter = node_load($treeNodeCounter->field_ref_counter['und'][0]['nid']);
+							$billingTypeCounter = taxonomy_term_load($refCounter->field_billing_type_counter['und'][0]['tid']);
+							if($billingTypeCounter->name == 'Prepaid') continue;
+						}
+					}
+					$args = array(
+	      			'qtabIndex' => $qtabIndex,
+	      			'termInTree' => $termInTree,
+	      			'id' => $id,
+	      			'rootId' => $rootId
+	      	);
+	      	$newArgs = _replace_arguments($qtabConfig['content'], $qtabConfig, $args);
+		
+	      	$qtabs[] = array(
+	      		'title' => $qtabConfig['title'],
+	      		'type' => 'callback',
+	      		'path' => $newArgs,
+	      		'weight' => $weight
+	      	);				
+					break;
+	    }
+	    $weight = $weight + 1;
+	    $qtabIndex = $qtabIndex + 1;
     }
 	
     $qtoptions = array(
