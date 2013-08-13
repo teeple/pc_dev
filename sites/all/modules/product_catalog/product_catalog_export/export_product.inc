@@ -761,7 +761,13 @@ function _get_attribute_exceptions($product) {
         } else {
             $benefit['bonus'] = NULL;
         }
-        /*
+				if (!empty($benefitNode -> field_recommend_vas['und'][0]['safe_value'])) {
+            $benefit['recommend_vas'] = $benefitNode -> field_recommend_vas['und'][0]['safe_value'];
+        } else {
+            $benefit['recommend_vas'] = NULL;
+        }
+				
+				/*
         if (!empty($benefitNode -> field_attribute_recurring['und'][0]['safe_value'])) {
             $benefit['recurring'] = $benefitNode -> field_attribute_recurring['und'][0]['safe_value'];
         } else {
