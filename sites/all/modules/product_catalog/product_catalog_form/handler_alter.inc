@@ -164,6 +164,7 @@ function _add_ajax_submit_callback($form_id, &$form) {
 		case 'loyaltypoint_node_form' :
 		case 'actionbonustransfer_node_form' :
 		case 'conditionwhatcalltype_node_form' :
+		case 'conditionwhatfeaturecode_node_form' :
 		case 'conditionwhatservicedomain_node_form' :
 		case 'conditionwhatcounter_node_form' :
 		case 'conditionwhatratinggroup_node_form' :
@@ -1278,6 +1279,15 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			//calltype
 			$options = _get_call_type_options();
 			$form['field_ref_type_of_call']['und']['#options'] = $options;
+			break;
+			
+		case 'conditionwhatfeaturecode_node_form' :
+			unset($form['field_parent_node']);
+			unset($form['field_weight']);
+			_unset_menu_items($form, $form_id);
+			
+			$options = _get_feature_code_options();
+			$form['field_feature_code']['und']['#options'] = $options;
 			break;
 			
 		case 'prddowngradepenalty_node_form' :
@@ -3169,6 +3179,20 @@ function _get_call_type_options() {
 	}
 
 	return $options;
+}
+
+function _get_feature_code_options() {
+
+	$options = array();
+	
+	$viewResult = views_get_view_result('list_featurecode', 'references_1');
+	
+	foreach($viewResult as $item) {
+		$options[$item->tid] = $item->taxonomy_term_data_name;
+	}
+	
+	return $options;
+	
 }
 
 function _get_product_exclusive_list($productNid) {

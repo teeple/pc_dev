@@ -429,7 +429,7 @@ function ocs_ctools_link($title, $url, $opt)
 
 function ocs_log_new( $new)
 {
-//    dsm($new);
+//    dsm($new, ' new');
     if ( get_class( $new) == 'FieldCollectionItemEntity') {
         $field = field_info_instances('field_collection_item', $new->field_name);
         $type = 'FieldCollectionItemEntity:' . $new->field_name;
@@ -445,7 +445,8 @@ function ocs_log_new( $new)
 
 function ocs_log_changes( $before, $after)
 {
-	// dpm( $before, 'before');
+//	dpm( $before, 'change( before)');
+//	dpm( $after, 'change( after)');
 	if ( get_class( $before) == 'FieldCollectionItemEntity') {
 		// field_collection 
 		$field = field_info_instances('field_collection_item', $before->field_name);

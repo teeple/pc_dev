@@ -262,6 +262,7 @@
 			case 'conditionwhatservicedomain':
 			case 'conditionwhatcontentprice':
 			case 'conditionwhatcalltype':
+			case 'conditionwhatfeaturecode':
 			// case 'conditionwhenvaliddate':
 			case 'treenodeotheronetimechargediscou':
 				menus.custom_delete._disabled = false;
@@ -608,6 +609,7 @@
 			"Group Member Count" : $.fn.getSubMenuAddNodeWithoutWrapper("Group Member Count", "conditionwhatgroupmembercount"),			
 			"Usage Domain" : $.fn.getSubMenuAddNodeWithoutWrapper("Usage Domain", "conditionwhatusagedomain"),
 			"Call Type" : $.fn.getSubMenuAddNodeWithoutWrapper("Call Type", "conditionwhatcalltype"),
+			"Feature Code" : $.fn.getSubMenuAddNodeWithoutWrapper("Feature Code", "conditionwhatfeaturecode"),			
 			"Counter" : $.fn.getSubMenuAddNodeWithoutWrapper("Counter", "conditionwhatcounter"),
 			"Rating Group" : $.fn.getSubMenuAddNodeWithoutWrapper("Rating Group", "conditionwhatratinggroup"),
 			"Main Product" : $.fn.getSubMenuAddNodeWithoutWrapper("Main Product", "conditionwhatmainproduct"),
@@ -631,6 +633,7 @@
 			"Counter" : $.fn.getSubMenuAddNodeWithoutWrapper("Counter", "conditionwhatcounter"),
 			"Usage Domain" : $.fn.getSubMenuAddNodeWithoutWrapper("Usage Domain", "conditionwhatusagedomain"),
 			"Call Type" : $.fn.getSubMenuAddNodeWithoutWrapper("Call Type", "conditionwhatcalltype"),
+			"Feature Code" : $.fn.getSubMenuAddNodeWithoutWrapper("Feature Code", "conditionwhatfeaturecode"),						
 			"Main Product" : $.fn.getSubMenuAddNodeWithoutWrapper("Main Product", "conditionwhatmainproduct"),
 			"Callee Main Product" : $.fn.getSubMenuAddNodeWithoutWrapper("Callee's Main Product", "conditionwhatmainproductforpeer"),
 			"Group Member Count" : $.fn.getSubMenuAddNodeWithoutWrapper("Group Member Count", "conditionwhatgroupmembercount"),			
@@ -652,6 +655,7 @@
 			"Group Member Count" : $.fn.getSubMenuAddNodeWithoutWrapper("Group Member Count", "conditionwhatgroupmembercount"),			
 			"Usage Domain" : $.fn.getSubMenuAddNodeWithoutWrapper("Usage Domain", "conditionwhatusagedomain"),			
 			"Call Type" : $.fn.getSubMenuAddNodeWithoutWrapper("Call Type", "conditionwhatcalltype"),
+			"Feature Code" : $.fn.getSubMenuAddNodeWithoutWrapper("Feature Code", "conditionwhatfeaturecode"),						
 			"Counter" : $.fn.getSubMenuAddNodeWithoutWrapper("Counter", "conditionwhatcounter"),
 			"Main Product" : $.fn.getSubMenuAddNodeWithoutWrapper("Main Product", "conditionwhatmainproduct"),
 			"Callee Main Product" : $.fn.getSubMenuAddNodeWithoutWrapper("Callee's Main Product", "conditionwhatmainproductforpeer")
@@ -668,6 +672,7 @@
 			"Group Member Count" : $.fn.getSubMenuAddNodeWithoutWrapper("Group Member Count", "conditionwhatgroupmembercount"),
 			"Usage Domain" : $.fn.getSubMenuAddNodeWithoutWrapper("Usage Domain", "conditionwhatusagedomain"),			
 			"Call Type" : $.fn.getSubMenuAddNodeWithoutWrapper("Call Type", "conditionwhatcalltype"),
+			"Feature Code" : $.fn.getSubMenuAddNodeWithoutWrapper("Feature Code", "conditionwhatfeaturecode"),						
 			"RoamingType" : $.fn.getSubMenuAddNodeWithoutWrapper("RoamingType", "conditionwhatroamingtype"),
 			"Counter" : $.fn.getSubMenuAddNodeWithoutWrapper("Counter", "conditionwhatcounter"),
 			"Main Product" : $.fn.getSubMenuAddNodeWithoutWrapper("Main Product", "conditionwhatmainproduct"),
@@ -709,6 +714,7 @@
 			"Group Member Count" : $.fn.getSubMenuAddNodeWithoutWrapper("Group Member Count", "conditionwhatgroupmembercount"),					
 			"Usage Domain" : $.fn.getSubMenuAddNodeWithoutWrapper("Usage Domain", "conditionwhatusagedomain"),			
 			"Call Type" : $.fn.getSubMenuAddNodeWithoutWrapper("Call Type", "conditionwhatcalltype"),
+			"Feature Code" : $.fn.getSubMenuAddNodeWithoutWrapper("Feature Code", "conditionwhatfeaturecode"),						
 			"Counter" : $.fn.getSubMenuAddNodeWithoutWrapper("Counter", "conditionwhatcounter"),
 			"Rating Group" : $.fn.getSubMenuAddNodeWithoutWrapper("Rating Group", "conditionwhatratinggroup"),
 		};
@@ -742,6 +748,7 @@
 			"Group Member Count" : $.fn.getSubMenuAddNodeWithoutWrapper("Group Member Count", "conditionwhatgroupmembercount"),					
 			"Usage Domain" : $.fn.getSubMenuAddNodeWithoutWrapper("Usage Domain", "conditionwhatusagedomain"),			
 			"Call Type" : $.fn.getSubMenuAddNodeWithoutWrapper("Call Type", "conditionwhatcalltype"),
+			"Feature Code" : $.fn.getSubMenuAddNodeWithoutWrapper("Feature Code", "conditionwhatfeaturecode"),						
 			"Counter" : $.fn.getSubMenuAddNodeWithoutWrapper("Counter", "conditionwhatcounter"),
 		};
 		return obj;
@@ -758,6 +765,7 @@
 			"Group Member Count" : $.fn.getSubMenuAddNodeWithoutWrapper("Group Member Count", "conditionwhatgroupmembercount"),					
 			"Usage Domain" : $.fn.getSubMenuAddNodeWithoutWrapper("Usage Domain", "conditionwhatusagedomain"),			
 			"Call Type" : $.fn.getSubMenuAddNodeWithoutWrapper("Call Type", "conditionwhatcalltype"),
+			"Feature Code" : $.fn.getSubMenuAddNodeWithoutWrapper("Feature Code", "conditionwhatfeaturecode"),						
 			"Counter" : $.fn.getSubMenuAddNodeWithoutWrapper("Counter", "conditionwhatcounter"),
 			"Rating Group" : $.fn.getSubMenuAddNodeWithoutWrapper("Rating Group", "conditionwhatratinggroup"),
 		};
@@ -770,6 +778,7 @@
 			"Counter" : $.fn.getSubMenuAddNodeWithoutWrapper("Counter", "conditionwhatcounter"),
 			"Usage Domain" : $.fn.getSubMenuAddNodeWithoutWrapper("Usage Domain", "conditionwhatusagedomain"),			
 			"Call Type" : $.fn.getSubMenuAddNodeWithoutWrapper("Call Type", "conditionwhatcalltype"),
+			"Feature Code" : $.fn.getSubMenuAddNodeWithoutWrapper("Feature Code", "conditionwhatfeaturecode"),						
 			"Main Product" : $.fn.getSubMenuAddNodeWithoutWrapper("Main Product", "conditionwhatmainproduct"),
 			"Callee Main Product" : $.fn.getSubMenuAddNodeWithoutWrapper("Callee's Main Product", "conditionwhatmainproductforpeer")
 		};
@@ -789,6 +798,7 @@
 			"Group Member Count" : $.fn.getSubMenuAddNodeWithoutWrapper("Group Member Count", "conditionwhatgroupmembercount"),					
 			"Usage Domain" : $.fn.getSubMenuAddNodeWithoutWrapper("Usage Domain", "conditionwhatusagedomain"),			
 			"Call Type" : $.fn.getSubMenuAddNodeWithoutWrapper("Call Type", "conditionwhatcalltype"),
+			"Feature Code" : $.fn.getSubMenuAddNodeWithoutWrapper("Feature Code", "conditionwhatfeaturecode"),						
 			"Counter" : $.fn.getSubMenuAddNodeWithoutWrapper("Counter", "conditionwhatcounter"),
 			"Main Product" : $.fn.getSubMenuAddNodeWithoutWrapper("Main Product", "conditionwhatmainproduct"),
 			"Callee Main Product" : $.fn.getSubMenuAddNodeWithoutWrapper("Callee's Main Product", "conditionwhatmainproductforpeer")
