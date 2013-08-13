@@ -141,6 +141,7 @@ function _add_ajax_submit_callback($form_id, &$form) {
 		case 'actionpricechargeonetime_node_form' :
 		case 'actionpricechargerecurring_node_form' :
 		case 'actionpricechargerecurringdefaul_node_form' :
+		case 'actionpricechargerecurringbycs_node_form':
 		case 'actionpricediscount_node_form' :
 		case 'actionpriceallowance_node_form' :
 		case 'actionblockfactors_node_form' :
@@ -2212,7 +2213,14 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 
 			_unset_menu_items($form, $form_id);
 			break;
-
+		case 'actionpricechargerecurringbycs_node_form':
+			unset($form['field_weight']);
+			$form['field_ref_product']['#type'] = hidden;
+			$form['field_ref_tree_tid']['#type'] = hidden;
+			//remove recurring cycle of 1/3 monthly
+			unset($form['field_charging_cycle_type']['und']['#options'][3]);
+			_unset_menu_items($form, $form_id);
+		break;
 		case 'actionsetcounter_node_form' :
 			$form['field_ref_source_action']['#type'] = 'hidden';
 			$productNid = $form_state['product_nid'];
