@@ -24,7 +24,9 @@ function _create_modal_export_link($contentType,$params) {
 		case 'devicemodel':
 			$export_url = '/common/devicemodel/export#quickset-qtabs_common_data=5';
 			break;
-			
+		case 'tvchannel':
+			$export_url = '/common/tvchannel/export#quickset-qtabs_common_data=6';
+		break;
 	}
 	
 	$add_class_1 = 'add-link-in-rightpane';
@@ -55,7 +57,9 @@ function _create_modal_upload_link($contentType,$params) {
 		case 'devicemodel':
 			$upload_url = '/import/imei_prefix_importer#quickset-qtabs_common_data=5';
 			break;
-			
+		case 'tvchannel':
+			$upload_url = '/import/tvchannel_importer#quickset-qtabs_common_data=6';
+			break;
 	}
 	
 	$add_class_1 = 'add-link-in-rightpane';
