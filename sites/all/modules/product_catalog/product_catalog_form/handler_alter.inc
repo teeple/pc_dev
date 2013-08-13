@@ -12,6 +12,7 @@ function _unset_menu_items(&$form, $formId) {
 
 	$unsetDeleteButton = TRUE;
 
+	dsm($formId, 'formId');
 	switch($formId) {
 		case 'numberingplan_domestic_node_form' :
 		case 'numberingplan_idd_node_form' :
@@ -31,13 +32,11 @@ function _unset_menu_items(&$form, $formId) {
 		case 'servicefeaturecode_node_form' :
 		case 'servicefeaturecodescheme_node_form' :
 		case 'unittransfer_node_form' :
-		case 'productgroup_node_form' :
-		case 'productchange_node_form' :
 		case 'number_special_node_form':
 		case 'simpleproductoffering_node_form':
 		case 'packetsgsn_node_form' :
 		case 'packetsgsnip_node_form' :
-    case 'vouchercardtype_node_form':
+    	case 'vouchercardtype_node_form':
 		case 'roaming_zone_node_form':
 		case 'locationfactor_node_form':
 			$firstPathName = current(explode('/', current_path()));
@@ -45,6 +44,11 @@ function _unset_menu_items(&$form, $formId) {
 				$unsetDeleteButton = FALSE;
 			}
 			break;
+		case 'productgroup_node_form' :
+		case 'productchange_node_form' :
+			$unsetDeleteButton = FALSE;
+			break;
+			
 	}
 	if ($unsetDeleteButton)	unset($form['actions']['delete']);
 }
@@ -441,6 +445,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 				$billTypeTid = $form['field_billing_type']['und']['#default_value'][0];
 				$viewResult = views_get_view_result('list_product_group', 'panel_pane_3', $serviceDomainTid, $billTypeTid);
 
+				$options = array();
 				foreach ($viewResult as $item) {
 					$options[$item -> nid] = $item -> node_title;
 				}
@@ -518,33 +523,6 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 				array('field_service_domain', 'tid', $svcDomainTid),
 				array('field_sub_group1', 'value', array('VOICE', 'SMS', 'DATA', 'VIDEO'), 'IN'),
 				));
-
-			/*
-			$view = views_get_view('list_calltype');
-			$view -> set_display('panel_pane_2');
-			$view -> set_arguments(array('0' => $svcDomainTid));
-			$view -> execute();
-
-			$group = array();
-			foreach ($view->result as $record) {
-				$subgroup1 = $record -> field_field_sub_group1[0]['raw']['value'];
-				$subgroup2 = $record -> field_field_sub_group2[0]['raw']['value'];
-				$options[$record -> tid] = t('<span class="@class">@svc</span>', array('@class' => t('ocs_svc_perm @1 @2', array('@1' => $subgroup1, '@2' => $subgroup2)), '@svc' => $record -> taxonomy_term_data_name));
-				$group[$subgroup1][$subgroup2] = 1;
-			}
-			*/
-
-			/*
-			 $legend = '';
-			 foreach( $group as $key => $values) {
-			 foreach( array_keys( $values) as $v) {
-			 $legend .= t('<div>@k,@v</div>', array( '@k' => $key, '@v' => $v));
-			 }
-			 }
-			 */
-
-			//dpm( $options, 'options');
-			//dpm( $svcDomainTid, 'svcDomainTid');
 
 			foreach (array_keys( $form['field_service_permission']) as $key) {
 				/*
