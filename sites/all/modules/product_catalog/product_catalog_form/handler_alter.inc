@@ -12,7 +12,6 @@ function _unset_menu_items(&$form, $formId) {
 
 	$unsetDeleteButton = TRUE;
 
-	dsm($formId, 'formId');
 	switch($formId) {
 		case 'numberingplan_domestic_node_form' :
 		case 'numberingplan_idd_node_form' :
@@ -887,15 +886,13 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 		case 'prdattributebenefit_node_form' :
 			$product = node_load($form_state['product_nid']);
 			$prdTypeTerm = taxonomy_term_load($product -> field_product_type['und'][0]['tid']);
-			if($prdTypeTerm->field_common_code['und'][0]['value'] != '01'){//main이 아닐경우, Recommend VAS 감춤
-				unset($form['field_recommend_vas']);
-			}
+
 			$form['field_parent_node']['#type'] = 'hidden';
 			unset($form['field_ref_product']);
 			unset($form['field_ref_tree_tid']);
 			unset($form['field_weight']);
 			_unset_menu_items($form, $form_id);
-		
+
 			break;
 
 		case 'prdattributedeposit_node_form' :

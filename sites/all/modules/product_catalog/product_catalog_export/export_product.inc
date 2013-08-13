@@ -817,20 +817,7 @@ function _get_attribute_exceptions($product) {
     $numberSavings = array();
 
     if (!empty($view -> result)) {
-    	/*
-        foreach ($view->result as $record) {
-            $numberSavingNode = node_load($record -> nid);
-            $numberSavingInfo = array();
-            $numberSavingInfo['saving_period'] = isset($numberSavingNode -> field_saving_period['und'][0]['value']) ? $numberSavingNode -> field_saving_period['und'][0]['value'] : 0;
-            $savingPeriodType = taxonomy_term_load($numberSavingNode -> field_period_type['und'][0]['tid']);
-            $numberSavingInfo['period_type'] = $savingPeriodType -> name;
-            $numberSavingInfo['deposit_price'] = isset($numberSavingNode -> field_price['und'][0]['value']) ? $numberSavingNode -> field_price['und'][0]['value'] : 0;
-            $numberSavings[] = $numberSavingInfo;
-        }
-        $retArray['number_saving'] = $numberSavings;
-        */
         $retArray['number_saving'] = null;
-
 		foreach ($view->result as $record) {
 			$serviceSavingNode = node_load($record->nid);
 			$serviceSavingInfo = array();
@@ -859,19 +846,22 @@ function _get_attribute_exceptions($product) {
         }
         $retArray['allowed_device'] = $allowedDevice;
     }
-
+    
     //available Channel
     $view = views_get_view('list_product_child_node');
     $view -> set_display('panel_pane_2');
     $view -> set_arguments(array('0' => $product -> nid, '1' => 'prdattributeavailablechannel'));
     $view -> execute();
+    
     $availableChannel = array();
 
     if (!empty($view -> result)) {
         foreach ($view->result as $record) {
-            $availableChannelNode = node_load($record -> nid);
-            $tvChannelNode = node_load($availableChannelNode -> field_ref_tvchannel['und'][0]['nid']);
-            $availableChannel[] = array('channel_code' => $tvChannelNode -> field_channel_code['und'][0]['safe_value'], );
+        	$availableChannelNode = node_load($record -> nid);
+        	foreach( $availableChannelNode->field_ref_tvchannel['und'] as $item) {
+        		$channel = node_load($item['nid']);
+        		$availableChannel[] = array('channel_name' => $channel->title);
+        	}
         }
         $retArray['available_channel'] = $availableChannel;
     }
