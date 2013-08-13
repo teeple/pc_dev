@@ -422,6 +422,18 @@
         	"image" : "/sites/default/files/icons/money.png"
         	        }
         },
+        "nonusage_fee_recurring_by_cs" : {
+        	"valid_children" : ["actionpricechargerecurringbycs"],
+        	"icon" : {
+        	"image" : "/sites/default/files/icons/money.png"
+        	        }
+        },
+        "actionpricechargerecurringbycs" : {
+		        "valid_children" : [],
+    		    	"icon" : {
+        		"image" : "/sites/default/files/icons/money.png"
+            }
+        },
         "actionpricechargerecurring" : {
 		        "valid_children" : [ "conditioncommonand",
 		                             "conditioncommonand_nonusage_recurring"],
