@@ -917,11 +917,11 @@ function _get_redirect_url_in_create_n_list($addOrList, $content_type, $params) 
 }
 
 function set_permissions_all_checked() {
-	$allRoles = array('product designer', 'relation manager', 'lifecycle manager', 'common data manager', 'simulator', 'ocs manager', 'account manager');
-
-	foreach ($allRoles as $role) {
-		$user = user_role_load_by_name($role);
-		user_role_grant_permissions($user -> rid, array_keys(module_invoke_all('permission')));
+	// $allRoles = array('product designer', 'relation manager', 'lifecycle manager', 'common data manager', 'simulator', 'ocs manager', 'account manager');
+	$allRoles = user_roles();
+	foreach ($allRoles as $rid => $role_name) {
+		// $user = user_role_load_by_name($role);
+		user_role_grant_permissions($rid, array_keys(module_invoke_all('permission')));
 	}
 }
 
