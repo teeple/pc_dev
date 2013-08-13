@@ -154,6 +154,7 @@ function _add_ajax_submit_callback($form_id, &$form) {
 		case 'prdnonusagerollover_node_form' :
 		case 'prdnonusagerechargeblock_node_form' :
 		case 'prdnonusagegroupbonusblock_node_form' :
+		case 'prdattributeavailablechannel_node_form' :
 		case 'unittransferfactor_node_form' :
 		case 'conditionwhatusagetypefactors_node_form' :
 		case 'conditionwhatnonusagetypefactors_node_form' :
@@ -2645,6 +2646,12 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			$form['field_ref_device_class']['#type'] = 'hidden';
 			break;
 		case 'prdattributenumbersaving_node_form' :
+			_unset_menu_items($form, $form_id);
+			$form['field_ref_product']['#type'] = 'hidden';
+			$form['field_ref_tree_tid']['#type'] = 'hidden';
+			$form['field_weight']['#type'] = 'hidden';
+			break;
+		case 'prdattributeavailablechannel_node_form' :
 			_unset_menu_items($form, $form_id);
 			$form['field_ref_product']['#type'] = 'hidden';
 			$form['field_ref_tree_tid']['#type'] = 'hidden';

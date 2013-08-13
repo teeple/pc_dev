@@ -491,7 +491,8 @@ function _compare_content( $field, $before, $after)
 	foreach( $field as $key => $value) {
 		$v1 = $before->$key;
 		$v2 = $after->$key;
-		$label = $value['label'];
+		
+		$label = isset($value['label'])? $value['label']: null;
 
 		// dpm( $key, 'key');
 		// dpm( $v1, 'v1');

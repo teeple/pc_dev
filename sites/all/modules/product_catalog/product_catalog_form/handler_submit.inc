@@ -1017,5 +1017,15 @@ function set_numbersaving(){
 		$node->field_ref_tree_tid['und'][0]['value'] = 6771;
 		node_save($node);
 
+
+	global $user;
+	$node = new StdClass();
+	$node->uid = $user->uid;
+	$node->type = 'prdattributeavailablechannel';
+	$node->language = 'und';
+	$node->field_ref_product['und'][0]['nid'] = $entity->nid;
+	$node->field_ref_tree_tid['und'][0]['value'] = 7035;
+	node_save($node);
+
 }
 
