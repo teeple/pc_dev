@@ -56,29 +56,6 @@ function _product_for_export($exportItemNids = NULL, $isExternalAPI = FALSE, $ta
         }
         
         $nonUsage['recurring_charge']['charge_items'] = _get_recurring_amount($node->nid);
-        
-        //custom recurring charge by CS
-        $recurring_by_cs_view_result = views_get_view_result('list_actionpricechargerecurring', 'panel_pane_5', $node->nid);
-				if(!empty($recurring_by_cs_view_result)){
-					$recurring_by_cs = current($recurring_by_cs_view_result);
-					$nonUsage['reccurring_charge_by_cs']['use'] = isset($recurring_by_cs->field_field_set_use[0]['raw']['value'])?$recurring_by_cs->field_field_set_use[0]['raw']['value']:"0";
-					if(isset($recurring_by_cs->field_field_charging_cycle_type[0]['raw']['value'])){
-						$nonUsage['reccurring_charge_by_cs']['period_type'] = $recurringTypes[$recurring_by_cs->field_field_charging_cycle_type[0]['raw']['value']];
-					}else{
-						$nonUsage['reccurring_charge_by_cs']['period_type'] = NULL;
-					}
-					if(!empty($recurring_by_cs->field_field_subscriber_status)){
-						foreach($recurring_by_cs->field_field_subscriber_status as $status){
-							$nonUsage['reccurring_charge_by_cs']['status'][] = array(
-								'id' => $status['raw']['node']->field_ocs_state_id['und'][0]['value'],
-								'name' => $status['raw']['node']->title
-							);
-						}
-					}else{
-						$nonUsage['reccurring_charge_by_cs']['status'] = NULL;
-					}
-				}
-			  
         $nonUsage['onetime_charge'] = _get_onetime_charge($node -> nid);
         $nonUsage['onetime_charge_discount_on_main'] = _get_onetime_charge_discount($node -> nid);
 
@@ -881,17 +858,19 @@ function _get_attribute_exceptions($product) {
     if (!empty($view -> result)) {
         foreach ($view->result as $record) {
         	$availableChannelNode = node_load($record -> nid);
-        	foreach( $availableChannelNode->field_ref_tvchannel['und'] as $item) {
-        		$channel = node_load($item['nid']);
-        		$availableChannel[] = array('channel_name' => $channel->title);
-        	}
+        	if(!empty($availableChanneNode)) {
+	        	foreach( $availableChannelNode->field_ref_tvchannel['und'] as $item) {
+	        		$channel = node_load($item['nid']);
+	        		$availableChannel[] = array('channel_name' => $channel->title);
+	        	}
+	        }
         }
-        $retArray['available_channel'] = $availableChannel;
+        $retArray['available_channel'] = !empty($availableChannel)? $availableChannel: NULL;
     }
     
     $expireDateTypeTerm = isset($product->field_expire_date_type['und'][0]['tid']) ? taxonomy_term_load($product->field_expire_date_type['und'][0]['tid']) : NULL;
     
-    if(isset($expireDateTypeTerm)) {
+    if(!empty($expireDateTypeTerm)) {
     
     	switch($expireDateTypeTerm->field_common_code['und'][0]['value']) {
     		case '3': //Hour

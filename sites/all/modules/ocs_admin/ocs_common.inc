@@ -427,26 +427,50 @@ function ocs_ctools_link($title, $url, $opt)
 	echo $link_string;
 }
 
+function ocs_log_deletes( $delete)
+{
+	dsm($delete, 'delete');
+	if ( get_class( $new) == 'FieldCollectionItemEntity') {
+	    $field = field_info_instances('field_collection_item', $delete->field_name);
+	    $type = 'FieldCollectionItemEntity:' . $delete->field_name;
+	    $id = 'item_id=' . $delete->item_id;
+	}
+	else {
+		$field = field_info_instances( 'node', $delete->type);
+		$type = node_type_get_name($delete);
+		$id = 'nid=' . $delete->nid;
+	}
+	
+	$retArr = _new_content($field, $delete);
+	$logMessage = t('@type (@id) deleted @data', array( '@type' => $type, '@id' => $id, '@data' => drupal_json_encode( $retArr)));
+	_save_change_log($logMessage, 'deleted');
+}
+
 function ocs_log_new( $new)
 {
-//    dsm($new, ' new');
+	dsm($new, ' new');
     if ( get_class( $new) == 'FieldCollectionItemEntity') {
         $field = field_info_instances('field_collection_item', $new->field_name);
         $type = 'FieldCollectionItemEntity:' . $new->field_name;
         $id = 'item_id=' . $new->item_id;
     }
     else {
-        
+		$field = field_info_instances( 'node', $new->type);
+		$type = node_type_get_name($new);
+		$id = 'nid=' . $new->nid;
     }
-
-    // $field = field_info_instances('field_collection_item', $new->field_name);
-
+    
+    $retArr = _new_content($field, $new);
+    
+    $logMessage = t('@type (@id) created @data', array( '@type' => $type, '@id' => $id, '@data' => drupal_json_encode( $retArr)));
+    _save_change_log($logMessage, 'created');
+    
 }
 
 function ocs_log_changes( $before, $after)
 {
-//	dpm( $before, 'change( before)');
-//	dpm( $after, 'change( after)');
+	dpm( $before, 'change( before)');
+	dpm( $after, 'change( after)');
 	if ( get_class( $before) == 'FieldCollectionItemEntity') {
 		// field_collection 
 		$field = field_info_instances('field_collection_item', $before->field_name);
@@ -455,6 +479,7 @@ function ocs_log_changes( $before, $after)
 	}
 	else {
 		$field = field_info_instances( 'node', $before->type);
+		
 		// $type = $before->type;
         $type = node_type_get_name($before);
         $id = 'nid=' . $before->nid;
@@ -467,22 +492,49 @@ function ocs_log_changes( $before, $after)
         // dsm($diff, 'diff');
         // $logMessage = t('Content @type (@id) changed @data', array( '@type' => $type, '@id' => $id, '@data' => drupal_json_encode( $diff)));
         $logMessage = t('@type (@id) changed @data', array( '@type' => $type, '@id' => $id, '@data' => drupal_json_encode( $diff)));
-        _save_change_log($logMessage);
+        _save_change_log($logMessage, 'changed');
         watchdog( 'change_log', 'Content %type (%id) changed %data', array( '%type' => $type, '%id' => $id, '%data' => json_encode( $diff)), WATCHDOG_NOTICE); 
 	}
 }
 
-function _save_change_log($logMessage)
+function _save_change_log($logMessage, $history_type)
 {
-    global $user;
+	global $user;
+	
+	if( $history_type == 'created' &&
+		$history_type == 'changed' &&
+		$history_type == 'deleted' ) {
+		$term = current(taxonomy_get_term_by_name($history_type, 'historytype'));
+	} {
+		$term = current(taxonomy_get_term_by_name('changed', 'historytype'));
+	}
+	
     $changeHistory = new stdClass;
     $changeHistory->uid = $user->uid;
     $changeHistory->type = 'changehistory';
     $changeHistory->language = 'und';
-    $changeHistory->field_history_type['und'][0]['value'] = 'change_log';
+    $changeHistory->field_history_type['und'][0]['tid'] = $term->tid;
     $changeHistory->field_history_changed['und'][0]['value'] = $logMessage;
 
     node_save($changeHistory);
+}
+
+function _new_content($field, $new) 
+{
+    $retArr = array();
+	foreach( $field as $key => $value ) {
+		$label = isset($value['label'])? $value['label']: null;
+		eval('$value = $new->'.$key.';');
+		if( is_array($value)) {
+			$value1 = isset($value['und'])? $value['und']: NULL;
+			
+			for( $i=0; $i< count($value1); $i++) {
+				$value11 = _get_field_value( $value1, $i);
+				$retArr[$label][] = array( $value11, $key);
+			}
+		}
+	}
+	return $retArr;
 }
 
 function _compare_content( $field, $before, $after)
@@ -493,11 +545,14 @@ function _compare_content( $field, $before, $after)
 		$v2 = $after->$key;
 		
 		$label = isset($value['label'])? $value['label']: null;
-
-		// dpm( $key, 'key');
-		// dpm( $v1, 'v1');
-		// dpm( $value, 'value');
-
+		
+		$collections = field_info_field($key);
+		dpm($collections, 'collections');
+		
+//		 dpm( $key, 'key');
+//		 dpm( $v1, 'v1');
+//		 dpm( $value, 'value');
+		
 		if ( is_array( $v1)) {
 			// field type
 			$v1 = isset($v1['und']) ? $v1['und'] : NULL;
