@@ -469,8 +469,8 @@ function ocs_log_new( $new)
 
 function ocs_log_changes( $before, $after)
 {
-	dpm( $before, 'change( before)');
-	dpm( $after, 'change( after)');
+//	dpm( $before, 'change( before)');
+//	dpm( $after, 'change( after)');
 	if ( get_class( $before) == 'FieldCollectionItemEntity') {
 		// field_collection 
 		$field = field_info_instances('field_collection_item', $before->field_name);
@@ -497,17 +497,11 @@ function ocs_log_changes( $before, $after)
 	}
 }
 
-function _save_change_log($logMessage, $history_type)
+function _save_change_log($logMessage, $history_type = 'changed')
 {
 	global $user;
 	
-	if( $history_type == 'created' &&
-		$history_type == 'changed' &&
-		$history_type == 'deleted' ) {
-		$term = current(taxonomy_get_term_by_name($history_type, 'historytype'));
-	} {
-		$term = current(taxonomy_get_term_by_name('changed', 'historytype'));
-	}
+	$term = current(taxonomy_get_term_by_name($history_type, 'historytype'));
 	
     $changeHistory = new stdClass;
     $changeHistory->uid = $user->uid;
@@ -539,6 +533,10 @@ function _new_content($field, $new)
 
 function _compare_content( $field, $before, $after)
 {
+//	dsm($field, 'field name');
+//	dsm($before, 'before in compare content');
+//	dsm($after, 'after in compare content');
+	
     $diff = array();
 	foreach( $field as $key => $value) {
 		$v1 = $before->$key;
@@ -546,32 +544,45 @@ function _compare_content( $field, $before, $after)
 		
 		$label = isset($value['label'])? $value['label']: null;
 		
-		$collections = field_info_field($key);
-		dpm($collections, 'collections');
+//		dpm( $key, 'key');
+//		dpm( $v1, 'v1');
+//		dpm( $v2, 'v2');
+//		dpm( $value, 'value');
 		
-//		 dpm( $key, 'key');
-//		 dpm( $v1, 'v1');
-//		 dpm( $value, 'value');
+		// skip in case field_collection embed other field_collection
+		if($value['display']['default']['module'] == 'field_collection' ) continue;
 		
-		if ( is_array( $v1)) {
+		if ( is_array( $v1)){
+		
 			// field type
 			$v1 = isset($v1['und']) ? $v1['und'] : NULL;
 			$v2 = isset($v2['und']) ? $v2['und'] : NULL;
+			
 			for( $i=0; $i< max( count($v1), count( $v2)); $i++) {
-				$vv1 = _get_field_value( $v1, $i);
-				$vv2 = _get_field_value( $v2, $i);
+			
+//				$vv1 = render(field_view_value('node', $before, $key, $v1));
+//				$vv2 = render(field_view_value('node', $after, $key, $v2));
+				$vv1 = render(field_view_value('field_collection_item', $before, $key, $v1));
+				$vv2 = render(field_view_value('field_collection_item', $after, $key, $v2));
+//				
+				dsm($vv1, 'vv1');
+				dsm($vv2, 'vv2');
+				
+//				$vv1 = _get_field_value( $v1, $i);
+//				$vv2 = _get_field_value( $v2, $i);
 				if ( $vv1 !== $vv2) {
 					$diff[$label][] = array( $vv1, $vv2, $key);
 				}
 			}
 		}
 		else {
+
 			if ( $v1 !== $v2) {
 				$diff[$label] = array( $v1, $v2, $key);
 			}
 		}
 	}
-
+	
 	return $diff;
 }
 

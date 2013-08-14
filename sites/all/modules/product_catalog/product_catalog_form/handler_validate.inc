@@ -942,7 +942,6 @@ function product_catalog_form_node_validate($node, $form, &$form_state) {
 					// Relation쪽 메뉴가 아닐 경우에만 validate 체크
 					if(isset($form_state['values']['field_product_id'])) {
 
-
 						$productName = $form_state['values']['title'];
 						$svcDomainTid = $form_state['values']['field_service_type_of_provider']['und'][0]['tid'];
 
@@ -970,7 +969,7 @@ function product_catalog_form_node_validate($node, $form, &$form_state) {
 						// create 시에만 확인
 						if (!isset($form['nid']['#value'])) {
 							$viewResult = views_get_view_result('list_product', 'panel_pane_2', $fieldBillingTypeTid, $fieldShortCode);
-	
+							
 							if (count($viewResult) > 0) {
 								form_set_error('field_short_code', "this short code value is already used. Try different ");
 							}

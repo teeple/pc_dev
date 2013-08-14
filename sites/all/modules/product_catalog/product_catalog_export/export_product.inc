@@ -374,8 +374,8 @@ function _get_counter_list($product) {
     	
     	$chargingCounter['amount_to_action'] = isset($limitAmount)? $limitAmount * $conversionUnit: null;
     	
-   		$actions = array();
-    	if( !empty($limitAmount) ){
+    	$actions = array();
+    	if( isset($limitAmount) ){
     		$actionResults = views_get_view_result('list_actionsetonthreshold', 'panel_pane_2', $item->nid);
     		
     		foreach($actionResults as $actionItem) {
