@@ -61,12 +61,13 @@ function _product_for_export($exportItemNids = NULL, $isExternalAPI = FALSE, $ta
         $recurring_by_cs_view_result = views_get_view_result('list_actionpricechargerecurring', 'panel_pane_5', $node->nid);
 				if(!empty($recurring_by_cs_view_result)){
 					$recurring_by_cs = current($recurring_by_cs_view_result);
-					$nonUsage['reccurring_charge_by_cs']['use'] = isset($recurring_by_cs->field_field_set_use[0]['raw']['value'])?$recurring_by_cs->field_field_set_use[0]['raw']['value']:"0";
+					$nonUsage['recurring_scheme']['charge_by_cs_scheme']['use'] = isset($recurring_by_cs->field_field_set_use[0]['raw']['value'])?$recurring_by_cs->field_field_set_use[0]['raw']['value']:"0";
 					if(isset($recurring_by_cs->field_field_charging_cycle_type[0]['raw']['value'])){
-						$nonUsage['reccurring_charge_by_cs']['period_type'] = $recurringTypes[$recurring_by_cs->field_field_charging_cycle_type[0]['raw']['value']];
+						$nonUsage['recurring_scheme']['charge_by_cs_scheme']['rcrr_period_type'] = $recurring_by_cs->field_field_charging_cycle_type[0]['raw']['value'];
 					}else{
-						$nonUsage['reccurring_charge_by_cs']['period_type'] = NULL;
+						$nonUsage['recurring_scheme']['charge_by_cs_scheme']['rcrr_period_type'] = NULL;
 					}
+					/*
 					if(!empty($recurring_by_cs->field_field_subscriber_status)){
 						foreach($recurring_by_cs->field_field_subscriber_status as $status){
 							$nonUsage['reccurring_charge_by_cs']['status'][] = array(
@@ -77,6 +78,7 @@ function _product_for_export($exportItemNids = NULL, $isExternalAPI = FALSE, $ta
 					}else{
 						$nonUsage['reccurring_charge_by_cs']['status'] = NULL;
 					}
+					*/ 
 				}
 			  
         $nonUsage['onetime_charge'] = _get_onetime_charge($node -> nid);
