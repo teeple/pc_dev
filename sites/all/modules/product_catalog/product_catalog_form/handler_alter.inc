@@ -820,9 +820,13 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 				$form['actions']['submit']['#submit'][] = 'product_catalog_form_form_redirect_handler';
 				// Edit
 			} else {
-				$form['field_ref_voucher_type']['und']['#disabled'] = TRUE;
-				$form['field_voucher_id']['und']['#disabled'] = TRUE;
-				$form['field_service_operator']['und']['#disabled'] = TRUE;
+				// Commercial에 Deply 된 이력이 있으면  disable
+				$viewResult = views_get_view_result('list_export_history', 'panel_pane_7', 'VOUCHER',$form['nid']['#value']);
+				if(!empty($viewResult)){
+					$form['field_ref_voucher_type']['und']['#disabled'] = TRUE;
+					$form['field_voucher_id']['und']['#disabled'] = TRUE;
+					$form['field_service_operator']['und']['#disabled'] = TRUE;
+				}
 			}
 			$form['field_valid_date_ymd_w_enddate']['und']['#required'] = FALSE;
 			break;
