@@ -1,4 +1,7 @@
 <?php
+define( 'RoamingIntlVoice', '1011');
+define( 'RoamingIntlSMS', '1010');
+
 define( 'RoamingHCC', '1031');
 define( 'RoamingIVC', '1032');
 define( 'RoamingLVC', '1033');
@@ -223,11 +226,14 @@ function ocs_roaming_import_validate( $form, &$form_state)
     if ( $values['op'] == 'Update Configuration') {
 		if ( $form['#config_type'] == 'tariff') {
 
+			/* bhtak 13/08/15
+			   do not check number of tariff plans
 			$num = count( array_get_value( $form['#start_date_list'], FALSE));
 			if ( $num != count( $form['#tariff_plan_list'])) {
 				form_set_error( 'product', t('The product <em>@name</em> has not enough tariff plans. It must have at least @num plans.',
 					array( '@name' => $form['product']['#options'][$values['product']], '@num' => $num)));
 			}
+			*/
 
 			foreach( $values['tariff_plan'] as $k => $v) {
 				$node = node_load( $v);
@@ -442,10 +448,12 @@ function _ocs_roaming_save_tariff( $delete, $reset, $json, $plan_list)
 				'tariff' => $node, 
 				'roaming' => node_load( $node->field_ref_roaming_plan['und'][0]['nid']));
 
+		/* bhtak 13/08/15 do not update start date of tariff plan
 		list( $type, $start_date) = explode( '|', $k);
 		$node->field_valid_date_ymd['und'][0]['value'] = $start_date;
 		dpm( $node, $node->title);
 		node_save( $node);
+		*/
 	}
 
 	$rate_list = json_decode( $json, TRUE);
@@ -499,17 +507,24 @@ function _ocs_roaming_save_tariff( $delete, $reset, $json, $plan_list)
 		}
 
 		// initialize roaming plan
+		/*
 		$t = node_load( $plan_nid);
 		$plan = node_load( $t->field_ref_roaming_plan['und'][0]['nid']);
 		unset( $plan->field_ref_roaming_ratinggroup['und']);
 		node_save( $plan);
+		*/
 	}
 
 	foreach( $plan_list as $plan => $plan_nid) {
 		list( $tariff_type, $start_date) = explode( '|', $plan);
 
 		foreach( $rate_list as $key => $records) {
-			if ( strstr( $key, 'Customer') == NULL) {
+			$list = explode( '_', $key);
+			if ( $list[1] == 'Cus' || $list[0] == 'IDD') {
+				_save_roaming_intl_zone( $reset, $terms, $records);
+			}
+			else if ( $list[1] != 'Customer') {
+				dpm( 'Invalid key ' . $key);
 				continue;
 			}
 
@@ -525,7 +540,7 @@ function _ocs_roaming_save_tariff( $delete, $reset, $json, $plan_list)
 				if ( empty( $plmn)) continue;
 
 				if ( ($tariff_type == 'SMS' && strstr( $calltype, 'SMS')) 	// SMS call type
-					|| ($tariff_type == 'VOICE' && strstr( $calltype, 'SMS') === FALSE)) { 	// SMS call type
+					|| ($tariff_type == 'VOICE' && strstr( $calltype, 'SMS') === FALSE)) { 	// Voice call type
 					$k = $tariff_type.':'.$plmn.':'.$calltype;
 					if ($start_date >= $rec['VALD_STRT_DT'] ) {
 						if ( ! isset( $tariffs[$k]) || $tariffs[$k]['VALD_STRT_DT'] < $rec['VALD_STRT_DT']) {
@@ -555,7 +570,17 @@ function _ocs_roaming_save_tariff( $delete, $reset, $json, $plan_list)
                 }
             }
         }
-    }
+
+		$t = node_load( $plan_nid);
+		$plan = node_load( $t->field_ref_roaming_plan['und'][0]['nid']);
+		unset( $plan->field_ref_roaming_ratinggroup['und']);
+		foreach( $old_list['Rating Group'] as $nid => $remove_flag) {
+			if ( $remove_flag == FALSE) {
+				$plan->field_ref_roaming_ratinggroup['und'][] = array( 'nid' => $nid);
+			}
+		}
+		node_save( $plan);
+	}
 
 	return TRUE;
 }
@@ -565,6 +590,18 @@ function _save_roaming_tariff_op( $reset, $terms, $plan, $plan_nid, $key, $tarif
 	// customer tariff has key with format '<Partner Name>_Customer'
 	$list = explode( '_', $key);
 	$partner_code = $list[0];
+	$roaming_intl_zone_nid = 0;
+	if ($list[1] == 'Cus' || $list[0] == 'IDD') {
+		// add condition for romaing_intl_zone
+		$nids = ocs_get_nids_by_cond( 'roaming_zone', array(
+					array('property', 'title', $key)));
+		if ( count( $nids) > 1 || count( $nids) == 0) {
+			drupal_set_message( t('Invalid Roaming INTL Zone <em>@name</em>. @n items are found.', 
+					array( '@name' => $key, '@n' => count($nids))), 'error');
+			return;
+		}
+		$roaming_intl_zone_nid = $nids[0];
+	}
 
 	$tariff_ptr = $tariff_plan[$plan]['tariff'];
 
@@ -576,13 +613,16 @@ function _save_roaming_tariff_op( $reset, $terms, $plan, $plan_nid, $key, $tarif
 
 	$partner = ocs_get_node_by_cond( 'roaming_carrier', NULL, array(
 		array('field_partner_code', 'value', $partner_code)));
-	if ( isset( $partner->nid) || strstr( $partner_code, 'DEFAULT')) {
+	if ( isset( $partner->nid) || strstr( $partner_code, 'DEFAULT')  || 
+			substr( $partner_code, 0, 3) == 'IDD') {
+		$partner_name = isset( $partner->nid) ? $partner->title : $partner_code;
 		foreach( $tariffs as $plmn_calltype => $rec) {
 			list( $tariff_type, $plmn, $calltype) = explode( ':', $plmn_calltype);
 
-			$tariff = $rec['RATE_APLY_UNIT'] . '_' . $rec['RATE'];
+			$tariff = '';
 			if ( !empty( $rec['INIT_RATE_APLY_UNIT']))
-				$tariff .= $rec['INIT_RATE_APLY_UNIT'] . '_' . $rec['INIT_RATE'];
+				$tariff = $rec['INIT_RATE_APLY_UNIT'] . '_' . $rec['INIT_RATE'] . '_';
+			$tariff .= $rec['RATE_APLY_UNIT'] . '_' . $rec['RATE'];
 
 			if ( ($tariff_type == 'SMS' && $rec['RATE_APLY_UNIT_CD'] != RATE_UNIT_COUNT) ||
 				($tariff_type == 'VOICE' && $rec['RATE_APLY_UNIT_CD'] != RATE_UNIT_SECOND)) {
@@ -620,27 +660,13 @@ function _save_roaming_tariff_op( $reset, $terms, $plan, $plan_nid, $key, $tarif
 					$rate->field_price['und'][0]['value'] = floatval($rec['RATE']);
 				}
 				else {
-					if ( isset( $rate->field_charge_collection['und'][0]['value'])) {
-						$vs = entity_load_single( 'field_collection_item', $rate->field_charge_collection['und'][0]['value']);
+					if ( ! empty( $rec['INIT_RATE_APLY_UNIT'])) {
+						_save_charge( $rate, 0, 0, $rec['INIT_RATE_APLY_UNIT'], $rec['INIT_RATE_APLY_UNIT'], $rec['INIT_RATE']);
+						_save_charge( $rate, 1, $rec['INIT_RATE_APLY_UNIT'], null, $rec['RATE_APLY_UNIT'], $rec['RATE']);
 					}
 					else {
-						$vs = entity_create('field_collection_item', array('field_name' => 'field_charge_collection'));
-						$vs->setHostEntity( 'node', $rate);
+						_save_charge( $rate, 0, 0, null, $rec['RATE_APLY_UNIT'], $rec['RATE']);
 					}
-
-					$idx = 0;
-					$vs->field_range_start['und'][$idx]['value'] = 0;
-					if ( ! empty( $rec['INIT_RATE_APLY_UNIT'])) {
-						$vs->field_uom_amount['und'][$idx]['value'] = $rec['INIT_RATE_APLY_UNIT'];
-						$vs->field_price_amount_float['und'][$idx]['value'] = floatval($rec['INIT_RATE']);
-						$idx ++;
-						$vs->field_range_start['und'][$idx]['value'] = $rec['INIT_RATE_APLY_UNIT'];
-					}
-
-					$vs->field_uom_amount['und'][$idx]['value'] = $rec['RATE_APLY_UNIT'];
-					$vs->field_price_amount_float['und'][$idx]['value'] = floatval($rec['RATE']);
-
-					$vs->save();
 
 					$rate->field_ref_tariffplan['und'][0]['nid'] = $tariff_ptr->nid;
 					$rate->field_ref_tree_tid['und'][0]['value'] = $tid;
@@ -653,11 +679,15 @@ function _save_roaming_tariff_op( $reset, $terms, $plan, $plan_nid, $key, $tarif
 
 
 			// get rating group
-			$rg = $partner->title . '_' . $tariff;
-			$rm = ocs_get_node_by_cond( 'roaming_ratinggroup', $rg, array(
+			$rg = $partner_name . '_' . $tariff;
+			$cond = array(
 				array('field_rating_group', 'value', $rg),
 				array('field_ref_roaming_plan', 'nid', $plan_ptr->nid),
-				array('field_ref_type_of_call', 'tid', $terms['calltype'][$calltype])));
+				array('field_ref_type_of_call', 'tid', $terms['calltype'][$calltype]));
+			if ( $roaming_intl_zone_nid > 0) {
+				$cond[] = array( 'field_roaming_zone', 'nid', $roaming_intl_zone_nid);
+			}
+			$rm = ocs_get_node_by_cond( 'roaming_ratinggroup', $rg, $cond);
 			$new_node = FALSE;
 			if ( ! isset( $rm->nid)) {
 				$rm->title = $rg;
@@ -688,6 +718,10 @@ function _save_roaming_tariff_op( $reset, $terms, $plan, $plan_nid, $key, $tarif
 					unset( $rm->field_ref_roaming_type['und']);		// set a NULL for outgoing SMS
 				else 
 					$rm->field_ref_roaming_type['und'][0]['tid'] = $terms['roaming_type'][$plmn];
+
+				if ( $roaming_intl_zone_nid > 0) {
+					$rm->field_roaming_zone['und'][0]['nid'] = $roaming_intl_zone_nid;
+				}
 
 				//dpm( $rm, $rm->title);
 				node_save( $rm);
@@ -776,6 +810,10 @@ function _ocs_roaming_get_plmn_calltype( $rec)
 		else if ( $rec['FTR_CD'] == RoamingGPRS ) {
 			// TODO implement roaming GPRS
 //			drupal_set_message( 'Roaming GPRS : Not implmented ', 'error');
+		}
+		else if ( $rec['FTR_CD'] == RoamingIntlVoice) {
+			$plmn = 'Other PLMN';
+			$calltype = 'MOBILE_ROAMING_OTHER_COUNTRY';
 		}
 		else {
 			drupal_set_message( 'Warning : invalid FTR_CD ' . $rec['FTR_CD'], 'error');
@@ -1042,6 +1080,83 @@ function _batch_build_save_roaming_tariff_finished($success, $results, $operatio
 // ajax handler
 function ocs_ajax_select_roaming_product($form, &$form_state)
 {
-	    return $form['tariff_plan'];
+	return $form['tariff_plan'];
+}
+
+function _save_roaming_intl_zone( $reset, $terms, $records)
+{
+	//dpm( $records);
+	foreach( $records as $record) {
+		// find roaming zone by title
+		$name = $record['PROD_CD'];
+		$nids = ocs_get_nids_by_cond( 'roaming_zone', array(
+					array( 'property', 'title', $name)
+						));
+		if ( count( $nids) > 1) {
+			// error
+			drupal_set_message( t('Multiple Roaming INTL Zone is found for @name', array( '@name' => $name)), 'error');
+		}
+		else {
+			if ( count( $nids) == 0) {
+				$zone = ocs_admin_get_new_node( 'roaming_zone');
+				$zone->title = $name;
+				dpm( 'New Roaming INTL Zone : ' . $name);
+			}
+			else {
+				$zone = node_load( $nids[0]);
+				unset( $zone->field_roaming_countries['und']);
+				dpm( 'Existing Roaming INTL Zone : ' . $name);
+			}
+
+			// add country list
+			foreach( $record['COUNTRY_CD'] as $country) {
+				$country_nids = ocs_get_nids_by_cond( 'roaming_country', array(
+							array( 'field_country_code_3', 'value', $country)
+							));
+				if ( count($country_nids) > 1 || count( $country_nids) == 0) {
+					drupal_set_message( t('Invalid Roaming Country <em>@name</em>. @n items found.', 
+						array( '@name' => $country, '@n' => count( $country_nids))), 'error');
+					continue;
+				}
+				else {
+					$zone->field_roaming_countries['und'][] = array( 'nid' => $country_nids[0]);
+				}
+			}
+
+			// find roaming partner nid
+			// name format : <Partner Name>_Cus_??
+			$list = explode( '_', $name);
+			$partner_nid = ocs_get_nids_by_cond( 'roaming_carrier', array(
+						array( 'field_partner_code', 'value', $list[0])
+						));
+			if ( count( $partner_nid) > 1 ) {
+				drupal_set_message( t('Invalid Roaming Carrier <em>@name</em>. @n items found.', 
+					array( '@name' => $list[0], '@n' => count( $partner_nid))), 'error');
+				continue;
+			}
+			else {
+				$zone->field_roaming_carrier['und'][0]['nid'] = $partner_nid[0];
+			}
+
+			node_save( $zone);
+		}
+	}
+}
+
+function _save_charge( $rate, $idx, $start, $end, $uom_amount, $price) 
+{
+	if ( isset( $rate->field_charge_collection['und'][$idx]['value'])) {
+		$vs = entity_load_single( 'field_collection_item', $rate->field_charge_collection['und'][$idx]['value']);
+	}
+	else {
+		$vs = entity_create('field_collection_item', array('field_name' => 'field_charge_collection'));
+		$vs->setHostEntity( 'node', $rate);      
+	}
+
+	$vs->field_range_start['und'][0]['value'] = $start;
+	if ( ! empty( $end)) $vs->field_range_end['und'][0]['value'] = $end;
+	$vs->field_uom_amount['und'][0]['value'] = $uom_amount;
+	$vs->field_price_amount_float['und'][0]['value'] = floatval($price);
+	$vs->save();
 }
 

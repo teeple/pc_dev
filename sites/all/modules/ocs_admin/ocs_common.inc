@@ -391,7 +391,10 @@ function ocs_get_nids_by_cond( $type, $field_cond = NULL)
 
 	if ( $field_cond) {
 		foreach( $field_cond as $cond) {
-			$query->fieldCondition( $cond[0], $cond[1], $cond[2]);
+            if ( $cond[0] == 'property')
+                $query->propertyCondition( $cond[1], $cond[2]);
+			else 
+				$query->fieldCondition( $cond[0], $cond[1], $cond[2], isset($cond[3]) ? $cond[3] : NULL);
 		}
 	}
 	$result = $query->execute();
