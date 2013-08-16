@@ -567,16 +567,14 @@ function add_js_settings_after_node_save($node){
 	);
 	
 	drupal_add_js(array('product_catalog_ajax_result' => $js_settings), 'setting');
-    
-    return $js_settings;
+  return $js_settings;
 }
 
 function add_js_settings_after_node_update($node) {
-	
 	if($node->type == 'prdcounterlist') {
 	    $rootNode = node_load($node->field_ref_product['und'][0]['nid']);
     	$children = _load_tree_item_mixed_with_node_and_term($rootNode);
-		$js_data = json_encode($children);
+			$js_data = json_encode($children);
 	} else {
 		$js_data = array(
 			'nid' => 'node_'.$node->nid,
@@ -588,8 +586,17 @@ function add_js_settings_after_node_update($node) {
 		'success' => TRUE,
 		'data' => $js_data,
 		// 'parent_nid' => $parentId
-		'parent_nid' => !empty($parentId)? $parentId: NULL
+		'parent_nid' => !empty($parentId)? $parentId: NULL,
 	);
+	
+	switch($node->type){
+		case 'prdcounterlist':
+			$js_settings['need_to_refresh'] = TRUE;
+			break;
+		default :
+			$js_settings['need_to_refresh'] = FALSE;
+			break;
+	}
 	
 	drupal_add_js(array('product_catalog_ajax_result' => $js_settings), 'setting');
 }

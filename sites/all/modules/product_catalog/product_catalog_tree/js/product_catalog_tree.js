@@ -9,6 +9,7 @@
 			//bind ajax success callback. changes tree node's title		
 				
 			$(document).ajaxSuccess(function(event,request, settings) {	
+				//console.log(settings.url);
 				if(settings.url === '/system/ajax'){
 					var triggeringElement = settings.extraData._triggering_element_name;
 					//console.log(triggeringElement);
@@ -29,11 +30,33 @@
 						//console.log(product_catalog_ajax_result);
 						//console.log(responseJson);
 						if(typeof product_catalog_ajax_result != 'undefined'){
-							if(op === 'edit'){				
-								if( product_catalog_ajax_result.data.nid instanceof Array) {
-									$(".product_catalog_tree").jstree("set_text", $('#' + product_catalog_ajax_result.data.nid[0]), product_catalog_ajax_result.data.title[0]);
+							if(op === 'edit'){		
+								// counter list를 보여주고자 할 때에는 변경된 부분을 보이기 위해 전체 tree를 refresh한다.
+								var needToRefresh = false;		
+								if(product_catalog_ajax_result.need_to_refresh instanceof Array){
+									for(var i=0;i<product_catalog_ajax_result.need_to_refresh.length;i++){
+										if(needToRefresh == true) break;
+										needToRefresh = product_catalog_ajax_result.need_to_refresh[i];
+									}
 								}else{
-									$(".product_catalog_tree").jstree("set_text", $('#' + product_catalog_ajax_result.data.nid), product_catalog_ajax_result.data.title);
+									needToRefresh = product_catalog_ajax_result.need_to_refresh;
+								}
+								
+								if(needToRefresh){
+									var treeData = $.parseJSON(product_catalog_ajax_result.data[0]);
+					
+									$.jstree._focused()._get_settings().json_data.data = treeData;
+									$.jstree._focused().refresh(-1);
+				
+									$.fn.unmasking();
+				
+									$(".product_catalog_tree").jstree('open_all');
+								}else{
+									if( product_catalog_ajax_result.data.nid instanceof Array) {
+										$(".product_catalog_tree").jstree("set_text", $('#' + product_catalog_ajax_result.data.nid[0]), product_catalog_ajax_result.data.title[0]);
+									}else{
+										$(".product_catalog_tree").jstree("set_text", $('#' + product_catalog_ajax_result.data.nid), product_catalog_ajax_result.data.title);
+									}
 								}
 							}else if(op === 'add'){
 								$.fn.addNestedMultipleChildren(product_catalog_ajax_result);
@@ -41,21 +64,6 @@
 							}
 						}						
 					}
-					
-				// counter list를 보여주고자 할 때에는 변경된 부분을 보이기 위해 전체 tree를 refresh한다.
-				} else if (settings.url == '/product_catalog_ajax/counter_list') {
-					
-					var responseText = request.responseText;
-					var responseJson = $.parseJSON(responseText);
-					var treeData = $.parseJSON(responseJson[0].settings.product_catalog_ajax_result.data[0]);
-					
-					$.jstree._focused()._get_settings().json_data.data = treeData;
-					$.jstree._focused().refresh(-1);
-
-					$.fn.unmasking();
-
-					$(".product_catalog_tree").jstree('open_all');
-					// window.location = "http://localhost:8888/product_designer/Mobile/Main/edit/19085";
 				} else if (settings.url == '/product_catalog_ajax/set_rollover') {
 					
 					// var selectTreeTid = $.parseJSON(request.responseText)[0].settings.product_catalog_ajax_result.data.select_tree_id;
