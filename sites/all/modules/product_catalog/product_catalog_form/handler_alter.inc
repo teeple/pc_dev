@@ -1375,7 +1375,10 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 				$viewResult = views_get_view_result('list_export_history', 'panel_pane_6', $product_nid);
 				if(!empty($viewResult)){
 					$disabledItems[] = 'field_product_id';
-					$disabledItems[] = 'field_short_code';
+					
+					//short code 향후 CS에서 관리하거나, Feature Code형태로 변경될 듯..
+					//현재 short code때문에 다른거 수정이 안된다고 하여 임시로 수정 가능하도록 변경 
+					//$disabledItems[] = 'field_short_code';
 				}
 				
 				$productTypeTid = $form['field_product_type']['und']['#default_value'][0];
