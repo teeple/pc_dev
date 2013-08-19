@@ -54,7 +54,7 @@ function _product_catalog_delete_backupfiles(){
 }
 
 function _delete_old_files($location,$days){
-    $location = '/var/www/backup_migrate/manual/';
+    //$location = '/var/www/backup_migrate/manual/';
     $time = time();
     $pivot = strtotime("-".$days." day", $time);
     
