@@ -520,7 +520,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 
 			$options = _handler_get_term_options( 'calltype', array(
 				array('field_service_domain', 'tid', $svcDomainTid),
-				array('field_sub_group1', 'value', array('VOICE', 'SMS', 'DATA', 'VIDEO'), 'IN'),
+				array('field_sub_group1', 'value', array('VOICE', 'SMS', 'DATA', 'VIDEO', 'CHARGE', 'VAS'), 'IN'),
 				));
 
 			foreach (array_keys( $form['field_service_permission']) as $key) {
