@@ -36,6 +36,7 @@ function product_catalog_form_cronapi($op, $function = NULL) {
 }
 
 function _product_catalog_delete_backupfiles(){
+	dsm('_product_catalog_delete_backupfiles');
     // load config node
     $query = new EntityFieldQuery();
     $result = $query->entityCondition('entity_type', 'node')
@@ -45,6 +46,7 @@ function _product_catalog_delete_backupfiles(){
     if (count($result) > 0) {
         $nids = array_keys( $result['node']);
         $configNode = node_load($nids[0]);
+				dsm($configNode,'configNode');
         $days = $configNode->field_valid_days['und'][0]['value'];
         
         _delete_old_files('/var/www/backup_migrate/manual/',$days);
