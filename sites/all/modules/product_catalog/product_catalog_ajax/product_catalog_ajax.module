@@ -621,7 +621,7 @@ function product_catalog_ajax_select_modal_item_submit($contentTypes) {
     if(!empty($deleteNids)){
         node_delete_multiple($deleteNids);
     }
-
+    
 	foreach($nids as $nid) {
 		$actionsetnotification = new StdClass();
   	
@@ -827,7 +827,7 @@ function product_catalog_ajax_set_cardtype() {
 	exit;
 }
 
-function product_catalog_ajax_select_modal_content($js = NULL, $contentType, $nid, $defaultTabIndex) {
+function product_catalog_ajax_select_modal_content($js = NULL, $contentType, $nid, $defaultTabIndex, $additionalParam) {
 	ctools_include('node.pages', 'node', '');
 	ctools_include('modal');
 	ctools_include('ajax');
@@ -842,13 +842,22 @@ function product_catalog_ajax_select_modal_content($js = NULL, $contentType, $ni
 	
     switch($contentType){
         case 'actionsetnotification':
+        	if( !empty($additionalParam) ) {
+        		$refTreeTid = $defaultTabIndex;
+        		$defaultTabIndex = $additionalParam;
+        	}
         case 'vouchercardtypenotification':
             $renderOutput .= '<input type="button" id="vbo-message-select-button" value="Select"/>';
         break;
     }
     
 	$output[] = ctools_modal_command_display('Notification Message Selection', $renderOutput);
-	$output[] = ajax_command_invoke(NULL, 'selectModalButtonBinding', array('0' => $renderOutput, '1' => $nid, '2' => $defaultTabIndex));
+	
+	dsm($nid, 'nid');
+	dsm($defaultTabIndex, 'defaultTabIndex');
+	dsm($refTreeTid, 'refTreeTid');	
+	
+	$output[] = ajax_command_invoke(NULL, 'selectModalButtonBinding', array('0' => $renderOutput, '1' => $nid, '2' => $defaultTabIndex, '3' => $refTreeTid));
 	
 	$output = ajax_render($output);
 	print $output;
@@ -2396,10 +2405,18 @@ function product_catalog_ajax_delete_from_view($nodeNid, $refNodeNid, $additiona
 		case 'actionsetcounter':
 		case 'actionsetcounteronbonus':
 		case 'actionsetbonusonrecurringcharge':
-        case 'actionsetnotification':
         case 'actionsetonthreshold' :
         	//additional param means default tab index
 			$output[] = _add_command_after_dismiss_modal($refNodeNid,NULL,$additionalParam);
+			break;
+		case 'actionsetnotification':
+			if( isset($indexParam) ) {
+				$actionsetNotificationNode = node_load($refNodeNid);
+				$refNodeNid = $actionsetNotificationNode->field_ref_vouchercardtype['und'][0]['nid'];
+				$output[] = _add_command_after_dismiss_modal($refNodeNid,$additionalParam,$indexParam);
+			} else {
+				$output[] = _add_command_after_dismiss_modal($refNodeNid,NULL,$additionalParam);
+			}
 			break;
 		case 'treenodecounterforvoucher':
 			$treeNodeCounter = node_load($nodeNid);

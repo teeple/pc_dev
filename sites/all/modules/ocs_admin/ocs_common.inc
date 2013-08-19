@@ -533,10 +533,6 @@ function _new_content($field, $new)
 
 function _compare_content( $field, $before, $after)
 {
-//	dsm($field, 'field name');
-//	dsm($before, 'before in compare content');
-//	dsm($after, 'after in compare content');
-	
     $diff = array();
 	foreach( $field as $key => $value) {
 		$v1 = $before->$key;
@@ -560,13 +556,8 @@ function _compare_content( $field, $before, $after)
 			
 			for( $i=0; $i< max( count($v1), count( $v2)); $i++) {
 			
-//				$vv1 = render(field_view_value('node', $before, $key, $v1));
-//				$vv2 = render(field_view_value('node', $after, $key, $v2));
 				$vv1 = render(field_view_value('field_collection_item', $before, $key, $v1));
 				$vv2 = render(field_view_value('field_collection_item', $after, $key, $v2));
-//				
-				dsm($vv1, 'vv1');
-				dsm($vv2, 'vv2');
 				
 //				$vv1 = _get_field_value( $v1, $i);
 //				$vv2 = _get_field_value( $v2, $i);

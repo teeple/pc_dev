@@ -88,13 +88,11 @@
 		});
 	};
 	
-	$.fn.selectModalButtonBinding = function(renderOutput, nid, defaultTabIndex) {		
+	$.fn.selectModalButtonBinding = function(renderOutput, nid, defaultTabIndex, refTreeTid) {		
 		
 		// $.fn.behaviorAttach(renderOutput);
-		//console.log('source action nid');
-		//console.log(nid);
 		
-		$('#vbo-message-select-button').bind('click', {nid:nid, defaultTabIndex: defaultTabIndex}, $.fn.selectMessageItemHandler);
+		$('#vbo-message-select-button').bind('click', {nid:nid, defaultTabIndex:defaultTabIndex, refTreeTid:refTreeTid}, $.fn.selectMessageItemHandler);
 		
 	};
 
@@ -136,16 +134,21 @@
 				selectedItemNid[i] = inputItems[i].value;
 			}
 		}
+		
 		$.fn.modalMasking('Selecting ...');
 		$.ajax({
 			url : loadLink,
 			type: "post",
-			data: {'nids': selectedItemNid, 'source_nid': event.data.nid, 'default_tab_index': event.data.defaultTabIndex},
+			data: {'nids': selectedItemNid, 'source_nid': event.data.nid, 'default_tab_index': event.data.defaultTabIndex, 'ref_tree_tid': event.data.refTreeTid},
 			success : function(data) {
 				$.fn.modalUnmasking();
 				Drupal.CTools.Modal.dismiss();
 				
-				node = $('#node_' + event.data.nid);
+				if( event.data.refTreeTid != null ) {
+					node = $('[id^="term_' + event.data.refTreeTid +'"]');
+				} else {
+					node = $('#node_' + event.data.nid);
+				}
 				
 				//console.log('selectedItemNid');
 				//console.log(selectedItemNid);
