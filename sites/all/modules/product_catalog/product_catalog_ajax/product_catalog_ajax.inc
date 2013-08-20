@@ -14,7 +14,7 @@ function _load_tree_item_mixed_with_node_and_term($rootNode, $grandParentNode = 
 
 			if ($productTypeTerm -> name == 'CUG') {
 				$cug_group_type = taxonomy_term_load($rootNode ->field_cug_group_type['und'][0]['tid']);
-				if($cug_group_type->name == 'CAC'){
+				if($cug_group_type->name == 'CallerAndCallee'){
 					$notAllowedCombinationStr .= '_' . 'CAC';
 				}else{
 					$cugCustomerTypeTerm = taxonomy_term_load($rootNode -> field_cug_customer_type['und'][0]['tid']);
