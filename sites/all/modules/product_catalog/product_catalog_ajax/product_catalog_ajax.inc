@@ -543,26 +543,29 @@ function add_js_settings_after_node_save($node) {
 }
 
 function add_js_settings_after_node_update($node) {
-	if ($node -> type == 'prdcounterlist') {
-		$rootNode = node_load($node -> field_ref_product['und'][0]['nid']);
-		$children = _load_tree_item_mixed_with_node_and_term($rootNode);
-		$js_data = json_encode($children);
-	} else {
-		$js_data = array('nid' => 'node_' . $node -> nid, 'title' => $node -> title);
-	}
-
-	$js_settings = array('success' => TRUE, 'data' => $js_data,
-	// 'parent_nid' => $parentId
-	'parent_nid' => !empty($parentId) ? $parentId : NULL, );
-
-	switch($node->type) {
-		case 'prdcounterlist' :
-			$js_settings['need_to_refresh'] = TRUE;
+	$need_to_reload_all = FALSE;
+	$need_to_refresh_node = FALSE;
+	$reload_node_id = NULL;
+	
+	switch($node->type){
+		case 'prdcounterlist':
+			$rootNode = node_load($node -> field_ref_product['und'][0]['nid']);
+			$children = _load_tree_item_mixed_with_node_and_term($rootNode);
+			$js_data = json_encode($children);
+			$need_to_reload_all = TRUE;
+			break;
+		case 'prdattributeprefixrangeallowed':
+			$need_to_refresh_node = TRUE;
+			$reload_node_id = 'term_'.$node->field_ref_tree_tid['und'][0]['value'].'_'.$node->field_ref_product['und'][0]['nid'];
 			break;
 		default :
-			$js_settings['need_to_refresh'] = FALSE;
+			$js_data = array('nid' => 'node_' . $node -> nid, 'title' => $node -> title);
 			break;
 	}
+	
+	$js_settings = array('success' => TRUE, 'data' => $js_data,	'parent_nid' => !empty($parentId) ? $parentId : NULL
+								,'need_to_reload_all' => $need_to_reload_all, 'need_to_refresh_node' => $need_to_refresh_node
+								,'reload_node_id' => $reload_node_id);
 
 	drupal_add_js(array('product_catalog_ajax_result' => $js_settings), 'setting');
 }

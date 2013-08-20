@@ -11,6 +11,9 @@
 			$(document).ajaxSuccess(function(event,request, settings) {	
 				//console.log(settings.url);
 				if(settings.url === '/system/ajax'){
+					//console.log(event);
+					//console.log(request);
+					//console.log(settings);
 					var triggeringElement = settings.extraData._triggering_element_name;
 					//console.log(triggeringElement);
 					if(triggeringElement.match('submit-field_ref_timetable_idd') != null){
@@ -32,17 +35,27 @@
 						if(typeof product_catalog_ajax_result != 'undefined'){
 							if(op === 'edit'){		
 								// counter list를 보여주고자 할 때에는 변경된 부분을 보이기 위해 전체 tree를 refresh한다.
-								var needToRefresh = false;		
-								if(product_catalog_ajax_result.need_to_refresh instanceof Array){
-									for(var i=0;i<product_catalog_ajax_result.need_to_refresh.length;i++){
-										if(needToRefresh == true) break;
-										needToRefresh = product_catalog_ajax_result.need_to_refresh[i];
+								var needToReloadAll = false;		
+								if(product_catalog_ajax_result.need_to_reload_all instanceof Array){
+									for(var i=0;i<product_catalog_ajax_result.need_to_reload_all.length;i++){
+										if(needToReloadAll == true) break;
+										needToReloadAll = product_catalog_ajax_result.need_to_reload_all[i];
 									}
 								}else{
-									needToRefresh = product_catalog_ajax_result.need_to_refresh;
+									needToReloadAll = product_catalog_ajax_result.need_to_reload_all;
 								}
 								
-								if(needToRefresh){
+								var needToRefreshNode = false;
+								if(product_catalog_ajax_result.need_to_refresh_node instanceof Array){
+									for(var i=0;i<product_catalog_ajax_result.need_to_refresh_node.length;i++){
+										if(needToRefreshNode == true) break;
+										needToRefreshNode = product_catalog_ajax_result.need_to_refresh_node[i];
+									}
+								}else{
+									needToRefreshNode = product_catalog_ajax_result.need_to_refresh_node;
+								}
+								
+								if(needToReloadAll){
 									var treeData = $.parseJSON(product_catalog_ajax_result.data[0]);
 					
 									$.jstree._focused()._get_settings().json_data.data = treeData;
@@ -51,7 +64,21 @@
 									$.fn.unmasking();
 				
 									$(".product_catalog_tree").jstree('open_all');
-								}else{
+								}
+								else if(needToRefreshNode){
+									var nodeId = null;
+									if(product_catalog_ajax_result.reload_node_id instanceof Array){
+										for(var i=0;i<product_catalog_ajax_result.reload_node_id.length;i++){
+											if(nodeId != null) break;
+											nodeId = product_catalog_ajax_result.reload_node_id[i];
+										}
+									}else{
+										nodeId = product_catalog_ajax_result.reload_node_id;
+									}
+									var node = $('#' + nodeId);
+									$.fn.reloadTreeContentDiv(node);
+								}
+								else{
 									if( product_catalog_ajax_result.data.nid instanceof Array) {
 										$(".product_catalog_tree").jstree("set_text", $('#' + product_catalog_ajax_result.data.nid[0]), product_catalog_ajax_result.data.title[0]);
 									}else{
