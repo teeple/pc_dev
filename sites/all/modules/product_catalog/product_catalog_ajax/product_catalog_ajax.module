@@ -251,6 +251,8 @@ function product_catalog_ajax_clone_product($targetProductId){
     unset($productNode->field_weight_for_hierarchy);
     node_save($productNode);   
     
+		$ridHistory = array();
+		
     $view = views_get_view('list_product_child_node');
     $view->set_display('panel_pane_3');
     $view->set_arguments(array('0' => $targetProductNode->nid));
@@ -269,7 +271,13 @@ function product_catalog_ajax_clone_product($targetProductId){
                 $childNode->uid = $user->uid;
                 $childNode->field_ref_product['und'][0]['nid'] = $productNode->nid;
 								if($childNode->type == 'actionpricechargerecurring' || $childNode->type == 'actionpricechargerecurringdefaul'){
-									$recurring_charge_id = $productNode -> field_product_id['und'][0]['value'] . '_' . time();
+									$now = time();
+									if(in_array($now,$ridHistory)){
+										$now++;
+									}
+									$ridHistory[] = $now;
+									
+									$recurring_charge_id = $productNode -> field_product_id['und'][0]['value'] . '_' . $now;
 									$childNode->field_recurring_charge_id['und'][0]['value'] = $recurring_charge_id;
 									$childNode->field_recurring_charge_id['und'][0]['safe_value'] = $recurring_charge_id;
 									//$cloneNode->title = 'temp';
