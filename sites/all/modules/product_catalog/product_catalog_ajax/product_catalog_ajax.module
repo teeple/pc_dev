@@ -1439,8 +1439,8 @@ function product_catalog_ajax_select_submit() {
         $child->field_ref_product['und'][0]['nid'] = $tmpProductNid[1];
         $child->field_ref_numberspecial['und'][0]['nid'] = $childNid;
         $child->field_ref_tree_nid['und'][0]['nid'] = $planNode->nid;
-        node_save($child);        
-        $planNode->field_ref_numberspecial['und'][0]['nid'] = $child->nid;
+        node_save($child);
+        $planNode->field_ref_numberspecial['und'][0]['nid'] = $childNid;
         node_save($planNode);
         $js_data['parent_title'] = $child->title;
         $js_data['append_to'] = 'inside';

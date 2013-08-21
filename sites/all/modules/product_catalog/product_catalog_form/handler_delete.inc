@@ -9,9 +9,14 @@ function node_delete_handler_to_touch_product($node){
 };
 
 function product_catalog_form_node_delete($node){
-    $childNodes = get_nested_children_nids($node->nid);
+	 $childNodes = get_nested_children_nids($node->nid);
 
 	switch($node->type){
+		case 'treenodespecialnumberscheme':
+			$tariffplan_node = node_load($node->field_ref_tree_nid['und'][0]['nid']);
+			$tariffplan_node -> field_ref_numberspecial = NULL;
+			node_save($tariffplan_node);
+			break;
 		case 'treenodeproductforvoucher':
 			$refProductNid = $node->field_ref_product['und'][0]['nid'];
 			$viewResult = views_get_view_result('list_loyaltypoint', 'panel_pane_2',  $node->field_ref_vouchercardtype['und'][0]['nid']);
