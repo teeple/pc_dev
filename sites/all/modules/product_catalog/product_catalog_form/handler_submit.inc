@@ -262,9 +262,8 @@ function _create_default_items_by_voca($product, $voca_name) {
 								$now = time();
 								if(in_array($now,$ridHistory)){
 									$now++;
-								}else{
-									$fieldValue = '\'' . $product -> field_product_id['und'][0]['value'] . '_' . $now . '\'';
 								}
+								$fieldValue = '\'' . $product -> field_product_id['und'][0]['value'] . '_' . $now . '\'';
 								$ridHistory[] = $now;
 							} else if ($fieldValue == '$productBillType') {
 								$fieldValue = '\'' . $product -> field_billing_type['und'][0]['tid'];
