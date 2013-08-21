@@ -1,13 +1,10 @@
 <?php
-function _load_tree_item_mixed_with_node_and_term($rootNode, $grandParentNode = NULL) {
-	$children = array('attr' => array('id' => 'node_' . $rootNode -> nid, 'node_type' => $rootNode -> type, 'rel' => $rootNode -> type, 'weight' => isset($rootNode -> field_weight['und'][0]['value']) ? $rootNode -> field_weight['und'][0]['value'] : 0, ), 'data' => $rootNode -> title, );
 
-	$filterTerm = FALSE;
+function _get_invisible_combination_string($rootNode){
+	$notAllowedCombinationStr = NULL;
+	
 	switch($rootNode->type) {
 		case 'simpleproductoffering' :
-			$vocaName = _get_vocabulary_name('simpleproductoffering', $rootNode);
-			$children['state'] = 'open';
-			$filterTerm = TRUE;
 			$productTypeTerm = taxonomy_term_load($rootNode -> field_product_type['und'][0]['tid']);
 			$billTypeTerm = taxonomy_term_load($rootNode -> field_billing_type['und'][0]['tid']);
 			$notAllowedCombinationStr = $productTypeTerm -> name . '_' . $billTypeTerm -> name;
@@ -27,10 +24,8 @@ function _load_tree_item_mixed_with_node_and_term($rootNode, $grandParentNode = 
 					}
 				}
 			}
-
 			break;
 		case 'tariffplan' :
-			$filterTerm = TRUE;
 			$productNode = node_load($rootNode -> field_ref_product['und'][0]['nid']);
 			$serviceDomainTerm = taxonomy_term_load($productNode -> field_service_type_of_provider['und'][0]['tid']);
 			if ($serviceDomainTerm -> name === 'Cross') {
@@ -44,8 +39,27 @@ function _load_tree_item_mixed_with_node_and_term($rootNode, $grandParentNode = 
 					$notAllowedCombinationStr .= '_' . $cugCustomerTypeTerm -> name;
 				}
 			}
-			$vocaName = $rootNode -> field_tree_child_voca_name['und'][0]['value'];
+			break;
+	}
 
+	return $notAllowedCombinationStr;
+}
+
+function _load_tree_item_mixed_with_node_and_term($rootNode, $grandParentNode = NULL) {
+	$children = array('attr' => array('id' => 'node_' . $rootNode -> nid, 'node_type' => $rootNode -> type, 'rel' => $rootNode -> type, 'weight' => isset($rootNode -> field_weight['und'][0]['value']) ? $rootNode -> field_weight['und'][0]['value'] : 0, ), 'data' => $rootNode -> title, );
+
+	$filterTerm = FALSE;
+	switch($rootNode->type) {
+		case 'simpleproductoffering' :
+			$vocaName = _get_vocabulary_name('simpleproductoffering', $rootNode);
+			$children['state'] = 'open';
+			$filterTerm = TRUE;
+			$notAllowedCombinationStr = _get_invisible_combination_string($rootNode);
+			break;
+		case 'tariffplan' :
+			$filterTerm = TRUE;
+			$notAllowedCombinationStr = _get_invisible_combination_string($rootNode);
+			$vocaName = $rootNode -> field_tree_child_voca_name['und'][0]['value'];
 			break;
 		case 'vouchercardtype' :
 			$vocaName = $rootNode -> field_tree_child_voca_name['und'][0]['value'];

@@ -959,16 +959,12 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			$productTypeTerm = taxonomy_term_load($productNode -> field_product_type['und'][0]['tid']);
 			$productBillingTypeTerm = taxonomy_term_load($productNode -> field_billing_type['und'][0]['tid']);
 
-			if ($productTypeTerm -> name !== 'Main') {
-				$form['#fieldgroups']['group_recurring_day'] -> format_type = 'hidden';
-				$form['field_charging_day_type']['#type'] = 'hidden';
-				$form['field_rcrr_charging_day_monthly']['#type'] = 'hidden';
-				$form['field_rcrr_charging_day_week']['#type'] = 'hidden';
-			}
-
-			if ($productBillingTypeTerm -> name == 'Prepaid') {
-				unset($form['field_charging_cycle_type']['und']['#options'][3]);
-				unset($form['field_charging_cycle_type']['und']['#options'][4]);
+			if($productTypeTerm->name != 'CUG'){
+				if($productBillingTypeTerm->name == 'Prepaid'){
+					$form['field_recurring_cycle_postpaid_']['#type'] = 'hidden';
+				}else{
+					$form['field_recurring_cycle_pps_']['#type'] = 'hidden';
+				}
 			}
 
 			unset($form['field_ref_product']);
@@ -977,6 +973,23 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 
 			break;
 		case 'prdnonusagerecurringbonusscheme_node_form' :
+			$productNode = node_load($form['#node'] -> field_ref_product['und'][0]['nid']);
+			$productTypeTerm = taxonomy_term_load($productNode -> field_product_type['und'][0]['tid']);
+			$productBillingTypeTerm = taxonomy_term_load($productNode -> field_billing_type['und'][0]['tid']);
+
+			if($productTypeTerm->name != 'CUG'){
+				if($productBillingTypeTerm->name == 'Prepaid'){
+					unset($form['field_cycle_type_postpaid_']);
+					unset($form['field_day_of_month_postpaid']);
+					unset($form['field_day_of_week_postpaid']);
+					unset($form['#fieldgroups']['group_charging_cycle_postpaid']);
+				}else{
+					unset($form['field_cycle_type_pps_']);
+					unset($form['field_day_of_month_pps']);
+					unset($form['field_day_of_week_pps']);
+					unset($form['#fieldgroups']['group_charging_cycle_pps']);
+				}
+			}
 			unset($form['field_ref_product']);
 			unset($form['field_weight']);
 			_unset_menu_items($form, $form_id);
@@ -2183,7 +2196,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			$form['field_weight']['#type'] = 'hidden';
 			$form['field_ref_product']['#type'] = 'hidden';
 			$form['field_ref_tree_tid']['#type'] = 'hidden';
-
+			$form['field_billing_type']['#type'] = 'hidden';
 			// in case EDIT
 			if (isset($form['nid']['#value'])) {
 				$product = node_load($form_state['build_info']['args'][0] -> field_ref_product['und'][0]['nid']);
