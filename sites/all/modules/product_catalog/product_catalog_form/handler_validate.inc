@@ -520,7 +520,7 @@ function product_catalog_form_node_validate($node, $form, &$form_state) {
 						}
 						$allowedPrefix[$i] = array('start' => (string)$base . $start, 'end' => (string)$base . $end);
 					}
-
+					
 					if ($isValid) {
 						$targetElement = 'field_prefix_range][und][';
 
@@ -530,8 +530,7 @@ function product_catalog_form_node_validate($node, $form, &$form_state) {
 
 							for ($j = 0; $j < $totalRow; $j++) {
 
-								if ($i == $j)
-									continue;
+								if ($i == $j) continue;
 
 								if ($start >= $allowedPrefix[$j]['start'] && $start <= $allowedPrefix[$j]['end']) {
 									$targetElement .= $i . '][field_prefix_range_start';

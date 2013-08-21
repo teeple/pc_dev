@@ -168,6 +168,7 @@ function _add_ajax_submit_callback($form_id, &$form) {
 		case 'loyaltypoint_node_form' :
 		case 'actionbonustransfer_node_form' :
 		case 'conditionwhatcalltype_node_form' :
+		case 'conditionwhatbilltype_node_form' :
 		case 'conditionwhatfeaturecode_node_form' :
 		case 'conditionwhatservicedomain_node_form' :
 		case 'conditionwhatcounter_node_form' :
@@ -671,6 +672,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 		case 'conditionwhereroamingcountry_node_form' :
 		case 'conditionwhereroamingzone_node_form' :
 		case 'conditionwhatroamingtype_node_form' :
+		case 'conditionwhatbilltype_node_form' :
 		case 'conditionwhererattype_node_form' :
 		case 'conditionwheresgsn_node_form' :
 		case 'conditionwheresgsnip_node_form' :
