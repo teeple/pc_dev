@@ -1800,11 +1800,10 @@ function product_catalog_ajax_load_select_form($nid,$eventType,$rootNid,$relType
 	$qtabConfigs = _qtabconfig_loading($targetCollection, $termInTree);
 	
 	$qtabs = array();
-  $weight = 0;
+    $weight = 0;
   
-  $index = 0;
+    $index = 0;
 	$qtabIndex = 0;
-	
     foreach($qtabConfigs[$targetCollection] as $qtabConfig) {
 			if(isset($qtabConfig['args'])) {
 				$args = array(

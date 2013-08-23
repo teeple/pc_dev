@@ -49,11 +49,13 @@ function _product_for_export($exportItemNids = NULL, $isExternalAPI = FALSE, $ta
         
         $recurringTypes = array(1 => 'Daily', 3 => '1/3 Monthly', 4 => 'Monthly');
         
+        /*
         if(!empty($nonUsage['recurring_scheme']['charge_scheme']['rcrr_period_type'])) {
         	$nonUsage['recurring_charge']['period_type'] = $recurringTypes[$nonUsage['recurring_scheme']['charge_scheme']['rcrr_period_type']];
         } else {
  	       $nonUsage['recurring_charge']['period_type'] = NULL;
         }
+        */
         
         $nonUsage['recurring_charge']['charge_items'] = _get_recurring_amount($node->nid);
         //custom recurring charge by CS
@@ -66,18 +68,6 @@ function _product_for_export($exportItemNids = NULL, $isExternalAPI = FALSE, $ta
 			}else{
 				$nonUsage['recurring_scheme']['charge_by_cs_scheme']['rcrr_period_type'] = NULL;
 			}
-			/*
-			if(!empty($recurring_by_cs->field_field_subscriber_status)){
-				foreach($recurring_by_cs->field_field_subscriber_status as $status){
-					$nonUsage['reccurring_charge_by_cs']['status'][] = array(
-						'id' => $status['raw']['node']->field_ocs_state_id['und'][0]['value'],
-						'name' => $status['raw']['node']->title
-					);
-				}
-			}else{
-				$nonUsage['reccurring_charge_by_cs']['status'] = NULL;
-			}
-			*/ 
 		}
 			  
         $nonUsage['onetime_charge'] = _get_onetime_charge($node -> nid);
@@ -130,6 +120,11 @@ function _get_product_relationship($nid){
             $exclusive_product_other_ids[] = $item['raw']['node']->field_product_id['und'][0]['safe_value'];
         }
         
+        // prerequisite products
+        foreach($record->field_field_prerequisite_products as $item){
+        	$prerequisite_product_ids[] = $item['raw']['node']->field_product_id['und'][0]['safe_value'];
+        }
+        
         //downgrade penalty
         $downgradePenaltyViewResult = views_get_view_result('list_product_downgrade_penalty', 'panel_pane_2', $record->nid);
         foreach($downgradePenaltyViewResult as $item){
@@ -140,6 +135,7 @@ function _get_product_relationship($nid){
         //$relationship['product_id'] = $record->field_field_product_id[0]['raw']['value'];
         if(isset($exclusive_product_ids)) $relationship['exclusiveness'] = $exclusive_product_ids;
         if(isset($exclusive_product_other_ids)) $relationship['exclusiveness_other'] = $exclusive_product_other_ids;
+        if(isset($prerequisite_product_ids)) $relationship['prerequisite'] = $prerequisite_product_ids;        
         if(isset($downgrade)) $relationship['downgrade_penalty'] = $downgrade;
     }
     return $relationship;
@@ -428,9 +424,10 @@ function _get_recurring_amount($productNid) {
     
     foreach($view->result as $chargingItem){
         $charge = array();
+        $charge['billing_type'] = $chargingItem->field_field_billing_type[0]['rendered']['#markup'];
         $charge['amount'] = $chargingItem->field_field_price_amount_float[0]['raw']['value'];
         $charge['on'] = $chargingItem->field_field_pricing_cycle_type[0]['rendered']['#markup'];
-        $retArray['default'] = $charge;
+        $retArray['default'][] = $charge;
     }
     
     $view = views_get_view('list_actionpricechargerecurring');
@@ -462,36 +459,81 @@ function _get_recurring_amount($productNid) {
 
 function _get_recurring_scheme($productNid) {
     $retArray = array();
-
+    
     $view_name = 'list_child_item_for_product';
     $display = 'panel_pane_1';
     $args = array('0' => $productNid, '1' => 'prdnonusagerecurringchargescheme');
     $records = _get_nids_from_views($view_name, $display, $args);
     $chargeScheme = node_load(current($records));
-
-    $charging_cycle_type = !empty($chargeScheme -> field_charging_cycle_type) ? $chargeScheme -> field_charging_cycle_type['und'][0]['value'] : NULL;
     
-    if (empty($charging_cycle_type)) {
-        $retArray['charge_scheme'] = NULL;
+    $product = node_load($productNid);
+    $productType = taxonomy_term_load($product->field_product_type['und'][0]['tid']);
+    $productBillType = taxonomy_term_load($product->field_billing_type['und'][0]['tid']);
+    
+    // $charging_cycle_type = !empty($chargeScheme -> field_charging_cycle_type) ? $chargeScheme -> field_charging_cycle_type['und'][0]['value'] : NULL;
+    $charge_recurring_cycle['Prepaid'] = !empty($chargeScheme -> field_recurring_cycle_pps_) ? $chargeScheme -> field_recurring_cycle_pps_['und'][0]['value'] : NULL;
+    $charge_recurring_cycle['Postpaid'] = !empty($chargeScheme -> field_recurring_cycle_postpaid_) ? $chargeScheme -> field_recurring_cycle_postpaid_['und'][0]['value'] : NULL;
+    
+    if($charge_recurring_cycle['Prepaid'] == NULL && $charge_recurring_cycle['Postpaid'] == NULL ) {
+    	$retArray['charge_scheme'] = NULL;
     } else {
-        $retArray['charge_scheme'] = array('rcrr_period_type' => $charging_cycle_type, );
+    
+    	switch($productType->name) {
+	    	case 'CUG':
+		    	foreach($charge_recurring_cycle as $key=>$value) {
+			        if (!empty($value)) {
+				        $retArray['charge_scheme'][] = array('billing_type'=> $key, 'rcrr_period_type' => $value);
+				    }
+			    }
+			    break;
+			default:
+				$retArray['charge_scheme'][] = array('biling_type' => $productBillType->name, 'rcrr_period_type' => $charge_recurring_cycle[$productBillType->name]);
+				break;
+		}
     }
-
+    
     $args[1] = 'prdnonusagerecurringbonusscheme';
     $records = _get_nids_from_views($view_name, $display, $args);
     $bonusScheme = node_load(current($records));
 
-    $bonus_cycle_type = !empty($bonusScheme -> field_bonus_cycle_type) ? $bonusScheme -> field_bonus_cycle_type['und'][0]['value'] : NULL;
-
-    if (empty($bonus_cycle_type)) {
+    $bonus_cycle_type['Prepaid'] = !empty($bonusScheme -> field_cycle_type_pps_) ? $bonusScheme -> field_cycle_type_pps_['und'][0]['value'] : NULL;
+    $bonus_cycle_type['Postpaid'] = !empty($bonusScheme -> field_cycle_type_postpaid_) ? $bonusScheme -> field_cycle_type_postpaid_['und'][0]['value'] : NULL;
+    
+    if($bonus_cycle_type['Prepaid'] == NULL && $bonus_cycle_type['Postpaid'] == NULL ) {
         $retArray['bonus_scheme'] = NULL;
-
     } else {
-        $rcrr_charging_day_arr = array('1' => NULL, '2' => !empty($bonusScheme -> field_rcrr_charging_day_week) ? $bonusScheme -> field_rcrr_charging_day_week['und'][0]['value'] : NULL, '3' => NULL, '4' => !empty($bonusScheme -> field_rcrr_charging_day_monthly) ? $bonusScheme -> field_rcrr_charging_day_monthly['und'][0]['value'] : NULL);
-
-        $rcrr_charging_day = $rcrr_charging_day_arr[$bonus_cycle_type];
-
-        $retArray['bonus_scheme'] = array('rcrr_period_type' => $bonusScheme -> field_bonus_cycle_type['und'][0]['value'], 'rcrr_charging_day' => $rcrr_charging_day, );
+    
+    	switch($productType->name) {
+	       	case 'CUG':
+		       	foreach($bonus_cycle_type as $key=>$value) {
+		    		if($key == 'Prepaid' && !empty($value)) {
+					 	$rcrr_charging_day_arr = array('1' => NULL, '2' => !empty($bonusScheme -> field_day_of_week_pps) ? $bonusScheme -> field_day_of_week_pps['und'][0]['value'] : NULL, '3' => NULL, '4' => !empty($bonusScheme -> field_day_of_month_pps) ? $bonusScheme -> field_day_of_month_pps['und'][0]['value'] : NULL);
+				        $rcrr_charging_day = $rcrr_charging_day_arr[$value];
+				        $retArray['bonus_scheme'][] = array('billing_type' => $key, 'rcrr_period_type' => $value, 'rcrr_charging_day' => $rcrr_charging_day);
+				        
+		    		} else if ($key == 'Postpaid' && !empty($value)) {
+					 	$rcrr_charging_day_arr = array('1' => NULL, '2' => !empty($bonusScheme -> field_day_of_week_postpaid) ? $bonusScheme -> field_day_of_week_postpaid['und'][0]['value'] : NULL, '3' => NULL, '4' => !empty($bonusScheme -> field_day_of_month_postpaid) ? $bonusScheme -> field_day_of_month_postpaid['und'][0]['value'] : NULL);
+				
+				        $rcrr_charging_day = $rcrr_charging_day_arr[$value];
+				        $retArray['bonus_scheme'][] = array('billing_type' => $key, 'rcrr_period_type' => $value, 'rcrr_charging_day' => $rcrr_charging_day);
+		    		}
+		    	}
+		    	break;
+		    default:
+	    		$cycle_type = $bonus_cycle_type[$productBillType->name];
+		    	if($productBillType->name == 'Prepaid') {
+					$rcrr_charging_day_arr = array('1' => NULL, '2' => !empty($bonusScheme -> field_day_of_week_pps) ? $bonusScheme -> field_day_of_week_pps['und'][0]['value'] : NULL, '3' => NULL, '4' => !empty($bonusScheme -> field_day_of_month_pps) ? $bonusScheme -> field_day_of_month_pps['und'][0]['value'] : NULL);
+					$rcrr_charging_day = $rcrr_charging_day_arr[$cycle_type];
+					$retArray['bonus_scheme'][] = array('billing_type' => $productBillType->name, 'rcrr_period_type' => $cycle_type, 'rcrr_charging_day' => $rcrr_charging_day);
+		    		
+				} else {
+				 	$rcrr_charging_day_arr = array('1' => NULL, '2' => !empty($bonusScheme -> field_day_of_week_postpaid) ? $bonusScheme -> field_day_of_week_postpaid['und'][0]['value'] : NULL, '3' => NULL, '4' => !empty($bonusScheme -> field_day_of_month_postpaid) ? $bonusScheme -> field_day_of_month_postpaid['und'][0]['value'] : NULL);
+			
+			        $rcrr_charging_day = $rcrr_charging_day_arr[$cycle_type];
+			        $retArray['bonus_scheme'][] = array('billing_type' => $productBillType->name, 'rcrr_period_type' => $cycle_type, 'rcrr_charging_day' => $rcrr_charging_day);
+				}
+				break;
+		}
     }
 
     return $retArray;

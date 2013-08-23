@@ -494,7 +494,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			$form['account']['current_pass']['#description'] = 'Enter your current password to change the <em class="placeholder">E-mail address</em> or <em class="placeholder">Password</em>';
 			unset($form['account']['mail']['#description']);
 			unset($form['account']['notify']);
-			unset($form['account']['roles']['#options'][3]); // skip 'administrator' role
+			// unset($form['account']['roles']['#options'][3]); // skip 'administrator' role
 			unset($form['actions']['cancel']);
 			unset($form['picture']);
 			unset($form['account']['status']);
@@ -1407,7 +1407,6 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 					unset($form['#fieldgroups']['group_cug']);
 				} else {
 					$disabledItems[] = 'field_cug_customer_type';
-					// $disabledItems[] = 'field_cug_group_type';
 				}
 
 				$svcDomainTid = $form['field_service_type_of_provider']['und']['#default_value'][0];
@@ -1425,9 +1424,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 				$form['field_next_join_product']['und']['#options'] = $options;
 				
 			}
-
 			$productTypeTid = $form['field_product_type']['und']['#default_value'][0];
-
 			$billingType = taxonomy_term_load($form['field_billing_type']['und']['#default_value']);
 			if ($billingType -> name == 'Prepaid') {
 				unset($form['#groups']['group_contraints']);
@@ -1447,6 +1444,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 				$unsetItems = array_merge($unsetItems, array('field_product_sub_type', 'field_expire_date_for_hour', 'field_description', 'field_offering_status', 'field_version', 'field_billing_type', 'field_validfor_product', 'field_service_operator', 'field_billing_cycle', 'field_product_id', 'field_custdvcd4prod', 'field_customer_group_type', 'field_is_bundle', 'field_deferred_subscription_flag', 'field_price_units', 'field_treatment_price_amount', 'field_treatment_day', 'field_contract_period', 'field_roaming_allowed', 'field_cug_member_counter', 'field_short_code', 'field_next_join_product', 'field_expire_date_type', 'field_expire_date', 'field_field_deferred_subscriptio', 'field_hlr_template_id', 'field_point_for_subscription', 'field_next_join_confirm', 'field_resubscription_flag', 'field_cug_customer_type', 'field_cug_group_type', 'field_cug_need_member_product', 'field_specific_date', 'field_valid_date_hour'));
 
 				$options = _get_product_exclusive_list($form['nid']['#value']);
+				
 				$form['field_exclusiveness']['und']['#options'] = $options['list'];
 				
 				$args = $options['args'];
@@ -1480,17 +1478,19 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 				if ($productTypeTerm -> name == 'Main') {
 					$form['field_exclusiveness_others']['und']['#options'] = $options;
 					unset($form['field_exclusiveness']);
+					unset($form['field_prerequisite_products']);
 				
 				// Other 상품에서는 exclusiveness를 사용
 				} else {
 					// 자신은 Exclusiveness List에서 제외 
 					unset($options[$product_nid]);
 					$form['field_exclusiveness']['und']['#options'] = $options;
+					$form['field_prerequisite_products']['und']['#options'] = $options;
 					$unsetItems = array_merge($unsetItems, array('field_exclusiveness_others'));
 				}
 
 			} else {
-				$unsetItems = array_merge($unsetItems, array('field_exclusiveness', 'field_exclusiveness_others'));
+				$unsetItems = array_merge($unsetItems, array('field_exclusiveness', 'field_exclusiveness_others', 'field_prerequisite_products'));
 				if(isset($form['nid']['#value'])){ //edit and not relation
 					$form['product_clone_button'] = array(
 						'#type' => 'markup',
@@ -3198,7 +3198,6 @@ function _get_feature_code_options() {
 	}
 	
 	return $options;
-	
 }
 
 function _get_product_exclusive_list($productNid) {
@@ -3210,18 +3209,29 @@ function _get_product_exclusive_list($productNid) {
 	$billingTypeTid = $product -> field_billing_type['und'][0]['tid'];
 	$svcOperatorTid = $product -> field_service_operator['und'][0]['tid'];
 	$customerTypeTid = $product -> field_custdvcd4prod['und'][0]['tid'];
-
+	
 	$options = array();
 
 	$args = array('0' => $svcDomainTid, '1' => $svcOperatorTid, '2' => $billingTypeTid, '3' => $customerTypeTid);
+	$customerTypeTerm = taxonomy_term_load($customerTypeTid);
+	if($customerTypeTerm->name == 'Group_and_Personal') {
+		$args[3] = 'all';
+	}
+	
 	$options['args'] = $args;
 
 	$view = views_get_view('list_product_in_exclusive');
-
+	
 	if ($productTypeTerm -> name == 'Main') {
+		$billingTypeTerm = taxonomy_term_load($billingTypeTid);
+		if($billingTypeTerm->name != 'Prepaid') {
+			$args[2] = 'all';
+		}
 		$view -> set_display('panel_pane_2');
+		
 	} else {
 		$view -> set_display('panel_pane_5');
+		
 	}
 
 	$view -> set_arguments($args);

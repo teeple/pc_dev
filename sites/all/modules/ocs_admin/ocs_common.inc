@@ -432,7 +432,6 @@ function ocs_ctools_link($title, $url, $opt)
 
 function ocs_log_deletes( $delete)
 {
-	dsm($delete, 'delete');
 	if ( get_class( $new) == 'FieldCollectionItemEntity') {
 	    $field = field_info_instances('field_collection_item', $delete->field_name);
 	    $type = 'FieldCollectionItemEntity:' . $delete->field_name;
@@ -451,7 +450,6 @@ function ocs_log_deletes( $delete)
 
 function ocs_log_new( $new)
 {
-	dsm($new, ' new');
     if ( get_class( $new) == 'FieldCollectionItemEntity') {
         $field = field_info_instances('field_collection_item', $new->field_name);
         $type = 'FieldCollectionItemEntity:' . $new->field_name;
@@ -536,17 +534,18 @@ function _new_content($field, $new)
 
 function _compare_content( $field, $before, $after)
 {
+	if ( get_class( $before) == 'FieldCollectionItemEntity') {
+		$entity_type = 'field_collection_item';
+	} else {
+		$entity_type = 'node';
+	}
+	
     $diff = array();
 	foreach( $field as $key => $value) {
 		$v1 = $before->$key;
 		$v2 = $after->$key;
 		
 		$label = isset($value['label'])? $value['label']: null;
-		
-//		dpm( $key, 'key');
-//		dpm( $v1, 'v1');
-//		dpm( $v2, 'v2');
-//		dpm( $value, 'value');
 		
 		// skip in case field_collection embed other field_collection
 		if($value['display']['default']['module'] == 'field_collection' ) continue;
@@ -559,8 +558,14 @@ function _compare_content( $field, $before, $after)
 			
 			for( $i=0; $i< max( count($v1), count( $v2)); $i++) {
 			
-				$vv1 = render(field_view_value('field_collection_item', $before, $key, $v1));
-				$vv2 = render(field_view_value('field_collection_item', $after, $key, $v2));
+//				$vv1 = render(field_view_value('field_collection_item', $before, $key, $v1));
+//				$vv2 = render(field_view_value('field_collection_item', $after, $key, $v2));
+
+				$f1 = field_get_items($entity_type, $before, $key);
+				$f2 = field_get_items($entity_type, $after, $key);
+				
+				$vv1 = render(field_view_value($entity_type, $before, $key, $f1[$i]));
+				$vv2 = render(field_view_value($entity_type, $after, $key, $f2[$i]));
 				
 //				$vv1 = _get_field_value( $v1, $i);
 //				$vv2 = _get_field_value( $v2, $i);
