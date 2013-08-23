@@ -180,6 +180,15 @@ function rating_rule_export($ruleset_template , $export_item,  $nid=NULL, $vars 
 			{
 				$data['export_target'] = $export_item->field_export_target['und'][0]['value'];
 			}
+
+			if($nid!=NULL && count($data['delete_keys'])==0)
+			{
+				if(property_exists($export_item , 'field_delete_key_view_name') && array_key_exists('und', $export_item->field_delete_key_view_name) && count($export_item->field_delete_key_view_name['und'])>0)
+				{
+					$delete_key_data =  rating_rules_export_from_view("fetch_delete_key", $export_item->field_delete_key_view_name['und'][0]['value'], $export_item->field_delete_key_display_name['und'][0]['value'] , $nid);
+					$data['delete_keys'] = $delete_key_data['delete_keys'];
+				}
+			}
 			return $data;
 		}
 		return NULL;
@@ -1071,7 +1080,7 @@ function generate_condition_string_from_tree_node($nid)
 		{
 			$factor = $f['conversion_info'];
 			$type_info = $f['type_info'];
-			if(array_key_exists('und' , $factor->field_rating_factor_name) && count($factor->field_rating_factor_name['und'])>0 && $factor_name != $factor->field_rating_factor_name['und'][0]['value'])
+			if(!is_array($factor) && array_key_exists('und' , $factor->field_rating_factor_name) && count($factor->field_rating_factor_name['und'])>0 && $factor_name != $factor->field_rating_factor_name['und'][0]['value'])
 			{
 				$a = array('replaced'=>$factor_name, 'original'=>$factor->field_rating_factor_name['und'][0]['value']);
 				if(array_key_exists('type', $type_info))
@@ -1415,6 +1424,7 @@ function has_same_sub_factor($arr , $factor_name)
     }
     return FALSE;
 }
+
 function rating_rules_export_from_view($title, $view_name, $display_name, $nid=NULL)
 {
     $view_name=trim($view_name);
