@@ -65,6 +65,7 @@ function _array_export_counter($exportItemNids=NULL){
 
 	$arr = array();
 	$arr[] = rating_rules_export_by_content_type_and_item_name("rating_rule_export", "rating_counter_info", $exportItemNids);
+	$arr[] = rating_rules_export_by_content_type_and_item_name("rating_rule_export_explicit", "accounting", $exportItemNids);
 	foreach($arr as $a)
 	{
 		foreach($a as $t => $v)
