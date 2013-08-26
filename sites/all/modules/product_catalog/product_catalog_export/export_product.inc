@@ -160,6 +160,12 @@ function _get_deposit_scheme($product,$target=NULL) {
 			$depositAmount = $prdAttributeDeposit->field_field_deposit_amount[0]['raw']['value'];
 			
 			$thresholdCounterNid = $prdAttributeDeposit->field_field_threshold_counter[0]['raw']['nid'];
+
+			if(isset($prdAttributeDeposit->field_field_deposit_group_code)) {
+					$depositGroupCodeTid = $prdAttributeDeposit->field_field_deposit_group_code[0]['raw']['tid'];
+				} else {
+					$depositGroupCodeTid = NULL;
+			}
 			
 			if($thresholdCounterNid > 0) {
 				$treeNodeCounter = node_load($thresholdCounterNid);
@@ -171,7 +177,7 @@ function _get_deposit_scheme($product,$target=NULL) {
 				$thresholdScheme = _create_threshold_scheme($treeNodeCounter);
 			
 				// create deposit scheme
-				$depositScheme = _create_deposit_scheme($treeNodeCounter, $depositAmount, $thresholdLimit, $thresholdScheme);
+				$depositScheme = _create_deposit_scheme($treeNodeCounter, $depositAmount, $thresholdLimit, $thresholdScheme,$depositGroupCodeTid);
 			
 				if(isset($target)) {
 					$redirectFlag = FALSE;
@@ -253,7 +259,7 @@ function _create_threshold_scheme($treeNodeCounter) {
 	return $scheme;
 }
 
-function _create_deposit_scheme($treeNodeCounter, $depositAmount, $thresholdLimit, $thresholdScheme) {
+function _create_deposit_scheme($treeNodeCounter, $depositAmount, $thresholdLimit, $thresholdScheme,$depositGroupCodeTid) {
 	global $user;
 	
 	$product = node_load($treeNodeCounter->field_ref_product['und'][0]['nid']);
@@ -283,6 +289,7 @@ function _create_deposit_scheme($treeNodeCounter, $depositAmount, $thresholdLimi
 	$factor->field_ref_thres_counter_limit['und'][0]['nid'] = $treeNodeCounter->field_ref_counter['und'][0]['nid'];
 	$factor->field_is_default_factor['und'][0]['value'] = 0;
 	$factor->field_ref_thresholdscheme['und'][0]['nid'] = $thresholdScheme->nid;
+	$factor->field_deposit_group_code['und'][0]['tid'] = $depositGroupCodeTid;
 	$factor->field_thismonth_accu_counter = NULL;
 	$factor->field_ref_type_of_call_mul = NULL;
 	$factor->field_counter_unit_type['und'][0]['tid'] = 696; // Money type fixed

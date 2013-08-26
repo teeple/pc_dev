@@ -111,6 +111,13 @@ function _array_deposit_scheme($exportItemNids=NULL){
                 }else{
                     $factor['thresholdscheme_id'] = NULL;
                 }
+
+				if(isset($factorNode->field_deposit_group_code['und'][0]['tid'])) {
+					$tempTerm = $item->field_field_deposit_group_code[0]['raw']['taxonomy_term'];
+					$factor['deposit_group_code'] = _get_common_code($tempTerm);
+					} else {
+						$factor['deposit_group_code'] = NULL;
+					}
                 
                 $factorArray[] = $factor;
             }
