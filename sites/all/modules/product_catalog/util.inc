@@ -64,6 +64,20 @@ function _clone_field_collection($type, $orgEntity, $newEntity, $collectionName)
 					$newCollectionInfo -> field_range_end = $orgCollectionInfo -> field_range_end;
 					$newCollectionInfo -> field_discount_ = $orgCollectionInfo -> field_discount_;
 					break;
+				case 'field_attribute_key_value' :
+					$newCollectionInfo -> field_ref_productattributekey = $orgCollectionInfo -> field_ref_productattributekey;
+					$newCollectionInfo -> field_attribute_value = $orgCollectionInfo -> field_attribute_value;
+					break;
+				case 'field_prefix_range' :
+					$newCollectionInfo -> field_base_prefix = $orgCollectionInfo -> field_base_prefix;
+					$newCollectionInfo -> field_prefix_range_start = $orgCollectionInfo -> field_prefix_range_start;
+					$newCollectionInfo -> field_prefix_range_end = $orgCollectionInfo -> field_prefix_range_end;
+					$newCollectionInfo -> field_description = $orgCollectionInfo -> field_description;
+					break;
+				case 'field_required_device' :
+					$newCollectionInfo -> field_amount = $orgCollectionInfo -> field_amount;
+					$newCollectionInfo -> field_deposit_price = $orgCollectionInfo -> field_deposit_price;
+					break;
 			}
 			$newCollectionInfo -> save();
 			$evalStr = '$newEntity->' . $collectionName . '[\'und\'][' . $i . '][\'value\'] = $newCollectionInfo->item_id;';
@@ -1028,4 +1042,101 @@ function delete_field($fields) {
 	 'field_value_to',
 	 'field_value_type');
 	 */
+}
+
+function _fix_field_collection_field_prefix_range(){
+	$field_collection_ids = array();
+
+	$viewResult = views_get_view_result('list_fix_field_collection', 'panel_pane_1');
+	foreach($viewResult as $item){
+	 if(in_array($item->field_collection_item_field_data_field_prefix_range_item_id,$field_collection_ids)){
+	   $orgEntity = node_load($item->nid);
+	   $orgCollections = $orgEntity-> field_prefix_range;
+		 unset($orgEntity->field_prefix_range);
+		 $fieldsetCount = count($orgCollections['und']);
+		 
+	  	for ($i = 0; $i < $fieldsetCount; $i++) {
+				$orgCollectionInfo = field_collection_item_load($orgCollections['und'][$i]['value']);
+				$newCollectionInfo = entity_create('field_collection_item', array('field_name' => 'field_prefix_range'));
+				$newCollectionInfo -> setHostEntity('node', $orgEntity);
+				
+				$newCollectionInfo -> field_base_prefix = $orgCollectionInfo -> field_base_prefix;
+				$newCollectionInfo -> field_prefix_range_start = $orgCollectionInfo -> field_prefix_range_start;
+				$newCollectionInfo -> field_prefix_range_end = $orgCollectionInfo -> field_prefix_range_end;
+				$newCollectionInfo -> field_description = $orgCollectionInfo -> field_description;
+				$newCollectionInfo -> save();
+				
+				$orgEntity->field_prefix_range['und'][$i]['value'] =  $newCollectionInfo->item_id;
+			}
+
+			node_save($orgEntity);
+	
+	 }else{
+	   $field_collection_ids [] = $item->field_collection_item_field_data_field_prefix_range_item_id;
+	 }
+	}
+}
+
+function _fix_field_collection_field_attribute_key_value(){
+	$field_collection_ids = array();
+
+	$viewResult = views_get_view_result('list_fix_field_collection', 'panel_pane_2');
+	foreach($viewResult as $item){
+	 if(in_array($item->field_collection_item_field_data_field_attribute_key_value_i,$field_collection_ids)){
+	   $orgEntity = node_load($item->nid);
+	   $orgCollections = $orgEntity-> field_attribute_key_value;
+		 unset($orgEntity->field_attribute_key_value);
+		 $fieldsetCount = count($orgCollections['und']);
+		 
+	  	for ($i = 0; $i < $fieldsetCount; $i++) {
+				$orgCollectionInfo = field_collection_item_load($orgCollections['und'][$i]['value']);
+				$newCollectionInfo = entity_create('field_collection_item', array('field_name' => 'field_attribute_key_value'));
+				$newCollectionInfo -> setHostEntity('node', $orgEntity);
+				
+				$newCollectionInfo -> field_ref_productattributekey = $orgCollectionInfo -> field_ref_productattributekey;
+				$newCollectionInfo -> field_attribute_value = $orgCollectionInfo -> field_attribute_value;
+				
+				$newCollectionInfo -> save();
+				
+				$orgEntity->field_attribute_key_value['und'][$i]['value'] =  $newCollectionInfo->item_id;
+			}
+
+			node_save($orgEntity);
+	
+	 }else{
+	   $field_collection_ids [] = $item->field_collection_item_field_data_field_attribute_key_value_i;
+	 }
+	}
+}
+
+function _fix_field_collection_field_required_device(){
+	$field_collection_ids = array();
+
+	$viewResult = views_get_view_result('list_fix_field_collection', 'panel_pane_3');
+	foreach($viewResult as $item){
+	 if(in_array($item->field_collection_item_field_data_field_required_device_item_,$field_collection_ids)){
+	   $orgEntity = node_load($item->nid);
+	   $orgCollections = $orgEntity-> field_required_device;
+		 unset($orgEntity->field_required_device);
+		 $fieldsetCount = count($orgCollections['und']);
+		 
+	  	for ($i = 0; $i < $fieldsetCount; $i++) {
+				$orgCollectionInfo = field_collection_item_load($orgCollections['und'][$i]['value']);
+				$newCollectionInfo = entity_create('field_collection_item', array('field_name' => 'field_required_device'));
+				$newCollectionInfo -> setHostEntity('node', $orgEntity);
+				
+				$newCollectionInfo -> field_amount = $orgCollectionInfo -> field_amount;
+				$newCollectionInfo -> field_deposit_price = $orgCollectionInfo -> field_deposit_price;
+				
+				$newCollectionInfo -> save();
+				
+				$orgEntity->field_attribute_key_value['und'][$i]['value'] =  $newCollectionInfo->item_id;
+			}
+
+			node_save($orgEntity);
+	
+	 }else{
+	   $field_collection_ids [] = $item->field_collection_item_field_data_field_required_device_item_;
+	 }
+	}
 }

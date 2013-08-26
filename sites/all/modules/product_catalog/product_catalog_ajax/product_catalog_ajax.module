@@ -290,6 +290,15 @@ function product_catalog_ajax_clone_product($targetProductId){
                 if(isset($targetChildNode->field_discount_collection)){
                     _clone_field_collection('node',$targetChildNode,$childNode,'field_discount_collection');
                 }
+								if(isset($targetChildNode->field_attribute_key_value)){
+                    _clone_field_collection('node',$targetChildNode,$childNode,'field_attribute_key_value');
+                }
+								if(isset($targetChildNode->field_prefix_range)){
+                    _clone_field_collection('node',$targetChildNode,$childNode,'field_prefix_range');
+                }
+								if(isset($targetChildNode->field_required_device)){
+                    _clone_field_collection('node',$targetChildNode,$childNode,'field_required_device');
+                }
                 _clone_nested_child_node($targetChildNode,$childNode);
                 
                 $actionSetView = views_get_view('query_actionset_children');
