@@ -2466,4 +2466,44 @@ function _unset_unused_field_of_cloned_node($node){
     unset($node->data);    
     return $node;
 }
+
+function _copy_product_basic_counter_condition($product_nid){
+	$product = node_load($product_nid);
+	$base_treenodecounter = array();
+	$view_result = views_get_view_result('list_treenodecounter', 'panel_pane_4', $product->nid);
+	foreach($view_result as $item){
+		$treenodecounter = node_load($item->nid);
+		$real_counter = node_load($treenodecounter->field_ref_counter['und'][0]['nid']);
+		$real_counter_type = taxonomy_term_load($real_counter->field_counter_type['und'][0]['tid']);
+		if($real_counter_type->name == 'Basic'){
+			$base_treenodecounter[$real_counter->nid] = $treenodecounter;
+		}
+	}
+	
+	$view_result = views_get_view_result('list_product_for_basic_counter_setting_copy', 'panel_pane_1'
+		, $product->field_service_type_of_provider['und'][0]['tid']
+		, $product->field_product_type['und'][0]['tid']
+		, $product->field_billing_type['und'][0]['tid']
+		, $product->nid);
+	
+	foreach($view_result as $target_product){
+		$treenodecounter_result = views_get_view_result('list_treenodecounter', 'panel_pane_4', $target_product->nid);
+		foreach($treenodecounter_result as $item){
+			$treenodecounter = node_load($item->nid);
+			$real_counter_nid = $treenodecounter->field_ref_counter['und'][0]['nid'];
+			if(isset($base_treenodecounter[$real_counter_nid])){
+				//delete old children
+				$delete_children = get_nested_children_nids($treenodecounter->nid);
+				$delete_children = array_unique($delete_children); 
+				if(!empty($delete_children)){
+					node_delete_multiple($delete_children);
+				}
+				
+				//copy children from base to target	
+				_clone_nested_child_node($base_treenodecounter[$real_counter_nid],$treenodecounter);
+			}
+		}
+		
+	}
+}
 ?>
