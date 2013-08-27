@@ -166,6 +166,7 @@ function _json_voucher_cardtype($exportItemNids = NULL) {
     $arr[] = rating_rules_export_by_content_type_and_item_name("rating_rule_export", "list_loyaltypointfactors", $exportItemNids);
     $arr[] = rating_rules_export_by_content_type_and_item_name("rating_rule_export", "rating_voucher_product", $exportItemNids);
     $arr[] = rating_rules_export_by_content_type_and_item_name("rating_rule_export", "list_treenodecounterforvoucherprd", $exportItemNids);
+    $arr[] = rating_rules_export_by_content_type_and_item_name("rating_rule_export", "rating_loyalty_notification", $exportItemNids);
 
     foreach ($arr as $a) {
         foreach ($a as $t => $v) {
