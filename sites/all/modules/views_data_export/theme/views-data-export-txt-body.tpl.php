@@ -13,12 +13,6 @@
 
 foreach ($themed_rows as $count => $row):
   foreach ($row as $field => $content):
-?>
-[<?php print $header[$field]; ?>]
-
-<?php print strip_tags($content); // strip html so its plain txt. ?>
-
-<?php endforeach; ?>
-----------------------------------------
+?><?php print $header[$field]; ?> <?php print strip_tags($content); // strip html so its plain txt. ?> <?php endforeach; ?>
 
 <?php endforeach;

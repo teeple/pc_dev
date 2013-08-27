@@ -3218,18 +3218,18 @@ function _get_product_exclusive_list($productNid) {
 		$args[3] = 'all';
 	}
 	
-	$options['args'] = $args;
-
 	$view = views_get_view('list_product_in_exclusive');
 	
+	$billingTypeTerm = taxonomy_term_load($billingTypeTid);
 	if ($productTypeTerm -> name == 'Main') {
-		$billingTypeTerm = taxonomy_term_load($billingTypeTid);
 		if($billingTypeTerm->name != 'Prepaid') {
 			$args[2] = 'all';
 		}
 		$view -> set_display('panel_pane_2');
-		
 	} else {
+		if($billingTypeTerm->name == 'Hybrid') {
+			$args[2] = 'all';
+		}
 		$view -> set_display('panel_pane_5');
 		
 	}
@@ -3243,6 +3243,8 @@ function _get_product_exclusive_list($productNid) {
 		$options['list'][$item -> nid] = view_get_field_value_by_label($view, 'PHP', $item);
 	}
 	unset($options['list'][$productNid]);
+	$options['args'] = $args;
+
 
 	return $options;
 }

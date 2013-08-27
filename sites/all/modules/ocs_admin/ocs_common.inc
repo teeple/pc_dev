@@ -430,7 +430,7 @@ function ocs_ctools_link($title, $url, $opt)
 	echo $link_string;
 }
 
-function ocs_log_deletes( $delete)
+function ocs_log_deleted( $delete)
 {
 	if ( get_class( $delete) == 'FieldCollectionItemEntity') {
 	    $field = field_info_instances('field_collection_item', $delete->field_name);
