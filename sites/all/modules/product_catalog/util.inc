@@ -41,8 +41,6 @@ function _clone_field_collection($type, $orgEntity, $newEntity, $collectionName)
 	eval($evalStr);
 
 	if (isset($orgCollections['und'][0]['value'])) {
-		$evalStr = 'unset($newEntity->' . $collectionName . ');';
-		eval($evalStr);
 		$fieldsetCount = count($orgCollections['und']);
 
 		for ($i = 0; $i < $fieldsetCount; $i++) {

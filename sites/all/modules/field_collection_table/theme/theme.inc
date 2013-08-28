@@ -60,46 +60,31 @@ function theme_field_collection_table_multiple_value_fields($variables) {
     usort($items, '_field_sort_items_value_helper');
 
     $header = array(
-    	/* remove collectin name and draggable attribute
-      array(
-        'data' => '<label>' . t('!title: !required', array('!title' => $element['#title'], '!required' => $required)) . "</label>",
-        'class' => array('field-label'),
-      ),
-      */
+     // array(
+      //  'data' => '<label>' . t('!title: !required', array('!title' => $element['#title'], '!required' => $required)) . "</label>",
+       // 'class' => array('field-label'),
+      //),
     );
 
     // Add the items as table rows.
-    
     foreach ($items as $key => $item) {
       uasort($item, 'element_sort');
       $item['_weight']['#attributes']['class'] = array($order_class);
       $cells = array(
-        // remove collectin name and draggable attribute
-        //array('data' => '', 'class' => array('field-multiple-drag')),
+       // array('data' => '', 'class' => array('field-multiple-drag')),
       );
       foreach (element_children($item) as $field_name) {
-      	// Only add the header once.
+        // Only add the header once.
         if ($key == 0) {
           $header[] = array(
             'data' => '<label>' . t('!title', array('!title' => _field_collection_table_get_title($item[$field_name]))) . '</label>',
             'class' => array('field-label'),
           );
         }
-        //if($field_name == 'remove_button'){
-        //    $markupStr = '<input type="button" value="remove" id="remove_collection_item_'.$item['#entity']->item_id.'"/>';
-        //    $removeItem = array(
-        //        '#type' => 'markup',
-        //        '#markup' => $markupStr
-        //    );
-            
-        //    $cells[] = array('data' => $removeItem);
-        //}else{
-            $cells[] = array('data' => $item[$field_name]);
-        //}
+        $cells[] = array('data' => $item[$field_name]);
       }
       $rows[] = array(
         'data' => $cells,
-         // remove collectin name and draggable attribute
         //'class' => array('draggable'),
       );
     }

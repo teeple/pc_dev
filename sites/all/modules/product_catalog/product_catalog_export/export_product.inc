@@ -46,18 +46,11 @@ function _product_for_export($exportItemNids = NULL, $isExternalAPI = FALSE, $ta
         // $nonUsage['threshold_scheme'] = _get_thresdhold_scheme($node);
         $nonUsage['deposit_scheme'] = _get_deposit_scheme($node, $target);
         $nonUsage['recurring_scheme'] = _get_recurring_scheme($node -> nid);
+        $recurringScheme = $nonUsage['recurring_scheme'];
         
         $recurringTypes = array(1 => 'Daily', 3 => '1/3 Monthly', 4 => 'Monthly');
         
-        /*
-        if(!empty($nonUsage['recurring_scheme']['charge_scheme']['rcrr_period_type'])) {
-        	$nonUsage['recurring_charge']['period_type'] = $recurringTypes[$nonUsage['recurring_scheme']['charge_scheme']['rcrr_period_type']];
-        } else {
- 	       $nonUsage['recurring_charge']['period_type'] = NULL;
-        }
-        */
-        
-        $nonUsage['recurring_charge']['charge_items'] = _get_recurring_amount($node->nid);
+        $nonUsage['recurring_charge'] = _get_recurring_amount($node->nid, $recurringScheme);
         //custom recurring charge by CS
         $recurring_by_cs_view_result = views_get_view_result('list_actionpricechargerecurring', 'panel_pane_5', $node->nid);
 		if(!empty($recurring_by_cs_view_result)){
@@ -421,8 +414,12 @@ function _get_thresdhold_scheme($product) {
     return $scheme;
 }
 
-function _get_recurring_amount($productNid) {
+function _get_recurring_amount($productNid, $recurringSchemes) {
     $retArray = array();
+    $recurringCharges = array();
+    $defaultBillTypes = array();
+    
+    $recurring_period_type = array( '1' => 'Daily', '3' => '1/3 Monthly', '4' => 'Monthly');
     
     $view = views_get_view('list_actionpricechargerecurring');
     $view -> set_display('panel_pane_4');
@@ -431,37 +428,53 @@ function _get_recurring_amount($productNid) {
     
     foreach($view->result as $chargingItem){
         $charge = array();
-        $charge['billing_type'] = $chargingItem->field_field_billing_type[0]['rendered']['#markup'];
+        $billingType = $chargingItem->field_field_billing_type[0]['rendered']['#markup'];
         $charge['amount'] = $chargingItem->field_field_price_amount_float[0]['raw']['value'];
         $charge['on'] = $chargingItem->field_field_pricing_cycle_type[0]['rendered']['#markup'];
-        $retArray['default'][] = $charge;
+        $defaultItems[$billingType] = $charge;
+        $defaultBillTypes[] = $billingType;
     }
     
-    $view = views_get_view('list_actionpricechargerecurring');
-    $view -> set_display('panel_pane_3');
-    $view -> set_arguments(array('0' => $productNid));
-    $view -> execute();
-    
-    foreach($view->result as $chargingItem){
-        $charge = array();
-        $charge['amount'] = $chargingItem->field_field_price_amount_float[0]['raw']['value'];
-        $charge['on'] = $chargingItem->field_field_pricing_cycle_type[0]['rendered']['#markup'];
-        $charge['conditions'] = array();
-        
-        $conditionSets = get_children($chargingItem->nid);
-        foreach($conditionSets['children'] as $set){
-            $conditionSet = array();
-            $conditionCount = count($set['children']);
-            
-            foreach($set['children'] as $condition){
-                $conditionSet[] = $condition['data'];
-            }
-            $charge['conditions'][] = $conditionSet;
-        }
-        
-       $retArray['custom'][] = $charge;
-    }
-    return $retArray;
+    foreach($defaultBillTypes as $billType) {
+    	
+    	$recurringCharge = array();
+    	$recurringCharge['billing_type'] = $billType;
+    	foreach($recurringSchemes['charge_scheme'] as $recurringScheme) {
+    		if($recurringScheme['billing_type'] == $billType) {
+    			$recurringCharge['period_type'] = $recurring_period_type[$recurringScheme['rcrr_period_type']];
+    		}
+    	}
+    	$recurringCharge['charge_items']['default'] = $defaultItems[$billType];
+    	
+    	$view = views_get_view('list_actionpricechargerecurring');
+	    $view -> set_display('panel_pane_3');
+	    $view -> set_arguments(array('0' => $productNid));
+	    $view -> execute();
+	    
+	    foreach($view->result as $chargingItem){
+	        $charge = array();
+	        $charge['amount'] = $chargingItem->field_field_price_amount_float[0]['raw']['value'];
+	        $charge['on'] = $chargingItem->field_field_pricing_cycle_type[0]['rendered']['#markup'];
+	        $charge['conditions'] = array();
+	        
+	        $conditionSets = get_children($chargingItem->nid);
+	        foreach($conditionSets['children'] as $set){
+	            $conditionSet = array();
+	            $conditionCount = count($set['children']);
+	            
+	            foreach($set['children'] as $condition){
+	                $conditionSet[] = $condition['data'];
+	            }
+	            $charge['conditions'][] = $conditionSet;
+	        }
+	        
+	       $recurringCharge['custom'] = $charge;
+	    }
+	    
+	    $recurringCharges[] = $recurringCharge;
+	}
+	
+    return $recurringCharges;
 }
 
 function _get_recurring_scheme($productNid) {
