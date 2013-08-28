@@ -2269,12 +2269,12 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			$form['field_ref_roaming_carrier']['und']['#ajax'] = array('callback' => 'roaming_options_callback_zone', 'wrapper' => 'custom_roaming_ratinggroup_zone');
 			*/
 			
-			$form['field_ref_roaming_country']['#prefix'] = '<div id="custom_roaming_ratinggroup">';
+			$form['field_ref_roaming_carrier']['#prefix'] = '<div id="custom_roaming_ratinggroup">';
 			$form['field_ref_type_of_call']['#suffix'] = '</div>';
 			
 			$form['field_ref_roaming_country']['und']['#ajax'] = array('callback' => 'custom_roaming_ratinggroup_callback','wrapper' => 'custom_roaming_ratinggroup');
 			$form['field_ref_roaming_carrier']['und']['#ajax'] = array('callback' => 'custom_roaming_ratinggroup_callback','wrapper' => 'custom_roaming_ratinggroup');
-			
+			$form['field_ref_roaming_type']['und']['#ajax'] = array('callback' => 'custom_roaming_ratinggroup_callback','wrapper' => 'custom_roaming_ratinggroup');
 			_rendering_filter_roaming_ratinggroup($form,$form_state);
 			//dsm($form);
 			break;
@@ -2878,32 +2878,35 @@ function _rendering_filter_roaming_ratinggroup(&$form,&$form_state){
 	$carrierOptions['_none'] = ' - None -';
 	$zoneOptions = array();
 	$zoneOptions['_none'] = ' - None -';
+	$countryOptions = array();
+	$countryOptions['_none'] = ' - None -';
 
 	$roamingCountryNid = NULL;
 	$roamingCarrierNid = NULL;
 	$roamingTypeTid = NULL;
-	if (isset($form_state['values'])) {
+	
+	if (isset($form_state['values'])) {//바뀐게 있음..
 		$roamingCarrierNid = $form_state['values']['field_ref_roaming_carrier']['und'][0]['nid'];
 		$roamingCountryNid = $form_state['values']['field_ref_roaming_country']['und'][0]['nid'];
 		$roamingTypeTid = $form_state['values']['field_ref_roaming_type']['und'][0]['tid'];
-	} else {
-		if (isset($form['nid']['#value'])) {
+	} else {//바뀐게 없음..
+		if (isset($form['nid']['#value'])) {//edit 일때..
 			$roamingCarrierNid = $form_state['build_info']['args'][0] -> field_ref_roaming_carrier['und'][0]['nid'];
 			$roamingCountryNid = $form_state['build_info']['args'][0] -> field_ref_roaming_country['und'][0]['nid'];
 			$roamingTypeTid = $form_state['build_info']['args'][0] -> field_ref_roaming_type['und'][0]['tid'];
 		}
 	}
 	
-	$view = views_get_view('list_roaming_carrier');
-	$view -> set_display('panel_pane_3');
-	$view -> set_arguments(array('0' => $roamingCountryNid));
+	$view = views_get_view('list_roaming_country');
+	$view -> set_display('panel_pane_4');
+	$view -> set_arguments(array('0' => $roamingCarrierNid));
 	$view -> execute();
 	foreach ($view->result as $item) {
-		$carrierOptions[$item -> nid] = $item -> node_title;
+		$countryOptions[$item -> node_field_data_field_ref_roaming_country_nid] = $item -> node_field_data_field_ref_roaming_country_title;
 	}
-	$form['field_ref_roaming_carrier']['und']['#options'] = $carrierOptions;
+	$form['field_ref_roaming_country']['und']['#options'] = $countryOptions;
 	if(count($view->result) == 0){
-		$roamingCarrierNid = NULL;
+		$roamingCountryNid = NULL;
 	}
 	
 	if (isset($roamingTypeTid)) {
@@ -2914,12 +2917,21 @@ function _rendering_filter_roaming_ratinggroup(&$form,&$form_state){
 				$options = array();
 				$options['_none'] = '- None -';
 				
-				$view = views_get_view('list_roaming_zone');
-				$view -> set_display('panel_pane_5');
-				$view -> set_arguments(array('0' => $roamingCarrierNid));
-				$view -> execute();
-				foreach ($view->result as $item) {
-					$zoneOptions[$item -> nid] = $item -> node_title;
+				if($roamingCarrierNid == NULL && $roamingCountryNid == NULL){
+					$view = views_get_view('list_roaming_zone');
+					$view -> set_display('panel_pane_6');
+					$view -> execute();
+					foreach ($view->result as $item) {
+						$zoneOptions[$item -> nid] = $item -> node_title;
+					}
+				}else if($roamingCarrierNid != NULL && $roamingCountryNid != NULL){
+					$view = views_get_view('list_roaming_zone');
+					$view -> set_display('panel_pane_5');
+					$view -> set_arguments(array('0' => $roamingCarrierNid));
+					$view -> execute();
+					foreach ($view->result as $item) {
+						$zoneOptions[$item -> nid] = $item -> node_title;
+					}
 				}
 				$form['field_roaming_zone']['und']['#options'] = $zoneOptions;
 				//$form['field_roaming_zone']['#type'] = 'container';
@@ -2941,8 +2953,8 @@ function custom_roaming_ratinggroup_callback($form,&$form_state){
 	//$form['field_ref_type_of_call']['#suffix'] = '</div>';
 	
 	$renderStr = '<div id="custom_roaming_ratinggroup">';
-	$renderStr .= drupal_render($form['field_ref_roaming_country']);
 	$renderStr .= drupal_render($form['field_ref_roaming_carrier']);
+	$renderStr .= drupal_render($form['field_ref_roaming_country']);
 	$renderStr .= drupal_render($form['field_ref_roaming_type']);
 	$renderStr .= drupal_render($form['field_roaming_zone']);
 	$renderStr .= drupal_render($form['field_rating_group']);
