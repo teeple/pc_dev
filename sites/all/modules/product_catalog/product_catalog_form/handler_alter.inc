@@ -165,6 +165,7 @@ function _add_ajax_submit_callback($form_id, &$form) {
 		case 'prdattributefeaturecode_node_form' :
 		case 'prdattributebenefit_node_form' :
 		case 'prdattributedeposit_node_form' :
+		case 'prdattributedepositcondition_node_form':
 		case 'loyaltypoint_node_form' :
 		case 'actionbonustransfer_node_form' :
 		case 'conditionwhatcalltype_node_form' :
@@ -915,6 +916,12 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			}
 			$form['field_threshold_counter']['und']['#options'] = $options;
 			break;
+		
+		case 'prdattributedepositcondition_node_form' :
+			$form['field_ref_product']['#type'] = 'hidden';
+			$form['field_ref_tree_tid']['#type'] = 'hidden';
+			_unset_menu_items($form, $form_id);
+			break;
 
 		case 'locationfactor_node_form' :
 		case 'homezonefactor_node_form' :
@@ -927,7 +934,8 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			$basicCounterList = array();
 
 			$productNid = $form_state['product_nid'];
-
+			
+			/*
 			$basicCounterList = array();
 			$basicCounterList = _get_default_basic_counters($productNid);
 
@@ -941,7 +949,8 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			}
 			$form['field_counter_for_max_count']['und']['#options'] = $mergedCounterList;
 			$form['field_counter_for_max_amount']['und']['#options'] = $mergedCounterList;
-
+			*/
+			
 			_unset_menu_items($form, $form_id);
 			break;
 
@@ -2146,6 +2155,10 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			foreach ($counters as $counter) {
 				$form['field_ref_counter']['und']['#options'][$counter -> nid] = $counter -> node_field_data_field_ref_counter_title;
 			}
+			break;
+		case 'predepositcondition_node_form':
+			$form['field_ref_prddepositcondition']['#type']='hidden';
+			_unset_menu_items($form, $form_id);
 			break;
 		case 'actionpricechargefactors_node_form' :
 			unset($form['field_parent_node']);
