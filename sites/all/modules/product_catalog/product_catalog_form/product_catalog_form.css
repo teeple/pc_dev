@@ -152,3 +152,15 @@
 div .fieldset-wrapper{
 	padding-left:10px;
 }
+
+/* views used in tarffplan basicrate setting */
+.view-id-list_numberingplan_domestic.view-display-id-panel_pane_2,
+.view-id-list_timetable.view-display-id-panel_pane_2,
+.view-id-list_rates.view-display-id-panel_pane_2,
+.view-id-list_numberingplan_domestic.view-display-id-panel_pane_4,
+.view-id-list_timetable.view-display-id-panel_pane_5,
+.view-id-list_numberingplan_idd.view-display-id-panel_pane_2,
+.view-id-list_tariffplan_idd_carrier.view-display-id-panel_pane_1,
+.view-id-list_roaming_plan.view-display-id-panel_pane_3{
+	border:0px;
+}
