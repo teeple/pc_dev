@@ -2170,7 +2170,7 @@ ul.quicktabs-tabs.quicktabs-style-zen {
 	border-radius: 0 0 3px 3px;
 }
 
-/* for embeded views fiels */
+/* for embeded views fiels 
 td.views-field.views-field-view .view ,
 td.views-field.views-field-view .view .views-row-last {
 	background: none;
@@ -2190,7 +2190,24 @@ td.views-field.views-field-view .view .views-row.views-row-last {
 	padding-bottom: 0;
 	border: none;
 }
+*/
+td.views-field.views-field-view .view ,
+td.views-field.views-field-view .view .views-row-last {
+	background: none;
+}
 
+td.views-field.views-field-view .view .views-row {
+	padding: 5px 0;
+	border-bottom: 1px dashed #BBB;
+}
+
+td.views-field.views-field-view .view .views-row.views-row-first {
+	padding-top: 0;
+}
+
+td.views-field.views-field-view .view .views-row.views-row-last {
+	padding-bottom: 0;
+}
 /* for notification messages */
 /*
 div.messages {
