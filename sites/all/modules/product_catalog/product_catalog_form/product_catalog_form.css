@@ -152,3 +152,10 @@
 div .fieldset-wrapper{
 	padding-left:10px;
 }
+
+/* div border_none */
+div .border_none,
+div .border_none > div .block_inner,
+div .border_none > div .block_inner > div .block_content{
+	border:0px;
+}
