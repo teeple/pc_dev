@@ -147,3 +147,9 @@
 #ocs-global-config-node-form > div > div> div> label {
   width:250px;
 }
+
+/* embeded view table */
+td.views-field.views-field-view .view ,
+td.views-field.views-field-view .view .views-row-last {
+	background: none;
+}
