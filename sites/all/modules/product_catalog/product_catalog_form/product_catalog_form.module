@@ -45,11 +45,28 @@ function _product_catalog_delete_backupfiles(){
     if (count($result) > 0) {
         $nids = array_keys( $result['node']);
         $configNode = node_load($nids[0]);
-				$days = $configNode->field_valid_days['und'][0]['value'];
+		$days = $configNode->field_valid_days['und'][0]['value'];
         
         _delete_old_files('/var/www/backup_migrate/manual/',$days);
         _delete_old_files('/var/www/backup_migrate/scheduled/',$days);
+        
+        _delete_change_history($days);
+        
     }
+}
+
+function _delete_change_history($days) {
+	$ndays_before = mktime(0, 0, 0, date("m")  , date("d")-$days, date("Y"));
+	$date_range = '2013-08-01--'.date('Y-m-d', $ndays_before);
+	
+	$deleteItems = array();
+	$viewResult = views_get_view_result('list_changehistory', 'panel_pane_2', $date_range);
+	
+	foreach($viewResult as $item) {
+		$deleteItems[] = $item->nid;
+	}
+	
+	node_delete_multiple($deleteItems);
 }
 
 function _delete_old_files($location,$days){
