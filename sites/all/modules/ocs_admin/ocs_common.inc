@@ -519,7 +519,7 @@ function _new_content($field, $new)
     $retArr = array();
 	foreach( $field as $key => $value ) {
 		$label = isset($value['label'])? $value['label']: null;
-		eval('$value = $new->'.$key.';');
+		eval('$value = isset($new->'.$key.')? $new->'.$key.': null;');
 		if( is_array($value)) {
 			$value1 = isset($value['und'])? $value['und']: NULL;
 			
