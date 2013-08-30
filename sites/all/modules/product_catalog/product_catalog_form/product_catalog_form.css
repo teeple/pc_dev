@@ -152,3 +152,9 @@
 div .fieldset-wrapper{
 	padding-left:10px;
 }
+
+/* hierarchy td*/
+.views-field.views-field-field-parent-node-for-hr,
+.views-field.views-field-field-weight-for-hierarchy{
+	display:none;
+}
