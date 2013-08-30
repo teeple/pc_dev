@@ -155,6 +155,7 @@ div .fieldset-wrapper{
 
 /* hierarchy td*/
 .views-field.views-field-field-parent-node-for-hr,
-.views-field.views-field-field-weight-for-hierarchy{
+.views-field.views-field-field-weight-for-hierarchy,
+.views-field.views-field-field-weight-for-ratingpriority{
 	display:none;
 }
