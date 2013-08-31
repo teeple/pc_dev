@@ -264,6 +264,7 @@
 			case 'conditionwhatcalltype':
 			case 'conditionwhatbilltype':
 			case 'conditionwhatfeaturecode':
+			case 'conditionwhatisredirected':
 			// case 'conditionwhenvaliddate':
 			case 'treenodeotheronetimechargediscou':
 				menus.custom_delete._disabled = false;
@@ -607,6 +608,7 @@
 			"Is Group Call" : $.fn.getSubMenuAddNodeWithoutWrapper("Is Group Call", "conditionwhatisgroupcall"),
 			"Is Video Call" : $.fn.getSubMenuAddNodeWithoutWrapper("Is Video Call", "conditionwhatisvideo"),
 			"Is CLIR" : $.fn.getSubMenuAddNodeWithoutWrapper("Is CLIR", "conditionwhatisclir"),
+			"Is Redirected" : $.fn.getSubMenuAddNodeWithoutWrapper("Is Redirected", "conditionwhatisredirected"),			
 			"Group Member Count" : $.fn.getSubMenuAddNodeWithoutWrapper("Group Member Count", "conditionwhatgroupmembercount"),			
 			"Usage Domain" : $.fn.getSubMenuAddNodeWithoutWrapper("Usage Domain", "conditionwhatusagedomain"),
 			"Call Type" : $.fn.getSubMenuAddNodeWithoutWrapper("Call Type", "conditionwhatcalltype"),
@@ -636,7 +638,8 @@
 			"Usage Domain" : $.fn.getSubMenuAddNodeWithoutWrapper("Usage Domain", "conditionwhatusagedomain"),
 			"Call Type" : $.fn.getSubMenuAddNodeWithoutWrapper("Call Type", "conditionwhatcalltype"),
 			"Main Product Bill Type" : $.fn.getSubMenuAddNodeWithoutWrapper("Main Product Bill Type", "conditionwhatbilltype"),	
-			"Feature Code" : $.fn.getSubMenuAddNodeWithoutWrapper("Feature Code", "conditionwhatfeaturecode"),						
+			"Feature Code" : $.fn.getSubMenuAddNodeWithoutWrapper("Feature Code", "conditionwhatfeaturecode"),
+			"Is Redirected" : $.fn.getSubMenuAddNodeWithoutWrapper("Is Redirected", "conditionwhatisredirected"),			
 			"Main Product" : $.fn.getSubMenuAddNodeWithoutWrapper("Main Product", "conditionwhatmainproduct"),
 			"Callee Main Product" : $.fn.getSubMenuAddNodeWithoutWrapper("Callee's Main Product", "conditionwhatmainproductforpeer"),
 			"Group Member Count" : $.fn.getSubMenuAddNodeWithoutWrapper("Group Member Count", "conditionwhatgroupmembercount"),			
@@ -655,6 +658,7 @@
 			"Is Group Call" : $.fn.getSubMenuAddNodeWithoutWrapper("Is Group Call", "conditionwhatisgroupcall"),			
 			"Is Video Call" : $.fn.getSubMenuAddNodeWithoutWrapper("Is Video Call", "conditionwhatisvideo"),
 			"Is CLIR" : $.fn.getSubMenuAddNodeWithoutWrapper("Is CLIR", "conditionwhatisclir"),
+			"Is Redirected" : $.fn.getSubMenuAddNodeWithoutWrapper("Is Redirected", "conditionwhatisredirected"),			
 			"Group Member Count" : $.fn.getSubMenuAddNodeWithoutWrapper("Group Member Count", "conditionwhatgroupmembercount"),			
 			"Usage Domain" : $.fn.getSubMenuAddNodeWithoutWrapper("Usage Domain", "conditionwhatusagedomain"),			
 			"Call Type" : $.fn.getSubMenuAddNodeWithoutWrapper("Call Type", "conditionwhatcalltype"),
@@ -673,6 +677,7 @@
 			"Is Group Call" : $.fn.getSubMenuAddNodeWithoutWrapper("Is Group Call", "conditionwhatisgroupcall"),						
 			"Is Video Call" : $.fn.getSubMenuAddNodeWithoutWrapper("Is Video Call", "conditionwhatisvideo"),			
 			"Is CLIR" : $.fn.getSubMenuAddNodeWithoutWrapper("Is CLIR", "conditionwhatisclir"),
+			"Is Redirected" : $.fn.getSubMenuAddNodeWithoutWrapper("Is Redirected", "conditionwhatisredirected"),			
 			"Group Member Count" : $.fn.getSubMenuAddNodeWithoutWrapper("Group Member Count", "conditionwhatgroupmembercount"),
 			"Usage Domain" : $.fn.getSubMenuAddNodeWithoutWrapper("Usage Domain", "conditionwhatusagedomain"),			
 			"Call Type" : $.fn.getSubMenuAddNodeWithoutWrapper("Call Type", "conditionwhatcalltype"),
@@ -716,6 +721,7 @@
 			"Is Group Call" : $.fn.getSubMenuAddNodeWithoutWrapper("Is Group Call", "conditionwhatisgroupcall"),						
 			"Is Video Call" : $.fn.getSubMenuAddNodeWithoutWrapper("Is Video Call", "conditionwhatisvideo"),			
 			"Is CLIR" : $.fn.getSubMenuAddNodeWithoutWrapper("Is CLIR", "conditionwhatisclir"),
+			"Is Redirected" : $.fn.getSubMenuAddNodeWithoutWrapper("Is Redirected", "conditionwhatisredirected"),			
 			"Group Member Count" : $.fn.getSubMenuAddNodeWithoutWrapper("Group Member Count", "conditionwhatgroupmembercount"),					
 			"Usage Domain" : $.fn.getSubMenuAddNodeWithoutWrapper("Usage Domain", "conditionwhatusagedomain"),			
 			"Call Type" : $.fn.getSubMenuAddNodeWithoutWrapper("Call Type", "conditionwhatcalltype"),
@@ -751,6 +757,7 @@
 			"Is Group Call" : $.fn.getSubMenuAddNodeWithoutWrapper("Is Group Call", "conditionwhatisgroupcall"),						
 			"Is Video Call" : $.fn.getSubMenuAddNodeWithoutWrapper("Is Video Call", "conditionwhatisvideo"),			
 			"Is CLIR" : $.fn.getSubMenuAddNodeWithoutWrapper("Is CLIR", "conditionwhatisclir"),
+			"Is Redirected" : $.fn.getSubMenuAddNodeWithoutWrapper("Is Redirected", "conditionwhatisredirected"),			
 			"Group Member Count" : $.fn.getSubMenuAddNodeWithoutWrapper("Group Member Count", "conditionwhatgroupmembercount"),					
 			"Usage Domain" : $.fn.getSubMenuAddNodeWithoutWrapper("Usage Domain", "conditionwhatusagedomain"),			
 			"Call Type" : $.fn.getSubMenuAddNodeWithoutWrapper("Call Type", "conditionwhatcalltype"),
@@ -769,6 +776,7 @@
 			"Is Group Call" : $.fn.getSubMenuAddNodeWithoutWrapper("Is Group Call", "conditionwhatisgroupcall"),						
 			"Is Video Call" : $.fn.getSubMenuAddNodeWithoutWrapper("Is Video Call", "conditionwhatisvideo"),			
 			"Is CLIR" : $.fn.getSubMenuAddNodeWithoutWrapper("Is CLIR", "conditionwhatisclir"),
+			"Is Redirected" : $.fn.getSubMenuAddNodeWithoutWrapper("Is Redirected", "conditionwhatisredirected"),			
 			"Group Member Count" : $.fn.getSubMenuAddNodeWithoutWrapper("Group Member Count", "conditionwhatgroupmembercount"),					
 			"Usage Domain" : $.fn.getSubMenuAddNodeWithoutWrapper("Usage Domain", "conditionwhatusagedomain"),			
 			"Call Type" : $.fn.getSubMenuAddNodeWithoutWrapper("Call Type", "conditionwhatcalltype"),
@@ -786,6 +794,7 @@
 			"Counter" : $.fn.getSubMenuAddNodeWithoutWrapper("Counter", "conditionwhatcounter"),
 			"Usage Domain" : $.fn.getSubMenuAddNodeWithoutWrapper("Usage Domain", "conditionwhatusagedomain"),			
 			"Call Type" : $.fn.getSubMenuAddNodeWithoutWrapper("Call Type", "conditionwhatcalltype"),
+			"Is Redirected" : $.fn.getSubMenuAddNodeWithoutWrapper("Is Redirected", "conditionwhatisredirected"),			
 			"Main Product Bill Type" : $.fn.getSubMenuAddNodeWithoutWrapper("Main Product Bill Type", "conditionwhatbilltype"),		
 			"Feature Code" : $.fn.getSubMenuAddNodeWithoutWrapper("Feature Code", "conditionwhatfeaturecode"),						
 			"Main Product" : $.fn.getSubMenuAddNodeWithoutWrapper("Main Product", "conditionwhatmainproduct"),
@@ -804,6 +813,7 @@
 			"Is Group Call" : $.fn.getSubMenuAddNodeWithoutWrapper("Is Group Call", "conditionwhatisgroupcall"),						
 			"Is Video Call" : $.fn.getSubMenuAddNodeWithoutWrapper("Is Video Call", "conditionwhatisvideo"),			
 			"Is CLIR" : $.fn.getSubMenuAddNodeWithoutWrapper("Is CLIR", "conditionwhatisclir"),
+			"Is Redirected" : $.fn.getSubMenuAddNodeWithoutWrapper("Is Redirected", "conditionwhatisredirected"),			
 			"Group Member Count" : $.fn.getSubMenuAddNodeWithoutWrapper("Group Member Count", "conditionwhatgroupmembercount"),					
 			"Usage Domain" : $.fn.getSubMenuAddNodeWithoutWrapper("Usage Domain", "conditionwhatusagedomain"),			
 			"Call Type" : $.fn.getSubMenuAddNodeWithoutWrapper("Call Type", "conditionwhatcalltype"),

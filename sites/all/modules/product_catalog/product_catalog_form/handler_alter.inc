@@ -181,6 +181,7 @@ function _add_ajax_submit_callback($form_id, &$form) {
 		case 'conditionwhatisvideo_node_form':
 		case 'conditionwhatisgroupcall_node_form' :
 		case 'conditionwhatisclir_node_form' :
+		case 'conditionwhatisredirected_node_form' :
 		case 'conditionwhatgroupmembercount_node_form' :
 		case 'conditionwhereserviceid_node_form' :
 		case 'conditionwhenactivationday_node_form' :
@@ -1549,9 +1550,9 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 		case 'conditionwhatisvideo_node_form' :
 		case 'conditionwhatisgroupcall_node_form' :
 		case 'conditionwhatisclir_node_form' :
+		case 'conditionwhatisredirected_node_form' :
 		case 'conditionwhatgroupmembercount_node_form' :
 		case 'conditionwhaturlgroupfactors_node_form' :
-		case 'conditionwhatisclir_node_form' :
 		case 'conditionwhatgroupmembercount_node_form' :
 		case 'conditionwhencustomfactors_node_form' :
 		case 'conditionwhendayofmonth_node_form' :
@@ -1559,7 +1560,6 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 		case 'conditionwhentimeslotfactors_node_form' :
 		case 'conditionwhencallingzonetime_node_form' :
 		case 'conditionwhenholidayfactors_node_form' :
-
 		case 'conditionwhenweekfactors_node_form' :
 		case 'conditionwherecountryfactors_node_form' :
 		case 'conditionwherecustomfactors_node_form' :
