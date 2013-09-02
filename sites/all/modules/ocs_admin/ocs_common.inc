@@ -548,7 +548,8 @@ function _compare_content( $field, $before, $after)
 		$label = isset($value['label'])? $value['label']: null;
 		
 		// skip in case field_collection embed other field_collection
-		if($value['display']['default']['module'] == 'field_collection' ) continue;
+		if(isset($value['display']['default']['module']) 
+			&& ($value['display']['default']['module'] == 'field_collection')) continue;
 		
 		if ( is_array( $v1)){
 		
