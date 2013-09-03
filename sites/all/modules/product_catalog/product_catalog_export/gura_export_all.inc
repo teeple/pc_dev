@@ -433,7 +433,7 @@ function set_rating_type_info($field_name , &$type_info)
 				{
 					//taxonomy_term
 					$type_info['type'] = 'string';
-					$type_info['size'] = '64';
+					$type_info['size'] = '128';
 					//$type_info['type'] = $field_info['type'];
 				   // dsm($factor_name);
 					//dsm($field_info);
@@ -450,7 +450,7 @@ function set_rating_type_info($field_name , &$type_info)
 			// php
 			//dsm($field_handler);
 			$type_info['type'] = 'string';
-			$type_info['size'] = '64';
+			$type_info['size'] = '128';
 		}
 	}
 }
@@ -1503,7 +1503,7 @@ function rating_rules_export_from_view($title, $view_name, $display_name, $nid=N
                         else
                         {
                             $factorMeta['type'] = 'string';
-                            $factorMeta['size'] = '64';
+                            $factorMeta['size'] = '128';
                         }
                     }
                     else
