@@ -50,10 +50,16 @@ function _product_for_export($exportItemNids = NULL, $isExternalAPI = FALSE, $ta
         
         $recurringTypes = array(1 => 'Daily', 3 => '1/3 Monthly', 4 => 'Monthly');
         
-        $nonUsage['recurring_charge'] = _get_recurring_amount($node->nid, $recurringScheme);
+        if( isset($recurringScheme) ) {
+        	$nonUsage['recurring_charge'] = _get_recurring_amount($node->nid, $recurringScheme);
+        } else {
+        	$nonUsage['recurring_charge'] = NULL;
+        }
+        
         //custom recurring charge by CS
         $recurring_by_cs_view_result = views_get_view_result('list_actionpricechargerecurring', 'panel_pane_5', $node->nid);
-		if(!empty($recurring_by_cs_view_result)){
+        dsm($recurring_by_cs_view_result, 'recurring_by_cs_view_result');
+        if(!empty($recurring_by_cs_view_result)){
 			$recurring_by_cs = current($recurring_by_cs_view_result);
 			$nonUsage['recurring_scheme']['charge_by_cs_scheme']['use'] = isset($recurring_by_cs->field_field_set_use[0]['raw']['value'])?$recurring_by_cs->field_field_set_use[0]['raw']['value']:"0";
 			if(isset($recurring_by_cs->field_field_charging_cycle_type[0]['raw']['value'])){
@@ -61,6 +67,10 @@ function _product_for_export($exportItemNids = NULL, $isExternalAPI = FALSE, $ta
 			}else{
 				$nonUsage['recurring_scheme']['charge_by_cs_scheme']['rcrr_period_type'] = NULL;
 			}
+			foreach($recurring_by_cs->field_field_subscriber_status as $status) {
+				$nonUsage['recurring_scheme']['charge_by_cs_scheme']['subscriber_status'][] = $status['rendered']['#title'];
+			}
+			
 		} else {
 			$nonUsage['recurring_scheme']['charge_by_cs_scheme'] = NULL;
 		}
@@ -427,8 +437,6 @@ function _get_recurring_amount($productNid, $recurringSchemes) {
     $view -> set_arguments(array('0' => $productNid));
     $view -> execute();
     
-    dsm($view->result, 'view->result');
-    
  	foreach($view->result as $chargingItem){
         $charge = array();
         $billingType = !empty($chargingItem->field_field_billing_type)? $chargingItem->field_field_billing_type[0]['rendered']['#markup']: NULL;
@@ -443,7 +451,6 @@ function _get_recurring_amount($productNid, $recurringSchemes) {
     	$recurringCharge = array();
     	$recurringCharge['billing_type'] = $billType;
     	foreach($recurringSchemes['charge_scheme'] as $recurringScheme) {
-    		dsm($recurringScheme, 'recurringScheme');
     		if($recurringScheme['billing_type'] == $billType) {
     			$recurringCharge['period_type'] = $recurring_period_type[$recurringScheme['rcrr_period_type']];
     		}
@@ -1012,13 +1019,26 @@ function _get_attribute_exceptions($product) {
 		$temp = current($viewResult);
 		$prdAttributeDepositCondition = node_load($temp->nid);
 		
+		$conditionLists = array();
+		$depositGroupCodeTerm = taxonomy_term_load($prdAttributeDepositCondition->field_deposit_group_code['und'][0]['tid']);
+		$minimumDeposit = $prdAttributeDepositCondition->field_minimum_deposit['und'][0]['value'];
+		$conditionLists['default']['deposit_group_code'] = _get_common_code($depositGroupCodeTerm);
+		$conditionLists['default']['minimum_deposit'] = $minimumDeposit;
+		
 		$preRequisiteConditions = array();
 		
 		$viewResult = views_get_view_result('list_actiondepositcondition', 'panel_pane_2', $prdAttributeDepositCondition->nid);
 		dsm($viewResult, 'viewResult');
 		foreach($viewResult as $item) {
+			$depositCondition = array();
+			$productId = $item->field_field_product_id[0]['raw']['value'];
+			$groupCode = _get_common_code($item->field_field_deposit_group_code[0]['raw']['taxonomy_term']);
+			$minimumDeposit = $item->field_field_minimum_deposit[0]['raw']['value'];
 
+			$preRequisiteConditions[$productId][] = array('deposit_group_code' => $groupCode, 'minimum_deposit' => $minimumDeposit);
 		}
+		$conditionLists['custom'] = $preRequisiteConditions;
+		$retArray['prerequisite_deposit_condition'] = $conditionLists;
 		
 	} else {
 		$retArray['prerequisite_deposit_condition'] = NULL;
