@@ -58,7 +58,6 @@ function _product_for_export($exportItemNids = NULL, $isExternalAPI = FALSE, $ta
         
         //custom recurring charge by CS
         $recurring_by_cs_view_result = views_get_view_result('list_actionpricechargerecurring', 'panel_pane_5', $node->nid);
-        dsm($recurring_by_cs_view_result, 'recurring_by_cs_view_result');
         if(!empty($recurring_by_cs_view_result)){
 			$recurring_by_cs = current($recurring_by_cs_view_result);
 			$nonUsage['recurring_scheme']['charge_by_cs_scheme']['use'] = isset($recurring_by_cs->field_field_set_use[0]['raw']['value'])?$recurring_by_cs->field_field_set_use[0]['raw']['value']:"0";
@@ -162,7 +161,6 @@ function _get_deposit_scheme($product,$target=NULL) {
 		if( count($viewResult) >  0 ) { 
 			
 			$prdAttributeDeposit = current($viewResult);
-			dsm($prdAttributeDeposit, 'prdAttributeDeposit');
 			$depositAmount = !empty($prdAttributeDeposit->field_field_deposit_amount)? $prdAttributeDeposit->field_field_deposit_amount[0]['raw']['value']: NULL;
 			
 			$thresholdCounterNid = !empty($prdAttributeDeposit->field_field_threshold_counter)? $prdAttributeDeposit->field_field_threshold_counter[0]['raw']['nid']: NULL;
@@ -1028,7 +1026,6 @@ function _get_attribute_exceptions($product) {
 		$preRequisiteConditions = array();
 		
 		$viewResult = views_get_view_result('list_actiondepositcondition', 'panel_pane_2', $prdAttributeDepositCondition->nid);
-		dsm($viewResult, 'viewResult');
 		foreach($viewResult as $item) {
 			$depositCondition = array();
 			$productId = $item->field_field_product_id[0]['raw']['value'];
