@@ -50,10 +50,16 @@ function _product_for_export($exportItemNids = NULL, $isExternalAPI = FALSE, $ta
         
         $recurringTypes = array(1 => 'Daily', 3 => '1/3 Monthly', 4 => 'Monthly');
         
-        $nonUsage['recurring_charge'] = _get_recurring_amount($node->nid, $recurringScheme);
+        if( isset($recurringScheme) ) {
+        	$nonUsage['recurring_charge'] = _get_recurring_amount($node->nid, $recurringScheme);
+        } else {
+        	$nonUsage['recurring_charge'] = NULL;
+        }
+        
         //custom recurring charge by CS
         $recurring_by_cs_view_result = views_get_view_result('list_actionpricechargerecurring', 'panel_pane_5', $node->nid);
-		if(!empty($recurring_by_cs_view_result)){
+        dsm($recurring_by_cs_view_result, 'recurring_by_cs_view_result');
+        if(!empty($recurring_by_cs_view_result)){
 			$recurring_by_cs = current($recurring_by_cs_view_result);
 			$nonUsage['recurring_scheme']['charge_by_cs_scheme']['use'] = isset($recurring_by_cs->field_field_set_use[0]['raw']['value'])?$recurring_by_cs->field_field_set_use[0]['raw']['value']:"0";
 			if(isset($recurring_by_cs->field_field_charging_cycle_type[0]['raw']['value'])){
@@ -61,6 +67,12 @@ function _product_for_export($exportItemNids = NULL, $isExternalAPI = FALSE, $ta
 			}else{
 				$nonUsage['recurring_scheme']['charge_by_cs_scheme']['rcrr_period_type'] = NULL;
 			}
+			foreach($recurring_by_cs->field_field_subscriber_status as $status) {
+				$nonUsage['recurring_scheme']['charge_by_cs_scheme']['subscriber_status'][] = $status['rendered']['#title'];
+			}
+			
+		} else {
+			$nonUsage['recurring_scheme']['charge_by_cs_scheme'] = NULL;
 		}
 			  
         $nonUsage['onetime_charge'] = _get_onetime_charge($node -> nid);
@@ -150,11 +162,12 @@ function _get_deposit_scheme($product,$target=NULL) {
 		if( count($viewResult) >  0 ) { 
 			
 			$prdAttributeDeposit = current($viewResult);
-			$depositAmount = $prdAttributeDeposit->field_field_deposit_amount[0]['raw']['value'];
+			dsm($prdAttributeDeposit, 'prdAttributeDeposit');
+			$depositAmount = !empty($prdAttributeDeposit->field_field_deposit_amount)? $prdAttributeDeposit->field_field_deposit_amount[0]['raw']['value']: NULL;
 			
-			$thresholdCounterNid = $prdAttributeDeposit->field_field_threshold_counter[0]['raw']['nid'];
-
-			if(isset($prdAttributeDeposit->field_field_deposit_group_code)) {
+			$thresholdCounterNid = !empty($prdAttributeDeposit->field_field_threshold_counter)? $prdAttributeDeposit->field_field_threshold_counter[0]['raw']['nid']: NULL;
+			
+			if(!empty($prdAttributeDeposit->field_field_deposit_group_code)) {
 					$depositGroupCodeTid = $prdAttributeDeposit->field_field_deposit_group_code[0]['raw']['tid'];
 				} else {
 					$depositGroupCodeTid = NULL;
@@ -424,9 +437,9 @@ function _get_recurring_amount($productNid, $recurringSchemes) {
     $view -> set_arguments(array('0' => $productNid));
     $view -> execute();
     
-    foreach($view->result as $chargingItem){
+ 	foreach($view->result as $chargingItem){
         $charge = array();
-        $billingType = $chargingItem->field_field_billing_type[0]['rendered']['#markup'];
+        $billingType = !empty($chargingItem->field_field_billing_type)? $chargingItem->field_field_billing_type[0]['rendered']['#markup']: NULL;
         $charge['amount'] = $chargingItem->field_field_price_amount_float[0]['raw']['value'];
         $charge['on'] = $chargingItem->field_field_pricing_cycle_type[0]['rendered']['#markup'];
         $defaultItems[$billingType] = $charge;
@@ -505,7 +518,7 @@ function _get_recurring_scheme($productNid) {
 			    }
 			    break;
 			default:
-				$retArray['charge_scheme'][] = array('biling_type' => $productBillType->name, 'rcrr_period_type' => $charge_recurring_cycle[$productBillType->name]);
+				$retArray['charge_scheme'][] = array('billing_type' => $productBillType->name, 'rcrr_period_type' => $charge_recurring_cycle[$productBillType->name]);
 				break;
 		}
     }
@@ -851,13 +864,6 @@ function _get_attribute_exceptions($product) {
             $benefit['recommend_vas'] = NULL;
         }
 				
-				/*
-        if (!empty($benefitNode -> field_attribute_recurring['und'][0]['safe_value'])) {
-            $benefit['recurring'] = $benefitNode -> field_attribute_recurring['und'][0]['safe_value'];
-        } else {
-            $benefit['recurring'] = NULL;
-        }
-        */
         $retArray['benefit'] = $benefit;
     }
 
@@ -1002,7 +1008,42 @@ function _get_attribute_exceptions($product) {
 		$retArray['next_join_confirm'] = NULL;
 		$retArray['expire_date'] = NULL;
 	}
-	    
+	
+	// VAS이면서, PostPaid, Hybrid일 경우에 deposit condition을 적용.
+	$productTypeTerm = taxonomy_term_load($product->field_product_type['und'][0]['tid']);
+	$billingTypeTerm = taxonomy_term_load($product->field_billing_type['und'][0]['tid']);
+	if( ($productTypeTerm->name == 'VAS')
+		&& ( ($billingTypeTerm->name == 'Postpaid') || ($billingTypeTerm->name == 'Hybrid')) ) {
+		
+		$viewResult = views_get_view_result('list_prdattributedepositcondition', 'panel_pane_1', $product->nid);
+		$temp = current($viewResult);
+		$prdAttributeDepositCondition = node_load($temp->nid);
+		
+		$conditionLists = array();
+		$depositGroupCodeTerm = taxonomy_term_load($prdAttributeDepositCondition->field_deposit_group_code['und'][0]['tid']);
+		$minimumDeposit = $prdAttributeDepositCondition->field_minimum_deposit['und'][0]['value'];
+		$conditionLists['default']['deposit_group_code'] = _get_common_code($depositGroupCodeTerm);
+		$conditionLists['default']['minimum_deposit'] = $minimumDeposit;
+		
+		$preRequisiteConditions = array();
+		
+		$viewResult = views_get_view_result('list_actiondepositcondition', 'panel_pane_2', $prdAttributeDepositCondition->nid);
+		dsm($viewResult, 'viewResult');
+		foreach($viewResult as $item) {
+			$depositCondition = array();
+			$productId = $item->field_field_product_id[0]['raw']['value'];
+			$groupCode = _get_common_code($item->field_field_deposit_group_code[0]['raw']['taxonomy_term']);
+			$minimumDeposit = $item->field_field_minimum_deposit[0]['raw']['value'];
+
+			$preRequisiteConditions[$productId][] = array('deposit_group_code' => $groupCode, 'minimum_deposit' => $minimumDeposit);
+		}
+		$conditionLists['custom'] = $preRequisiteConditions;
+		$retArray['prerequisite_deposit_condition'] = $conditionLists;
+		
+	} else {
+		$retArray['prerequisite_deposit_condition'] = NULL;
+	}
+	
     return $retArray;
 }
 
