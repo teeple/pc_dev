@@ -494,8 +494,11 @@ function ocs_admin_message_form_submit($form, &$form_state)
 		node_save($node);
 		$msg_create_or_update = ($isNew == TRUE)? 'created.':'updated.';
 		drupal_set_message($node->type. ' ' . $node->title . ' has been '. $msg_create_or_update);
-		//$form_state['rebuild'] = TRUE;
-		drupal_goto('config/ocs/message', array('fragment' => 'quickset-ocs_quick_tab=1'));
+		
+		$path = 'config/ocs/message/'.$node->nid.'/edit';
+		$options = array();
+		$options['fragment'] = 'quickset-ocs_quick_tab=1';
+		drupal_goto($path, $options);
 	}else if ($values['op'] == 'Delete') {
 		node_delete($form['#nid']);
 	}
@@ -671,10 +674,11 @@ function ocs_admin_message_group_form_submit($form, &$form_state)
 	if ($values['op'] == 'Save') {
 		if ($form['#op'] == 'edit') {
 			$node = node_load($form['#nid']);
-            $totalList = $node->field_ocs_message_list['und'];
-            
-            $remains = array_slice($totalList,0,$values['num_values']);
-            $node->field_ocs_message_list['und'] = $remains;
+			if(isset($node->field_ocs_message_list['und'])){
+      	$totalList = $node->field_ocs_message_list['und'];
+				$remains = array_slice($totalList,0,$values['num_values']);
+      	$node->field_ocs_message_list['und'] = $remains;
+			}
 		}
 		else {
 			$node = ocs_admin_get_new_node('ocs_message_group');
@@ -685,6 +689,11 @@ function ocs_admin_message_group_form_submit($form, &$form_state)
 			$node->field_ocs_message_list['und'][$i - 1]['nid'] = $values['value' . $i];
 		}
 		node_save($node);
+		
+		$path = 'config/ocs/message/group/'.$node->nid.'/edit';
+		$options = array();
+		$options['fragment'] = 'quickset-ocs_quick_tab=1';
+		drupal_goto($path, $options);
 	}else if ($values['op'] == 'Delete') {
 		node_delete($form['#nid']);
 	}
