@@ -35,7 +35,7 @@ function _unset_menu_items(&$form, $formId) {
 		case 'simpleproductoffering_node_form':
 		case 'packetsgsn_node_form' :
 		case 'packetsgsnip_node_form' :
-    case 'vouchercardtype_node_form':
+    	case 'vouchercardtype_node_form':
 		case 'roaming_zone_node_form':
 		case 'locationfactor_node_form':
 			$firstPathName = current(explode('/', current_path()));
@@ -45,7 +45,6 @@ function _unset_menu_items(&$form, $formId) {
 			break;
 		case 'productgroup_node_form' :
 		case 'productchange_node_form' :
-		case 'ocs_admin_message_form':
 			$unsetDeleteButton = FALSE;
 			break;
 			
@@ -2065,6 +2064,11 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			unset($form['field_weight']);
 			_unset_menu_items($form, $form_id);
 			$form['field_ref_product']['#type'] = 'hidden';
+			break;
+			
+		case 'actiondepositcondition_node_form' :
+			$form['field_ref_prddepositcondition']['#type'] = 'hidden';
+			_unset_menu_items($form, $form_id);
 			break;
 
 		case 'conditionwhatratinggroup_node_form' :

@@ -47,7 +47,14 @@
 					      		"image" : "/sites/default/files/icons/attribute_detail.png"
 					      	},
 				},
-
+				
+				'attribute_prerequisite_deposit_condition': {
+					"valid_children" : "none",
+					  		"icon" : {
+					      		"image" : "/sites/default/files/icons/attribute_detail.png"
+					      	},
+				},
+				
 				'attribute_number_saving': {
 					"valid_children" : "none",
 					  		"icon" : {

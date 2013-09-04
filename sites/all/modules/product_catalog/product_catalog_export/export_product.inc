@@ -61,6 +61,8 @@ function _product_for_export($exportItemNids = NULL, $isExternalAPI = FALSE, $ta
 			}else{
 				$nonUsage['recurring_scheme']['charge_by_cs_scheme']['rcrr_period_type'] = NULL;
 			}
+		} else {
+			$nonUsage['recurring_scheme']['charge_by_cs_scheme'] = NULL;
 		}
 			  
         $nonUsage['onetime_charge'] = _get_onetime_charge($node -> nid);
@@ -150,11 +152,12 @@ function _get_deposit_scheme($product,$target=NULL) {
 		if( count($viewResult) >  0 ) { 
 			
 			$prdAttributeDeposit = current($viewResult);
-			$depositAmount = $prdAttributeDeposit->field_field_deposit_amount[0]['raw']['value'];
+			dsm($prdAttributeDeposit, 'prdAttributeDeposit');
+			$depositAmount = !empty($prdAttributeDeposit->field_field_deposit_amount)? $prdAttributeDeposit->field_field_deposit_amount[0]['raw']['value']: NULL;
 			
-			$thresholdCounterNid = $prdAttributeDeposit->field_field_threshold_counter[0]['raw']['nid'];
-
-			if(isset($prdAttributeDeposit->field_field_deposit_group_code)) {
+			$thresholdCounterNid = !empty($prdAttributeDeposit->field_field_threshold_counter)? $prdAttributeDeposit->field_field_threshold_counter[0]['raw']['nid']: NULL;
+			
+			if(!empty($prdAttributeDeposit->field_field_deposit_group_code)) {
 					$depositGroupCodeTid = $prdAttributeDeposit->field_field_deposit_group_code[0]['raw']['tid'];
 				} else {
 					$depositGroupCodeTid = NULL;
@@ -424,9 +427,11 @@ function _get_recurring_amount($productNid, $recurringSchemes) {
     $view -> set_arguments(array('0' => $productNid));
     $view -> execute();
     
-    foreach($view->result as $chargingItem){
+    dsm($view->result, 'view->result');
+    
+ 	foreach($view->result as $chargingItem){
         $charge = array();
-        $billingType = $chargingItem->field_field_billing_type[0]['rendered']['#markup'];
+        $billingType = !empty($chargingItem->field_field_billing_type)? $chargingItem->field_field_billing_type[0]['rendered']['#markup']: NULL;
         $charge['amount'] = $chargingItem->field_field_price_amount_float[0]['raw']['value'];
         $charge['on'] = $chargingItem->field_field_pricing_cycle_type[0]['rendered']['#markup'];
         $defaultItems[$billingType] = $charge;
@@ -438,6 +443,7 @@ function _get_recurring_amount($productNid, $recurringSchemes) {
     	$recurringCharge = array();
     	$recurringCharge['billing_type'] = $billType;
     	foreach($recurringSchemes['charge_scheme'] as $recurringScheme) {
+    		dsm($recurringScheme, 'recurringScheme');
     		if($recurringScheme['billing_type'] == $billType) {
     			$recurringCharge['period_type'] = $recurring_period_type[$recurringScheme['rcrr_period_type']];
     		}
@@ -505,7 +511,7 @@ function _get_recurring_scheme($productNid) {
 			    }
 			    break;
 			default:
-				$retArray['charge_scheme'][] = array('biling_type' => $productBillType->name, 'rcrr_period_type' => $charge_recurring_cycle[$productBillType->name]);
+				$retArray['charge_scheme'][] = array('billing_type' => $productBillType->name, 'rcrr_period_type' => $charge_recurring_cycle[$productBillType->name]);
 				break;
 		}
     }
@@ -851,13 +857,6 @@ function _get_attribute_exceptions($product) {
             $benefit['recommend_vas'] = NULL;
         }
 				
-				/*
-        if (!empty($benefitNode -> field_attribute_recurring['und'][0]['safe_value'])) {
-            $benefit['recurring'] = $benefitNode -> field_attribute_recurring['und'][0]['safe_value'];
-        } else {
-            $benefit['recurring'] = NULL;
-        }
-        */
         $retArray['benefit'] = $benefit;
     }
 
@@ -1002,7 +1001,29 @@ function _get_attribute_exceptions($product) {
 		$retArray['next_join_confirm'] = NULL;
 		$retArray['expire_date'] = NULL;
 	}
-	    
+	
+	// VAS이면서, PostPaid, Hybrid일 경우에 deposit condition을 적용.
+	$productTypeTerm = taxonomy_term_load($product->field_product_type['und'][0]['tid']);
+	$billingTypeTerm = taxonomy_term_load($product->field_billing_type['und'][0]['tid']);
+	if( ($productTypeTerm->name == 'VAS')
+		&& ( ($billingTypeTerm->name == 'Postpaid') || ($billingTypeTerm->name == 'Hybrid')) ) {
+		
+		$viewResult = views_get_view_result('list_prdattributedepositcondition', 'panel_pane_1', $product->nid);
+		$temp = current($viewResult);
+		$prdAttributeDepositCondition = node_load($temp->nid);
+		
+		$preRequisiteConditions = array();
+		
+		$viewResult = views_get_view_result('list_actiondepositcondition', 'panel_pane_2', $prdAttributeDepositCondition->nid);
+		dsm($viewResult, 'viewResult');
+		foreach($viewResult as $item) {
+
+		}
+		
+	} else {
+		$retArray['prerequisite_deposit_condition'] = NULL;
+	}
+	
     return $retArray;
 }
 

@@ -969,6 +969,9 @@ function product_catalog_ajax_add_modal_content($js = NULL, $contentType, $refNo
 	$form_state = array();
 	
 	switch($contentType){
+		case 'actiondepositcondition':
+			$node->field_ref_prddepositcondition['und'][0]['nid'] = $refNodeNid;
+			break;
 		case 'rate':
 			$node->field_ref_tariffplan['und'][0]['nid'] = $refNodeNid;
 			$node->field_ref_tree_tid['und'][0]['value'] = $refTreeTid;
@@ -1025,16 +1028,16 @@ function product_catalog_ajax_add_modal_content($js = NULL, $contentType, $refNo
 		case 'numberspecialfactors':
 			$node->field_ref_numberspecial['und'][0]['nid'] = $refNodeNid;
 			break;
-    case 'roaming_zone':
-      $node->field_roaming_carrier['und'][0]['nid'] = $refNodeNid;
-      break;
-    case 'prddowngradepenalty':
-      $node->field_ref_product['und'][0]['nid'] = $refNodeNid;
-      break;
-    case 'mapbasicrateidd':
-      $node->field_ref_tariffplan_idd_carrier['und'][0]['nid'] = $addParam;
-      break;
-	}
+	    case 'roaming_zone':
+	      $node->field_roaming_carrier['und'][0]['nid'] = $refNodeNid;
+	      break;
+	    case 'prddowngradepenalty':
+	      $node->field_ref_product['und'][0]['nid'] = $refNodeNid;
+	      break;
+	    case 'mapbasicrateidd':
+	      $node->field_ref_tariffplan_idd_carrier['und'][0]['nid'] = $addParam;
+	      break;
+    }
 	
 	if (!$js) {
 		return drupal_get_form($contentType . '_node_form', $node);
@@ -1046,7 +1049,7 @@ function product_catalog_ajax_add_modal_content($js = NULL, $contentType, $refNo
   
   switch($contentType){
     case 'mapbasicratedomestic':
-		case 'mapbasicratedomesticincoming':
+	case 'mapbasicratedomesticincoming':
     case 'mapbasicrateroaming':
     case 'mapbasicrateidd':  
       $form_state['build_info']['args'][] = $refNodeNid;
@@ -1101,9 +1104,13 @@ function product_catalog_ajax_add_modal_content($js = NULL, $contentType, $refNo
 				$output[] = ctools_ajax_command_reload();
 				break;
 			case 'loyaltypointfactors':
+			case 'actiondepositcondition':
 				$defaultTabIndex = $addParam;
+				$prdAttributeDepositCondition = node_load($refNodeNid);
+				$refNodeNid = $prdAttributeDepositCondition->field_ref_product['und'][0]['nid'];
 				$output[] = _add_command_after_dismiss_modal($refNodeNid,$refTreeTid,$defaultTabIndex);
 				break;
+				
 			case 'actionsetcounter':
 			case 'actionsetcounteronbonus':
 			case 'actionsetbonusonrecurringcharge':
@@ -2324,6 +2331,12 @@ function product_catalog_modal_form_edit_modal_content($js = NULL, $contentType,
         		break;
         	case 'loyaltypointfactors':
         		$defaultTabIndex = $addParam;
+		       	$output[] = _add_command_after_dismiss_modal($refNodeNid,$refTreeTid,$defaultTabIndex);
+		       	break;
+        	case 'actiondepositcondition':
+        		$prdAttributeDepositCondition = node_load($refNodeNid);
+        		$refNodeNid = $prdAttributeDepositCondition->field_ref_product['und'][0]['nid'];
+        		$defaultTabIndex = $addParam;
         		$output[] = _add_command_after_dismiss_modal($refNodeNid,$refTreeTid,$addParam);
         		break;
         	case 'numberspecialfactors':
@@ -2391,6 +2404,13 @@ function product_catalog_ajax_delete_from_view($nodeNid, $refNodeNid, $additiona
 		case 'loyaltypointfactors':
 			$refTreeTid = $additionalParam;
 			$defaultTabIndex = $indexParam;
+			$output[] = _add_command_after_dismiss_modal($refNodeNid,$refTreeTid,$defaultTabIndex);
+			break;
+		case 'actiondepositcondition':
+			$prdAttributeDepositCondition = node_load($refNodeNid);
+			$refNodeNid = $prdAttributeDepositCondition->field_ref_product['und'][0]['nid'];
+			$refTreeTid = $additionalParam;
+			$defaultTabIndex= $indexParam;
 			$output[] = _add_command_after_dismiss_modal($refNodeNid,$refTreeTid,$defaultTabIndex);
 			break;
 		case 'domestic_ratinggroup':
