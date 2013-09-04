@@ -539,6 +539,7 @@ function ocs_admin_message_delete_confirm_submit($form, &$form_state)
 
 	drupal_set_message(t('The message "@name" has been delete.', array('@name' => $form['#name'])));
 }
+*/
 
 // add or edit message group
 function ocs_admin_message_group_form($form, &$form_state, $nid = NULL, $op = NULL)
@@ -629,7 +630,7 @@ function ocs_admin_message_group_form($form, &$form_state, $nid = NULL, $op = NU
 
 	return $form;
 }
-*/
+
 
 // return the format string of a message group
 function ocs_message_group_format($nid)
