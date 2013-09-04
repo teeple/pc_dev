@@ -333,10 +333,12 @@ function ocs_admin_message_form($form, &$form_state, $nid = NULL, $op = NULL)
 		'#value' => t('Save'),
 	);
 
-	$form['actions']['cancel'] = array(
-		'#type' => 'submit',
-		'#value' => t('Cancel'),
-	);
+	if(isset($node)){//edit
+		$form['actions']['delete'] = array(
+			'#type' => 'submit',
+			'#value' => t('Delete'),
+		);
+	}
 	
 	/*
 	$form_state['rebuild'] = TRUE;
@@ -404,6 +406,11 @@ function ocs_admin_message_form_validate($form, &$form_state)
 					}
 				}
 			}
+		}
+	}else if ($values['op'] == 'Delete'){
+		$view_result = views_get_view_result('list_message_reference', 'panel_pane_1', $form['#nid']);
+		if (count($view_result) > 0) {
+			form_set_error('title', "You should remove the items referencing this message!");
 		}
 	}
 }
@@ -487,14 +494,15 @@ function ocs_admin_message_form_submit($form, &$form_state)
 		node_save($node);
 		$msg_create_or_update = ($isNew == TRUE)? 'created.':'updated.';
 		drupal_set_message($node->type. ' ' . $node->title . ' has been '. $msg_create_or_update);
+		//$form_state['rebuild'] = TRUE;
+		drupal_goto('config/ocs/message', array('fragment' => 'quickset-ocs_quick_tab=1'));
+	}else if ($values['op'] == 'Delete') {
+		node_delete($form['#nid']);
 	}
-	$form_state['rebuild'] = TRUE;
-	$destinationUrl = _get_redirect_url_in_create_n_list('list', 'ocs_messages', NULL);
-	dsm($destinationUrl, 'destinationUrl');
-	$form_state['redirect'] = 'config/ocs/message';
 	return;
 }
 
+/*
 function ocs_admin_message_delete_confirm($form, &$form_state, $nid)
 {
 	$name = isset($_GET['name']) ? strip_tags($_GET['name']) : 'Message ID:' . $nid;
@@ -621,6 +629,7 @@ function ocs_admin_message_group_form($form, &$form_state, $nid = NULL, $op = NU
 
 	return $form;
 }
+*/
 
 // return the format string of a message group
 function ocs_message_group_format($nid)

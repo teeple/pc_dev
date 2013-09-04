@@ -35,7 +35,7 @@ function _unset_menu_items(&$form, $formId) {
 		case 'simpleproductoffering_node_form':
 		case 'packetsgsn_node_form' :
 		case 'packetsgsnip_node_form' :
-    	case 'vouchercardtype_node_form':
+    case 'vouchercardtype_node_form':
 		case 'roaming_zone_node_form':
 		case 'locationfactor_node_form':
 			$firstPathName = current(explode('/', current_path()));
@@ -45,6 +45,7 @@ function _unset_menu_items(&$form, $formId) {
 			break;
 		case 'productgroup_node_form' :
 		case 'productchange_node_form' :
+		case 'ocs_admin_message_form':
 			$unsetDeleteButton = FALSE;
 			break;
 			
