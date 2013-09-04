@@ -307,7 +307,6 @@ function edit_pane_callback($form, &$form_state) {
 }
 
 function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
-
 	load_required_js_css_before_ajax_load();
 
 	if ((isset($form['#attributes']) && isset($form['#attributes']['class'])) && gettype($form['#attributes']['class']) == 'array') {
@@ -315,10 +314,9 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 	}
 	
 	switch($form_id) {
+		case 'ocs_global_config_node_form':
+		case 'ocs_admin_message_form' :	
 		case 'ocs_ussd_code_node_form' :
-			_unset_menu_items($form, $form_id);
-			break;
-		case 'ocs_admin_message_form' :
 			_unset_menu_items($form, $form_id);
 			break;
 		case 'mapbasicrateroaming_node_form' :
