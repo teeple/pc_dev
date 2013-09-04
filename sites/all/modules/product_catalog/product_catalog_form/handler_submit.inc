@@ -266,7 +266,7 @@ function _create_default_items_by_voca($product, $voca_name) {
 								$fieldValue = '\'' . $product -> field_product_id['und'][0]['value'] . '_' . $now . '\'';
 								$ridHistory[] = $now;
 							} else if ($fieldValue == '$productBillType') {
-								$fieldValue = '\'' . $product -> field_billing_type['und'][0]['tid'];
+								$fieldValue = $product -> field_billing_type['und'][0]['tid'];
 							} 
 							$command = '$node->' . $fieldName . '=' . $fieldValue . ';';
 							eval($command);
