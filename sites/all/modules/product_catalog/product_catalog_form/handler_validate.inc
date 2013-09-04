@@ -152,6 +152,8 @@ function included_special_char($title) {
 function product_catalog_form_node_validate($node, $form, &$form_state) {
 	if ($form_state['values']['op'] == 'Delete') {
 		switch($form['form_id']['#value']) {
+			case '':
+				break;
 			case 'locationfactor_node_form':
 				$view_result = views_get_view_result('list_location_reference', 'panel_pane_1', $node -> nid);
 				if (count($view_result) > 0) {

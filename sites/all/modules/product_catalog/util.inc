@@ -775,13 +775,16 @@ function _get_redirect_url_in_view_n_delete($viewOrDel, $node) {
 			$url['fragment'] = $fragments[$node -> type];
 			break;
 		case 'ocs_messages':
-			$fragments = array('ocs_messages' => 'quickset-ocs_quick_tab=1');
+		case 'ocs_message_group':
+		  $paths = array('ocs_messages' => 'config/ocs/message', 'ocs_message_group' => 'config/ocs/message/group');
+			$fragment = 'quickset-ocs_quick_tab=1';
+			
 			if ($viewOrDel == 'view') {
-				$url['path'] = 'config/ocs/message/edit' . $node -> nid;
+				$url['path'] = $paths[$node -> type] . '/' . $node -> nid . '/edit';
 			} else {
 				$url['path'] = 'config/ocs/message';
 			}
-			$url['fragment'] = $fragments[$node -> type];
+			$url['fragment'] = $fragment;
 			break;
 		case 'ocs_ussd_code':
 			$fragments = array('ocs_ussd_code' => 'quickset-ocs_quick_tab=2');
@@ -910,7 +913,8 @@ function _get_redirect_url_in_create_n_list($addOrList, $content_type, $params) 
 			$url['fragment'] = $fragments[$content_type];
 			break;
 		case 'ocs_messages':
-			$fragments = array('ocs_messages' => 'quickset-ocs_quick_tab=1');
+		case 'ocs_message_group':
+			$fragments = array('ocs_messages' => 'config/ocs/message', 'ocs_message_group' => 'config/ocs/message');
 			if($addOrList == 'add') {
 				$url['path'] = 'config/ocs/message/' . $addOrList;
 			} else {

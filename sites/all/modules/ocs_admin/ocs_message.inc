@@ -541,6 +541,15 @@ function ocs_admin_message_delete_confirm_submit($form, &$form_state)
 }
 */
 
+function ocs_admin_message_group_form_validate($form, &$form_state){
+	if ($form_state['values']['op'] == 'Delete') {
+		$view_result = views_get_view_result('list_message_reference', 'panel_pane_1', $form['#nid']);
+		if (count($view_result) > 0) {
+			form_set_error('title', "You should remove the items referencing this message!");
+		}
+	}
+}
+
 // add or edit message group
 function ocs_admin_message_group_form($form, &$form_state, $nid = NULL, $op = NULL)
 {
@@ -554,7 +563,11 @@ function ocs_admin_message_group_form($form, &$form_state, $nid = NULL, $op = NU
 		if ($node) {
 			$title = $node->title;
 			if (!isset($form_state['values']['num_values'])) {
-				$num_values = count($node->field_ocs_message_list['und']);
+				if(isset($node->field_ocs_message_list['und'])){
+					$num_values = count($node->field_ocs_message_list['und']);
+				}else{
+					$num_values = 0;
+				}
 			}
 		}
 	}
@@ -623,14 +636,15 @@ function ocs_admin_message_group_form($form, &$form_state, $nid = NULL, $op = NU
 		'#value' => t('Save'),
 	);
 
-	$form['actions']['cancel'] = array(
-		'#type' => 'submit',
-		'#value' => t('Cancel'),
-	);
+	if ($op == 'edit') {
+		$form['actions']['delete'] = array(
+			'#type' => 'submit',
+			'#value' => t('Delete'),
+		);
+	}
 
 	return $form;
 }
-
 
 // return the format string of a message group
 function ocs_message_group_format($nid)
@@ -670,7 +684,9 @@ function ocs_admin_message_group_form_submit($form, &$form_state)
 		for ($i = 1; $i <= $values['num_values']; $i++) {
 			$node->field_ocs_message_list['und'][$i - 1]['nid'] = $values['value' . $i];
 		}
-		// node_save($node);
+		node_save($node);
+	}else if ($values['op'] == 'Delete') {
+		node_delete($form['#nid']);
 	}
 }
 
