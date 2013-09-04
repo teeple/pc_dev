@@ -417,6 +417,9 @@ function ocs_admin_message_form_validate($form, &$form_state)
 
 function ocs_admin_message_form_submit($form, &$form_state)
 {
+	ctools_include('node.pages', 'node', '');
+	ctools_include('ajax');
+	
 	$values = $form_state['values'];
 	$isNew = FALSE;
 	// dpm($values, 'submit values');
@@ -498,6 +501,7 @@ function ocs_admin_message_form_submit($form, &$form_state)
 		$path = 'config/ocs/message/'.$node->nid.'/edit';
 		$options = array();
 		$options['fragment'] = 'quickset-ocs_quick_tab=1';
+		unset($_GET['destination']);
 		drupal_goto($path, $options);
 	}else if ($values['op'] == 'Delete') {
 		node_delete($form['#nid']);
@@ -693,6 +697,7 @@ function ocs_admin_message_group_form_submit($form, &$form_state)
 		$path = 'config/ocs/message/group/'.$node->nid.'/edit';
 		$options = array();
 		$options['fragment'] = 'quickset-ocs_quick_tab=1';
+		unset($_GET['destination']);
 		drupal_goto($path, $options);
 	}else if ($values['op'] == 'Delete') {
 		node_delete($form['#nid']);
