@@ -412,6 +412,10 @@ function ocs_admin_message_form_validate($form, &$form_state)
 		if (count($view_result) > 0) {
 			form_set_error('title', "You should remove the items referencing this message!");
 		}
+		$view_result = views_get_view_result('list_message_reference_from_field_collection', 'panel_pane_1', $form['#nid']);
+		if (count($view_result) > 0) {
+			form_set_error('title', "You should remove the items referencing this message!");
+		}
 	}
 }
 
@@ -551,6 +555,10 @@ function ocs_admin_message_delete_confirm_submit($form, &$form_state)
 function ocs_admin_message_group_form_validate($form, &$form_state){
 	if ($form_state['values']['op'] == 'Delete') {
 		$view_result = views_get_view_result('list_message_reference', 'panel_pane_1', $form['#nid']);
+		if (count($view_result) > 0) {
+			form_set_error('title', "You should remove the items referencing this message!");
+		}
+		$view_result = views_get_view_result('list_message_reference_from_field_collection', 'panel_pane_1', $form['#nid']);
 		if (count($view_result) > 0) {
 			form_set_error('title', "You should remove the items referencing this message!");
 		}
