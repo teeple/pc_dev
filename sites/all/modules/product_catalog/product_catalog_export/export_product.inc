@@ -1032,7 +1032,7 @@ function _get_attribute_exceptions($product) {
 			$groupCode = _get_common_code($item->field_field_deposit_group_code[0]['raw']['taxonomy_term']);
 			$minimumDeposit = $item->field_field_minimum_deposit[0]['raw']['value'];
 
-			$preRequisiteConditions[$productId][] = array('deposit_group_code' => $groupCode, 'minimum_deposit' => $minimumDeposit);
+			$preRequisiteConditions[]= array($productId => array('deposit_group_code' => $groupCode, 'minimum_deposit' => $minimumDeposit));
 		}
 		$conditionLists['custom'] = $preRequisiteConditions;
 		$retArray['prerequisite_deposit_condition'] = $conditionLists;
