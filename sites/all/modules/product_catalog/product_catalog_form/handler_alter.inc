@@ -11,7 +11,6 @@ function _unset_menu_items(&$form, $formId) {
 	unset($form['revision_information']);
 
 	$unsetDeleteButton = TRUE;
-
 	switch($formId) {
 		case 'numberingplan_domestic_node_form' :
 		case 'numberingplan_idd_node_form' :
@@ -35,7 +34,7 @@ function _unset_menu_items(&$form, $formId) {
 		case 'simpleproductoffering_node_form':
 		case 'packetsgsn_node_form' :
 		case 'packetsgsnip_node_form' :
-    	case 'vouchercardtype_node_form':
+    case 'vouchercardtype_node_form':
 		case 'roaming_zone_node_form':
 		case 'locationfactor_node_form':
 			$firstPathName = current(explode('/', current_path()));
@@ -45,6 +44,9 @@ function _unset_menu_items(&$form, $formId) {
 			break;
 		case 'productgroup_node_form' :
 		case 'productchange_node_form' :
+		case 'ocs_ussd_code_node_form':
+		case 'ocs_admin_message_form':
+		case 'ocs_message_group_node_form':
 			$unsetDeleteButton = FALSE;
 			break;
 			
@@ -205,7 +207,7 @@ function _add_ajax_submit_callback($form_id, &$form) {
 		case 'conditionwhenvaliddate_node_form' :
 		case 'backupandmigrateconfiguration_node_form' :
 		case 'ocs_global_config_node_form' :
-		case 'ocs_ussd_code_node_form':
+		//case 'ocs_ussd_code_node_form':
 			$change = TRUE;
 			break;
 

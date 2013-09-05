@@ -15,6 +15,16 @@ function product_catalog_form_node_submit($node, $form, &$form_state) {
 	$form_id = $form['form_id']['#value'];
 
 	switch($form_id) {
+		case 'ocs_ussd_code_node_form':
+			if ($form_state['values']['op'] == 'Save') {
+				node_save($node);
+				$path = 'config/ocs/ussd/'.$node->nid;
+				$options = array();
+				$options['fragment'] = 'quickset-ocs_quick_tab=2';
+				unset($_GET['destination']);
+				drupal_goto($path, $options);
+			}
+			break;
 		case 'prodoffernonusagesubitem_node_form' :
 		case 'actionpricefactors_node_form' :
 			$node -> uid = $user -> uid;

@@ -789,7 +789,7 @@ function _get_redirect_url_in_view_n_delete($viewOrDel, $node) {
 		case 'ocs_ussd_code':
 			$fragments = array('ocs_ussd_code' => 'quickset-ocs_quick_tab=2');
 			if ($viewOrDel == 'view') {
-				$url['path'] = 'config/ocs/ussd/edit' . $node -> nid;
+				$url['path'] = 'config/ocs/ussd/' . $node -> nid;
 			} else {
 				$url['path'] = 'config/ocs/ussd/list';
 			}
