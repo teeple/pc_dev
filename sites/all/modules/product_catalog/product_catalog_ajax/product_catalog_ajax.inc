@@ -387,12 +387,24 @@ function get_children_stored_procedure($nid, $parentId = NULL) {
 
 	$stored_procedure_query = "call pc_dev.getTreeDataView(:nid);";
 	$stored_procedure_result = db_query($stored_procedure_query, array(':nid' => $nid)) -> fetchAll();
-
+	
 	foreach ($stored_procedure_result as $item) {
 
 		switch($item->content_type) {
 			case 'conditioncommonand' :
 				$item -> rel_type = _get_rel_type_on_condition($item);
+			case 'treenodecounter':
+				$treenodecounter_node = node_load($item->nid);
+				$product_node = node_load($treenodecounter_node->field_ref_product['und'][0]['nid']);
+				$product_type_term = taxonomy_term_load($product_node->field_product_type['und'][0]['tid']);
+				if($product_type_term->name != 'Main'){
+					switch($item->rel_type){
+						case "tree_node_counter_main_basic_prepaid":
+						case "tree_node_counter_main_basic_postpaid":
+							$item->rel_type .= '_removable';
+							break;
+					}
+				}
 				break;
 		}
 

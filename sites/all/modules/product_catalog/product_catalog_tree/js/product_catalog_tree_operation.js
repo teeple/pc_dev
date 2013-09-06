@@ -158,7 +158,7 @@
 				$.fn.loadForm(node,null,event.data.defaultTabIndex);
 			}
 		});
-	}
+	};
 	
 	// select_load_form -> selectItemHandler
 	//

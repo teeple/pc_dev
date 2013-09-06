@@ -33,12 +33,12 @@
 				};
 				*/
 				break;
+			case "tree_node_counter_main_basic_prepaid_removable":
+			case "tree_node_counter_main_basic_postpaid_removable":
 			case 'tree_node_counter_main_rollover_prepaid':
 			case 'tree_node_counter_main_rollover_postpaid':
 			case "tree_node_counter_main_optional_prepaid":
 			case "tree_node_counter_main_optional_postpaid":
-			case "tree_node_counter_accumulated_basic_prepaid":
-			case "tree_node_counter_accumulated_basic_postpaid":
 			case 'actionblockfactors':
 			case 'tree_node_counter_accumulated_optional_prepaid':
 			case 'tree_node_counter_accumulated_optional_postpaid':

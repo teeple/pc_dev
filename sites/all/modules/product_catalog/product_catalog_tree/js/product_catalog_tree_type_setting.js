@@ -184,6 +184,8 @@
 				"counter_main" : {
 					"valid_children" : ["tree_node_counter_main_basic_prepaid", 									
 															"tree_node_counter_main_basic_postpaid",
+															"tree_node_counter_main_basic_prepaid_removable", 									
+															"tree_node_counter_main_basic_postpaid_removable",
 															"tree_node_counter_main_optional_prepaid",
 															"tree_node_counter_main_optional_postpaid",
 				            					"tree_node_counter_main_rollover_prepaid",
@@ -193,10 +195,10 @@
 					},
 				},
 				"counter_accumulated": {
-						"valid_children" : ['tree_node_counter_accumulated_optional_prepaid',
+						"valid_children" : ["tree_node_counter_accumulated_optional_prepaid",
 																"tree_node_counter_accumulated_optional_postpaid",
-																'tree_node_counter_accumulated_rollover_prepaid',
-																'tree_node_counter_accumulated_rollover_prepaid'],
+																"tree_node_counter_accumulated_rollover_prepaid",
+																"tree_node_counter_accumulated_rollover_prepaid"],
 				        	"icon" : {
 				        			"image" : "/sites/default/files/icons/inbox-document.png"
 				        		},
@@ -204,6 +206,8 @@
 				"counter_shared": {
 						"valid_children" : ["tree_node_counter_main_basic_prepaid", 									
 																"tree_node_counter_main_basic_postpaid",
+																"tree_node_counter_main_basic_prepaid_removable", 									
+																"tree_node_counter_main_basic_postpaid_removable",
 																"tree_node_counter_main_optional_prepaid",
 																"tree_node_counter_main_optional_postpaid",
 						          					"tree_node_counter_main_rollover_prepaid",
@@ -231,6 +235,20 @@
 				            }
 				},
 				
+				"tree_node_counter_main_basic_prepaid_removable" : {
+					"valid_children" : [ "conditioncommonand" ],
+				            "icon" : {
+						"image" : "/sites/default/files/icons/Basic_Prepaid.png"
+				            }
+				},
+				"tree_node_counter_main_basic_postpaid_removable" : {
+					"valid_children" : [ "conditioncommonand" ],
+				            "icon" : {
+						"image" : "/sites/default/files/icons/Basic_Postpaid.png"
+				            }
+				},
+				
+				
 				"tree_node_counter_main_optional_prepaid" : {
 					"valid_children" : [ "conditioncommonand" ],
 				            "icon" : {
@@ -255,7 +273,7 @@
 						"image" : "/sites/default/files/icons/Rollover_Postpaid.png"
 				    }
 				},
-				
+												
 				"tree_node_counter_accumulated_optional_prepaid" : {
 					"valid_children" : [ "conditioncommonand" ],
 				            "icon" : {

@@ -153,6 +153,8 @@
 					            "check_move" : function (m) {
 					            		if(m.o.attr('rel') == 'tree_node_counter_main_basic_prepaid' 
 					            			|| m.o.attr('rel') == 'tree_node_counter_main_basic_postpaid'
+					            			|| m.o.attr('rel') == 'tree_node_counter_main_basic_prepaid_removable' 
+					            			|| m.o.attr('rel') == 'tree_node_counter_main_basic_postpaid_removable'
 					            			|| m.o.attr('rel') == 'tree_node_counter_main_optional_prepaid' 
 					            			|| m.o.attr('rel') == 'tree_node_counter_main_optional_postpaid' 
 					            			|| m.o.attr('rel') == 'tree_node_counter_main_rollover_prepaid' 
