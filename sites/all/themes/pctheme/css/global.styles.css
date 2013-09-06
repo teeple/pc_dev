@@ -3100,6 +3100,17 @@ div.div_float_left {
 	margin-left: 5px;
 }
 
+.jstree-default li[rel="treenodepacketpredefined"] > a:after {
+	content:"";
+    background:url('/sites/default/files/icon/icon_l_r.png');
+    display: block;
+    margin-top: 5px;
+	width: 16px;
+	height: 9px;
+	float: right;
+	margin-left: 5px;
+}
+
 .jstree-default li[rel="treenodepacketdefaultqos"] > a:after {
 	content:"";
     background:url('/sites/default/files/icon/icon_l_r.png');
