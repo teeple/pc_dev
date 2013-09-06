@@ -2456,45 +2456,673 @@ div.div_float_left {
 }
 
 
-.jstree-default li[rel="attribute_allowed_device"] > a:after {content: " >> ";font-weight: bold;}
-.jstree-default li[rel="attribute_required_device"] > a:after {content: " >> ";font-weight: bold;}
-.jstree-default li[rel="attribute_available_channel"] > a:after {content: " >> ";font-weight: bold;}
-.jstree-default li[rel="attribute_subscriber_lifecycle_scheme"] > a:after {content: " >> ";font-weight: bold;}
-.jstree-default li[rel="data_tariffplan_predefined"] > a:after {content: " >> ";font-weight: bold;}
-.jstree-default li[rel="data_tariffplan_dynamic"] > a:after {content: " >> ";font-weight: bold;}
-.jstree-default li[rel="data_tariffplan_qos"] > a:after {content: " >> ";font-weight: bold;}
+.jstree-default li[rel="attribute_benefits"] > a:before  {
+	content:"";
+    background:url('/sites/default/files/icon/icon_l.png'), no-repeat;
+    display: block;
+    margin-top: 5px;
+	width: 16px;
+	height: 9px;
+	float: right;
+	margin-left: 3px;
+}
 
-.jstree-default li[rel*="packaged_"] > a:after {content: " >> ";font-weight: bold;}
-.jstree-default li[rel*="counter_"] > a:after {content: " >> ";font-weight: bold;}
-.jstree-default li[rel*="tree_node_counter"] > a:after {content: " >> ";font-weight: bold;}
-.jstree-default li[rel*="conditioncommonand"] > a:after {content: " >> ";font-weight: bold;}
-.jstree-default li[rel*="nonusage_subscription_"] > a:after {content: " >> ";font-weight: bold;}
-.jstree-default li[rel*="nonusage_activation_"] > a:after {content: " >> ";font-weight: bold;}
-.jstree-default li[rel*="nonusage_unsubscription_"] > a:after {content: " >> ";font-weight: bold;}
-.jstree-default li[rel*="nonusage_recharge_"] > a:after {content: " >> ";font-weight: bold;}
-.jstree-default li[rel*="nonusage_usageend_"] > a:after {content: " >> ";font-weight: bold;}
-.jstree-default li[rel*="nonusage_recurring_"] > a:after {content: " >> ";font-weight: bold;}
-.jstree-default li[rel*="nonusage_deposit"] > a:after {content: " >> ";font-weight: bold;}
-.jstree-default li[rel*="nonusage_threshold"] > a:after {content: " >> ";font-weight: bold;}
-.jstree-default li[rel*="nonusage_unittransfer_"] > a:after {content: " >> ";font-weight: bold;}
-.jstree-default li[rel*="nonusage_activation_"] > a:after {content: " >> ";font-weight: bold;}
-.jstree-default li[rel*="nonusage_otheronetimecharge"] > a:after {content: " >> ";font-weight: bold;}
-.jstree-default li[rel="nonusage_fee_recurring_custom"] > a:after {content: " >> ";font-weight: bold;}
+.jstree-default li[rel="attribute_allowed_prefix"] > a:before  {
+	content:"";
+    background:url('/sites/default/files/icon/icon_l.png'), no-repeat;
+    display: block;
+    margin-top: 5px;
+	width: 16px;
+	height: 9px;
+	float: right;
+	margin-left: 3px;
+}
+.jstree-default li[rel="attribute_number_saving"] > a:after  {
+	content:"";
+    background:url('/sites/default/files/icon/icon_l.png');
+    display: block;
+    margin-top: 5px;
+	width: 16px;
+	height: 9px;
+	float: right;
+	margin-left: 3px;
+}
 
-.jstree-default li[rel*="treeNodeCustom"] > a:after {content: " >> ";font-weight: bold;}
-.jstree-default li[rel*="action"] > a:after {content: " >> ";font-weight: bold;}
 
-.jstree-default li[rel="data_tariffplan_basicrate"] > a:after {content: " >> ";font-weight: bold;}
-.jstree-default li[rel="basicrate_data"] > a:after {content: " >> ";font-weight: bold;}
+.jstree-default li[rel="attribute_featurecode"] > a:after {
+	content:"";
+    background:url('/sites/default/files/icon/icon_r.png');
+    display: block;
+    margin-top: 5px;
+	width: 16px;
+	height: 9px;
+	float: right;
+	margin-left: 3px;
+}
 
-.jstree-default li[rel*="sms_tariffplan_specialnumber"] > a:after {content: " >> ";font-weight: bold;}
-.jstree-default li[rel*="voice_tariffplan_specialnumber"] > a:after {content: " >> ";font-weight: bold;}
+.jstree-default li[rel="attribute_allowed_device"] > a:after  {
+	content:"";
+    background:url('/sites/default/files/icon/icon_r.png');
+    display: block;
+    margin-top: 5px;
+	width: 16px;
+	height: 9px;
+	float: right;
+	margin-left: 3px;
+}
+.jstree-default li[rel="attribute_required_device"] > a:after  {
+	content:"";
+    background:url('/sites/default/files/icon/icon_r.png');
+    display: block;
+    margin-top: 5px;
+	width: 16px;
+	height: 9px;
+	float: right;
+	margin-left: 3px;
+}
+.jstree-default li[rel="attribute_available_channel"] > a:after  {
+	content:"";
+    background:url('/sites/default/files/icon/icon_r.png');
+    display: block;
+    margin-top: 5px;
+	width: 16px;
+	height: 9px;
+	float: right;
+	margin-left: 3px;
+}
+.jstree-default li[rel="attribute_subscriber_lifecycle_scheme"] > a:after  {
+	content:"";
+    background:url('/sites/default/files/icon/icon_r.png');
+    display: block;
+    margin-top: 5px;
+	width: 16px;
+	height: 9px;
+	float: right;
+	margin-left: 3px;
+}
 
-.jstree-default li[rel*="treenodepacket"] > a:after {content: " >> ";font-weight: bold;}
+.jstree-default li[rel="treenodelifecyclescheme"] > a:after  {
+	content:"";
+    background:url('/sites/default/files/icon/icon_l_r.png');
+    display: block;
+    margin-top: 5px;
+	width: 16px;
+	height: 9px;
+	float: right;
+	margin-left: 3px;
+}
 
-.jstree-default li[rel*="usage_"] > a:after {content: " >> ";font-weight: bold;}
-.jstree-default li[rel="unittransfer"] > a:after {content: " >> ";font-weight: bold;}
-.jstree-default li[rel="Rates"] > a:after {content: " >> ";font-weight: bold;}
+.jstree-default li[rel="prdattributepackaged"] > a:after  {
+	content:"";
+    background:url('/sites/default/files/icon/icon_l_r.png');
+    display: block;
+    margin-top: 5px;
+	width: 16px;
+	height: 9px;
+	float: right;
+	margin-left: 3px;
+}
+
+.jstree-default li[rel="available_product"] > a:after  {
+	content:"";
+    background:url('/sites/default/files/icon/icon_r.png');
+    display: block;
+    margin-top: 5px;
+	width: 16px;
+	height: 9px;
+	float: right;
+	margin-left: 3px;
+}
+
+.jstree-default li[rel="member_product"] > a:after  {
+	content:"";
+    background:url('/sites/default/files/icon/icon_r.png');
+    display: block;
+    margin-top: 5px;
+	width: 16px;
+	height: 9px;
+	float: right;
+	margin-left: 3px;
+}
+
+.jstree-default li[rel="prdattributefeaturecode"] > a:after  {
+	content:"";
+    background:url('/sites/default/files/icon/icon_r.png');
+    display: block;
+    margin-top: 5px;
+	width: 16px;
+	height: 9px;
+	float: right;
+	margin-left: 3px;
+}
+
+.jstree-default li[rel="data_tariffplan_predefined"] > a:after  {
+	content:"";
+    background:url('/sites/default/files/icon/icon_r.png');
+    display: block;
+    margin-top: 5px;
+	width: 16px;
+	height: 9px;
+	float: right;
+	margin-left: 3px;
+}
+.jstree-default li[rel="data_tariffplan_dynamic"] > a:after  {
+	content:"";
+    background:url('/sites/default/files/icon/icon_r.png');
+    display: block;
+    margin-top: 5px;
+	width: 16px;
+	height: 9px;
+	float: right;
+	margin-left: 3px;
+}
+.jstree-default li[rel="data_tariffplan_qos"] > a:after {
+	content:"";
+    background:url('/sites/default/files/icon/icon_r.png');
+    display: block;
+    margin-top: 5px;
+	width: 16px;
+	height: 9px;
+	float: right;
+	margin-left: 3px;
+}
+
+.jstree-default li[rel*="packaged_"] > a:after {
+	content:"";
+    background:url('/sites/default/files/icon/icon_r.png');
+    display: block;
+    margin-top: 5px;
+	width: 16px;
+	height: 9px;
+	float: right;
+	margin-left: 3px;
+}
+
+.jstree-default li[rel="counter_main"] > a:after {
+	content:"";
+    background:url('/sites/default/files/icon/icon_r.png');
+    display: block;
+    margin-top: 5px;
+	width: 16px;
+	height: 9px;
+	float: right;
+	margin-left: 3px;
+}
+
+.jstree-default li[rel="counter_accumulated"] > a:after {
+	content:"";
+    background:url('/sites/default/files/icon/icon_r.png');
+    display: block;
+    margin-top: 5px;
+	width: 16px;
+	height: 9px;
+	float: right;
+	margin-left: 3px;
+}
+
+.jstree-default li[rel*="tree_node_counter"] > a:after {
+	content:"";
+    background:url('/sites/default/files/icon/icon_l_r.png');
+    display: block;
+    margin-top: 5px;
+	width: 16px;
+	height: 9px;
+	float: right;
+	margin-left: 3px;
+}
+
+.jstree-default li[rel*="conditioncommonand"] > a:after {
+	content:"";
+    background:url('/sites/default/files/icon/icon_r.png'), no-repeat;
+    display: block;
+    margin-top: 5px;
+	width: 16px;
+	height: 9px;
+	float: right;
+	margin-left: 3px;
+}
+
+.jstree-default li[rel^="conditionwh"] > a:after {
+	content:"";
+    background:url('/sites/default/files/icon/icon_l_r.png');
+    display: block;
+    margin-top: 5px;
+	width: 16px;
+	height: 9px;
+	float: right;
+	margin-left: 3px;
+}
+
+.jstree-default li[rel^="nonusage_subscription_"] > a:after{
+	content:"";
+    background:url('/sites/default/files/icon/icon_r.png');
+    display: block;
+    margin-top: 5px;
+	width: 16px;
+	height: 9px;
+	float: right;
+	margin-left: 3px;
+}
+
+.jstree-default li[rel*="nonusage_activation_"] > a:after {
+	content:"";
+    background:url('/sites/default/files/icon/icon_r.png');
+    display: block;
+    margin-top: 5px;
+	width: 16px;
+	height: 9px;
+	float: right;
+	margin-left: 3px;
+}
+
+.jstree-default li[rel="nonusage_recharge"] > a:after {
+	content:"";
+    background:url('/sites/default/files/icon/icon_l.png');
+    display: block;
+    margin-top: 5px;
+	width: 16px;
+	height: 9px;
+	float: right;
+	margin-left: 3px;
+}
+
+.jstree-default li[rel="nonusage_voucher"] > a:after {
+	content:"";
+    background:url('/sites/default/files/icon/icon_l.png');
+    display: block;
+    margin-top: 5px;
+	width: 16px;
+	height: 9px;
+	float: right;
+	margin-left: 3px;
+}
+
+.jstree-default li[rel*="nonusage_recharge_"] > a:after {
+	content:"";
+    background:url('/sites/default/files/icon/icon_r.png');
+    display: block;
+    margin-top: 5px;
+	width: 16px;
+	height: 9px;
+	float: right;
+	margin-left: 3px;
+}
+
+.jstree-default li[rel*="nonusage_usageend_"] > a:after {
+	content:"";
+    background:url('/sites/default/files/icon/icon_r.png');
+    display: block;
+    margin-top: 5px;
+	width: 16px;
+	height: 9px;
+	float: right;
+	margin-left: 3px;
+}
+
+.jstree-default li[rel*="nonusage_deposit"] > a:after {
+	content:"";
+    background:url('/sites/default/files/icon/icon_r.png');
+    display: block;
+    margin-top: 5px;
+	width: 16px;
+	height: 9px;
+	float: right;
+	margin-left: 3px;
+}
+
+.jstree-default li[rel*="treenodedepositscheme"] > a:after {
+	content:"";
+    background:url('/sites/default/files/icon/icon_l_r.png');
+    display: block;
+    margin-top: 5px;
+	width: 16px;
+	height: 9px;
+	float: right;
+	margin-left: 3px;
+}
+
+.jstree-default li[rel*="nonusage_unittransfer_scheme"] > a:after {
+	content:"";
+    background:url('/sites/default/files/icon/icon_r.png');
+    display: block;
+    margin-top: 5px;
+	width: 16px;
+	height: 9px;
+	float: right;
+	margin-left: 3px;
+}
+
+.jstree-default li[rel*="treenodeunittransferscheme"] > a:after {
+	content:"";
+    background:url('/sites/default/files/icon/icon_l_r.png');
+    display: block;
+    margin-top: 5px;
+	width: 16px;
+	height: 9px;
+	float: right;
+	margin-left: 3px;
+}
+
+.jstree-default li[rel*="nonusage_activation_"] > a:after {
+	content:"";
+    background:url('/sites/default/files/icon/icon_r.png');
+    display: block;
+    margin-top: 5px;
+	width: 16px;
+	height: 9px;
+	float: right;
+	margin-left: 3px;
+}
+
+.jstree-default li[rel*="nonusage_otheronetimecharge"] > a:after {
+	content:"";
+    background:url('/sites/default/files/icon/icon_r.png');
+    display: block;
+    margin-top: 5px;
+	width: 16px;
+	height: 9px;
+	float: right;
+	margin-left: 3px;
+}
+
+.jstree-default li[rel*="treenodeotheronetimecharge"] > a:after {
+	content:"";
+    background:url('/sites/default/files/icon/icon_l_r.png');
+    display: block;
+    margin-top: 5px;
+	width: 16px;
+	height: 9px;
+	float: right;
+	margin-left: 3px;
+}
+
+.jstree-default li[rel="nonusage_fee_recurring"] > a:after {
+	content:"";
+    background:url('/sites/default/files/icon/icon_l.png');
+    display: block;
+    margin-top: 5px;
+	width: 16px;
+	height: 9px;
+	float: right;
+	margin-left: 3px;
+}
+
+.jstree-default li[rel="actionpricechargerecurringdefaul"] > a:after {
+	content:"";
+    background:url('/sites/default/files/icon/icon_l.png');
+    display: block;
+    margin-top: 5px;
+	width: 16px;
+	height: 9px;
+	float: right;
+	margin-left: 3px;
+}
+
+.jstree-default li[rel="nonusage_recurring_discount"] > a:after {
+	content:"";
+    background:url('/sites/default/files/icon/icon_r.png');
+    display: block;
+    margin-top: 5px;
+	width: 16px;
+	height: 9px;
+	float: right;
+	margin-left: 3px;
+}
+
+.jstree-default li[rel="nonusage_recurring_discount"] > a:after {
+	content:"";
+    background:url('/sites/default/files/icon/icon_r.png');
+    display: block;
+    margin-top: 5px;
+	width: 16px;
+	height: 9px;
+	float: right;
+	margin-left: 3px;
+}
+
+.jstree-default li[rel="nonusage_fee_recurring_custom"] > a:after {
+	content:"";
+    background:url('/sites/default/files/icon/icon_r.png');
+    display: block;
+    margin-top: 5px;
+	width: 16px;
+	height: 9px;
+	float: right;
+	margin-left: 3px;
+}
+
+.jstree-default li[rel="nonusage_recurring_bonus"] > a:after {
+	content:"";
+    background:url('/sites/default/files/icon/icon_l_r.png');
+    display: block;
+    margin-top: 5px;
+	width: 16px;
+	height: 9px;
+	float: right;
+	margin-left: 3px;
+}
+
+.jstree-default li[rel="actionpricechargerecurringbycs"] > a:after {
+	content:"";
+    background:url('/sites/default/files/icon/icon_l.png');
+    display: block;
+    margin-top: 5px;
+	width: 16px;
+	height: 9px;
+	float: right;
+	margin-left: 3px;
+}
+
+.jstree-default li[rel^="usage_"] > a:after {
+	content:"";
+    background:url('/sites/default/files/icon/icon_r.png');
+    display: block;
+    margin-top: 5px;
+	width: 16px;
+	height: 9px;
+	float: right;
+	margin-left: 3px;
+}
+
+.jstree-default li[rel="actionpricechargeonetime"] > a:after {
+	content:"";
+    background:url('/sites/default/files/icon/icon_l_r.png');
+    display: block;
+    margin-top: -10px;
+	width: 16px;
+	height: 9px;
+	float: right;
+	margin-left: 5px;
+}
+
+.jstree-default li[rel="actionpricediscount"] > a:after {
+	content:"";
+    background:url('/sites/default/files/icon/icon_l_r.png');
+    display: block;
+    margin-top: 5px;
+	width: 16px;
+	height: 9px;
+	float: right;
+	margin-left: 5px;
+}
+
+.jstree-default li[rel="actionpriceallowanceonetime"] > a:after {
+	content:"";
+    background:url('/sites/default/files/icon/icon_l_r.png');
+    display: block;
+    margin-top: 5px;
+	width: 16px;
+	height: 9px;
+	float: right;
+	margin-left: 5px;
+}
+
+.jstree-default li[rel$="_tariffplan_domestic"] > a:after {
+	content:"";
+    background:url('/sites/default/files/icon/icon_l.png');
+    display: block;
+    margin-top: 5px;
+	width: 16px;
+	height: 9px;
+	float: right;
+	margin-left: 5px;
+}
+
+.jstree-default li[rel^="treeNodeCustom"] > a:after {
+	content:"";
+    background:url('/sites/default/files/icon/icon_r.png');
+    display: block;
+    margin-top: 5px;
+	width: 16px;
+	height: 9px;
+	float: right;
+	margin-left: 5px;
+}
+
+.jstree-default li[rel="actionpricechargefactors"] > a:after {
+	content:"";
+    background:url('/sites/default/files/icon/icon_l_r.png');
+    display: block;
+    margin-top: 5px;
+	width: 16px;
+	height: 9px;
+	float: right;
+	margin-left: 5px;
+}
+
+.jstree-default li[rel="actionpricediscountfactors"] > a:after {
+	content:"";
+    background:url('/sites/default/files/icon/icon_l_r.png');
+    display: block;
+    margin-top: 5px;
+	width: 16px;
+	height: 9px;
+	float: right;
+	margin-left: 5px;
+}
+
+.jstree-default li[rel="actionpricecugdiscountfactors"] > a:after {
+	content:"";
+    background:url('/sites/default/files/icon/icon_r.png');
+    display: block;
+    margin-top: 5px;
+	width: 16px;
+	height: 9px;
+	float: right;
+	margin-left: 5px;
+}
+
+.jstree-default li[rel="attribute_prerequisite_deposit_condition"] > a:after {
+	content:"";
+    background:url('/sites/default/files/icon/icon_l.png');
+    display: block;
+    margin-top: 5px;
+	width: 16px;
+	height: 9px;
+	float: right;
+	margin-left: 5px;
+}
+
+.jstree-default li[rel="attribute_deposit_amount"] > a:after {
+	content:"";
+    background:url('/sites/default/files/icon/icon_l.png');
+    display: block;
+    margin-top: 5px;
+	width: 16px;
+	height: 9px;
+	float: right;
+	margin-left: 5px;
+}
+
+.jstree-default li[rel="nonusage_recurring_discount_on_main"] > a:after {
+	content:"";
+    background:url('/sites/default/files/icon/icon_r.png');
+    display: block;
+    margin-top: 5px;
+	width: 16px;
+	height: 9px;
+	float: right;
+	margin-left: 5px;
+}
+
+.jstree-default li[rel="actionblockfactors"] > a:after {
+	content:"";
+    background:url('/sites/default/files/icon/icon_l_r.png');
+    display: block;
+    margin-top: 5px;
+	width: 16px;
+	height: 9px;
+	float: right;
+	margin-left: 5px;
+}
+
+.jstree-default li[rel$="_tariffplan_international"] > a:after {
+	content:"";
+    background:url('/sites/default/files/icon/icon_l.png');
+    display: block;
+    margin-top: 5px;
+	width: 16px;
+	height: 9px;
+	float: right;
+	margin-left: 5px;
+}
+
+.jstree-default li[rel="voice_tariffplan_specialnumber"] > a:after {
+	content:"";
+    background:url('/sites/default/files/icon/icon_r.png');
+    display: block;
+    margin-top: 5px;
+	width: 16px;
+	height: 9px;
+	float: right;
+	margin-left: 5px;
+}
+
+.jstree-default li[rel="treenodespecialnumberscheme"] > a:after {
+	content:"";
+    background:url('/sites/default/files/icon/icon_l_r.png');
+    display: block;
+    margin-top: 5px;
+	width: 16px;
+	height: 9px;
+	float: right;
+	margin-left: 5px;
+}
+
+.jstree-default li[rel="treenodepacketdynamic"] > a:after {
+	content:"";
+    background:url('/sites/default/files/icon/icon_l_r.png');
+    display: block;
+    margin-top: 5px;
+	width: 16px;
+	height: 9px;
+	float: right;
+	margin-left: 5px;
+}
+
+.jstree-default li[rel="treenodepacketdefaultqos"] > a:after {
+	content:"";
+    background:url('/sites/default/files/icon/icon_l_r.png');
+    display: block;
+    margin-top: 5px;
+	width: 16px;
+	height: 9px;
+	float: right;
+	margin-left: 5px;
+}
+
+.jstree-default li[rel="data_tariffplan_basicrate"] > a:after {
+	content:"";
+    background:url('/sites/default/files/icon/icon_r.png');
+    display: block;
+    margin-top: 5px;
+	width: 16px;
+	height: 9px;
+	float: right;
+	margin-left: 5px;
+}
+
+
 
 /*
 .div.main_tree {
