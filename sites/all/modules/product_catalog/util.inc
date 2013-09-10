@@ -585,6 +585,51 @@ function _get_custom_page_in_pcatalog($node) {
 	return $url;
 }
 
+function _get_tree_item_url($refProductNid, $nid) {
+	$product = node_load($refProductNid);
+	
+	$retUrl = NULL;
+	
+	if(!empty($product)) {
+		$serviceDomain = taxonomy_term_load($product -> field_service_type_of_provider['und'][0]['tid']);
+		$productType = taxonomy_term_load($product -> field_product_type['und'][0]['tid']);
+	
+		$url['path'] = '/product_designer/' . $serviceDomain -> name . '/' . $productType -> name . '/edit/' . $product -> nid;
+		$url['tree_item_id'] = 'node_' . $nid;
+		$fragment = array(	'Mobile' => 
+							array('Main' => '', 
+								'VAS' => 'quickset-products_with_cug=1', 
+								'Package' => 'quickset-products_with_cug=2', 
+								'CUG' => 'quickset-products_with_cug=3'), 
+							'IPTV' => array('Main' => '', 
+								'VAS' => 'quickset-products=1',
+								'Package' => 'quickset-products=2'),
+							'Broadband' => array('Main' => '',
+								'VAS' => 'quickset-products=1',
+								'Package' => 'quickset-products=2'),
+							'VoIP' => array('Main' => '',
+								'VAS' => 'quickset-products_with_cug=1',
+								'Package' => 'quickset-products_with_cug=2',
+								'CUG' => 'quickset-products_with_cug=3'),
+							'Satellite' => array('Main' => '',
+								'VAS' => 'quickset-products=1',
+								'Package' => 'quickset-products=2'), 
+							'Dummy' => array('Main' => '', 
+								'VAS' => 'quickset-products=1', 
+								'Package' => 'quickset-products=2'), 
+							'Cross' => array('Main' => '', 
+								'VAS' => 'quickset-products=1', 
+								'Package' => 'quickset-products=2'), 
+						);
+		$url['fragment'] = $fragment[$serviceDomain -> name][$productType -> name];
+		
+		$retUrl = $url['path'] . '?tree_item_id=' . $url['tree_item_id'] . $url['fragment'];
+	}
+	
+	return $retUrl;
+	
+}
+
 function _get_redirect_url_in_view_n_delete($viewOrDel, $node) {
 	$url = array();
 	switch($node->type) {

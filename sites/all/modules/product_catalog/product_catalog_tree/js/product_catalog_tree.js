@@ -209,32 +209,27 @@
 							// 임시로 모두 오픈
 							$(".product_catalog_tree").jstree('open_all');
 							
-//							alert(window.location.href);
-//							
-//							var params = {};
-//							
-//							if (location.search) {
-//							    var parts = location.search.substring(1).split('&');
-//							
-//							    for (var i = 0; i < parts.length; i++) {
-//							        var nv = parts[i].split('=');
-//							        if (!nv[0]) continue;
-//							        params[nv[0]] = nv[1] || true;
-//							    }
-//							}
-//							
-//							// Now you can get the parameters you want like so:
-//							var abc = params.tree_item_id;
-//							console.log(abc);
-//							
-//							if(abc) {
-//								var foundItem = $('#'+abc);
-//								console.log(foundItem);
-//								if(foundItem) {
-//									$(".product_catalog_tree").jstree('close_all');
-//									$(".product_catalog_tree").jstree("select_node", "#"+abc);					
-//								}
-//							}
+							var params = {};
+							if (location.search) {
+							    var parts = location.search.substring(1).split('&');
+							
+							    for (var i = 0; i < parts.length; i++) {
+							        var nv = parts[i].split('=');
+							        if (!nv[0]) continue;
+							        params[nv[0]] = nv[1] || true;
+							    }
+							}
+							
+							// Now you can get the parameters you want like so:
+							var abc = params.tree_item_id;
+							if(abc) {
+								var foundItem = $('#'+abc);
+								console.log(foundItem);
+								if(foundItem) {
+									$(".product_catalog_tree").jstree('close_all');
+									$(".product_catalog_tree").jstree("select_node", "#"+abc);					
+								}
+							}
 						},
 						error: function(jqXHR, textStatus, errorThrown){
 							//console.log('ajax error');
