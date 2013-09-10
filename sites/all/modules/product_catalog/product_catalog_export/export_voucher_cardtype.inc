@@ -25,7 +25,7 @@ function _array_voucher_cardtype($exportItemNids = NULL, $isExternalAPI = FALSE)
     $jsonRecord_vouchers = array();
 	
 	foreach ($viewResult as $record) {
-
+	
         $jsonRecord['id'] = isset($record -> field_field_voucher_id) ? $record -> field_field_voucher_id[0]['rendered']['#markup'] : null;
         $jsonRecord['title'] = isset($record -> node_title) ? $record -> node_title : null;
         $jsonRecord['price'] = !empty($record -> field_field_price_amount_float) ? $record -> field_field_price_amount_float[0]['raw']['value'] : null;
@@ -34,6 +34,7 @@ function _array_voucher_cardtype($exportItemNids = NULL, $isExternalAPI = FALSE)
 
         $jsonRecord['service_operator'] = _add_commoncode($record -> field_field_service_operator);
         $jsonRecord['use_area'] = !empty($record -> field_field_use_area) ? $record -> field_field_use_area[0]['rendered']['#markup'] : null;
+        $jsonRecord['number_grade'] = _get_common_code($record -> field_field_number_grade[0]['raw']['taxonomy_term']);
         $jsonRecord['charge'] = _voucher_cardtype_charge( $record->nid);
         
         $node = node_load($record->nid);

@@ -243,7 +243,7 @@ function _create_threshold_scheme($treeNodeCounter) {
 	$factor->field_ref_thresholdscheme['und'][0]['nid'] = $scheme->nid;
 	node_save($factor);
 	
-	$tmpViewResult = views_get_view_result('list_actionsetonthreshold', 'panel_pane_1', $treeNodeCounter->nid);
+	$tmpViewResult = views_get_view_result('list_actionsetonthreshold', 'panel_pane_2', $treeNodeCounter->nid);
 	
 	if( count($tmpViewResult) > 0 ) {
 		$actionSetThreshold = current($tmpViewResult);
@@ -435,7 +435,7 @@ function _get_recurring_amount($productNid, $recurringSchemes) {
     $view -> set_arguments(array('0' => $productNid));
     $view -> execute();
     
- 		foreach($view->result as $chargingItem){
+ 	foreach($view->result as $chargingItem){
         $charge = array();
         $billingType = !empty($chargingItem->field_field_billing_type)? $chargingItem->field_field_billing_type[0]['rendered']['#markup']: NULL;
         $charge['amount'] = $chargingItem->field_field_price_amount_float[0]['raw']['value'];
@@ -1016,28 +1016,27 @@ function _get_attribute_exceptions($product) {
 		$viewResult = views_get_view_result('list_prdattributedepositcondition', 'panel_pane_1', $product->nid);
 		$temp = current($viewResult);
 		$prdAttributeDepositCondition = node_load($temp->nid);
+		
+		$conditionLists = array();
+		$depositGroupCodeTerm = taxonomy_term_load($prdAttributeDepositCondition->field_deposit_group_code['und'][0]['tid']);
 		$minimumDeposit = $prdAttributeDepositCondition->field_minimum_deposit['und'][0]['value'];
-	
-		if(isset($minimumDeposit) && $minimumDeposit > 0){
-			$conditionLists = array();
-			$depositGroupCodeTerm = taxonomy_term_load($prdAttributeDepositCondition->field_deposit_group_code['und'][0]['tid']);
-			$conditionLists['default']['deposit_group_code'] = _get_common_code($depositGroupCodeTerm);
-			$conditionLists['default']['minimum_deposit'] = $minimumDeposit;
-			
-			$preRequisiteConditions = array();
-			
-			$viewResult = views_get_view_result('list_actiondepositcondition', 'panel_pane_2', $prdAttributeDepositCondition->nid);
-			foreach($viewResult as $item) {
-				$depositCondition = array();
-				$productId = $item->field_field_product_id[0]['raw']['value'];
-				$groupCode = _get_common_code($item->field_field_deposit_group_code[0]['raw']['taxonomy_term']);
-				$minimumDeposit = $item->field_field_minimum_deposit[0]['raw']['value'];
-	
-				$preRequisiteConditions[]= array($productId => array('deposit_group_code' => $groupCode, 'minimum_deposit' => $minimumDeposit));
-			}
-			$conditionLists['custom'] = $preRequisiteConditions;
-			$retArray['prerequisite_deposit_condition'] = $conditionLists;
+		$conditionLists['default']['deposit_group_code'] = _get_common_code($depositGroupCodeTerm);
+		$conditionLists['default']['minimum_deposit'] = $minimumDeposit;
+		
+		$preRequisiteConditions = array();
+		
+		$viewResult = views_get_view_result('list_actiondepositcondition', 'panel_pane_2', $prdAttributeDepositCondition->nid);
+		foreach($viewResult as $item) {
+			$depositCondition = array();
+			$productId = $item->field_field_product_id[0]['raw']['value'];
+			$groupCode = _get_common_code($item->field_field_deposit_group_code[0]['raw']['taxonomy_term']);
+			$minimumDeposit = $item->field_field_minimum_deposit[0]['raw']['value'];
+
+			$preRequisiteConditions[]= array($productId => array('deposit_group_code' => $groupCode, 'minimum_deposit' => $minimumDeposit));
 		}
+		$conditionLists['custom'] = $preRequisiteConditions;
+		$retArray['prerequisite_deposit_condition'] = $conditionLists;
+		
 	} else {
 		$retArray['prerequisite_deposit_condition'] = NULL;
 	}
@@ -1047,6 +1046,7 @@ function _get_attribute_exceptions($product) {
 
 function _get_common_code($term) {
     $data = array();
+
     $voca = taxonomy_vocabulary_machine_name_load($term -> vocabulary_machine_name);
     $data['codeGroup'] = $voca -> name;
     $data['code'] = isset($term -> field_common_code['und'][0]['safe_value']) ? $term -> field_common_code['und'][0]['safe_value'] : $term -> name;
