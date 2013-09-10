@@ -132,7 +132,7 @@ function _is_condition_duplicated($args) {
 	if (!empty($view -> result))
 		return TRUE;
 	return FALSE;
-};
+}
 
 function is_machine_name($argStr) {
 	// if (preg_match('/[^0-9a-zA-Z_]/', $argStr)) {
@@ -143,7 +143,8 @@ function is_machine_name($argStr) {
 }
 
 function included_special_char($title) {
-	if (strpos($title, ',') ) {
+	if (strpos($title, ',') 
+		|| strpos($title, '\'' ) ) {
 		return TRUE;
 	} 
 	return FALSE;
@@ -955,7 +956,11 @@ function product_catalog_form_node_validate($node, $form, &$form_state) {
 						if(count($viewResult) > 0) {
 							form_set_error('title', "Product Name should be unique for this domain");
 						}
-
+						
+						if(included_special_char($productName)) {
+							form_set_error('title', "Special Characters are not allowed for product name");
+						}
+						
 						if (!is_machine_name($form_state['values']['field_product_id']['und'][0]['value'])) {
 							form_set_error('field_product_id', "Only letters, numbers and underscore are allowed for product id");
 						}
@@ -1048,6 +1053,7 @@ function product_catalog_form_node_validate($node, $form, &$form_state) {
 								drupal_set_message($existName . " is defined in Product Downgrade Penlaty", 'error');
 							}
 						}
+						
 					} else{ //relation일 경우
 						//exclusive 설정일 때,
 						$need_to_check_exclusive = FALSE;
