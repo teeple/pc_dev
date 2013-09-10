@@ -227,7 +227,8 @@
 								console.log(foundItem);
 								if(foundItem) {
 									$(".product_catalog_tree").jstree('close_all');
-									$(".product_catalog_tree").jstree("select_node", "#"+abc);					
+									$(".product_catalog_tree").jstree("select_node", "#"+abc);
+									foundItem.trigger('click');
 								}
 							}
 						},
