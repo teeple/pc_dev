@@ -1,5 +1,46 @@
 <?php
 
+function _validate_prdcounterlist($node,$node_unchanged){
+	$oldList = array_values($node_unchanged->field_counter_list['und']);
+	$newList = array_values($node->field_counter_list['und']);
+	
+	$oldCounterNids = array();
+	$newCounterNids = array();
+	foreach($oldList as $record) {
+	   $oldCounterNids[] = current($record);
+	}
+	foreach($newList as $record) {
+	   $newCounterNids[] = current($record);
+	}
+	$changedCounters = array_diff($oldCounterNids, $newCounterNids);
+	//$changedCounters = join('+',$changedCounters);
+	foreach($changedCounters as $item){
+		$view_result = views_get_view_result('list_counter_refereces', 'panel_pane_3', $item,$node->field_ref_product['und'][0]['nid']);
+		$view = views_get_view('list_counter_refereces');
+		$view -> set_display('panel_pane_3');
+		$view -> set_arguments(array('0' => $item, '1' => $node->field_ref_product['und'][0]['nid']));
+		$view -> execute();
+		if(!empty($view->result)){
+			$view_render = $view->render();
+			$counter_node = node_load($item);
+			$render_output = '<div>"'. $counter_node->title . '" counter can not be deleted. It is currently used as below items in the product.</div><br/>';
+			$render_output .= $view_render;
+			$render_output .= '<br/><br/><h3>Your selection of counters will not affect. Please reload content</h3></div>';
+			form_set_error('title',$render_output);
+			
+			$node->field_counter_list = $node_unchanged->field_counter_list;
+			break;
+		}
+	}
+	
+	/*
+	$args = array();
+	$args[0] = $node->field_ref_product['und'][0]['nid'];
+	$args[1] = join('+', $changedCounters);
+	$changedTreeNodeCounterNids = _get_nids_from_views('list_treenodecounter', 'panel_pane_2', $args);
+	*/
+}
+
 function validate_voucher($voucher_nid) {
 	$result = array('is_valid' => TRUE);
 	$voucher_node = node_load($voucher_nid);
