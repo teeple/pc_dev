@@ -1862,7 +1862,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 				$serviceDomainTid = $depositSchemeNode -> field_service_domain['und'][0]['tid'];
 
 				$isDefaultFactor = $form_state['build_info']['args'][0] -> field_is_default_factor['und'][0]['value'];
-
+				
 				if ($isDefaultFactor == 1) {
 					$form['title']['#disabled'] = TRUE;
 
@@ -1878,7 +1878,9 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 						$options[$item -> nid] = $item -> node_title;
 					}
 					$form['field_thismonth_accu_counter']['und']['#options'] = $options;
-
+					
+					dsm('here');
+					
 				} else {
 					$form['field_thismonth_accu_counter']['#type'] = 'hidden';
 				}
