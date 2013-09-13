@@ -173,7 +173,7 @@ function _is_condition_duplicated($args) {
 	if (!empty($view -> result))
 		return TRUE;
 	return FALSE;
-}
+} 
 
 function is_machine_name($argStr) {
 	// if (preg_match('/[^0-9a-zA-Z_]/', $argStr)) {
