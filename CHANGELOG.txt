@@ -1,6 +1,6 @@
 
 Drupal 7.14 2012-05-02
------------------------
+-------------------------
 - Fixed "integrity constraint" fatal errors when rebuilding registry.
 - Fixed custom logo and favicon functionality referencing incorrect paths.
 - Fixed DB Case Sensitivity: Allow BINARY attribute in MySQL.
