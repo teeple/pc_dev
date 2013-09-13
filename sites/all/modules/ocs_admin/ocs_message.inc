@@ -426,8 +426,8 @@ function ocs_admin_message_form_submit($form, &$form_state)
 	
 	$values = $form_state['values'];
 	$isNew = FALSE;
-	// dpm($values, 'submit values');
-	// dpm( $form, 'form');
+	//dpm($values, 'submit values');
+	//dpm( $form, 'form');
 
 	if ($values['op'] == 'Save') {
 		if ($form['#op'] == 'edit') {
@@ -449,7 +449,13 @@ function ocs_admin_message_form_submit($form, &$form_state)
 		// flatten $options[1], counter
 		$options[1] = array_get_value($options[1]);
 		//dpm($options, 'options');
-
+		unset($node->field_ocs_value_type);
+		unset($node->field_ocs_value);
+		unset($node->field_ocs_value_format);
+		unset($node->field_ocs_value_str);
+		unset($node->field_ocs_format);
+		unset($node->field_ocs_export_format);
+		
 		for ($i = 1; $i <= $values['num_values']; $i++) {
 			$type = $values['type:' . $i];
 			$node->field_ocs_value_type['und'][$i - 1]['value'] = $type;
