@@ -1348,15 +1348,19 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 					unset($form['#fieldgroups']['group_cug']);
 					unset($form['#groups']['group_cug']);
 				}
-
+				
 				if ($productTypeTerm -> name != 'Main') {
 					if ($productTypeTerm -> name == 'CUG') {
 						$form['field_billing_type']['und']['#default_value'] = 680;
 						$disabledItems[] = 'field_billing_type';
+
 					} else {
-						// Hybrid Delete
-						unset($form['field_billing_type']['und']['#options'][680]);
+						unset($form['field_billing_type']['und']['#options'][680]); // Hybrid Delete
+						unset($form['field_product_detail_type']);
 					}
+					
+				} else {
+					if( $serviceTypeTerm->name == 'Cross') unset($form['field_product_detail_type']);
 				}
 				
 				$serviceDomainTid = $form['field_service_type_of_provider']['und']['#default_value'][0];
@@ -1408,7 +1412,10 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 				
 				$productTypeTid = $form['field_product_type']['und']['#default_value'][0];
 				$productTypeName = $form['field_product_type']['und']['#options'][$productTypeTid];
-
+				$svcDomainTid = $form['field_service_type_of_provider']['und']['#default_value'][0];
+				
+				$serviceTypeTerm = taxonomy_term_load($svcDomainTid);
+				
 				if ($productTypeName != 'CUG') {
 					$hiddenItems[] = 'field_cug_member_counter';
 					$unsetItems[] = 'field_cug_group_type';
@@ -1418,8 +1425,9 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 				} else {
 					$disabledItems[] = 'field_cug_customer_type';
 				}
-
-				$svcDomainTid = $form['field_service_type_of_provider']['und']['#default_value'][0];
+				
+				if ($productTypeName != 'Main' || $serviceTypeTerm->name == 'Cross') unset($form['field_product_detail_type']);
+				
 				$billingTypeTid = $form['field_billing_type']['und']['#default_value'];
 				$svcOperatorTid = $form['field_service_operator']['und']['#default_value'];
 				
@@ -1879,8 +1887,6 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 					}
 					$form['field_thismonth_accu_counter']['und']['#options'] = $options;
 					
-					dsm('here');
-					
 				} else {
 					$form['field_thismonth_accu_counter']['#type'] = 'hidden';
 				}
@@ -2296,7 +2302,6 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			$form['field_ref_roaming_carrier']['und']['#ajax'] = array('callback' => 'custom_roaming_ratinggroup_callback','wrapper' => 'custom_roaming_ratinggroup');
 			$form['field_ref_roaming_type']['und']['#ajax'] = array('callback' => 'custom_roaming_ratinggroup_callback','wrapper' => 'custom_roaming_ratinggroup');
 			_rendering_filter_roaming_ratinggroup($form,$form_state);
-			//dsm($form);
 			break;
 
 		case 'actionsetbonusonrecurringcharge_node_form' :
@@ -2933,7 +2938,6 @@ function _rendering_filter_roaming_ratinggroup(&$form,&$form_state){
 		$roamingTypeTerm = taxonomy_term_load($roamingTypeTid);
 		switch($roamingTypeTerm->name) {
 			case 'Other PLMN' :
-				//dsm($form,'form');
 				$options = array();
 				$options['_none'] = '- None -';
 				

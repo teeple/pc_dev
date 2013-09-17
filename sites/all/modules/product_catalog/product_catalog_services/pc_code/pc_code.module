@@ -62,8 +62,6 @@ function _commoncode_update_or_create($code_list, $code_group) {
     $vocabulary = taxonomy_vocabulary_machine_name_load($voca_machine_name);
 
     if ($vocabulary == NULL) {
-    	error_log('here1');
-    
 
         // PCatalog에서 사용하지 않는 taxonomy는 만들지 않음.
         $codeGroupVoca = taxonomy_vocabulary_machine_name_load('COMMON_CODE_GROUP_LIST');
@@ -89,8 +87,6 @@ function _commoncode_update_or_create($code_list, $code_group) {
         field_create_instance($field_instance);
     }
     
-    error_log('here2');
-    
     $terms = taxonomy_get_tree($vocabulary -> vid);
     $tids = array();
     foreach ($terms as $term) {
@@ -107,8 +103,6 @@ function _commoncode_update_or_create($code_list, $code_group) {
       $tempTerm = taxonomy_term_load($item->tid);
       $svcDomainTermsCommonCode[$tempTerm->field_common_code['und'][0]['safe_value']] = $tempTerm->tid;
     }
-    
-    error_log('here3');
     
     foreach ($code_list as $code) {
         $foundFlag = FALSE;

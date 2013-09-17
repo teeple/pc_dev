@@ -686,6 +686,7 @@ function _get_attribute($product) {
                       'bill_type' => array('through_common_code' => TRUE, 'field' => 'field_billing_type', 'field_value' => "field_billing_type['und'][0]['tid']", 'field_value_default' => NULL), 
                       'product_type' => array('through_common_code' => TRUE, 'field' => 'field_product_type', 'field_value' => "field_product_type['und'][0]['tid']", 'field_value_default' => NULL), 
                       'product_sub_type' => array('through_common_code' => TRUE, 'field' => 'field_product_sub_type', 'field_value' => "field_product_sub_type['und'][0]['tid']", 'field_value_default' => NULL), 
+                      'product_detail_type' => array('through_common_code' => TRUE, 'field' => 'field_product_detail_type', 'field_value' => "field_product_detail_type['und'][0]['tid']", 'field_value_default' => NULL), 
                       'service_domain' => array('through_common_code' => TRUE, 'field' => 'field_service_type_of_provider', 'field_value' => "field_service_type_of_provider['und'][0]['tid']", 'field_value_default' => NULL), 
                       'customer_type' => array('through_common_code' => TRUE, 'field' => 'field_custdvcd4prod', 'field_value' => "field_custdvcd4prod['und'][0]['tid']", 'field_value_default' => NULL), 
                       'customer_group_type' => array('through_common_code' => TRUE, 'field' => 'field_customer_group_type', 'field_value' => "field_customer_group_type['und'][0]['tid']", 'field_value_default' => NULL), 

@@ -448,8 +448,8 @@ function ocs_admin_message_form_submit($form, &$form_state)
 		$options = $form['#options'];
 		// flatten $options[1], counter
 		$options[1] = array_get_value($options[1]);
-		//dpm($options, 'options');
-
+		dsm($values['num_values'], 'num_values');
+		
 		for ($i = 1; $i <= $values['num_values']; $i++) {
 			$type = $values['type:' . $i];
 			$node->field_ocs_value_type['und'][$i - 1]['value'] = $type;
@@ -498,6 +498,7 @@ function ocs_admin_message_form_submit($form, &$form_state)
 			}
 			$lang_idx ++;
 		}
+		dsm($node, 'node');
 		node_save($node);
 		$msg_create_or_update = ($isNew == TRUE)? 'created.':'updated.';
 		drupal_set_message($node->type. ' ' . $node->title . ' has been '. $msg_create_or_update);
