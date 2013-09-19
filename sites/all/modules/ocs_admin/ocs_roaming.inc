@@ -61,7 +61,7 @@ function ocs_roaming_import( $form, &$form_state, $type)
 		$response = drupal_http_request( $url, array(
 			'method' => $method,
 			'headers' => array('Content-Type' => 'application/json', 'Accept' => 'application/json'),
-			'timeout'=>5));
+			'timeout'=>60));
 		dpm( $url, 'url');
 		dpm( $response, 'response');
 		if ( $response->code == 200) {
