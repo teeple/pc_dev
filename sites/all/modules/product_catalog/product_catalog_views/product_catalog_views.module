@@ -184,13 +184,13 @@ function depositschemefactor_thresholdscheme_detail($depositschemefactor_nid){
 	if(isset($threshold_scheme_nid)){
 		$threshold_scheme_node = node_load($threshold_scheme_nid);
 		$output = $threshold_scheme_node->title;
+		$rows = array();
 	  foreach($factor->field_deposit_amount_collection['und'] as $item){
 	  	$deposit_collection_info = field_collection_item_load($item['value']);
 			$threshold_amount_min = isset($deposit_collection_info->field_threshold_amount['und'][0]['value'])?$deposit_collection_info->field_threshold_amount['und'][0]['value']:0;
 			$threshold_amount_max = isset($deposit_collection_info->field_threshold_amount_max['und'][0]['value'])?$deposit_collection_info->field_threshold_amount_max['und'][0]['value']:0;
 	  	//dsm($deposit_collection_info,'deposit_collection_info');
 	  	
-	  	$rows = array();
 			$view_result = views_get_view_result('list_thresholdschemefactors', 'panel_pane_1',$threshold_scheme_nid);
 			foreach($view_result as $view_item){
 				$threshold_factor = node_load($view_item->nid);
@@ -211,10 +211,12 @@ function depositschemefactor_thresholdscheme_detail($depositschemefactor_nid){
 					$rows[] = array($level.'%',$min,$max,$actions);
 				}
 			}
-			$output .= theme('table',array('header' => $headers,'rows' => $rows));
+			
 			//dsm($view_result,'view result');
 	 	}
 	}
+
+	$output .= theme('table',array('header' => $headers,'rows' => $rows));
 	
 	return $output;
 }
