@@ -390,6 +390,15 @@ function _get_counter_list($product) {
 				$action['parameters']['dest'] = !empty($actionItem->field_field_message_dest)? $actionItem->field_field_message_dest[0]['raw']['taxonomy_term']->name:null;
 				$action['parameters']['message'] = !empty($actionItem->field_field_ref_messages)? $actionItem->field_field_ref_messages[0]['raw']['nid']: null;
 				
+				$featureCodes = array();
+				if(!empty($actionItem->field_field_feature_code)) {
+					foreach($actionItem->field_field_feature_code as $item) {
+						$featureCode = _get_common_code($item['raw']['taxonomy_term']);
+						$featureCodes[] = $featureCode;
+					}
+				}
+				$action['parameters']['feature_code'] = !empty($featureCodes)? $featureCodes: null;
+				
 				$actions[] = $action;
     		}
     	}
