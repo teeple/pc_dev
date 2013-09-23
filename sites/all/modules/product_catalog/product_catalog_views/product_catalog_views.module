@@ -174,4 +174,50 @@ function product_catalog_exclusive_list( $nid)
 	}
 }
 
+function depositschemefactor_thresholdscheme_detail($depositschemefactor_nid){
+	$output = '';	
+	$headers = array('Level','Min Threshold','Max Threshold', 'Action');
+	
+	$factor = node_load($depositschemefactor_nid);
+	//dsm($factor,'factor');
+	$threshold_scheme_nid = $factor->field_ref_thresholdscheme['und'][0]['nid'];
+	if(isset($threshold_scheme_nid)){
+		$threshold_scheme_node = node_load($threshold_scheme_nid);
+		$output = $threshold_scheme_node->title;
+	  foreach($factor->field_deposit_amount_collection['und'] as $item){
+	  	$deposit_collection_info = field_collection_item_load($item['value']);
+			$threshold_amount_min = isset($deposit_collection_info->field_threshold_amount['und'][0]['value'])?$deposit_collection_info->field_threshold_amount['und'][0]['value']:0;
+			$threshold_amount_max = isset($deposit_collection_info->field_threshold_amount_max['und'][0]['value'])?$deposit_collection_info->field_threshold_amount_max['und'][0]['value']:0;
+	  	//dsm($deposit_collection_info,'deposit_collection_info');
+	  	
+	  	$rows = array();
+			$view_result = views_get_view_result('list_thresholdschemefactors', 'panel_pane_1',$threshold_scheme_nid);
+			foreach($view_result as $view_item){
+				$threshold_factor = node_load($view_item->nid);
+				$level = isset($threshold_factor->field_limittothreshold['und'][0]['value'])?$threshold_factor->field_limittothreshold['und'][0]['value']:NULL;
+				if($level != NULL){
+					$actions = array();
+					foreach($threshold_factor->field_threshold_action_set['und'] as $action_item){
+						$action_collection_info = field_collection_item_load($action_item['value']);
+						$action_term = taxonomy_term_load($action_collection_info->field_action_type['und'][0]['tid']);
+						$actions[] = $action_term->name;
+						//$actions[] = $action_collection_info->field_action_type['und'][0]['taxonomy_term']->name;
+					}
+					$actions = join(',',$actions);
+					
+					$min = number_format($threshold_amount_min*$level/100, 2, '.', ' ');
+					$max = number_format($threshold_amount_max*$level/100, 2, '.', ' ');
+					
+					$rows[] = array($level.'%',$min,$max,$actions);
+				}
+			}
+			$output .= theme('table',array('header' => $headers,'rows' => $rows));
+			//dsm($view_result,'view result');
+	 	}
+	}
+	
+	return $output;
+}
+
+
 ?>

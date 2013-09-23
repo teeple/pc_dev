@@ -6,7 +6,7 @@ function node_delete_handler_to_touch_product($node){
         _touch_product($productNode->nid);
     }
     //touch_product($node);
-};
+}
 
 function product_catalog_form_node_delete($node){
 	 $childNodes = get_nested_children_nids($node->nid);
