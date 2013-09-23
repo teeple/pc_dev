@@ -470,7 +470,7 @@ function _ocs_roaming_save_tariff( $delete, $reset, $json, $plan_list)
 
 			if ( ! empty( $rate_nids)) {
 				foreach( $rate_nids as $nid) {
-                    $old_list['Rate'][$nid] = TRUE;
+                    $old_list[$plan_nid]['Rate'][$nid] = TRUE;
 				}
 			}
 
@@ -480,7 +480,7 @@ function _ocs_roaming_save_tariff( $delete, $reset, $json, $plan_list)
 
 			if ( ! empty( $rate_nids)) {
 				foreach( $rate_nids as $nid) {
-                    $old_list['Rate'][$nid] = TRUE;
+                    $old_list[$plan_nid]['Rate'][$nid] = TRUE;
 				}
 			}
 
@@ -491,7 +491,7 @@ function _ocs_roaming_save_tariff( $delete, $reset, $json, $plan_list)
 
 			if ( ! empty( $rg_nids)) {
 				foreach( $rg_nids as $nid) {
-                    $old_list['Rating Group'][$nid] = TRUE;
+                    $old_list[$plan_nid]['Rating Group'][$nid] = TRUE;
 				}
 			}
 
@@ -501,7 +501,7 @@ function _ocs_roaming_save_tariff( $delete, $reset, $json, $plan_list)
 
 			if ( ! empty( $rate_nids)) {
 				foreach( $rate_nids as $nid) {
-                    $old_list['Basic Rate'][$nid] = TRUE;
+                    $old_list[$plan_nid]['Basic Rate'][$nid] = TRUE;
 				}
 			}
 		}
@@ -560,26 +560,28 @@ function _ocs_roaming_save_tariff( $delete, $reset, $json, $plan_list)
 
     if ( $delete) {
         dpm( $old_list, 'old list');
-        foreach( $old_list as $type => $list) {
-            foreach( $list as $nid => $status) {
-                if ( $status === TRUE) {
-                    $node = node_load( $nid);
-                    dpm( t('Remove unused @type : @title ', 
-                        array( '@type' => $type, '@title' => $node->title)));
-                    node_delete( $nid);
+        foreach( $old_list as $plan_nid => $old_list_by_plan) {
+			foreach( $old_list_plan as $type => $list) {
+				foreach( $list as $nid => $status) {
+					if ( $status === TRUE) {
+						$node = node_load( $nid);
+						dpm( t('Remove unused @type : @title from plan @p', 
+							array( '@type' => $type, '@title' => $node->title, '@p' => $plan_nid)));
+						node_delete( $nid);
+					}
                 }
             }
-        }
 
-		$t = node_load( $plan_nid);
-		$plan = node_load( $t->field_ref_roaming_plan['und'][0]['nid']);
-		unset( $plan->field_ref_roaming_ratinggroup['und']);
-		foreach( $old_list['Rating Group'] as $nid => $remove_flag) {
-			if ( $remove_flag == FALSE) {
-				$plan->field_ref_roaming_ratinggroup['und'][] = array( 'nid' => $nid);
+			$t = node_load( $plan_nid);
+			$plan = node_load( $t->field_ref_roaming_plan['und'][0]['nid']);
+			unset( $plan->field_ref_roaming_ratinggroup['und']);
+			foreach( $old_list[$plan_nid]['Rating Group'] as $nid => $remove_flag) {
+				if ( $remove_flag == FALSE) {
+					$plan->field_ref_roaming_ratinggroup['und'][] = array( 'nid' => $nid);
+				}
 			}
+			node_save( $plan);
 		}
-		node_save( $plan);
 	}
 
 	return TRUE;
@@ -647,7 +649,7 @@ function _save_roaming_tariff_op( $reset, $terms, $plan, $plan_nid, $key, $tarif
 			}
 			else {
 				dpm( t( '@p) Existing roaming rate : @t', array( '@p' => $partner_code, '@t' => $tariff)));
-                $old_list['Rate'][$rate->nid] = FALSE;
+                $old_list[$plan_nid]['Rate'][$rate->nid] = FALSE;
 			}
 
 			if ( $new_node || $reset) {
@@ -699,7 +701,7 @@ function _save_roaming_tariff_op( $reset, $terms, $plan, $plan_nid, $key, $tarif
 			else {
 				dpm( t( '@code) Existing roaming group : @rg ratinggroup:@nid',
 					array( '@code' => $partner_code, '@rg' => $rg, '@nid' => $rm->nid)));
-                $old_list['Rating Group'][$rm->nid] = FALSE;
+                $old_list[$plan_nid]['Rating Group'][$rm->nid] = FALSE;
 			}
 
 			if ( $new_node || $reset) {
@@ -755,7 +757,7 @@ function _save_roaming_tariff_op( $reset, $terms, $plan, $plan_nid, $key, $tarif
 
 				node_save( $node);
 
-                $old_list['Basic Rate'][$result[0]] = FALSE;
+                $old_list[$plan_nid]['Basic Rate'][$result[0]] = FALSE;
 			}
 			else {	// too many mapping
 				drupal_set_message( 'Invalid tariff mapping ', 'error');
