@@ -31,18 +31,33 @@ function _array_threshold_scheme($exportItemNids=NULL){
                 foreach($item->field_field_threshold_action_set as $item) {
                 	$actionSet = array();
                 	$fieldCollection = current($item['rendered']['entity']['field_collection_item']);
+                	
                 	$actionSet['action'] = $fieldCollection['field_action_type']['#object']->field_action_type['und'][0]['taxonomy_term']->name;
                 	
                 	$message_orig = isset($fieldCollection['field_action_type']['#object']->field_message_orig['und'][0]['value'])? $fieldCollection['field_action_type']['#object']->field_message_orig['und'][0]['value']: NULL;
                 	$message_dest = isset($fieldCollection['field_action_type']['#object']->field_message_dest['und'][0]['taxonomy_term']->name)? $fieldCollection['field_action_type']['#object']->field_message_dest['und'][0]['taxonomy_term']->name: NULL;
                 	$message_id = isset($fieldCollection['field_action_type']['#object']->field_ref_messages['und'][0]['nid'])? $fieldCollection['field_action_type']['#object']->field_ref_messages['und'][0]['nid']: NULL;
                 	
+                	if(!empty($fieldCollection['field_feature_code'])) {
+                		$featureCodeIndex = 0;
+                		while( !empty($fieldCollection['field_feature_code']) && 
+                			!empty($fieldCollection['field_feature_code'][$featureCodeIndex])) {
+                			$featureCodeTerm = $fieldCollection['field_feature_code'][$featureCodeIndex++]['#options']['entity'];
+                			$featureCodes[] = _get_common_code($featureCodeTerm);
+                		}
+                	}
+                	
                 	if(isset($message_id)) {
                 		$actionSet['parameters'] = array('orig' => $message_orig,
                 																		'dest' => $message_dest,
                 																		'message' => $message_id);
                 	} else {
-                		$actionSet['parameters'] = NULL;
+                		if(!empty($featureCodes)) {
+                			$actionSet['parameters'] = array('feature_code' => $featureCodes);
+                			
+                		} else {
+	                		$actionSet['parameters'] = NULL;
+                		}
                 	}
                 	$actionSetList[] = $actionSet;
                 }
