@@ -1127,6 +1127,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 				$form['field_enddate_option2']['#type'] = 'hidden';
 				$form['field_enddate_option3']['#type'] = 'hidden';
 				$form['field_enddate_option4']['#type'] = 'hidden';
+				$form['field_valid_date_hour']['#type'] = 'hidden';
 				unset($form['#groups']);
 				unset($form['#fieldgroups']);
 				unset($form['#group_children']);
