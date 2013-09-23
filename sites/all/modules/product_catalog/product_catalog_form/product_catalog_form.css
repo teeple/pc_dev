@@ -45,7 +45,6 @@
 	padding: 0px 10px 0px 10px;
 }
 */
-
 .myform .form-type-textfield .form-text {
 /*    left: clear; */
     width: 200px;
@@ -158,4 +157,9 @@ div .fieldset-wrapper{
 .views-field.views-field-field-weight-for-hierarchy,
 .views-field.views-field-field-weight-for-ratingpriority{
 	display:none;
+}
+
+/* custom modal width */
+.node-thresholdschemefactors-form{
+	width:1800px;
 }
