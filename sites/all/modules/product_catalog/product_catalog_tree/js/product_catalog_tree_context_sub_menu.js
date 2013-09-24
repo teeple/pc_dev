@@ -631,7 +631,8 @@
 			"Card Types" : $.fn.getSubMenuAddNodeWithoutWrapper("Card Types", "conditionwhatcardtype"),
 			"Counter" : $.fn.getSubMenuAddNodeWithoutWrapper("Counter", "conditionwhatcounter"),
 			"Main Product" : $.fn.getSubMenuAddNodeWithoutWrapper("Main Product", "conditionwhatmainproduct"),
-			"Callee Main Product" : $.fn.getSubMenuAddNodeWithoutWrapper("Callee's Main Product", "conditionwhatmainproductforpeer")
+			"Callee Main Product" : $.fn.getSubMenuAddNodeWithoutWrapper("Callee's Main Product", "conditionwhatmainproductforpeer"),
+			"Feature Code" : $.fn.getSubMenuAddNodeWithoutWrapper("Feature Code", "conditionwhatfeaturecode"),
 		};
 		return obj;
 	};
