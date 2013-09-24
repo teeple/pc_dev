@@ -39,6 +39,7 @@
 				switch (relType) {
 					case "conditioncommonand":
 						var who = $.fn.getConditionWhoType1();
+						console.log(who);
 						var where = $.fn.getConditionWhereType1();
 						var what = $.fn.getConditionWhatType1();
 						var when = $.fn.getConditionWhenType1();

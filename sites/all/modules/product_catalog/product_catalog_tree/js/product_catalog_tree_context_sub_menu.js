@@ -267,6 +267,8 @@
 			case 'conditionwhatisredirected':
 			// case 'conditionwhenvaliddate':
 			case 'treenodeotheronetimechargediscou':
+			case 'conditionwhocugadminstatus' :
+			case 'conditionwhocugadminproductstatu' :
 				menus.custom_delete._disabled = false;
 				menus.custom_delete.action = function(node) {
 					$.fn.deleteNode(node);
@@ -516,6 +518,8 @@
 			"Carrier (Called)" : $.fn.getSubMenuAddNodeWithoutWrapper("Carrier (Called)", "conditionwhocalledcarrier"),
 			"Customer Level" : $.fn.getSubMenuAddNodeWithoutWrapper("Customer Level", "conditionwhocustomerlevel"),
 			"Roaming Carrier" : $.fn.getSubMenuAddNodeWithoutWrapper("Roaming Carrier", "conditionwhoroamingcarrier"),
+			"CUG Admin Status" : $.fn.getSubMenuAddNodeWithoutWrapper("CUG Admin Status", "conditionwhocugadminstatus"),
+			"CUG Admin Product Status" : $.fn.getSubMenuAddNodeWithoutWrapper("CUG Admin Product Status", "conditionwhocugadminproductstatu"),
 		};
 		return obj;
 	};
