@@ -572,7 +572,7 @@ function add_js_settings_after_node_update($node) {
 	$need_to_reload_all = FALSE;
 	$need_to_refresh_node = FALSE;
 	$reload_node_id = NULL;
-	
+
 	switch($node->type){
 		case 'prdcounterlist':
 			$rootNode = node_load($node -> field_ref_product['und'][0]['nid']);

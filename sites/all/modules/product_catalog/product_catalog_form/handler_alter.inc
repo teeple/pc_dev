@@ -1155,21 +1155,17 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 				$form['field_amount_corresponding']['#type'] = 'hidden';
 				
 				$productNid = $form['#node'] -> field_ref_product['und'][0]['nid'];
-
-				$tempView = views_get_view('list_treenodecounter');
-				$tempView -> set_display('panel_pane_5');
-				$tempView -> set_arguments(array('0' => $productNid, '1' => 'Main'));
-				$tempView -> execute();
 				
-				$options = array();
-				foreach ($tempView->result as $treeNodeCounterItem) {
-					$options[$treeNodeCounterItem -> node_field_data_field_ref_counter_nid] = $treeNodeCounterItem -> node_field_data_field_ref_counter_title;
+				$chargingCounterList = _get_charging_counter_list($productNid);
+				$prdCounterList = _get_existing_counter_list($productNid);
+				$options = array_unique($chargingCounterList + $prdCounterList);
+				
+				$currentCounterNid = $form['#node']->field_ref_counter['und'][0]['nid'];
+				
+				if (!empty($options[$currentCounterNid])) {
+					unset($options[$currentCounterNid]);
 				}
-
-				if (isset($options[$form['#node'] -> field_ref_counter['und'][0]['nid']])) {
-					unset($options[$form['#node'] -> field_ref_counter['und'][0]['nid']]);
-				}
-
+				
 				$form['field_counter']['und']['#options'] = $options;
 
 			}
@@ -3073,6 +3069,35 @@ function _get_existing_counter_list($productNid) {
 
 	return $retArray;
 }
+
+function _get_charging_counter_list($productNid) {
+
+	$tempView = views_get_view('list_treenodecounter');
+	$tempView -> set_display('panel_pane_5');
+	$tempView -> set_arguments(array('0' => $productNid, '1' => 'Main'));
+	$tempView -> execute();
+	
+	$options = array();
+	
+	foreach($tempView->result as $treeNodeCounterItem) {
+		$chargingCounters[] = $treeNodeCounterItem->node_field_data_field_ref_counter_nid;
+	}
+	$args[0] = join('+', $chargingCounters);
+
+	$view = views_get_view('query_list_counter');
+	$view -> set_display('panel_pane_3');
+	$view -> set_arguments($args);
+	$view -> execute();
+
+	$retArray = array();
+	foreach ($view->result as $record) {
+		$retArray[$record -> nid] = view_get_field_value_by_label($view, 'PHP', $record);
+		// $retArray[$record -> nid] = '';
+	}
+	
+	return $retArray;
+}
+
 
 function _get_available_counter_list($productNid, $existingCounterNids) {
 
