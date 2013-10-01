@@ -118,17 +118,23 @@ function _get_product_relationship($nid){
     
         //exclusiveness
         foreach($record->field_field_exclusiveness as $item){
+        	if(isset($item['raw']['node'])){
             $exclusive_product_ids[] = $item['raw']['node']->field_product_id['und'][0]['safe_value'];
+					}
         }
         
         //exclusiveness ot1rs
         foreach($record->field_field_exclusiveness_others as $item){
-            $exclusive_product_other_ids[] = $item['raw']['node']->field_product_id['und'][0]['safe_value'];
+      		if(isset($item['raw']['node'])){
+      			$exclusive_product_other_ids[] = $item['raw']['node']->field_product_id['und'][0]['safe_value'];
+      		}
         }
         
         // prerequisite products
         foreach($record->field_field_prerequisite_products as $item){
-        	$prerequisite_product_ids[] = $item['raw']['node']->field_product_id['und'][0]['safe_value'];
+        	if(isset($item['raw']['node'])){
+        		$prerequisite_product_ids[] = $item['raw']['node']->field_product_id['und'][0]['safe_value'];
+					}
         }
         
         //downgrade penalty
