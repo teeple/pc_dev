@@ -11,7 +11,9 @@ function _product_for_export($exportItemNids = NULL, $isExternalAPI = FALSE, $ta
 
     foreach ($exportItemNids as $nid) {
         $node = node_load($nid);
-
+        
+        if(!isset($node->nid)) continue;
+        
         //Basic Attributes
         $product = array();
         $product['type'] = 'product';

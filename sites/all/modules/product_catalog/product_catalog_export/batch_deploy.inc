@@ -52,13 +52,28 @@ function _validate_product_change_scheme( $prd_list)
 
 function deploy_all( $type, $prd_list, $target, $redirectFlag = TRUE)
 {
+	global $user;
+	
+	$exportTypeTerm = current(taxonomy_get_term_by_name($type, 'export_type'));
+	$flag = flag_get_flag('export_type_flag');
+
+	if($flag->is_flagged($exportTypeTerm->tid)) {
+		$flagView = views_embed_view('list_flagged_term', 'panel_pane_1', $exportTypeTerm->tid);
+		drupal_set_message($flagView, 'error');
+		return;
+	}
+	
 	if ( $type === 'PRODUCT_CHANGE_SCHEME') {
 		if ( _validate_product_change_scheme( $prd_list) === FALSE) {
 			drupal_set_message('FATAL : Invalid Product Change Scheme', 'error');
 			return;
 		}
 	}
-
+	
+	$flag->flag('flag', $exportTypeTerm->tid);
+	$exportTypeTerm->field_flagged_user['und'][0]['uid'] = $user->uid;
+	taxonomy_term_save($exportTypeTerm);
+	
 	$_SESSION['http_request_count'] = 0; // reset counter for debug information.
 	if ( isset( $redirectFlag)) {
 		$_SESSION['redirect_after_batch'] = 'lifecycles/history/'.$type;
@@ -71,7 +86,7 @@ function deploy_all( $type, $prd_list, $target, $redirectFlag = TRUE)
 	foreach( $prd_list as $nid => $prd) {
 		$operations[] = array('batch_deploy_product_op', array( $type, $nid, $prd, $target));
 	}
-
+	
 	$batch = array(
 		'operations' => $operations,
 		'finished' => 'batch_deploy_product_finished',
@@ -89,6 +104,7 @@ function batch_deploy_product_op( $type, $nid, $obj, $target, &$context)
 	$result = export_deploy( $type, array( $nid => $obj), $target, FALSE);
 
 	$result[0]['title'] = $obj->title;
+	$result[0]['type'] = $type;
 	$context['results'][] = $result[0];
 	$context['message'] = t('<br>Deploy @type "@title" <br>', 
 		array( '@type' => $type, '@title' => check_plain($obj->title))) . batch_deploy_result( end($context['results']));
@@ -123,6 +139,9 @@ function batch_deploy_result( $param)
 
 function batch_deploy_product_finished($success, $results, $operations) 
 {
+	$flag = flag_get_flag('export_type_flag');
+	$exportTypeTerm = current(taxonomy_get_term_by_name($results[0]['type']));
+	
 	if ($success) {
 		// Here we could do something meaningful with the results.
 		// We just display the number of nodes we processed...
@@ -142,7 +161,8 @@ function batch_deploy_product_finished($success, $results, $operations)
 		drupal_set_message(t('An error occurred while processing @operation with arguments : @args', 
 			array('@operation' => $error_operation[0], '@args' => print_r($error_operation[0], TRUE))));
 	}
-
+	$flag->flag('unflag', $exportTypeTerm->tid);
+	
 	if ( isset($_SESSION['redirect_after_batch'])) {
 		drupal_goto($_SESSION['redirect_after_batch']);
 	}
