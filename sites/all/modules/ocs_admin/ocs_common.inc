@@ -565,8 +565,8 @@ function _compare_content( $field, $before, $after)
 				$f1 = field_get_items($entity_type, $before, $key);
 				$f2 = field_get_items($entity_type, $after, $key);
 				
-				$vv1 = render(field_view_value($entity_type, $before, $key, $f1[$i]));
-				$vv2 = render(field_view_value($entity_type, $after, $key, $f2[$i]));
+				$vv1 = isset($f1[$i]) ? render(field_view_value($entity_type, $before, $key, $f1[$i])) : NULL;
+				$vv2 = isset($f2[$i]) ? render(field_view_value($entity_type, $after, $key, $f2[$i])) : NULL;
 				
 //				$vv1 = _get_field_value( $v1, $i);
 //				$vv2 = _get_field_value( $v2, $i);
