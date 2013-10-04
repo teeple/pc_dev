@@ -12,8 +12,14 @@ foreach($adminPermissions as $key => $value) {
 		}
 	}
 }
+
 $revokeRids = array(1,2,4,5,6,7,8,9,10);
 foreach($revokeRids as $rid) {
 	user_role_revoke_permissions($rid, array_keys($revoke_permissions));
 }
+
+$changedPermission = $permissions[10];
+$changedPermission[] = array('administer permissions', 'administer users');
+user_role_grant_permissions(10, $changedPermission);
+
 ?>

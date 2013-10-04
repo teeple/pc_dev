@@ -121,7 +121,9 @@ function _get_product_relationship($nid){
             $exclusive_product_ids[] = $item['raw']['node']->field_product_id['und'][0]['safe_value'];
         }
         
-        //exclusiveness ot1rs
+        //exclusiveness others
+        dsm($record->field_field_exclusiveness_others, 'exclusiveness others');
+        
         foreach($record->field_field_exclusiveness_others as $item){
             $exclusive_product_other_ids[] = $item['raw']['node']->field_product_id['und'][0]['safe_value'];
         }
