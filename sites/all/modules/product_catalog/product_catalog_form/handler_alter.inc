@@ -1316,7 +1316,9 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 		case 'simpleproductoffering_node_form' :
 			$disabledItems = array();
 			$hiddenItems = array();
-			$unsetItems = array('field_r_prodofferingrel', 'field_r_productspecification', 'field_r_prodspeccharvalueuse', 'field_r_productofferingprice', 'field_version', 'field_is_bundle', 'field_roaming_allowed', 'field_offering_status', 'field_parent_node_for_rp', 'field_weight_for_ratingpriority', 'field_weight', 'field_ref_product', 'field_parent_node', 'field_customer_group_type', 'field_tpl_voca_machine_name', 'field_parent_node_for_hr', 'field_weight_for_hierarchy');
+			$unsetItems = array('field_r_prodofferingrel', 'field_r_productspecification', 'field_r_prodspeccharvalueuse', 'field_r_productofferingprice', 'field_version', 'field_is_bundle', 'field_roaming_allowed'
+												, 'field_offering_status', 'field_parent_node_for_rp', 'field_weight_for_ratingpriority', 'field_weight', 'field_ref_product', 'field_parent_node', 'field_customer_group_type', 'field_tpl_voca_machine_name'
+												, 'field_parent_node_for_hr', 'field_weight_for_hierarchy');
 			
 			// in case Create
 			if (!isset($form['nid']['#value'])) {
@@ -1498,7 +1500,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 					$form['field_exclusiveness_others']['und']['#options'] = $options;
 					unset($form['field_exclusiveness']);
 					unset($form['field_prerequisite_products']);
-				
+					unset($form['field_activate_prerequisite_prod']);
 				// Other 상품에서는 exclusiveness를 사용
 				} else {
 					// 자신은 Exclusiveness List에서 제외 
@@ -1509,7 +1511,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 				}
 
 			} else {
-				$unsetItems = array_merge($unsetItems, array('field_exclusiveness', 'field_exclusiveness_others', 'field_prerequisite_products'));
+				$unsetItems = array_merge($unsetItems, array('field_exclusiveness', 'field_exclusiveness_others', 'field_prerequisite_products','field_activate_prerequisite_prod'));
 				if(isset($form['nid']['#value'])){ //edit and not relation
 					$form['product_clone_button'] = array(
 						'#type' => 'markup',
