@@ -130,6 +130,15 @@ function _get_product_relationship($nid){
       		}
         }
         
+				//activate prerequisite product
+				if(isset($record->field_field_prerequisite_products)){
+					if(isset($record->field_field_activate_prerequisite_prod[0]['raw']['value'])){
+						$activate_prerequisite_product = $record->field_field_activate_prerequisite_prod[0]['raw']['value'];
+					}else{
+						$activate_prerequisite_product = "0";
+					}
+				}
+				
         // prerequisite products
         foreach($record->field_field_prerequisite_products as $item){
         	if(isset($item['raw']['node'])){
@@ -147,7 +156,8 @@ function _get_product_relationship($nid){
         //$relationship['product_id'] = $record->field_field_product_id[0]['raw']['value'];
         if(isset($exclusive_product_ids)) $relationship['exclusiveness'] = $exclusive_product_ids;
         if(isset($exclusive_product_other_ids)) $relationship['exclusiveness_other'] = $exclusive_product_other_ids;
-        if(isset($prerequisite_product_ids)) $relationship['prerequisite'] = $prerequisite_product_ids;        
+        if(isset($prerequisite_product_ids)) $relationship['activate_prerequisite'] = $activate_prerequisite_product;   
+        if(isset($prerequisite_product_ids)) $relationship['prerequisite'] = $prerequisite_product_ids;     
         if(isset($downgrade)) $relationship['downgrade_penalty'] = $downgrade;
     }
     return $relationship;
