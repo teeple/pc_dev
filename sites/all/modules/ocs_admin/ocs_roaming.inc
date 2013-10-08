@@ -565,7 +565,7 @@ function _ocs_roaming_save_tariff( $delete, $reset, $json, $plan_list)
         $rg_list = array();
         // get all the roaming rating group
         $nids = ocs_get_nids_by_cond( 'roaming_ratinggroup', array(
-            array('field_ref_roaming_plan', 'nid', $plan_ptr->nid)));
+			array('field_ref_roaming_plan', 'nid', $plan_ptr->field_ref_roaming_plan['und'][0]['nid'])));
         foreach( $nids as $nid) {
             $rg = node_load( $nid);
             $rg_list[$rg->field_rating_group['und'][0]['value']][$rg->field_ref_type_of_call['und'][0]['tid']][] = $rg->nid;
@@ -730,7 +730,7 @@ function batch_update_roaming_plan( $plan_nid, &$context)
 		$roaming_plan = node_load( $plan->field_ref_roaming_plan['und'][0]['nid']);
 
 		$nids = ocs_get_nids_by_cond( 'roaming_ratinggroup', array(
-			array('field_ref_roaming_plan', 'nid', $plan_nid)));
+			array('field_ref_roaming_plan', 'nid', $roaming_plan->nid)));
 
 		unset( $roaming_plan->field_ref_roaming_ratinggroup['und']);
 		foreach( $nids as $nid) {
@@ -778,11 +778,12 @@ function batch_save_rating_group( $rg, $rg_nids, $key, $plan_nid, $calltype, $pl
 	}
 
     $partner =  (isset( $partner_ptr[$partner_code])) ? node_load( $partner_ptr[$partner_code]) : NULL;  
+	$plan_ptr = node_load( $plan_nid);
 
     if ( count( $rg_nids) == 0) {
         $cond = array(
             array('field_rating_group', 'value', $rg),
-            array('field_ref_roaming_plan', 'nid', $plan_nid),
+			array('field_ref_roaming_plan', 'nid', $plan_ptr->field_ref_roaming_plan['und'][0]['nid']),
             array('field_ref_type_of_call', 'tid', $terms_ptr['calltype'][$calltype]));
         if ( $roaming_intl_zone_nid > 0) {
             $cond[] = array( 'field_roaming_zone', 'nid', $roaming_intl_zone_nid);
@@ -856,8 +857,9 @@ function batch_save_rating_group( $rg, $rg_nids, $key, $plan_nid, $calltype, $pl
         $rm->field_ref_type_of_call['und'][0]['tid'] = $terms_ptr['calltype'][$calltype];
         $update = TRUE;
     }
-    if ( $rm->field_ref_roaming_plan['und'][0]['nid'] != $plan_nid) {
-        $rm->field_ref_roaming_plan['und'][0]['nid'] = $plan_nid;
+
+    if ( $rm->field_ref_roaming_plan['und'][0]['nid'] != $plan_ptr->field_ref_roaming_plan['und'][0]['nid']) {
+        $rm->field_ref_roaming_plan['und'][0]['nid'] = $plan_ptr->field_ref_roaming_plan['und'][0]['nid'];
         $update = TRUE;
         $msg[] = array( 'info', 'roaming plan nid');
     }
