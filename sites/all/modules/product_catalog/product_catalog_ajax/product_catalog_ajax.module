@@ -2502,12 +2502,13 @@ function _unset_unused_field_of_cloned_node($node){
     unset($node->name);
     unset($node->picture);
     unset($node->data);    
-	unset($node->field_attribute_key_value);
-	unset($node->field_charge_collection);
-	unset($node->field_deposit_amount_collection);
-	unset($node->field_discount_collection);
-	unset($node->field_prefix_range);
-	unset($node->field_required_device);
+		unset($node->field_attribute_key_value);
+		unset($node->field_charge_collection);
+		unset($node->field_deposit_amount_collection);
+		unset($node->field_discount_collection);
+		unset($node->field_prefix_range);
+		unset($node->field_required_device);
+		unset($node->field_parameterized);
     return $node;
 }
 
