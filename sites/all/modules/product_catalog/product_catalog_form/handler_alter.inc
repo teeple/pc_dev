@@ -1364,6 +1364,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 					
 				} else {
 					if( $serviceTypeTerm->name == 'Cross') unset($form['field_product_detail_type']);
+					$disabledItems[] = 'field_parameterized';
 				}
 				
 				$serviceDomainTid = $form['field_service_type_of_provider']['und']['#default_value'][0];
@@ -1528,7 +1529,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 					 unset($form['#fieldgroups']['group_next_join']);
 					 */
 					unset($form['field_point_for_subscription']);
-
+					unset($form['field_parameterized']);
 					break;
 				default :
 					$form['field_cug_group_type']['#type'] = 'container';
