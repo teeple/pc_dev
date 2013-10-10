@@ -77,7 +77,7 @@ function _clone_field_collection($type, $orgEntity, $newEntity, $collectionName)
 					$newCollectionInfo -> field_deposit_price = $orgCollectionInfo -> field_deposit_price;
 					break;
 				case 'field_parameterized':
-					$newCollectionInfo -> field_param_month = $orgCollectionInfo -> field_param_month;
+					$newCollectionInfo -> field_param_days = $orgCollectionInfo -> field_param_days;
 					$newCollectionInfo -> field_param_amount = $orgCollectionInfo -> field_param_amount;
 					break;
 			}
