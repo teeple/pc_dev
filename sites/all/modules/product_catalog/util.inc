@@ -76,6 +76,10 @@ function _clone_field_collection($type, $orgEntity, $newEntity, $collectionName)
 					$newCollectionInfo -> field_amount = $orgCollectionInfo -> field_amount;
 					$newCollectionInfo -> field_deposit_price = $orgCollectionInfo -> field_deposit_price;
 					break;
+				case 'field_parameterized':
+					$newCollectionInfo -> field_param_month = $orgCollectionInfo -> field_param_month;
+					$newCollectionInfo -> field_param_amount = $orgCollectionInfo -> field_param_amount;
+					break;
 			}
 			$newCollectionInfo -> save();
 			$evalStr = '$newEntity->' . $collectionName . '[\'und\'][' . $i . '][\'value\'] = $newCollectionInfo->item_id;';

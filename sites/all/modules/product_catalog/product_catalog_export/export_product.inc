@@ -702,7 +702,6 @@ function _get_attribute($product) {
     $result = array();
     $result_attribute_general = array();
     $result_attrbitue_exception = array();
-    
     $reqArray = array(
                       "product_id" => array("through_common_code" => FALSE, "field" => "field_product_id", "field_value" => "field_product_id['und'][0]['value']", "field_default" => NULL), 
                       "short_code" => array("through_common_code" => FALSE, "field" => "field_short_code", "field_value" => "field_short_code['und'][0]['value']", "field_default" => NULL), 
@@ -1069,7 +1068,23 @@ function _get_attribute_exceptions($product) {
 		$retArray['prerequisite_deposit_condition'] = NULL;
 	}
 	
-    return $retArray;
+	//parameterized 일 경우, collection 정보..
+	if(isset($product->field_product_sub_type['und'][0]['tid'])){
+		$productSubTypeTerm = taxonomy_term_load($product->field_product_sub_type['und'][0]['tid']);
+		if($productSubTypeTerm->name == 'Parameterized'){
+			$parameterized = array();
+			if(isset($product->field_parameterized['und'])){
+				foreach($product->field_parameterized['und'] as $item){
+					$collection_id = $item['value'];
+					$collection_item = field_collection_item_load($collection_id);
+					$parameterized[] = array('expire_month' => isset($collection_item->field_param_month['und'][0]['value'])?$collection_item->field_param_month['und'][0]['value']:NULL,
+																	'amount' => isset($collection_item->field_param_amount['und'][0]['value'])?$collection_item->field_param_amount['und'][0]['value']:NULL);
+				}
+			}
+			$retArray['parameterized_amount'] = $parameterized;
+		}
+	}
+  return $retArray;
 }
 
 function _get_common_code($term) {
