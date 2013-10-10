@@ -245,6 +245,9 @@ function product_catalog_ajax_clone_product($targetProductId){
 		$short_code = substr($clonedTime,-10);
 		$productNode->field_short_code['und'][0]['value'] = $short_code;
 		$productNode->field_short_code['und'][0]['safe_value'] = $short_code;
+		if(isset($targetProductNode->field_parameterized)){
+        _clone_field_collection('node',$targetProductNode,$productNode,'field_parameterized');
+    }
 		
     _unset_unused_field_of_cloned_node($productNode);
     unset($productNode->field_weight_for_ratingpriority);
@@ -299,10 +302,7 @@ function product_catalog_ajax_clone_product($targetProductId){
 								if(isset($targetChildNode->field_required_device)){
                     _clone_field_collection('node',$targetChildNode,$childNode,'field_required_device');
                 }
-								if(isset($targetChildNode->field_parameterized)){
-                    _clone_field_collection('node',$targetChildNode,$childNode,'field_parameterized');
-                }
-                _clone_nested_child_node($targetChildNode,$childNode);
+								_clone_nested_child_node($targetChildNode,$childNode);
                 
                 $actionSetView = views_get_view('query_actionset_children');
                 $actionSetView->set_display('panel_pane_1');
