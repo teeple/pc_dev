@@ -1079,7 +1079,7 @@ function _get_attribute_exceptions($product) {
 				foreach($product->field_parameterized['und'] as $item){
 					$collection_id = $item['value'];
 					$collection_item = field_collection_item_load($collection_id);
-					$parameterized[] = array('expire_month' => isset($collection_item->field_param_month['und'][0]['value'])?$collection_item->field_param_month['und'][0]['value']:NULL,
+					$parameterized[] = array('expire_days' => isset($collection_item->field_param_days['und'][0]['value'])?$collection_item->field_param_days['und'][0]['value']:NULL,
 																	'amount' => isset($collection_item->field_param_amount['und'][0]['value'])?$collection_item->field_param_amount['und'][0]['value']:NULL);
 				}
 			}
