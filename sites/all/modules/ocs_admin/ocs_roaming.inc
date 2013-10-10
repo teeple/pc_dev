@@ -456,10 +456,14 @@ function _ocs_roaming_save_tariff( $delete, $reset, $json, $plan_list)
 
 	$tariff_plan_list = array();
 	foreach( $plan_list as $k => $v) {
-		$node = node_load($v);
-		$tariff_plan_list[$k] = array( 
-				'tariff' => $node, 
-				'roaming' => node_load( $node->field_ref_roaming_plan['und'][0]['nid']));
+		list( $tariff_type, $start_date) = explode( '|', $k);
+        if ( ! isset( $tariff_plan_list[$v])) {
+            $tariff_plan_list[$v] = array( 
+				'tariff' => node_load($v),
+				'tariff_type' => $tariff_type,
+				'start_date' => $start_date,
+                );
+        }
 
 		/* bhtak 13/08/15 do not update start date of tariff plan
 		list( $type, $start_date) = explode( '|', $k);
@@ -554,11 +558,31 @@ function _ocs_roaming_save_tariff( $delete, $reset, $json, $plan_list)
 	$operations = array();
 	$tariffs = array();
 	$rating_group = array();
-	foreach( $tariff_plan_list as $plan => $v) {
-		list( $tariff_type, $start_date) = explode( '|', $plan);
+	foreach( $tariff_plan_list as $v) {
+		$tariff_type = $v['tariff_type'];
+        $plan_ptr = $v['tariff'];
+
+        $rg_list = array();
+        // get all the roaming rating group
+        $nids = ocs_get_nids_by_cond( 'roaming_ratinggroup', array(
+			array('field_ref_roaming_plan', 'nid', $plan_ptr->field_ref_roaming_plan['und'][0]['nid'])));
+        foreach( $nids as $nid) {
+            $rg = node_load( $nid);
+            $rg_list[$rg->field_rating_group['und'][0]['value']][$rg->field_ref_type_of_call['und'][0]['tid']][] = $rg->nid;
+        }
+        dpm( $rg_list, 'rg_list');
+
+        $old_rate_list = array();
+        $nids = ocs_get_nids_by_cond( 'rate', array(
+            array('field_ref_tariffplan', 'nid', $plan_ptr->nid),
+            array('field_ref_tree_tid', 'value', 
+                $terms['tpl_tariffplan_'.strtolower($tariff_type)][strtolower($tariff_type).'_tariffplan_roaming'])));
+        foreach( $nids as $nid) {
+            $node = node_load( $nid);
+            $old_rate_list[$node->title] = $nid;
+        }
 
 		foreach( $rate_list as $key => $records) {
-            //dpm( t( 'key:@k plan:@p', array( '@k' => $key, '@p' => $plan)));
 			$list = explode( '_', $key);
 			if ( $list[1] == 'Cus' || $list[0] == 'IDD') {
 				$operations[] = array('batch_save_roaming_intl_zone', array( $reset, $terms, $records));
@@ -599,7 +623,7 @@ function _ocs_roaming_save_tariff( $delete, $reset, $json, $plan_list)
 
                         $tariffs[$tariff] = array(
                                 'tariff_type' => $tariff_type, 
-                                'plan' => $plan, 
+                                'plan' => $plan_ptr->nid, 
                                 'rec' => $rec);
 
                         $k = $key . ':' . $plmn . ':' . $calltype;
@@ -608,18 +632,28 @@ function _ocs_roaming_save_tariff( $delete, $reset, $json, $plan_list)
                             $rating_group[$k]['VALD_STRT_DT'] < $rec['VALD_STRT_DT']) {
                         // save the tariff if it's not saved or its VALD_STRT_DT is later than saved one
 
+                            $rg_nids = array();
+                            if ( isset( $rg_list[$rg][$terms['calltype'][$calltype]])) {
+                                $rg_nids[] = $rg_list[$rg][$terms['calltype'][$calltype]];
+                            }
+
+                            $rate_nid = isset( $old_rate_list[$tariff]) ?  $old_rate_list[$tariff] : NULL;
+
                             $rating_group[$k] = array( 'rg' => $rg, 
+                                'rg_nids' => array_get_value( $rg_nids, FALSE),
+                                'plan' => $plan_ptr->nid,
                                 'key' => $key,
-                                'plan' => $plan,
                                 'plmn' => $plmn,
                                 'call_type' => $calltype,
                                 'tariff' => $tariff, 
+                                'rate_nid' => $rate_nid, 
                                 'tariff_type' => $tariff_type,
                                 'VALD_STRT_DT' => $rec['VALD_STRT_DT']);
 
-                            dpm( t( '@key) save rating group:@rg plmn=@p calltype=@c plan=@pl tariff=@t (@tt)',
+                            dpm( t( '@key) save rating group:@rg plmn=@p calltype=@c tariff=@t (@tt) rg_nids=@nids',
                                 array( '@rg' => $rg, '@key' => $key, '@p' => $plmn, '@c' => $calltype,
-                                '@pl' => $plan, '@t' => $tariff, '@tt' => $tariff_type)));
+                                    '@t' => $tariff, '@tt' => $tariff_type, 
+                                    '@nids' => implode( ',', array_get_value( $rg_nids, FALSE)))));
                         }
                         else {
                             /*
@@ -639,13 +673,6 @@ function _ocs_roaming_save_tariff( $delete, $reset, $json, $plan_list)
                 }
 			}
 
-			if ( ! empty( $tariffs)) {
-				/*
-				_save_roaming_tariff_op( $reset, $terms, $plan, $plan_nid, $key, $tariffs, $tariff_plan_list, $old_list);
-                dpm( t( 'Start date : @tm, Partner : @p', array( '@tm' => $plan, '@p' => $key)));
-				$operations[] = array('batch_save_roaming_tariff_op', array( $reset, $terms, $plan, $plan_nid, $key, $tariffs, $tariff_plan_list));
-				*/
-			}
 		}
 	}
 
@@ -658,22 +685,31 @@ function _ocs_roaming_save_tariff( $delete, $reset, $json, $plan_list)
 
 	foreach( $tariffs as $k => $v) {
         $tid = $terms['tpl_tariffplan_'.strtolower($v['tariff_type'])][strtolower($v['tariff_type']).'_tariffplan_roaming'];
-        $node = $tariff_plan_list[$v['plan']]['tariff'];
-		$operations[] = array('batch_save_roaming_tariff', array( $k, $node->nid, $tid, 
+		$operations[] = array('batch_save_roaming_tariff', array( $k, $v['plan'], $tid, 
             $terms['unit_of_range']['Seconds'], $terms['unit_of_measure']['Seconds'], $v['rec']));
 	}
 
 
     foreach( $rating_group as $rg) {
-        $node = $tariff_plan_list[$rg['plan']]['tariff'];
-        $operations[] = array( 'batch_save_rating_group', array( $rg['rg'], $rg['key'], 
-            $node->nid, $rg['call_type'], $rg['plmn'], $rg['tariff'],
+        $operations[] = array( 'batch_save_rating_group', array( $rg['rg'], $rg['rg_nids'], $rg['key'], 
+            $rg['plan'], $rg['call_type'], $rg['plmn'], $rg['tariff'], $rg['rate_nid'],
             $terms['tpl_tariffplan_'.strtolower($rg['tariff_type'])][strtolower($rg['tariff_type']).'_tariffplan_roaming']));
     }
 
     if ( $delete) {
-		$operations[] = array('batch_delete_unused_tariff', array());
+		foreach( $old_list as $plan_nid => $old_list_by_plan) {
+			foreach( $old_list_by_plan as $type => $list) {
+				foreach( $list as $nid => $status) {
+					$operations[] = array('batch_delete_unused_tariff', array( $plan_nid, $type, $nid));
+				}
+			}
+		}
 	}
+
+	foreach( $tariff_plan_list as $v) {
+        $plan_ptr = $v['tariff'];
+		$operations[] = array('batch_update_roaming_plan', array( $plan_ptr->nid));
+    }
 
 	$batch = array(
 		'operations' => $operations,
@@ -687,7 +723,38 @@ function _ocs_roaming_save_tariff( $delete, $reset, $json, $plan_list)
 	return $batch;
 }
 
-function batch_save_rating_group( $rg, $key, $plan_nid, $calltype, $plmn, $tariff, $tid, &$context)
+function batch_update_roaming_plan( $plan_nid, &$context)
+{
+    $plan = node_load( $plan_nid);
+	if ( isset( $plan->field_ref_roaming_plan['und'][0]['nid'])) {
+		$roaming_plan = node_load( $plan->field_ref_roaming_plan['und'][0]['nid']);
+
+		$nids = ocs_get_nids_by_cond( 'roaming_ratinggroup', array(
+			array('field_ref_roaming_plan', 'nid', $roaming_plan->nid)));
+
+		unset( $roaming_plan->field_ref_roaming_ratinggroup['und']);
+		foreach( $nids as $nid) {
+			$rg = node_load( $nid);
+			$msg[] = array( 'info', t( 'Insert to rating group list of the plan:@p nid=@n rg=@rg', 
+				array( '@p' => $roaming_plan->title, '@n' => $nid, '@rg' => $rg->field_rating_group['und'][0]['value'] )));
+			$roaming_plan->field_ref_roaming_ratinggroup['und'][] = array( 'nid' => $nid);
+		}
+		node_save( $roaming_plan);
+	}
+	else {
+		$msg[] = array( 'error', t( 'Invalid plan nid=@nid', array( '@nid' => $plan_nid)));
+	}
+
+	foreach( $msg as $m) {
+		drupal_set_message( $m[1], $m[0]);
+		$context['message'] .= '<br>' . $m[1];
+	}
+
+    _batch_update_http_requests();
+}
+
+
+function batch_save_rating_group( $rg, $rg_nids, $key, $plan_nid, $calltype, $plmn, $tariff, $rate_nid, $tid, &$context)
 {
     global $user;
 
@@ -711,88 +778,139 @@ function batch_save_rating_group( $rg, $key, $plan_nid, $calltype, $plmn, $tarif
 	}
 
     $partner =  (isset( $partner_ptr[$partner_code])) ? node_load( $partner_ptr[$partner_code]) : NULL;  
+	$plan_ptr = node_load( $plan_nid);
 
-    $cond = array(
-        array('field_rating_group', 'value', $rg),
-        array('field_ref_roaming_plan', 'nid', $plan_nid),
-        array('field_ref_type_of_call', 'tid', $terms_ptr['calltype'][$calltype]));
-    if ( $roaming_intl_zone_nid > 0) {
-        $cond[] = array( 'field_roaming_zone', 'nid', $roaming_intl_zone_nid);
-    }
-    $rg_nids = ocs_get_nids_by_cond( 'roaming_ratinggroup', $cond);
-    $new_node = FALSE;
     if ( count( $rg_nids) == 0) {
-        $rm = ocs_admin_get_new_node( 'roaming_ratinggroup');
-        $rm->title = $rg;
-        $rm->field_rating_group['und'][0]['value'] = $rg;
-        $msg[] = array( 'info', t( '@code) @key New roaming group : @rg ratinggroup: calltype=@ct plmn=@pl ',
-            array( '@code' => $partner_code, '@key' => $key, '@rg' => $rg, 
-                '@ct' => $calltype, '@pl' => $plmn)));
-
-        $new_node = TRUE;
+        $cond = array(
+            array('field_rating_group', 'value', $rg),
+			array('field_ref_roaming_plan', 'nid', $plan_ptr->field_ref_roaming_plan['und'][0]['nid']),
+            array('field_ref_type_of_call', 'tid', $terms_ptr['calltype'][$calltype]));
+        if ( $roaming_intl_zone_nid > 0) {
+            $cond[] = array( 'field_roaming_zone', 'nid', $roaming_intl_zone_nid);
+        }
+        $rg_nids = ocs_get_nids_by_cond( 'roaming_ratinggroup', $cond);
     }
-    else {
+
+    $update = FALSE;
+    if ( count( $rg_nids ) >= 1) {
+        if ( count( $rg_nids ) > 1) {
+            $msg[] = array( 'errro', t('@code)  duplicated rating group rg=@rg nid=@nid',
+                    array( '@code' => $partner_code, '@rg' => $rg, '@nid' => implode( ',', $rg_nid))));
+        }
+
+        // just one rating group
+        //dpm( $rg_nids[0], 'rating group node');
         $rm = node_load( $rg_nids[0]);
         $msg[] = array( 'info', t( '@code) @key Existing roaming group : @rg ratinggroup:@nid calltype=@ct plmn=@pl ',
             array( '@code' => $partner_code, '@key' => $key, '@rg' => $rg, 
                 '@nid' => $rm->nid, '@ct' => $calltype, '@pl' => $plmn)));
         $old_list_ptr[$plan_nid]['Rating Group'][$rm->nid] = FALSE;
 
-        foreach( $rg_nids as $idx => $rg_nid) {
-            if ( $idx > 0) {
-                $msg[] = array( 'info', t('@code) Remove duplicated rating group rg=@rg nid=@nid',
-                    array( '@code' => $partner_code, '@rg' => $rg, '@nid' => $rg_nid)));
-                node_delete( $rg_nid);
-            }
-        }
+    }
+    else {
+        $rm = ocs_admin_get_new_node( 'roaming_ratinggroup');
+        $rm->title = $rg;
+        $rm->field_rating_group['und'][0]['value'] = $rg;
+        $msg[] = array( 'info', t( '@code) @key New roaming group : @rg ratinggroup: calltype=@ct plmn=@pl ',
+            array( '@code' => $partner_code, '@key' => $key, '@rg' => $rg, 
+                '@ct' => $calltype, '@pl' => $plmn)));
+		$update = TRUE;
     }
 
     if ( empty( $partner)) {
-        unset( $rm->field_ref_roaming_country['und']);
-        unset( $rm->field_ref_roaming_carrier['und']);
+        if ( isset( $rm->field_ref_roaming_country['und'][0]['nid'])) {
+            unset( $rm->field_ref_roaming_country['und']);
+            $update = TRUE;
+            $msg[] = array( 'info', 'roaming_country unset');
+        }
+        if ( isset( $rm->field_ref_roaming_carrier['und'][0]['nid'])) {
+            unset( $rm->field_ref_roaming_carrier['und']);
+            $update = TRUE;
+            $msg[] = array( 'info', 'roaming_carrier unset');
+        }
     }
     else {
-        $rm->field_ref_roaming_country['und'][0]['nid'] = $partner->field_ref_roaming_country['und'][0]['nid'];
+        if ( $rm->field_ref_roaming_country['und'][0]['nid'] != 
+            $partner->field_ref_roaming_country['und'][0]['nid']) {
+            $rm->field_ref_roaming_country['und'][0]['nid'] = $partner->field_ref_roaming_country['und'][0]['nid'];
+            $update = TRUE;
+            $msg[] = array( 'info', 'roaming_country nid');
+        }
+
         if ( substr( $partner->title, 3) == '**') { // default carrier
-            unset( $rm->field_ref_roaming_carrier['und']);
+            if ( isset( $rm->field_ref_roaming_carrier['und'][0]['nid'])) {
+                unset( $rm->field_ref_roaming_carrier['und']);
+                $update = TRUE;
+                $msg[] = array( 'info', 'roaming carrier unset');
+            }
         }
         else {
-            $rm->field_ref_roaming_carrier['und'][0]['nid'] = $partner->nid;
+            if ( $rm->field_ref_roaming_carrier['und'][0]['nid'] != $partner->nid) {
+                $rm->field_ref_roaming_carrier['und'][0]['nid'] = $partner->nid;
+                $update = TRUE;
+                $msg[] = array( 'info', 'roaming carrier nid');
+            }
         }
     }
-    $rm->field_ref_type_of_call['und'][0]['tid'] = $terms_ptr['calltype'][$calltype];
-    $rm->field_ref_roaming_plan['und'][0]['nid'] = $plan_nid;
+    if ($rm->field_ref_type_of_call['und'][0]['tid'] != $terms_ptr['calltype'][$calltype]) {
+        $msg[] = array( 'info', 'roaming calltype tid');
+        $rm->field_ref_type_of_call['und'][0]['tid'] = $terms_ptr['calltype'][$calltype];
+        $update = TRUE;
+    }
 
-    if ($plmn == 'Outgoing SMS') 
-        unset( $rm->field_ref_roaming_type['und']);		// set a NULL for outgoing SMS
-    else 
-        $rm->field_ref_roaming_type['und'][0]['tid'] = $terms_ptr['roaming_type'][$plmn];
+    if ( $rm->field_ref_roaming_plan['und'][0]['nid'] != $plan_ptr->field_ref_roaming_plan['und'][0]['nid']) {
+        $rm->field_ref_roaming_plan['und'][0]['nid'] = $plan_ptr->field_ref_roaming_plan['und'][0]['nid'];
+        $update = TRUE;
+        $msg[] = array( 'info', 'roaming plan nid');
+    }
+
+    if ($plmn == 'Outgoing SMS')  {
+        if ( isset( $rm->field_ref_roaming_type['und'][0]['tid'])) {		// set a NULL for outgoing SMS
+            unset( $rm->field_ref_roaming_type['und']);		// set a NULL for outgoing SMS
+            $update = TRUE;
+            $msg[] = array( 'info', 'roaming type unset');
+        }
+    }
+    else  {
+        if ( $rm->field_ref_roaming_type['und'][0]['tid'] != $terms_ptr['roaming_type'][$plmn]) {
+            $rm->field_ref_roaming_type['und'][0]['tid'] = $terms_ptr['roaming_type'][$plmn];
+            $update = TRUE;
+            $msg[] = array( 'info', 'roaming type tid');
+        }
+    }
 
     if ( $roaming_intl_zone_nid > 0) {
-        $rm->field_roaming_zone['und'][0]['nid'] = $roaming_intl_zone_nid;
+        if ( $rm->field_roaming_zone['und'][0]['nid'] != $roaming_intl_zone_nid) {
+            $rm->field_roaming_zone['und'][0]['nid'] = $roaming_intl_zone_nid;
+            $update = TRUE;
+            $msg[] = array( 'info', 'roaming zone nid');
+        }
     }
 
-    //dpm( $rm, $rm->title);
-    node_save( $rm);
-
-
-    $t = node_load( $plan_nid);
-    $plan_ptr = node_load( $t->field_ref_roaming_plan['und'][0]['nid']);
-    if ( FALSE === array_search( $rm->nid, array_get_value( $plan_ptr->field_ref_roaming_ratinggroup, FALSE))) {
-        $msg[] = array( 'info', t( 'Insert to rating group list of the plan:@p nid=@n', 
-            array( '@p' => $plan_ptr->nid, '@n' => $rm->nid )));
-        //print_r( array_get_value( $plan->field_ref_roaming_ratinggroup, FALSE));
-        $plan_ptr->field_ref_roaming_ratinggroup['und'][] = array( 'nid' => $rm->nid);
-        node_save( $plan_ptr);
+    if ( $update ) {
+        $msg[] = array( 'info', 'Save rating group '. $rm->title);
+        node_save( $rm);
     }
+
 
 	// find rate
-	$rate_nids = ocs_get_nids_by_cond( 'rate', array(
-		array('property', 'title', $tariff),
-		array('field_ref_tariffplan', 'nid', $plan_nid),
-		array('field_ref_tree_tid', 'value', $tid)));
-    if ( count( $rate_nids) == 1) {
+    if ( $rate_nid === NULL) {
+        $rate_nids = ocs_get_nids_by_cond( 'rate', array(
+            array('property', 'title', $tariff),
+            array('field_ref_tariffplan', 'nid', $plan_nid),
+            array('field_ref_tree_tid', 'value', $tid)));
 
+        if ( count( $rate_nids) == 0 || count($rate_nids) > 1) {
+            $msg[] = array( 'error', t('Invalid rate <em>@t</em>  nid=@p, tid=@tid. @n rates are found', 
+                array('@t' => $tariff, '@n' => count( $rate_nids),
+                '@p' => $plan_nid, '@tid' => $tid)));
+        }
+        else {
+            $rate_nid = $rate_nids[0];
+        }
+    }
+
+    if ( $rate_nid !== NULL) {
         // add mapping
         // tariff mapping
         $result = ocs_get_nids_by_cond( 'basicrate_roaming', array(
@@ -802,15 +920,15 @@ function batch_save_rating_group( $rg, $key, $plan_nid, $calltype, $plmn, $tarif
         if ( empty($result)) {
             $mapping = ocs_admin_get_new_node( 'basicrate_roaming');
             $mapping->field_ref_tariffplan['und'][0]['nid'] = $plan_nid;
-            $mapping->field_ref_rate['und'][0]['nid'] = $rate_nids[0];
+            $mapping->field_ref_rate['und'][0]['nid'] = $rate_nid;
             $mapping->field_rating_group['und'][0]['value'] = $rg;
 
             node_save( $mapping);
         }
         else if ( count( $result) == 1) {
             $node = node_load( $result[0]);
-            if ( $node->field_ref_rate['und'][0]['nid'] != $rate_nids[0]) {
-                $node->field_ref_rate['und'][0]['nid'] = $rate_nids[0];
+            if ( $node->field_ref_rate['und'][0]['nid'] != $rate_nid) {
+                $node->field_ref_rate['und'][0]['nid'] = $rate_nid;
                 node_save( $node);
             }
 
@@ -819,11 +937,6 @@ function batch_save_rating_group( $rg, $key, $plan_nid, $calltype, $plmn, $tarif
         else {	// too many mapping
             $msg[] = array( 'error', 'Invalid tariff mapping ');
         }
-    }
-    else {
-        $msg[] = array( 'error', t('Invalid rate <em>@t</em>  nid=@p, tid=@tid. @n rates are found', 
-                    array('@t' => $tariff, '@n' => count( $rate_nids),
-                    '@p' => $plan_nid, '@tid' => $tid)));
     }
 
     $context['message'] = t( 'Save Rating Group <em>@r</em> to plan @p', 
@@ -837,36 +950,31 @@ function batch_save_rating_group( $rg, $key, $plan_nid, $calltype, $plmn, $tarif
 	_batch_update_http_requests();
 }
 
-function batch_delete_unused_tariff( &$context)
+function batch_delete_unused_tariff( $plan_nid, $type, $nid, &$context)
 {
 	global $user;
 
 	$old_list_ptr = &$_SESSION['import_roaming_tariff'][$user->uid]['old_list'];
+	$msg = array();
 
-	foreach( $old_list_ptr as $plan_nid => $old_list_by_plan) {
-		foreach( $old_list_plan as $type => $list) {
-			foreach( $list as $nid => $status) {
-				if ( $status === TRUE) {
-					$node = node_load( $nid);
-					dpm( t('Remove unused @type : @title from plan @p', 
-						array( '@type' => $type, '@title' => $node->title, '@p' => $plan_nid)));
-					node_delete( $nid);
-				}
-			}
+	if ( isset( $old_list_ptr[$plan_nid][$type][$nid])) {
+		if ( $old_list_ptr[$plan_nid][$type][$nid] === TRUE) {
+			$node = node_load( $nid);
+			$plan = node_load( $plan_nid);
+			$msg[] = array( 'info', t('Remove unused @type : nid=@nid, "@title" from plan @p', 
+				array( '@type' => $type, '@nid' => $nid, '@p' => $plan_nid . ' ' . $plan->title,
+					'@title' => ($type == 'Rating Group') ?  $node->field_rating_group['und'][0]['value'] : $node->title)));
+			node_delete( $nid);
 		}
+    }
 
-		$t = node_load( $plan_nid);
-		$plan = node_load( $t->field_ref_roaming_plan['und'][0]['nid']);
-		unset( $plan->field_ref_roaming_ratinggroup['und']);
-		foreach( $old_list[$plan_nid]['Rating Group'] as $nid => $remove_flag) {
-			if ( $remove_flag == FALSE) {
-				$plan->field_ref_roaming_ratinggroup['und'][] = array( 'nid' => $nid);
-			}
-		}
-		node_save( $plan);
-	}
+    $context['message'] = t( 'Delete unused tariffs');
 
-	$context['message'] = 'Delete Unused tariffs';
+    foreach( $msg as $m) {
+        drupal_set_message( $m[1], $m[0]);
+        $context['message'] .= '<br>' . $m[1];
+    }
+
 
 	_batch_update_http_requests();
 }
@@ -916,7 +1024,7 @@ function batch_save_roaming_tariff( $tariff, $nid, $tid, $tid_range, $tid_uom, $
 	}
 	else {
         $rate = node_load( $rate_nids[0]);
-		$old_list_ptr[$plan_nid]['Rate'][$rate->nid] = FALSE;
+		$old_list_ptr[$nid]['Rate'][$rate->nid] = FALSE;
 		$msg[] = array( 'info', t( 'Existing roaming rate : @t', array( '@t' => $tariff)));
 
         // remove unused rates
@@ -938,210 +1046,7 @@ function batch_save_roaming_tariff( $tariff, $nid, $tid, $tid_range, $tid_uom, $
 	_batch_update_http_requests();
 }
 
-function batch_save_roaming_tariff_op( $reset, $terms, $plan, $plan_nid, $key, $tariffs, $tariff_plan, &$context)
-{
-//	dpm( 'Save Roaming Tariff op');
 
-	$msg = array();
-
-	// customer tariff has key with format '<Partner Name>_Customer'
-	$list = explode( '_', $key);
-	$partner_code = $list[0];
-	$roaming_intl_zone_nid = 0;
-	if ($list[1] == 'Cus' || $list[0] == 'IDD') {
-		// add condition for romaing_intl_zone
-		$nids = ocs_get_nids_by_cond( 'roaming_zone', array( array('property', 'title', $key)));
-		if ( count( $nids) > 1 || count( $nids) == 0) {
-			drupal_set_message( t('Invalid Roaming INTL Zone <em>@name</em>. @n items are found.',
-				array( '@name' => $key, '@n' => count($nids))), 'error');
-			return;
-		}
-		$roaming_intl_zone_nid = $nids[0];
-	}
-
-	$tariff_ptr = $tariff_plan[$plan]['tariff'];
-
-	$t = node_load( $plan_nid);
-	$plan_ptr = node_load( $t->field_ref_roaming_plan['und'][0]['nid']);
-	$plan_ptr_update = FALSE;
-
-//	dpm( $tariff_ptr, $tariff_ptr->title);
-	//dpm( $plan_ptr, $plan_ptr->title);
-
-	global $user;
-
-	$old_list_ptr = &$_SESSION['import_roaming_tariff'][$user->uid]['old_list'];
-	$partner_ptr = &$_SESSION['import_roaming_tariff'][$user->uid]['partner_list'];
-
-	$partner =  (isset( $partner_ptr[$partner_code])) ? node_load( $partner_ptr[$partner_code]) : NULL;
-	if ( isset( $partner->nid) || strstr( $partner_code, 'DEFAULT')  || substr( $partner_code, 0, 3) == 'IDD') {
-		$partner_name = isset( $partner->nid) ? $partner->title : $partner_code;
-		$msg[] = array( 'info', t( 'add @n tariffs', array( '@n' => count( $tariffs))));
-
-		foreach( $tariffs as $plmn_calltype => $rec) {
-			list( $tariff_type, $plmn, $calltype) = explode( ':', $plmn_calltype);
-
-			$tariff = '';
-			if ( !empty( $rec['INIT_RATE_APLY_UNIT']))
-				$tariff = $rec['INIT_RATE_APLY_UNIT'] . '_' . $rec['INIT_RATE'] . '_';
-			$tariff .= $rec['RATE_APLY_UNIT'] . '_' . $rec['RATE'];
-
-			if ( ($tariff_type == 'SMS' && $rec['RATE_APLY_UNIT_CD'] != RATE_UNIT_COUNT) ||
-				($tariff_type == 'VOICE' && $rec['RATE_APLY_UNIT_CD'] != RATE_UNIT_SECOND)) {
-				$msg[] = array( 'error', t('Error : Invalid rate unit for @t:@u', array( '@t' => $tariff_type, '@u' => $rec['RATE_APLY_UNIT_CD'])));
-				$stop = TRUE;
-				continue;
-			}
-
-			$tariff = $tariff_type . '_' . $tariff;
-            $tid = $terms['tpl_tariffplan_'.strtolower($tariff_type)][strtolower($tariff_type).'_tariffplan_roaming'];
-
-			// add tariff
-			$rate = ocs_get_node_by_cond( 'rate', $tariff, array(
-				array('property', 'title', $tariff),
-				array('field_ref_tariffplan', 'nid', $tariff_ptr->nid),
-				array('field_ref_tree_tid', 'value', $tid)));
-			$new_node = FALSE;
-			if ( ! isset( $rate->nid)) {
-				$rate->title = $tariff;
-				$msg[] = array( 'info', t( '@p) New roaming rate : @t', array( '@p' => $partner_code, '@t' => $tariff)));
-				$new_node = TRUE;
-			}
-			else {
-				$msg[] = array( 'info', t( '@p) Existing roaming rate : @t', array( '@p' => $partner_code, '@t' => $tariff)));
-				$old_list_ptr[$plan_nid]['Rate'][$rate->nid] = FALSE;
-			}
-
-			if ( $new_node || $reset) {
-				$rate->field_range_units['und'][0]['tid'] = $terms['unit_of_range']['Seconds'];
-				$rate->field_uom_units['und'][0]['tid'] = $terms['unit_of_measure']['Seconds'];
-				if ( strstr( $calltype, 'SMS')) {
-
-					$rate->field_ref_tariffplan['und'][0]['nid'] = $tariff_ptr->nid;
-					$rate->field_ref_tree_tid['und'][0]['value'] = $tid;
-					$rate->field_price['und'][0]['value'] = floatval($rec['RATE']);
-				}
-				else {
-					if ( ! empty( $rec['INIT_RATE_APLY_UNIT'])) {
-						_save_charge( $rate, 0, 0, $rec['INIT_RATE_APLY_UNIT'], $rec['INIT_RATE_APLY_UNIT'], $rec['INIT_RATE']);
-						_save_charge( $rate, 1, $rec['INIT_RATE_APLY_UNIT'], null, $rec['RATE_APLY_UNIT'], $rec['RATE']);
-					}
-					else {
-						_save_charge( $rate, 0, 0, null, $rec['RATE_APLY_UNIT'], $rec['RATE']);
-					}
-
-					$rate->field_ref_tariffplan['und'][0]['nid'] = $tariff_ptr->nid;
-					$rate->field_ref_tree_tid['und'][0]['value'] = $tid;
-				}
-
-				node_save( $rate);
-			}
-
-			//print_r( $rec);
-
-			// get rating group
-			$rg = $partner_name . '_' . $tariff;
-			$cond = array(
-				array('field_rating_group', 'value', $rg),
-				array('field_ref_roaming_plan', 'nid', $plan_ptr->nid),
-				array('field_ref_type_of_call', 'tid', $terms['calltype'][$calltype]));
-			if ( $roaming_intl_zone_nid > 0) {
-				$cond[] = array( 'field_roaming_zone', 'nid', $roaming_intl_zone_nid);
-			}
-			$rm = ocs_get_node_by_cond( 'roaming_ratinggroup', $rg, $cond);
-			$new_node = FALSE;
-			if ( ! isset( $rm->nid)) {
-				$rm->title = $rg;
-				$rm->field_rating_group['und'][0]['value'] = $rg;
-				$msg[] = array( 'info', 'New rating group : ' . $rg);
-
-				$new_node = TRUE;
-			}
-			else {
-				$msg[] = array( 'info', t( '@code) Existing roaming group : @rg ratinggroup:@nid',
-					array( '@code' => $partner_code, '@rg' => $rg, '@nid' => $rm->nid)));
-                $old_list_ptr[$plan_nid]['Rating Group'][$rm->nid] = FALSE;
-			}
-
-			if ( $new_node || $reset) {
-				if ( empty( $partner)) {
-					unset( $rm->field_ref_roaming_country['und']);
-					unset( $rm->field_ref_roaming_carrier['und']);
-				}
-				else {
-					$rm->field_ref_roaming_country['und'][0]['nid'] = $partner->field_ref_roaming_country['und'][0]['nid'];
-					$rm->field_ref_roaming_carrier['und'][0]['nid'] = $partner->nid;
-				}
-				$rm->field_ref_type_of_call['und'][0]['tid'] = $terms['calltype'][$calltype];
-				$rm->field_ref_roaming_plan['und'][0]['nid'] = $plan_ptr->nid;
-
-				if ($plmn == 'Outgoing SMS') 
-					unset( $rm->field_ref_roaming_type['und']);		// set a NULL for outgoing SMS
-				else 
-					$rm->field_ref_roaming_type['und'][0]['tid'] = $terms['roaming_type'][$plmn];
-
-				if ( $roaming_intl_zone_nid > 0) {
-					$rm->field_roaming_zone['und'][0]['nid'] = $roaming_intl_zone_nid;
-				}
-
-				//dpm( $rm, $rm->title);
-				node_save( $rm);
-			}
-
-
-			if ( FALSE === array_search( $rm->nid, array_get_value( $plan_ptr->field_ref_roaming_ratinggroup, FALSE))) {
-				$msg[] = array( 'info', 'Insert to rating group list of the plan:'. $rm->nid );
-				//print_r( array_get_value( $plan->field_ref_roaming_ratinggroup, FALSE));
-				$plan_ptr->field_ref_roaming_ratinggroup['und'][] = array( 'nid' => $rm->nid);
-				$plan_ptr_updated = TRUE;
-				//dpm( $plan, 'plan');
-			}
-		
-			// add mapping
-			// tariff mapping
-			$result = ocs_get_nids_by_cond( 'basicrate_roaming', array(
-				array('field_ref_tariffplan', 'nid', $tariff_ptr->nid),
-				array('field_rating_group', 'value', $rg)));
-
-			if ( empty($result)) {
-				$mapping = ocs_admin_get_new_node( 'basicrate_roaming');
-				$mapping->field_ref_tariffplan['und'][0]['nid'] = $tariff_ptr->nid;
-				$mapping->field_ref_rate['und'][0]['nid'] = $rate->nid;
-				$mapping->field_rating_group['und'][0]['value'] = $rg;
-
-				node_save( $mapping);
-			}
-			else if ( count( $result) == 1) {
-				$node = node_load( $result[0]);
-				if ( $node->field_ref_rate['und'][0]['nid'] != $rate->nid) {
-					$node->field_ref_rate['und'][0]['nid'] = $rate->nid;
-					node_save( $node);
-				}
-
-                $old_list_ptr[$plan_nid]['Basic Rate'][$result[0]] = FALSE;
-			}
-			else {	// too many mapping
-				$msg[] = array( 'error', 'Invalid tariff mapping ');
-				continue;
-			}
-		}
-
-		//dpm( $plan_ptr, 'update plan');
-		if ( $plan_ptr_updated) node_save( $plan_ptr);
-	}
-	else {
-		$msg[] = array( 'error', 'Invalid Partner : ' . $key);
-	}
-
-	$context['result'][] = 'Import Roaming Tariff';
-	$context['message'] = t( 'Import Roaming Tariff from <em>@k</em>', array( '@k' => $key));
-	foreach( $msg as $m) {
-		if ( $m[0] == 'error') drupal_set_message( $m[1], 'error');
-		$context['message'] .= '<br>' . $m[1];
-	}
-
-	_batch_update_http_requests();
-}
 
 function _ocs_roaming_get_plmn_calltype( $rec)
 {
@@ -1238,6 +1143,7 @@ function batch_save_roaming_intl_zone( $reset, $terms, $records, &$context)
 			}
 
 			// add country list
+            $update = FALSE;
 			foreach( $record['COUNTRY_CD'] as $country) {
 				if ( isset( $country_ptr[$country])) {
                     $count = 0;
@@ -1247,6 +1153,7 @@ function batch_save_roaming_intl_zone( $reset, $terms, $records, &$context)
                             $count ++;
                             if ( $count > 1) {
                                 unset( $zone->field_roaming_countries['und'][$idx]);
+                                $update = TRUE;
                             }
                         }
                     }
@@ -1254,6 +1161,7 @@ function batch_save_roaming_intl_zone( $reset, $terms, $records, &$context)
                     if ( $count == 0) {
                         // not exist. add new one
                         $zone->field_roaming_countries['und'][] = array( 'nid' => $country_ptr[$country]);
+                        $update = TRUE;
                     }
 				}
 				else {
@@ -1267,18 +1175,29 @@ function batch_save_roaming_intl_zone( $reset, $terms, $records, &$context)
 			// name format : <Partner Name>_Cus_??
 			$list = explode( '_', $name);
 			if ( isset( $partner_ptr[$list[0]])) {
-				$zone->field_roaming_carrier['und'][0]['nid'] = $partner_ptr[$list[0]];
-				node_save( $zone);
+				if ( $zone->field_roaming_carrier['und'][0]['nid'] != $partner_ptr[$list[0]]) {
+                    $zone->field_roaming_carrier['und'][0]['nid'] = $partner_ptr[$list[0]];
+                    $update = TRUE;
+                }
 			}
             else if ( $list[0] == 'IDD') {
                 // default IDD
-				unset( $zone->field_roaming_carrier['und']);
-				node_save( $zone);
+                if ( isset( $zone->field_roaming_carrier['und'][0]['nid'])) {
+                    unset( $zone->field_roaming_carrier['und']);
+                    $update = TRUE;
+                }
             }
 			else {
 				$msg[] = array( 'error', t('Invalid Roaming Carrier <em>@name</em>',
 					array( '@name' => $list[0])));
+                continue;
 			}
+
+            if ( $update) {
+                node_save( $zone);
+                $msg[] = array( 'info', t('Save Roaming Carrier <em>@name</em>',
+                    array( '@name' => $list[0])));
+            }
 		}
 	}
 
