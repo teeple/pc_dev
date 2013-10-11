@@ -1078,7 +1078,8 @@ function _get_attribute_exceptions($product) {
 					$collection_id = $item['value'];
 					$collection_item = field_collection_item_load($collection_id);
 					$parameterized[] = array('expire_days' => isset($collection_item->field_param_days['und'][0]['value'])?$collection_item->field_param_days['und'][0]['value']:NULL,
-																	'amount' => isset($collection_item->field_param_amount['und'][0]['value'])?$collection_item->field_param_amount['und'][0]['value']:NULL);
+                                            'short_code' => isset($collection_item->field_param_short_code['und'][0]['value'])?$collection_item->field_param_short_code['und'][0]['value']:NULL,
+                                            'amount' => isset($collection_item->field_param_amount['und'][0]['value'])?$collection_item->field_param_amount['und'][0]['value']:NULL);
 				}
 			}
 			$retArray['parameterized_amount'] = $parameterized;
