@@ -1427,7 +1427,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 					unset($form['#groups']['group_cug']);
 					unset($form['#fieldgroups']['group_cug']);
 				} else {
-					$disabledItems[] = 'field_cug_customer_type';
+					//$disabledItems[] = 'field_cug_customer_type';
 				}
 				
 				if ($productTypeName != 'Main' || $serviceTypeTerm->name == 'Cross') unset($form['field_product_detail_type']);
