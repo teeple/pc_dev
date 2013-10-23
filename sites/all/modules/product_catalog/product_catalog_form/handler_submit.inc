@@ -1,4 +1,9 @@
 <?php
+
+function _clone_product_handler($form){
+	product_catalog_ajax_clone_product($form['#node']->nid);
+}
+
 function node_save_handler_to_touch_product($node) {
 	if (session_get('TOUCH_PRODUCT', TRUE)) {
 		$productNode = find_parent_product($node);

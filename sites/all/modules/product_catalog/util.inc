@@ -883,7 +883,7 @@ function _get_redirect_url_in_create_n_list($addOrList, $content_type, $params) 
 						'Dummy' => array('Main' => '', 
 							'VAS' => 'quickset-products=1', 
 							'Package' => 'quickset-products=2'), 
-						'Bundle' => array('Main' => '', 
+						'Cross' => array('Main' => '', 
 							'VAS' => 'quickset-products=1', 
 							'Package' => 'quickset-products=2'), 
 						);
