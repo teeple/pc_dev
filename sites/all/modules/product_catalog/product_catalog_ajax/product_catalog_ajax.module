@@ -226,14 +226,13 @@ function product_catalog_ajax_check_rollover_type($counterId) {
 
 function product_catalog_ajax_clone_product($targetProductId){
     ctools_include('node.pages', 'node', '');
-    ctools_include('ajax');
     global $user;
-    
-    $maxFieldLength = 60;
-    
-    $targetProductNid = explode('_', $targetProductId);
-    $targetProductNid = $targetProductNid[1];
-    $targetProductNode = node_load($targetProductNid);
+		$maxFieldLength = 60;
+		
+		$_SESSION['http_request_count'] = 0; // reset counter for debug information.
+		$operations = array();
+   
+		$targetProductNode = node_load($targetProductId);
     
     $clonedTime = time();
     $productNode = clone $targetProductNode;
@@ -245,98 +244,136 @@ function product_catalog_ajax_clone_product($targetProductId){
 		$short_code = substr($clonedTime,-10);
 		$productNode->field_short_code['und'][0]['value'] = $short_code;
 		$productNode->field_short_code['und'][0]['safe_value'] = $short_code;
-		
-    _unset_unused_field_of_cloned_node($productNode);
+		_unset_unused_field_of_cloned_node($productNode);
     unset($productNode->field_weight_for_ratingpriority);
     unset($productNode->field_weight_for_hierarchy);
-    node_save($productNode);   
-    
-		if(isset($targetProductNode->field_parameterized)){
+		node_save($productNode);   
+    if(isset($targetProductNode->field_parameterized)){
         _clone_field_collection('node',$targetProductNode,$productNode,'field_parameterized');
     }
 		
-		$ridHistory = array();
-		
-    $view = views_get_view('list_product_child_node');
+		//$_SESSION['redirect_after_batch'] = '';
+		$_SESSION['rid_history'] = array();
+		$view = views_get_view('list_product_child_node');
     $view->set_display('panel_pane_3');
     $view->set_arguments(array('0' => $targetProductNode->nid));
     $view->execute(); 
     
     foreach($view->result as $record){
         $targetChildNode = node_load($record->nid);
-        
-        switch($targetChildNode->type){
-            case 'tariffplan':
-                _paste_tariffplan($targetChildNode,$productNode->nid,$targetChildNode->field_ref_tree_tid['und'][0]['value']
-                    ,$targetChildNode->field_weight['und'][0]['value']);
-                break;
-            default:
-                $childNode = clone $targetChildNode;
-                $childNode->uid = $user->uid;
-                $childNode->field_ref_product['und'][0]['nid'] = $productNode->nid;
-								if($childNode->type == 'actionpricechargerecurring' || $childNode->type == 'actionpricechargerecurringdefaul'){
-									$now = time();
-									if(in_array($now,$ridHistory)){
-										$now++;
-									}
-									$ridHistory[] = $now;
-									
-									$recurring_charge_id = $productNode -> field_product_id['und'][0]['value'] . '_' . $now;
-									$childNode->field_recurring_charge_id['und'][0]['value'] = $recurring_charge_id;
-									$childNode->field_recurring_charge_id['und'][0]['safe_value'] = $recurring_charge_id;
-									//$cloneNode->title = 'temp';
-								}
-                _unset_unused_field_of_cloned_node($childNode);
-                node_save($childNode);
-                if(isset($targetChildNode->field_charge_collection)){
-                    _clone_field_collection('node',$targetChildNode,$childNode,'field_charge_collection');
-                }
-                if(isset($targetChildNode->field_discount_collection)){
-                    _clone_field_collection('node',$targetChildNode,$childNode,'field_discount_collection');
-                }
-								if(isset($targetChildNode->field_attribute_key_value)){
-                    _clone_field_collection('node',$targetChildNode,$childNode,'field_attribute_key_value');
-                }
-								if(isset($targetChildNode->field_prefix_range)){
-                    _clone_field_collection('node',$targetChildNode,$childNode,'field_prefix_range');
-                }
-								if(isset($targetChildNode->field_required_device)){
-                    _clone_field_collection('node',$targetChildNode,$childNode,'field_required_device');
-                }
-								_clone_nested_child_node($targetChildNode,$childNode);
-                
-                $actionSetView = views_get_view('query_actionset_children');
-                $actionSetView->set_display('panel_pane_1');
-                $actionSetView->set_arguments(array('0' => $targetChildNode->nid));
-                $actionSetView->execute(); 
-                foreach($actionSetView->result as $actionSetRecord){
-                    $targetActionSetNode = node_load($actionSetRecord->nid);
-                    $actionSetNode = clone $targetActionSetNode;
-                    $actionSetNode->uid = $user->uid;
-                    $actionSetNode->field_ref_source_action['und'][0]['nid'] = $childNode->nid;
-                    _unset_unused_field_of_cloned_node($actionSetNode);
-                    node_save($actionSetNode);
-                }
-								
-								$actionThresholdSetView = views_get_view('list_actions');
-                $actionThresholdSetView->set_display('panel_pane_2');
-                $actionThresholdSetView->set_arguments(array('0' => $targetChildNode->nid));
-                $actionThresholdSetView->execute(); 
-                foreach($actionThresholdSetView->result as $actionSetRecord){
-                    $targetActionSetNode = node_load($actionSetRecord->nid);
-                    $actionSetNode = clone $targetActionSetNode;
-                    $actionSetNode->uid = $user->uid;
-                    $actionSetNode->field_ref_treenodecounter['und'][0]['nid'] = $childNode->nid;
-                    _unset_unused_field_of_cloned_node($actionSetNode);
-                    node_save($actionSetNode);
-                }
-                break;
-        }        
-    }
+        $operations[] = array('batch_clone_product_child', array($targetChildNode,$productNode));
+		 }
     
-    $output = $productNode->nid;
-    print json_encode($output);
-    exit;
+		$redirectURL =  _get_redirect_url_in_view_n_delete('view', $productNode);
+		$_SESSION['redirect_after_batch'] = $redirectURL['path'];
+		
+    $batch = array(
+			'operations' => $operations,
+			'finished' => 'batch_clone_product_finished',
+			'title' => t('Cloning Product @product_name', array( '@product_name' => $targetProductNode->title)),
+			'init_message' => t('Starting ... '),
+			'progress_message' => t('Processed @current out of @total.'),
+			'error_message' => t('Cloning procedure has encountered an error.'),
+		);
+		batch_set($batch);
+}
+
+function batch_clone_product_finished($success, $results, $operations) 
+{
+	if ($success) {
+		// Here we could do something meaningful with the results.
+		// We just display the number of nodes we processed...
+		drupal_set_message(t('Cloning procedure has been completed successfully'));
+	}
+	else {
+		// An error occurred.
+		// $operations contains the operations that remained unprocessed.
+		$error_operation = reset($operations);
+		drupal_set_message(t('An error occurred while processing @operation with arguments : @args', 
+			array('@operation' => $error_operation[0], '@args' => print_r($error_operation[0], TRUE))));
+	}
+	
+	unset($_SESSION['rid_history']);
+	
+	if (isset($_SESSION['redirect_after_batch'])) {
+		drupal_goto($_SESSION['redirect_after_batch']);
+	}
+}
+
+function batch_clone_product_child($targetNode,$productNode, &$context) 
+{
+	ctools_include('node.pages', 'node', '');
+	global $user;
+	
+	$maxFieldLength = 60;
+	
+	switch($targetNode->type){
+		case 'tariffplan':
+      _paste_tariffplan($targetNode,$productNode->nid,$targetNode->field_ref_tree_tid['und'][0]['value'],$targetNode->field_weight['und'][0]['value']);
+      break;
+  default:
+      $childNode = clone $targetNode;
+      $childNode->uid = $user->uid;
+      $childNode->field_ref_product['und'][0]['nid'] = $productNode->nid;
+			if($childNode->type == 'actionpricechargerecurring' || $childNode->type == 'actionpricechargerecurringdefaul'){
+				$now = time();
+				if(in_array($now,$SESSION['rid_history'])){
+					$now++;
+				}
+				$SESSION['rid_history'][] = $now;
+				
+				$recurring_charge_id = $productNode -> field_product_id['und'][0]['value'] . '_' . $now;
+				$childNode->field_recurring_charge_id['und'][0]['value'] = $recurring_charge_id;
+				$childNode->field_recurring_charge_id['und'][0]['safe_value'] = $recurring_charge_id;
+				//$cloneNode->title = 'temp';
+			}
+      _unset_unused_field_of_cloned_node($childNode);
+      node_save($childNode);
+      if(isset($targetNode->field_charge_collection)){
+          _clone_field_collection('node',$targetNode,$childNode,'field_charge_collection');
+      }
+      if(isset($targetNode->field_discount_collection)){
+          _clone_field_collection('node',$targetNode,$childNode,'field_discount_collection');
+      }
+			if(isset($targetNode->field_attribute_key_value)){
+          _clone_field_collection('node',$targetNode,$childNode,'field_attribute_key_value');
+      }
+			if(isset($targetNode->field_prefix_range)){
+          _clone_field_collection('node',$targetNode,$childNode,'field_prefix_range');
+      }
+			if(isset($targetNode->field_required_device)){
+          _clone_field_collection('node',$targetNode,$childNode,'field_required_device');
+      }
+			_clone_nested_child_node($targetNode,$childNode);
+      
+      $actionSetView = views_get_view('query_actionset_children');
+      $actionSetView->set_display('panel_pane_1');
+      $actionSetView->set_arguments(array('0' => $targetNode->nid));
+      $actionSetView->execute(); 
+      foreach($actionSetView->result as $actionSetRecord){
+          $targetActionSetNode = node_load($actionSetRecord->nid);
+          $actionSetNode = clone $targetActionSetNode;
+          $actionSetNode->uid = $user->uid;
+          $actionSetNode->field_ref_source_action['und'][0]['nid'] = $childNode->nid;
+          _unset_unused_field_of_cloned_node($actionSetNode);
+          node_save($actionSetNode);
+      }
+			
+			$actionThresholdSetView = views_get_view('list_actions');
+      $actionThresholdSetView->set_display('panel_pane_2');
+      $actionThresholdSetView->set_arguments(array('0' => $targetNode->nid));
+      $actionThresholdSetView->execute(); 
+      foreach($actionThresholdSetView->result as $actionSetRecord){
+          $targetActionSetNode = node_load($actionSetRecord->nid);
+          $actionSetNode = clone $targetActionSetNode;
+          $actionSetNode->uid = $user->uid;
+          $actionSetNode->field_ref_treenodecounter['und'][0]['nid'] = $childNode->nid;
+          _unset_unused_field_of_cloned_node($actionSetNode);
+          node_save($actionSetNode);
+      }
+      break;
+	}
+	_batch_update_http_requests();
 }
 
 function _paste_tariffplan($targetNode,$productNid,$baseTid,$weight){

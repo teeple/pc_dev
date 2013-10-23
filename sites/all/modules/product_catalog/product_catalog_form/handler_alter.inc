@@ -227,6 +227,12 @@ function _add_ajax_submit_callback($form_id, &$form) {
 			unset($form['field_is_cloned']);
 			if (isset($form['nid']['#value'])) {// edit
 				$change = TRUE;
+				$form['actions']['clone'] = array(
+					'#type' => 'submit',
+	    		'#value' => t('Clone'),
+	    		'#weight' => 1000,
+	    		'#submit' => array('_clone_product_handler')
+				);
 			}
 			//$paths = explode('/', current_path());
 			//if($paths[0] == 'relation') $change = FALSE;
@@ -1513,13 +1519,6 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 
 			} else {
 				$unsetItems = array_merge($unsetItems, array('field_exclusiveness', 'field_exclusiveness_others', 'field_prerequisite_products','field_activate_prerequisite_prod'));
-				if(isset($form['nid']['#value'])){ //edit and not relation
-					$form['product_clone_button'] = array(
-						'#type' => 'markup',
-						'#markup' => '<input type="button" value="Clone Product" id="product_clone_button"/>',
-						'#weight' => 1000
-					);
-				}
 			}
 
 			switch($productTypeName) {
