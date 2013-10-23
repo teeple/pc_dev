@@ -1093,7 +1093,7 @@ function product_catalog_ajax_add_modal_content($js = NULL, $contentType, $refNo
 		case 'mapbasicratedomesticincoming':
     case 'mapbasicrateroaming':
     case 'mapbasicrateidd':  
-			$form_state['title'] = 'Basic Rate Setting';
+			$form_state['title'] = 'Setting Basic Rates';
       $form_state['build_info']['args'][] = $refNodeNid;
       $form_state['build_info']['args'][] = $refTreeTid;
       break;
