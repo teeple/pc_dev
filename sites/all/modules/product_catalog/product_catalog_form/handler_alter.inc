@@ -529,6 +529,18 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			$lifecycleScheme = node_load($form_state['build_info']['args'][0] -> args[0]);
 			$svcDomainTid = $lifecycleScheme -> field_service_domain['und'][0]['tid'];
 
+			$svcDomainTidList = array();
+			$svcDomainTerms = _handler_get_terms( 'SvcDomain');
+			if ( $svcDomainTerms[$svcDomainTid] == 'Mobile' || $svcDomainTerms[$svcDomainTid] == 'VoIP') {
+				// for mobile and VoIP domains, list both of call types
+				$svcDomainTidList[] = $svcDomainTerms['Mobile'];
+				$svcDomainTidList[] = $svcDomainTerms['VoIP'];
+			}
+			else {
+				$svcDomainTidList[] = $svcDomainTid;
+			}
+		 	//dpm( $svcDomainTerms);
+
 			$options = _handler_get_term_options( 'calltype', array(
 				array('field_service_domain', 'tid', $svcDomainTid),
 				array('field_sub_group1', 'value', array('VOICE', 'SMS', 'DATA', 'VIDEO', 'CHARGE', 'VAS'), 'IN'),

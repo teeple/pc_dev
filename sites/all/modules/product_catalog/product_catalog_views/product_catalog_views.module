@@ -209,8 +209,8 @@ function depositschemefactor_thresholdscheme_detail($depositschemefactor_nid){
 					$actions = join('<br/>',$actions);
 					$row_data[$level]['action'] = $actions;
 					
-					$min = number_format($threshold_amount_min*$level/100, 2, '.', ' ');
-					$max = number_format($threshold_amount_max*$level/100, 2, '.', ' ');
+					$min = number_format($threshold_amount_min*$level/100);
+					$max = number_format($threshold_amount_max*$level/100);
 					$row_data[$level]['min'][] = $min;
 					$row_data[$level]['max'][] = $max;
 				}
