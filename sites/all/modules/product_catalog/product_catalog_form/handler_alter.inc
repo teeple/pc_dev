@@ -2349,6 +2349,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			$billingTypeTerm = taxonomy_term_load($product -> field_billing_type['und'][0]['tid']);
 			if ($billingTypeTerm -> name == 'Postpaid') {
 				$tempTerm = taxonomy_get_term_by_name('Prepaid', 'billtypecounter');
+				$basicCounterList = _get_default_basic_counters($productNid);
 				$existingCounterList = _get_existing_counter_list($productNid,   current($tempTerm) -> tid);
 
 			} else {

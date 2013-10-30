@@ -24,11 +24,15 @@ function _array_export_counter($exportItemNids=NULL){
 	//fetch data
 	$view = views_get_view('list_counter');
 	
-	if(!empty($exportItemNids) && count($exportItemNids) > 1) {
-		$tempArgs = join('+', $exportItemNids);
-	} 
+    if (!empty($exportItemNids) && count($exportItemNids) > 1) {
+        $exportItemNids = join('+', $exportItemNids);
+    }
+
+    if (is_array($exportItemNids) && empty($exportItemNids)) {
+        $exportItemNids = NULL;
+    }
 	
-	$viewResult = views_get_view_result('list_counter', 'panel_pane_5', $tempArgs);
+	$viewResult = views_get_view_result('list_counter', 'panel_pane_5', $exportItemNids);
 	
 	$counterIds = array();
   foreach($viewResult as $record) {
