@@ -2331,7 +2331,11 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			$billingTypeTerm = taxonomy_term_load($product -> field_billing_type['und'][0]['tid']);
 			$tempTerm = taxonomy_get_term_by_name('Prepaid', 'billtypecounter');
 			$tempTerm = current($tempTerm);
-			$basicCounterList = _get_default_prepaid_basic_counters($productNid);
+			
+			$productTypeTerm = taxonomy_term_load($product->field_product_type['und'][0]['tid']);
+			if($productTypeTerm->name == 'Main'){
+				$basicCounterList = _get_default_prepaid_basic_counters($productNid);
+			}
 			$existingCounterList = _get_existing_counter_list($productNid,   $tempTerm -> tid);
 			
 			$mergedCounterList = $basicCounterList + $existingCounterList;
@@ -2357,7 +2361,10 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			$billingTypeTerm = taxonomy_term_load($product -> field_billing_type['und'][0]['tid']);
 			$tempTerm = taxonomy_get_term_by_name('Prepaid', 'billtypecounter');
 			$tempTerm = current($tempTerm);
-			$basicCounterList = _get_default_prepaid_basic_counters($productNid);
+			$productTypeTerm = taxonomy_term_load($product->field_product_type['und'][0]['tid']);
+			if($productTypeTerm->name == 'Main'){
+				$basicCounterList = _get_default_prepaid_basic_counters($productNid);
+			}
 			$existingCounterList = _get_existing_counter_list($productNid,   $tempTerm -> tid);
 
 			$mergedCounterList = $basicCounterList + $existingCounterList;
