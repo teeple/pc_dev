@@ -2329,15 +2329,11 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			$product = node_load($productNid);
 
 			$billingTypeTerm = taxonomy_term_load($product -> field_billing_type['und'][0]['tid']);
-			if ($billingTypeTerm -> name == 'Postpaid') {
-				$tempTerm = taxonomy_get_term_by_name('Prepaid', 'billtypecounter');
-				$existingCounterList = _get_existing_counter_list($productNid,   current($tempTerm) -> tid);
-
-			} else {
-				$basicCounterList = _get_default_basic_counters($productNid);
-				$existingCounterList = _get_existing_counter_list($productNid);
-
-			}
+			$tempTerm = taxonomy_get_term_by_name('Prepaid', 'billtypecounter');
+			$tempTerm = current($tempTerm);
+			$basicCounterList = _get_default_prepaid_basic_counters($productNid);
+			$existingCounterList = _get_existing_counter_list($productNid,   $tempTerm -> tid);
+			
 			$mergedCounterList = $basicCounterList + $existingCounterList;
 
 			$form['field_ref_counter']['und']['#options'] = $mergedCounterList;
@@ -2359,15 +2355,10 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 
 			$product = node_load($productNid);
 			$billingTypeTerm = taxonomy_term_load($product -> field_billing_type['und'][0]['tid']);
-			if ($billingTypeTerm -> name == 'Postpaid') {
-				$tempTerm = taxonomy_get_term_by_name('Prepaid', 'billtypecounter');
-				$basicCounterList = _get_default_basic_counters($productNid);
-				$existingCounterList = _get_existing_counter_list($productNid,   current($tempTerm) -> tid);
-
-			} else {
-				$basicCounterList = _get_default_basic_counters($productNid);
-				$existingCounterList = _get_existing_counter_list($productNid);
-			}
+			$tempTerm = taxonomy_get_term_by_name('Prepaid', 'billtypecounter');
+			$tempTerm = current($tempTerm);
+			$basicCounterList = _get_default_prepaid_basic_counters($productNid);
+			$existingCounterList = _get_existing_counter_list($productNid,   $tempTerm -> tid);
 
 			$mergedCounterList = $basicCounterList + $existingCounterList;
 			$form['field_ref_counter']['und']['#options'] = $mergedCounterList;
@@ -3054,13 +3045,57 @@ function roaming_options_callback_zone($form, $form_state) {
 	//return array('#type' => 'ajax', '#commands' => $commands);
 }
 
+// 해당 상품 type의 prepaid basic counter를 return 한다.
+function _get_default_prepaid_basic_counters($productNid) {
+	global $user;
+	$retArray = array();
+
+	$product = node_load($productNid);
+
+	$term_service_domain_tid = $product -> field_service_type_of_provider['und'][0]['tid'];
+	$term_counter_type = taxonomy_get_term_by_name('Basic', 'countertype');
+	$term_bill_type_product = taxonomy_term_load($product -> field_billing_type['und'][0]['tid']);
+	
+	$term_bill_type_counter = taxonomy_get_term_by_name('Prepaid', 'billtypecounter');
+	$billTypeCounter = current($term_bill_type_counter);
+	
+	$args = array();
+	$args[0] =  current($term_counter_type) -> tid;
+	$args[1] = $term_service_domain_tid;
+	$args[2] = $billTypeCounter -> tid;
+	
+	$view = views_get_view('query_list_counter');
+	$view -> set_display('panel_pane_1');
+	$view -> set_arguments($args);
+	$view -> execute();
+
+	$retArray = array();
+	foreach ($view->result as $record) {
+		$retArray[$record -> nid] = view_get_field_value_by_label($view, 'PHP', $record);
+	}
+
+	// 후불 상품에서는 선불 basic counter에 FREE_, POINT를 포함한다.
+	if ($term_bill_type_product -> name == 'Postpaid') {
+		$term_bill_type_counter = taxonomy_get_term_by_name('Prepaid', 'billtypecounter');
+		$billTypeCounter = current($term_bill_type_counter);
+		$args[2] = $billTypeCounter -> tid;
+	}
+	$viewResult = views_get_view_result('query_list_counter', 'panel_pane_5', $args[0], $args[1], $args[2]);
+	foreach ($viewResult as $record) {
+		$retArray[$record -> nid] = view_get_field_value_by_label($view, 'PHP', $record);
+	}
+
+	return $retArray;
+	// return $view->result;
+}
+
 // prdcounterlist에 있는 counter list를 리턴한다.
 //
-function _get_existing_counter_list($productNid) {
+function _get_existing_counter_list($productNid,$tid) {
 
 	$view = views_get_view('list_prdcounterlist');
 	$view -> set_display('panel_pane_2');
-	$view -> set_arguments(array('0' => $productNid));
+	$view -> set_arguments(array('0' => $productNid,'1'=>$tid));
 	$view -> execute();
 
 	$counterList = array();
