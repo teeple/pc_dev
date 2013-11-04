@@ -1,4 +1,52 @@
 <?php
+function product_priority_form($form,$form_state) {
+  $service_domain_name = $form_state['build_info']['args'][0];
+	  
+  // create a parent element and use our custom theme
+  $form['products'] = array(
+    '#prefix' => '<div id="product_priority">',
+    '#suffix' => '</div>',
+    '#tree' => TRUE,
+    '#theme' => 'product_catalog_form_product_priority'
+  );
+	
+	$view_result = views_get_view_result('list_relation_product_priority', 'panel_pane_1', $service_domain_name);
+	
+	foreach ($view_result as $key => $product) {
+		$markup = '<a href="/node/'.$product->nid.'">'.$product->node_title.'</a>';
+		
+		$form['products'][$key]['id'] = array(
+      '#type' => 'hidden',
+      '#value' => $product->nid,
+    );
+    $form['products'][$key]['name'] = array(
+      '#type' => 'markup',
+      '#markup' => $markup,
+    );
+		$form['products'][$key]['product_type'] = array(
+      '#type' => 'markup',
+      '#markup' => $product->field_field_product_type[0]['rendered']['#markup'],
+    );
+		$form['products'][$key]['billing_type'] = array(
+      '#type' => 'markup',
+      '#markup' => $product->field_field_billing_type[0]['rendered']['#markup'],
+    );
+    $form['products'][$key]['weight'] = array(
+      '#type' => 'weight',
+      '#default_value' => $product->field_data_field_weight_for_ratingpriority_field_weight_for_,
+      '#size' => 5,
+      '#delta' => 10000000,
+      '#attributes' => array('class' => array('rank-weight')), // needed for table dragging
+    );
+  }
+	  
+  $form['submit'] = array(
+      '#type' => 'submit',
+      '#value' => t('Save configuration'),
+  );
+	
+	return $form;
+}
 
 function basicrate_table_in_tariff_plan($type,$tariffplanNid,$refTreeTid){
   $tariffplanNode = node_load($tariffplanNid);
