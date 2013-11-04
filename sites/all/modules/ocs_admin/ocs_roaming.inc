@@ -1257,5 +1257,3 @@ function batch_import_roaming_tariff_finished($success, $results, $operations)
 		drupal_goto($_SESSION['redirect_after_batch']);
 	}
 }
-
-
