@@ -7,19 +7,8 @@ function product_priority_form_submit($form, &$form_state) {
 		db_query("UPDATE {field_data_field_weight_for_ratingpriority} SET field_weight_for_ratingpriority_value = :weight  WHERE entity_id = :id"
 						, array(':weight' => $product['weight'], ':id' =>$product['id']));
 	}
-  /*
-  foreach ($values as $arrkey => $valuearr) { //Cycle through each row of values
-        if (is_array($valuearr)) {
- 
-        $updateWeight = array(
-                "id"=>$valuearr['id'],
-                "weight"=>$valuearr['weight'],
-            );
- 
-            drupal_write_record('customsortmodule_list',$updateWeight,'id');
-        }
-    }
-	 */ 
+   
+	drupal_goto(current_path(), array('fragment' => 'quickset-relation_manager=4'));
 }
 
 function _clone_product_handler($form){

@@ -1,4 +1,5 @@
 <?php
+
 function product_priority_form($form,$form_state) {
   $service_domain_name = $form_state['build_info']['args'][0];
 	  
@@ -42,7 +43,7 @@ function product_priority_form($form,$form_state) {
 	  
   $form['submit'] = array(
       '#type' => 'submit',
-      '#value' => t('Save configuration'),
+      '#value' => t('Save configuration'),      
   );
 	
 	return $form;
