@@ -198,6 +198,7 @@ function _add_ajax_submit_callback($form_id, &$form) {
 		case 'treenodeotheronetimechargediscou_node_form' :
 		case 'treenodepacketdynamic_node_form' :
 		case 'treenodepacketdefaultqos_node_form' :
+		case 'treenodelifecyclescheme_node_form':
 		case 'basicrate_data_node_form' :
 		case 'prdattributerequireddevice_node_form' :
 		case 'prdattributenumbersaving_node_form' :
@@ -828,6 +829,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 
 			unset($form['field_active_period']);
 			unset($form['field_grace_period']);
+			unset($form['field_expire_period']);
 
 			// Create
 			if (!isset($form['nid']['#value'])) {
@@ -1419,8 +1421,6 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			} else {
 				$product_nid = $form['nid']['#value'];
 				$hiddenItems = array_merge($hiddenItems, array('field_product_type', 'field_service_type_of_provider'));
-
-				// $disabledItems = array_merge($disabledItems, array('field_billing_type', 'field_service_operator', 'field_price_units', 'field_product_id', 'field_custdvcd4prod', 'field_customer_group_type'));
 				$disabledItems = array_merge($disabledItems, array('field_billing_type', 'field_service_operator', 'field_price_units', 'field_custdvcd4prod', 'field_customer_group_type'));
 				
 				// Commercial에 Deply 된 이력이 있으면 product_id, short code disable
@@ -1458,9 +1458,10 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 
 				$options = array();
 				foreach ($viewResult as $item) {
-					if($item->nid != $product_nid){
-						$options[$item -> nid] = $item -> node_title;
-					}
+					$options[$item -> nid] = $item -> node_title;
+					// if($item->nid != $product_nid){
+					// 	$options[$item -> nid] = $item -> node_title;
+					// }
 				}
 				$form['field_next_join_product']['und']['#options'] = $options;
 				
@@ -2644,6 +2645,16 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			$form['field_parent_node']['#type'] = 'hidden';
 
 			break;
+
+		case 'treenodelifecyclescheme_node_form':
+			_unset_menu_items($form, $form_id);
+
+			$form['field_lifecycle_scheme']['#type'] = 'hidden';
+			$form['field_ref_product']['#type'] = 'hidden';
+			$form['field_ref_tree_tid']['#type'] = 'hidden';
+			
+			break;
+
 		case 'treenodepacketdynamic_node_form' :
 			_unset_menu_items($form, $form_id);
 			$form['field_ref_product']['#type'] = 'hidden';
