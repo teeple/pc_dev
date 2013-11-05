@@ -254,6 +254,7 @@
             case 'actionpricechargerecurring':
             case 'actionpricechargerecurringdefaul':
             case 'actionpriceallowancerecurring':
+            case 'actionunsubscriptioncleanup':
             case 'prdnonusagerollover':
             case 'treenodelifecyclescheme':
                	needToLoadEdit = false;

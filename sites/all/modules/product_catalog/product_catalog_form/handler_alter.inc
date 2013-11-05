@@ -144,6 +144,7 @@ function _add_ajax_submit_callback($form_id, &$form) {
 		case 'conditioncommontimetablefactors_node_form' :
 		case 'actionpricediscountfactors_node_form' :
 		case 'actionpriceallowancefactors_node_form' :
+		case 'actionunsubscriptioncleanup_node_form': 
 		case 'actionpricechargefactors_node_form' :
 		case 'actionpricechargeonetime_node_form' :
 		case 'actionpricechargerecurring_node_form' :
@@ -2228,6 +2229,14 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 					unset($form['field_price']);
 					break;
 			}
+			break;
+		case 'actionunsubscriptioncleanup_node_form':
+			$form['field_parent_node']['#type'] = 'hidden';
+			$form['field_weight']['#type'] = 'hidden';
+			$form['field_ref_product']['#type'] = 'hidden';
+			$form['field_ref_tree_tid']['#type'] = 'hidden';
+			// in case EDIT
+			_unset_menu_items($form, $form_id);
 			break;
 		case 'actionpricediscount_node_form' :
 		case 'actionpricechargeonetime_node_form' :
