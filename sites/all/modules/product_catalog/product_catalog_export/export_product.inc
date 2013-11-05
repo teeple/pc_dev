@@ -624,8 +624,33 @@ function _get_lifecyclescheme($productNid) {
     } else {
         return NULL;
     }
-
 }
+
+// function _get_lifecyclescheme($productNid) {
+//     $view_name = 'list_tree_term_child_node_for_product';
+//     $display = 'panel_pane_1';
+//     $args = array('0' => $productNid);
+
+//     $contentType = 'simpleproductoffering';
+//     $productNode = node_load($productNid);
+//     $vocaName = _get_vocabulary_name($contentType, $productNode);
+
+//     $term = taxonomy_get_term_by_name('Subscriber Lifecycle Scheme', $vocaName);
+//     if (!empty($term)) {
+//         $args[] =  current($term) -> tid;
+//     }
+
+//     $req_labels = array('lifecyclescheme_id' => 'Nid', );
+//     $records = _get_records_from_views_by_label($view_name, $display, $args, $req_labels);
+
+//     if (!empty($records)) {
+//         $schemeNode = node_load($records[0]['lifecyclescheme_id']);
+//         return $schemeNode -> field_lifecycle_scheme['und'][0]['nid'];
+//     } else {
+//         return NULL;
+//     }
+// }
+
 
 function _get_recurring_bonus($productNid) {
 
