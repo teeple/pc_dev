@@ -543,7 +543,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 		 	//dpm( $svcDomainTerms);
 
 			$options = _handler_get_term_options( 'calltype', array(
-				array('field_service_domain', 'tid', $svcDomainTid),
+				array('field_service_domain', 'tid', $svcDomainTidList, 'IN'),
 				array('field_sub_group1', 'value', array('VOICE', 'SMS', 'DATA', 'VIDEO', 'CHARGE', 'VAS'), 'IN'),
 				));
 
@@ -3396,11 +3396,37 @@ function _handler_get_term_options( $voca, $cond_list)
 	$result = $query->execute();
 
 	$options = array();
+
+	if ( isset( $result['taxonomy_term'])) {
+		foreach( array_keys( $result['taxonomy_term']) as $tid) {
+			$term = taxonomy_term_load( $tid);
+			$name = $term->name;
+			if ( ! empty( $term->description)) $name .= ' (' . $term->description . ')';
+			$options[$tid] = $name;
+		}
+	}
+	else {
+	// no terms found
+	//		dpm( $voca, 'not found');
+	}
+
+	return $options;
+}
+
+function _handler_get_terms( $voca)
+{
+    /* get vocabulary name */
+    $vid = taxonomy_vocabulary_machine_name_load( $voca);
+	$query = new EntityFieldQuery;
+	$result = $query->entityCondition('entity_type', 'taxonomy_term')
+		->propertyCondition('vid', $vid->vid)
+		->execute();
+
+	$options = array();
 	foreach( array_keys( $result['taxonomy_term']) as $tid) {
 		$term = taxonomy_term_load( $tid);
-		$name = $term->name;
-		if ( ! empty( $term->description)) $name .= ' (' . $term->description . ')';
-		$options[$tid] = $name;
+		$options[$term->name] = $tid;
+		$options[$tid] = $term->name;
 	}
 
 	return $options;

@@ -1,0 +1,849 @@
+stdClass Object
+(
+    [vid] => 133126
+    [uid] => 1
+    [title] => idd_ratinggroup 132704
+    [log] => 
+    [status] => 1
+    [comment] => 1
+    [promote] => 1
+    [sticky] => 0
+    [nid] => 132704
+    [type] => idd_ratinggroup
+    [language] => und
+    [created] => 1372148368
+    [changed] => 1382517930
+    [tnid] => 0
+    [translate] => 0
+    [revision_timestamp] => 1382517930
+    [revision_uid] => 1393
+    [field_prefix] => Array
+        (
+            [und] => Array
+                (
+                    [0] => Array
+                        (
+                            [value] => 350
+                            [format] => 
+                            [safe_value] => 350
+                        )
+
+                    [1] => Array
+                        (
+                            [value] => 385
+                            [format] => 
+                            [safe_value] => 385
+                        )
+
+                    [2] => Array
+                        (
+                            [value] => 503
+                            [format] => 
+                            [safe_value] => 503
+                        )
+
+                    [3] => Array
+                        (
+                            [value] => 974
+                            [format] => 
+                            [safe_value] => 974
+                        )
+
+                    [4] => Array
+                        (
+                            [value] => 370
+                            [format] => 
+                            [safe_value] => 370
+                        )
+
+                    [5] => Array
+                        (
+                            [value] => 373
+                            [format] => 
+                            [safe_value] => 373
+                        )
+
+                    [6] => Array
+                        (
+                            [value] => 1876
+                            [format] => 
+                            [safe_value] => 1876
+                        )
+
+                    [7] => Array
+                        (
+                            [value] => 594
+                            [format] => 
+                            [safe_value] => 594
+                        )
+
+                    [8] => Array
+                        (
+                            [value] => 590
+                            [format] => 
+                            [safe_value] => 590
+                        )
+
+                    [9] => Array
+                        (
+                            [value] => 963
+                            [format] => 
+                            [safe_value] => 963
+                        )
+
+                    [10] => Array
+                        (
+                            [value] => 1284
+                            [format] => 
+                            [safe_value] => 1284
+                        )
+
+                    [11] => Array
+                        (
+                            [value] => 297
+                            [format] => 
+                            [safe_value] => 297
+                        )
+
+                    [12] => Array
+                        (
+                            [value] => 687
+                            [format] => 
+                            [safe_value] => 687
+                        )
+
+                    [13] => Array
+                        (
+                            [value] => 505
+                            [format] => 
+                            [safe_value] => 505
+                        )
+
+                    [14] => Array
+                        (
+                            [value] => 1345
+                            [format] => 
+                            [safe_value] => 1345
+                        )
+
+                    [15] => Array
+                        (
+                            [value] => 356
+                            [format] => 
+                            [safe_value] => 356
+                        )
+
+                    [16] => Array
+                        (
+                            [value] => 237
+                            [format] => 
+                            [safe_value] => 237
+                        )
+
+                    [17] => Array
+                        (
+                            [value] => 387
+                            [format] => 
+                            [safe_value] => 387
+                        )
+
+                    [18] => Array
+                        (
+                            [value] => 691
+                            [format] => 
+                            [safe_value] => 691
+                        )
+
+                    [19] => Array
+                        (
+                            [value] => 597
+                            [format] => 
+                            [safe_value] => 597
+                        )
+
+                    [20] => Array
+                        (
+                            [value] => 233
+                            [format] => 
+                            [safe_value] => 233
+                        )
+
+                    [21] => Array
+                        (
+                            [value] => 227
+                            [format] => 
+                            [safe_value] => 227
+                        )
+
+                    [22] => Array
+                        (
+                            [value] => 266
+                            [format] => 
+                            [safe_value] => 266
+                        )
+
+                    [23] => Array
+                        (
+                            [value] => 968
+                            [format] => 
+                            [safe_value] => 968
+                        )
+
+                    [24] => Array
+                        (
+                            [value] => 213
+                            [format] => 
+                            [safe_value] => 213
+                        )
+
+                    [25] => Array
+                        (
+                            [value] => 679
+                            [format] => 
+                            [safe_value] => 679
+                        )
+
+                    [26] => Array
+                        (
+                            [value] => 377
+                            [format] => 
+                            [safe_value] => 377
+                        )
+
+                    [27] => Array
+                        (
+                            [value] => 501
+                            [format] => 
+                            [safe_value] => 501
+                        )
+
+                    [28] => Array
+                        (
+                            [value] => 212
+                            [format] => 
+                            [safe_value] => 212
+                        )
+
+                    [29] => Array
+                        (
+                            [value] => 235
+                            [format] => 
+                            [safe_value] => 235
+                        )
+
+                    [30] => Array
+                        (
+                            [value] => 225
+                            [format] => 
+                            [safe_value] => 225
+                        )
+
+                    [31] => Array
+                        (
+                            [value] => 229
+                            [format] => 
+                            [safe_value] => 229
+                        )
+
+                    [32] => Array
+                        (
+                            [value] => 1264
+                            [format] => 
+                            [safe_value] => 1264
+                        )
+
+                    [33] => Array
+                        (
+                            [value] => 240
+                            [format] => 
+                            [safe_value] => 240
+                        )
+
+                    [34] => Array
+                        (
+                            [value] => 251
+                            [format] => 
+                            [safe_value] => 251
+                        )
+
+                    [35] => Array
+                        (
+                            [value] => 263
+                            [format] => 
+                            [safe_value] => 263
+                        )
+
+                    [36] => Array
+                        (
+                            [value] => 226
+                            [format] => 
+                            [safe_value] => 226
+                        )
+
+                    [37] => Array
+                        (
+                            [value] => 1767
+                            [format] => 
+                            [safe_value] => 1767
+                        )
+
+                    [38] => Array
+                        (
+                            [value] => 255
+                            [format] => 
+                            [safe_value] => 255
+                        )
+
+                    [39] => Array
+                        (
+                            [value] => 680
+                            [format] => 
+                            [safe_value] => 680
+                        )
+
+                    [40] => Array
+                        (
+                            [value] => 238
+                            [format] => 
+                            [safe_value] => 238
+                        )
+
+                    [41] => Array
+                        (
+                            [value] => 231
+                            [format] => 
+                            [safe_value] => 231
+                        )
+
+                    [42] => Array
+                        (
+                            [value] => 592
+                            [format] => 
+                            [safe_value] => 592
+                        )
+
+                    [43] => Array
+                        (
+                            [value] => 382
+                            [format] => 
+                            [safe_value] => 382
+                        )
+
+                    [44] => Array
+                        (
+                            [value] => 389
+                            [format] => 
+                            [safe_value] => 389
+                        )
+
+                    [45] => Array
+                        (
+                            [value] => 689
+                            [format] => 
+                            [safe_value] => 689
+                        )
+
+                    [46] => Array
+                        (
+                            [value] => 291
+                            [format] => 
+                            [safe_value] => 291
+                        )
+
+                    [47] => Array
+                        (
+                            [value] => 359
+                            [format] => 
+                            [safe_value] => 359
+                        )
+
+                    [48] => Array
+                        (
+                            [value] => 994
+                            [format] => 
+                            [safe_value] => 994
+                        )
+
+                    [49] => Array
+                        (
+                            [value] => 509
+                            [format] => 
+                            [safe_value] => 509
+                        )
+
+                    [50] => Array
+                        (
+                            [value] => 423
+                            [format] => 
+                            [safe_value] => 423
+                        )
+
+                    [51] => Array
+                        (
+                            [value] => 95
+                            [format] => 
+                            [safe_value] => 95
+                        )
+
+                    [52] => Array
+                        (
+                            [value] => 355
+                            [format] => 
+                            [safe_value] => 355
+                        )
+
+                    [53] => Array
+                        (
+                            [value] => 1649
+                            [format] => 
+                            [safe_value] => 1649
+                        )
+
+                    [54] => Array
+                        (
+                            [value] => 262
+                            [format] => 
+                            [safe_value] => 262
+                        )
+
+                    [55] => Array
+                        (
+                            [value] => 218
+                            [format] => 
+                            [safe_value] => 218
+                        )
+
+                    [56] => Array
+                        (
+                            [value] => 216
+                            [format] => 
+                            [safe_value] => 216
+                        )
+
+                    [57] => Array
+                        (
+                            [value] => 375
+                            [format] => 
+                            [safe_value] => 375
+                        )
+
+                    [58] => Array
+                        (
+                            [value] => 253
+                            [format] => 
+                            [safe_value] => 253
+                        )
+
+                    [59] => Array
+                        (
+                            [value] => 248
+                            [format] => 
+                            [safe_value] => 248
+                        )
+
+                    [60] => Array
+                        (
+                            [value] => 228
+                            [format] => 
+                            [safe_value] => 228
+                        )
+
+                    [61] => Array
+                        (
+                            [value] => 236
+                            [format] => 
+                            [safe_value] => 236
+                        )
+
+                    [62] => Array
+                        (
+                            [value] => 224
+                            [format] => 
+                            [safe_value] => 224
+                        )
+
+                    [63] => Array
+                        (
+                            [value] => 242
+                            [format] => 
+                            [safe_value] => 242
+                        )
+
+                    [64] => Array
+                        (
+                            [value] => 241
+                            [format] => 
+                            [safe_value] => 241
+                        )
+
+                    [65] => Array
+                        (
+                            [value] => 676
+                            [format] => 
+                            [safe_value] => 676
+                        )
+
+                    [66] => Array
+                        (
+                            [value] => 269
+                            [format] => 
+                            [safe_value] => 269
+                        )
+
+                    [67] => Array
+                        (
+                            [value] => 232
+                            [format] => 
+                            [safe_value] => 232
+                        )
+
+                    [68] => Array
+                        (
+                            [value] => 221
+                            [format] => 
+                            [safe_value] => 221
+                        )
+
+                    [69] => Array
+                        (
+                            [value] => 220
+                            [format] => 
+                            [safe_value] => 220
+                        )
+
+                    [70] => Array
+                        (
+                            [value] => 222
+                            [format] => 
+                            [safe_value] => 222
+                        )
+
+                    [71] => Array
+                        (
+                            [value] => 685
+                            [format] => 
+                            [safe_value] => 685
+                        )
+
+                    [72] => Array
+                        (
+                            [value] => 252
+                            [format] => 
+                            [safe_value] => 252
+                        )
+
+                    [73] => Array
+                        (
+                            [value] => 850
+                            [format] => 
+                            [safe_value] => 850
+                        )
+
+                    [74] => Array
+                        (
+                            [value] => 261
+                            [format] => 
+                            [safe_value] => 261
+                        )
+
+                    [75] => Array
+                        (
+                            [value] => 678
+                            [format] => 
+                            [safe_value] => 678
+                        )
+
+                    [76] => Array
+                        (
+                            [value] => 878
+                            [format] => 
+                            [safe_value] => 878
+                        )
+
+                    [77] => Array
+                        (
+                            [value] => 960
+                            [format] => 
+                            [safe_value] => 960
+                        )
+
+                    [78] => Array
+                        (
+                            [value] => 371
+                            [format] => 
+                            [safe_value] => 371
+                        )
+
+                    [79] => Array
+                        (
+                            [value] => 53
+                            [format] => 
+                            [safe_value] => 53
+                        )
+
+                )
+
+        )
+
+    [field_area_name] => Array
+        (
+            [und] => Array
+                (
+                    [0] => Array
+                        (
+                            [value] => Uni_1668_Zone_5
+                            [format] => 
+                            [safe_value] => Uni_1668_Zone_5
+                        )
+
+                )
+
+        )
+
+    [field_ref_numberingplan_idd] => Array
+        (
+            [und] => Array
+                (
+                    [0] => Array
+                        (
+                            [nid] => 132088
+                        )
+
+                )
+
+        )
+
+    [field_service_type_of_provider] => Array
+        (
+            [und] => Array
+                (
+                    [0] => Array
+                        (
+                            [tid] => 406
+                        )
+
+                )
+
+        )
+
+    [field_ref_type_of_call] => Array
+        (
+            [und] => Array
+                (
+                    [0] => Array
+                        (
+                            [tid] => 7870
+                        )
+
+                )
+
+        )
+
+    [field_ref_carrier_mobile] => Array
+        (
+            [und] => Array
+                (
+                    [0] => Array
+                        (
+                            [nid] => 130120
+                        )
+
+                )
+
+        )
+
+    [field_rating_group] => Array
+        (
+            [und] => Array
+                (
+                    [0] => Array
+                        (
+                            [value] => RG_1668_IDD_Zone_5
+                            [format] => 
+                            [safe_value] => RG_1668_IDD_Zone_5
+                        )
+
+                )
+
+        )
+
+    [rdf_mapping] => Array
+        (
+            [rdftype] => Array
+                (
+                    [0] => sioc:Item
+                    [1] => foaf:Document
+                )
+
+            [title] => Array
+                (
+                    [predicates] => Array
+                        (
+                            [0] => dc:title
+                        )
+
+                )
+
+            [created] => Array
+                (
+                    [predicates] => Array
+                        (
+                            [0] => dc:date
+                            [1] => dc:created
+                        )
+
+                    [datatype] => xsd:dateTime
+                    [callback] => date_iso8601
+                )
+
+            [changed] => Array
+                (
+                    [predicates] => Array
+                        (
+                            [0] => dc:modified
+                        )
+
+                    [datatype] => xsd:dateTime
+                    [callback] => date_iso8601
+                )
+
+            [body] => Array
+                (
+                    [predicates] => Array
+                        (
+                            [0] => content:encoded
+                        )
+
+                )
+
+            [uid] => Array
+                (
+                    [predicates] => Array
+                        (
+                            [0] => sioc:has_creator
+                        )
+
+                    [type] => rel
+                )
+
+            [name] => Array
+                (
+                    [predicates] => Array
+                        (
+                            [0] => foaf:name
+                        )
+
+                )
+
+            [comment_count] => Array
+                (
+                    [predicates] => Array
+                        (
+                            [0] => sioc:num_replies
+                        )
+
+                    [datatype] => xsd:integer
+                )
+
+            [last_activity] => Array
+                (
+                    [predicates] => Array
+                        (
+                            [0] => sioc:last_activity_date
+                        )
+
+                    [datatype] => xsd:dateTime
+                    [callback] => date_iso8601
+                )
+
+        )
+
+    [cid] => 0
+    [last_comment_timestamp] => 1372148368
+    [last_comment_name] => 
+    [last_comment_uid] => 1
+    [comment_count] => 0
+    [name] => admin
+    [picture] => 0
+    [data] => b:0;
+)
+350
+385
+503
+974
+370
+373
+1876
+594
+590
+963
+1284
+297
+687
+505
+1345
+356
+237
+387
+691
+597
+233
+227
+266
+968
+213
+679
+377
+501
+212
+235
+225
+229
+1264
+240
+251
+263
+226
+1767
+255
+680
+238
+231
+592
+382
+389
+689
+291
+359
+994
+509
+423
+95
+355
+1649
+262
+218
+216
+375
+253
+248
+228
+236
+224
+242
+241
+676
+269
+232
+221
+220
+222
+685
+252
+850
+261
+678
+878
+960
+371
+53
