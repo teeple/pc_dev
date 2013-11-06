@@ -619,6 +619,7 @@ function product_catalog_ajax_paste_node($nodeId,$productId,$weight){
 								case "actionpricediscount":
 								case "actionpriceallowanceonetime":
 								case "actionpricechargerecurring":
+								case "actionunsubscriptioncleanup":
 										$output = _paste_action($targetNode,$productNid,$baseTid,$weight);
 										$output['product_catalog_ajax_result'] = add_js_settings_after_node_save($output['product_catalog_ajax_result_node']);
                     unset($output['product_catalog_ajax_result_node']);

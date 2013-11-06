@@ -380,6 +380,12 @@
 					"image" : "/sites/default/files/icons/discount.png"
 					        }
 				},
+				"nonusage_unsubscription_cleanup" : {
+					"valid_children" : ["actionunsubscriptioncleanup"],
+					"icon" : {
+					"image" : "/sites/default/files/icons/money.png"
+					        }
+				},
 				"nonusage_unsubscription_penalty" : {
 					"valid_children" : ["actionpricechargeonetime"],
 					"icon" : {
@@ -495,6 +501,14 @@
         "icon" : {
         		"image" : "/sites/default/files/icons/point.png"
         	},
+        },
+        
+        //unsubscriptioin
+        "actionunsubscriptioncleanup" : {
+        	"valid_children" : ["conditioncommonand"],
+        	"icon" : {
+        	"image" : "/sites/default/files/icons/money.png"
+        	        }
         },
         
         // Unit Transfer

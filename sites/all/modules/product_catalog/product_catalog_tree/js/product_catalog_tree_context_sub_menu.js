@@ -175,6 +175,14 @@
 					$.fn.pasteNode(node);
 				};
 				break;
+			case "nonusage_unsubscription_cleanup":
+				menus.custom_create._disabled = false;
+				menus.custom_create.submenu = $.fn.getSubMenuAddNode("CleanUp", "actionunsubscriptioncleanup");
+				menus.custom_paste._disabled = false;
+				menus.custom_paste.action = function(node) {
+					$.fn.pasteNode(node);
+				};
+				break;
 			case "nonusage_subscription_discount":
 			case "nonusage_recurring_discount":
 				menus.custom_create._disabled = false;
@@ -360,6 +368,7 @@
 			case "actionpricediscount":
 			case "actionpriceallowanceonetime":
 			case "actionpricechargerecurring":
+			case "actionunsubscriptioncleanup":
 				menus.custom_delete._disabled = false;
 				menus.custom_delete.action = function(node) {
 					$.fn.deleteNode(node);
