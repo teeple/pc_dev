@@ -1094,7 +1094,18 @@ function product_catalog_form_node_validate($node, $form, &$form_state) {
 								drupal_set_message($existName . " is defined in Product Downgrade Penlaty", 'error');
 							}
 						}
-						
+
+						//next join product 체크
+						if(isset($form_state['values']['field_next_join_product']['und'][0]['nid'])){
+							$next_join_product = node_load($form_state['values']['field_next_join_product']['und'][0]['nid']);
+							if($next_join_product->field_service_operator['und'][0]['tid'] != $form_state['values']['field_service_operator']['und'][0]['tid']){
+								form_set_error('field_next_join_product','Service Operator of Next Join Product is different');
+							}else if($next_join_product->field_billing_type['und'][0]['tid'] != $form_state['values']['field_billing_type']['und'][0]['tid']){
+								form_set_error('field_next_join_product','Billing Type of Next Join Product is different');
+							}else if($next_join_product->field_custdvcd4prod['und'][0]['tid'] != $form_state['values']['field_custdvcd4prod']['und'][0]['tid']){
+								form_set_error('field_next_join_product','Customer Type of Next Join Product is different');
+							}
+						}					
 					} else{ //relation일 경우
 						//exclusive 설정일 때,
 						$need_to_check_exclusive = FALSE;

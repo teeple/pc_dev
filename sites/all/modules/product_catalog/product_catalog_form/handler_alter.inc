@@ -1390,17 +1390,29 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 				
 				$serviceDomainTid = $form['field_service_type_of_provider']['und']['#default_value'][0];
 				$productTypeTid = $form['field_product_type']['und']['#default_value'][0];
+				
+				/*
 				$billingTypeTid = $form['field_billing_type']['und']['#default_value'];
 				$svcOperatorTid = $form['field_service_operator']['und']['#default_value'];
+				*/
 				
-				$viewResult = views_get_view_result('list_product_for_nextjoin', 'panel_pane_2', $serviceDomainTid, $productTypeTid, $billingTypeTid, $svcOperatorTid);
+				$viewResult = views_get_view_result('list_product_for_nextjoin', 'panel_pane_3', $serviceDomainTid, $productTypeTid);
 				
 				$options = array();
+				
 				foreach ($viewResult as $item) {
-					$options[$item -> nid] = $item -> node_title;
+					$title =  $item -> node_title;
+					$title .= ' [' . $item->taxonomy_term_data_field_data_field_service_operator_name;
+					$title .= ', ';
+					$title .= ($item->taxonomy_term_data_field_data_field_billing_type_name == 'Prepaid')?'PPS':'PS';
+					$title .= ', ';
+					$title .= ($item->taxonomy_term_data_field_data_field_custdvcd4prod_name == 'Personal')?'P':(($item->taxonomy_term_data_field_data_field_custdvcd4prod_name == 'Group')?'G':'GP');
+					$title .=']';
+					$options[$item -> nid] = $title;
 				}
 				$form['field_next_join_product']['und']['#options'] = $options;
-
+				
+				
 				//calltype
 				$options = _get_call_type_options();
 				$form['field_ref_type_of_call_mul']['und']['#options'] = $options;
@@ -1410,13 +1422,14 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 
 				$form['field_counter_unit_type']['und']['#ajax'] = array('callback' => 'deposit_counter_callback', 'wrapper' => 'deposit_counter_set', );
 
+				/*
 				$form['field_next_join_product']['#prefix'] = '<div id="next_join_product_div">';
 				$form['field_next_join_product']['#suffix'] = '</div>';
 
 				$form['field_billing_type']['und']['#ajax'] = array('callback' => 'nextjoin_product_ajax_callback', 'wrapper' => 'next_join_product_div');
 				$form['field_service_operator']['und']['#ajax'] = array('callback' => 'nextjoin_product_ajax_callback', 'wrapper' => 'next_join_product_div');
 				$form['field_custdvcd4prod']['und']['#ajax'] = array('callback' => 'nextjoin_product_ajax_callback', 'wrapper' => 'next_join_product_div');
-
+				*/
 			// in case Edit
 			} else {
 				$product_nid = $form['nid']['#value'];
