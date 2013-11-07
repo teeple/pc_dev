@@ -601,61 +601,61 @@ function _get_nonusage_rollover($productNid) {
 
 }
 
-// function _get_lifecyclescheme($productNid) {
-
-// 	$retArray = array();
-
-//     $results = views_get_view_result('list_treenodelifecyclescheme', 'panel_pane_1', $productNid);
-//     $optParams = array();
-//     if(count($results) > 0) {
-//     	$scheme_id = $results[0]->field_field_lifecycle_scheme[0]['raw']['nid'];
-
-//     	$retArray['scheme_id'] = $scheme_id;
-//     	if(!empty($results[0]->field_field_lifecycle_opt_params)) {
-// 	    	$tempParams = $results[0]->field_field_lifecycle_opt_params[0]['rendered']['entity']['field_collection_item'];
-
-// 	    	foreach($tempParams as $collection) {
-// 	    		$optKey = $collection['field_lifecycleoptparams_key']['#items'][0]['taxonomy_term'];
-// 				$optKeyCommCode = _get_common_code($optKey);
-// 	    		$optValue = $collection['field_lifecycleoptparams_value']['#items'][0]['value'];
-
-// 	    		$optParams[] = array( 'key' => $optKeyCommCode, 'value' => $optValue);
-// 	    	}
-// 		} else {
-// 			$optParams = NULL;
-// 		}
-// 		$retArray['params'] = $optParams;
-// 		return $retArray;
-
-//     } else {
-//     	return NULL;
-//     }
-// }
-
 function _get_lifecyclescheme($productNid) {
-    $view_name = 'list_tree_term_child_node_for_product';
-    $display = 'panel_pane_1';
-    $args = array('0' => $productNid);
 
-    $contentType = 'simpleproductoffering';
-    $productNode = node_load($productNid);
-    $vocaName = _get_vocabulary_name($contentType, $productNode);
+	$retArray = array();
 
-    $term = taxonomy_get_term_by_name('Subscriber Lifecycle Scheme', $vocaName);
-    if (!empty($term)) {
-        $args[] =  current($term) -> tid;
-    }
+    $results = views_get_view_result('list_treenodelifecyclescheme', 'panel_pane_1', $productNid);
+    $optParams = array();
+    if(count($results) > 0) {
+    	$scheme_id = $results[0]->field_field_lifecycle_scheme[0]['raw']['nid'];
 
-    $req_labels = array('lifecyclescheme_id' => 'Nid', );
-    $records = _get_records_from_views_by_label($view_name, $display, $args, $req_labels);
+    	$retArray['scheme_id'] = $scheme_id;
+    	if(!empty($results[0]->field_field_lifecycle_opt_params)) {
+	    	$tempParams = $results[0]->field_field_lifecycle_opt_params[0]['rendered']['entity']['field_collection_item'];
 
-    if (!empty($records)) {
-        $schemeNode = node_load($records[0]['lifecyclescheme_id']);
-        return $schemeNode -> field_lifecycle_scheme['und'][0]['nid'];
+	    	foreach($tempParams as $collection) {
+	    		$optKey = $collection['field_lifecycleoptparams_key']['#items'][0]['taxonomy_term'];
+				$optKeyCommCode = _get_common_code($optKey);
+	    		$optValue = $collection['field_lifecycleoptparams_value']['#items'][0]['value'];
+
+	    		$optParams[] = array( 'key' => $optKeyCommCode, 'value' => $optValue);
+	    	}
+		} else {
+			$optParams = NULL;
+		}
+		$retArray['params'] = $optParams;
+		return $retArray;
+
     } else {
-        return NULL;
+    	return NULL;
     }
 }
+
+// function _get_lifecyclescheme($productNid) {
+//     $view_name = 'list_tree_term_child_node_for_product';
+//     $display = 'panel_pane_1';
+//     $args = array('0' => $productNid);
+
+//     $contentType = 'simpleproductoffering';
+//     $productNode = node_load($productNid);
+//     $vocaName = _get_vocabulary_name($contentType, $productNode);
+
+//     $term = taxonomy_get_term_by_name('Subscriber Lifecycle Scheme', $vocaName);
+//     if (!empty($term)) {
+//         $args[] =  current($term) -> tid;
+//     }
+
+//     $req_labels = array('lifecyclescheme_id' => 'Nid', );
+//     $records = _get_records_from_views_by_label($view_name, $display, $args, $req_labels);
+
+//     if (!empty($records)) {
+//         $schemeNode = node_load($records[0]['lifecyclescheme_id']);
+//         return $schemeNode -> field_lifecycle_scheme['und'][0]['nid'];
+//     } else {
+//         return NULL;
+//     }
+// }
 
 
 function _get_recurring_bonus($productNid) {
