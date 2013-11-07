@@ -1,10 +1,15 @@
 <?php
 
-function _validate_product_change_scheme( $prd_list)
+function _validate_product_change_scheme()
 {
 	$list = array();
 
-	foreach( $prd_list as $scheme_nid => $scheme) {
+	// bhtak 13/11/06 need to test for all product change scheme
+	$prd_list = ocs_get_nids_by_cond( 'productchange', array());
+	if ( count( $prd_list) == 0) return TRUE;
+
+	foreach( $prd_list as $nid) {
+		$scheme = node_load( $nid);
 		if ( ! isset( $scheme->field_from_product_group['und']) || ! isset( $scheme->field_to_product_group['und'])) 
 			continue;
 
@@ -64,7 +69,7 @@ function deploy_all( $type, $prd_list, $target, $redirectFlag = TRUE)
 	}
 	
 	if ( $type === 'PRODUCT_CHANGE_SCHEME') {
-		if ( _validate_product_change_scheme( $prd_list) === FALSE) {
+		if ( _validate_product_change_scheme() === FALSE) {
 			drupal_set_message('FATAL : Invalid Product Change Scheme', 'error');
 			return;
 		}
