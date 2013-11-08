@@ -1037,6 +1037,18 @@ function product_catalog_form_node_validate($node, $form, &$form_state) {
 								form_set_error('field_cug_customer_type', "CUG Customer Type field is required");
 							}
 						}
+
+						// edit일 때, 기존에 next join, expire date unit이 없다가 , packaged product에 묶여 있는 상품이면서, next join 또는 expire date unit을 설정하는 것은 안됨
+						// in case Edit
+						if( isset($form['nid']['#value']) ) {
+							// 이전에 next join product와 expire date unit이 없었을 경우 
+							if (emtpy($form['build_info']['args'][0]->field_expire_date_type)
+								&& empty($form['build_info']['args'][0]->field_next_join_product)) {
+
+							}
+
+						}
+
 	
 						// expire date type이 설정되어있는데, expire date값이 없으면 에러
 						$expireDateTypeTerm = isset($form_state['values']['field_expire_date_type']['und'][0]['tid']) ? taxonomy_term_load($form_state['values']['field_expire_date_type']['und'][0]['tid']) : NULL;
@@ -1105,7 +1117,9 @@ function product_catalog_form_node_validate($node, $form, &$form_state) {
 							}else if($next_join_product->field_custdvcd4prod['und'][0]['tid'] != $form_state['values']['field_custdvcd4prod']['und'][0]['tid']){
 								form_set_error('field_next_join_product','Customer Type of Next Join Product is different');
 							}
-						}					
+						}
+
+
 					} else{ //relation일 경우
 						//exclusive 설정일 때,
 						$need_to_check_exclusive = FALSE;
