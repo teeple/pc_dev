@@ -1041,12 +1041,15 @@ function product_catalog_form_node_validate($node, $form, &$form_state) {
 						// edit일 때, 기존에 next join, expire date unit이 없다가 , packaged product에 묶여 있는 상품이면서, next join 또는 expire date unit을 설정하는 것은 안됨
 						// in case Edit
 						if( isset($form['nid']['#value']) ) {
-							// 이전에 next join product와 expire date unit이 없었을 경우 
-							if (emtpy($form['build_info']['args'][0]->field_expire_date_type)
-								&& empty($form['build_info']['args'][0]->field_next_join_product)) {
-
+							$viewResult = views_get_view_result('list_package_by_product_id', 'panel_pane_3', $form['nid']['#value']);
+							if(!empty($viewResult)){
+								if(isset($form_state['values']['field_expire_date_type']['und'][0]['tid'])){
+									form_set_error('field_expire_date_type','Expire Time Unit can not be set. This product is connected to other product as a packaged product.');
+								}
+								if(isset($form_state['values']['field_next_join_product']['und'][0]['nid'])){
+									form_set_error('field_next_join_product','Next Join Product can not be set. This product is connected to other product as a packaged product.');
+								}
 							}
-
 						}
 
 	
@@ -1083,8 +1086,12 @@ function product_catalog_form_node_validate($node, $form, &$form_state) {
 								}
 							}
 						}
+
 						// next join confirm이 설정되어있는데, next join product값이 없으면 에러
-	
+						if(isset($form_state['values']['field_next_join_confirm']['und'][0]['tid']) && !isset($form_state['values']['field_next_join_product']['und'][0]['nid'])){
+							form_set_error('field_next_join_confirm', "Next Join Confirm can not be set without Next Join Product.");
+						}
+						
 						//check exclusivessness and downgrade penalty
 						if (isset($form_state['values']['field_exclusiveness']['und'])) {
 							$isExist = FALSE;
