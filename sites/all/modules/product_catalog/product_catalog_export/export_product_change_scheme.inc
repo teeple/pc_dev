@@ -37,7 +37,20 @@ function _product_change_scheme_for_export($exportItemNids = NULL, $isExternalAP
 		}
 		
 		$productChange['restriction_by_prefix'] = FALSE;
+
+		// Active Date Setting
+		$activeDate = array();
+		$activeDate['options'] = isset($record->field_field_activedate_options[0]['rendered']['#title'])? $record->field_field_activedate_options[0]['rendered']['#title']: NULL;
 		
+		if(isset($record->field_field_activedate_options[0]) && $record->field_field_activedate_options[0]['rendered']['#options']['entity']->name != 'Fixed Date') {
+			$activeDate['ndays'] = isset($record->field_field_activedate_ndays[0]['raw']['value'])? $record->field_field_activedate_ndays[0]['raw']['value']: NULL;
+			$activeDate['fixed_date'] = NULL;			
+		} else {
+			$activeDate['ndays'] = NULL;		
+			$activeDate['fixed_date'] = isset($record->field_field_activedate_fixeddate[0]['raw']['value'])? $record->field_field_activedate_fixeddate[0]['raw']['value']: NULL;
+		}
+
+
 		// Grace Date Setting
 		$graceDate = array();
 		$graceDate['options'] = isset($record->field_field_gracedate_options[0]['rendered']['#title'])? $record->field_field_gracedate_options[0]['rendered']['#title']: NULL;
@@ -61,7 +74,9 @@ function _product_change_scheme_for_export($exportItemNids = NULL, $isExternalAP
 			$expireDate['ndays'] = NULL;		
 			$expireDate['fixed_date'] = isset($record->field_field_expiredate_fixeddate[0]['raw']['value'])? $record->field_field_expiredate_fixeddate[0]['raw']['value']: NULL;
 		}
-		$productChange['active_date'] = $expireDate;
+
+		$productChange['active_date'] = $activeDate;
+		$productChange['expire_date'] = $expireDate;
 		$productChange['grace_date'] = $graceDate;
 		
 		$viewResultSubSelected = views_get_view_result('list_product_change_sub_selected', 'panel_pane_4', $record->nid);
