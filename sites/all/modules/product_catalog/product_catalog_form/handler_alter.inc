@@ -188,6 +188,7 @@ function _add_ajax_submit_callback($form_id, &$form) {
 		case 'conditionwhatisclir_node_form' :
 		case 'conditionwhatisredirected_node_form' :
 		case 'conditionwhatgroupmembercount_node_form' :
+		case 'conditionwhatgroupmaxnumbercount_node_form' :
 		case 'conditionwhereserviceid_node_form' :
 		case 'conditionwhenactivationday_node_form' :
 		case 'numberspecialrate_node_form' :
@@ -1579,7 +1580,7 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 		case 'conditionwhatisredirected_node_form' :
 		case 'conditionwhatgroupmembercount_node_form' :
 		case 'conditionwhaturlgroupfactors_node_form' :
-		case 'conditionwhatgroupmembercount_node_form' :
+		case 'conditionwhatgroupmaxnumbercount_node_form' :
 		case 'conditionwhencustomfactors_node_form' :
 		case 'conditionwhendayofmonth_node_form' :
 		case 'conditionwhendayfactors_node_form' :
