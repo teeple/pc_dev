@@ -123,9 +123,6 @@ function _get_product_relationship($nid){
 					}
         }
         
-        //exclusiveness others
-        dsm($record->field_field_exclusiveness_others, 'exclusiveness others');
-        
         foreach($record->field_field_exclusiveness_others as $item){
       		if(isset($item['raw']['node'])){
       			$exclusive_product_other_ids[] = $item['raw']['node']->field_product_id['und'][0]['safe_value'];
@@ -1095,7 +1092,6 @@ function _get_attribute_exceptions($product) {
 		$preRequisiteConditions = array();
 		
 		$viewResult = views_get_view_result('list_actiondepositcondition', 'panel_pane_2', $prdAttributeDepositCondition->nid);
-		dsm($viewResult, 'viewResult');
 
 		foreach($viewResult as $item) {
 			$depositCondition = array();
