@@ -566,8 +566,7 @@
 		Drupal.behaviors.editablefields_submit.attach(document);
 		Drupal.behaviors.CToolsAutoSubmit.attach(document);
     //Drupal.behaviors.bef_live_filter.attach(document);
-	console.log('here');
-
+	
     Drupal.behaviors.CToolsCollapsible.attach(document);
    	Drupal.behaviors.collapse.attach(document, settings);
     Drupal.behaviors.jQueryUIMultiselect.attach(document,settings);

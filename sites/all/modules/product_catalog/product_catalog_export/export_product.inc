@@ -208,8 +208,10 @@ function _get_deposit_scheme($product,$target=NULL) {
 					// 해당 deposit scheme을 deploy한다.
 					export_deploy('DEPOSIT_SCHEME', array($depositScheme->nid => $depositScheme), $target, $redirectFlag);
 				}
+				$_SESSION['NO_REDIRECT'] = TRUE;
 				node_delete($depositScheme->nid);
 				node_delete($thresholdScheme->nid);
+				$_SESSION['NO_REDIRECT'] = FALSE;
 				
 				$scheme['deposit_scheme_id'] = $depositScheme->nid;
 			}
@@ -295,35 +297,49 @@ function _create_deposit_scheme($treeNodeCounter, $depositAmount, $thresholdLimi
 	node_save($scheme);
 	
 	// thresholdschemefactors save
-	$factor = new stdClass();
-	$factor->type = 'depositschemefactors';
-	node_object_prepare($factor);
-	$factor->title = 'depositschemefactors_tmp';
-	$factor->language = LANGUAGE_NONE;
-	$factor->status = 1;
-	$factor->sticky = 1;
-	$factor->uid = $user->uid;
-	$factor->field_ref_depositscheme['und'][0]['nid'] = $scheme->nid;
-	$factor->field_ref_thres_counter_acc['und'][0]['nid'] = $treeNodeCounter->field_ref_counter['und'][0]['nid'];
-	$factor->field_ref_thres_counter_limit['und'][0]['nid'] = $treeNodeCounter->field_ref_counter['und'][0]['nid'];
-	$factor->field_is_default_factor['und'][0]['value'] = 0;
-	$factor->field_ref_thresholdscheme['und'][0]['nid'] = $thresholdScheme->nid;
-	$factor->field_deposit_group_code['und'][0]['tid'] = $depositGroupCodeTid;
-	$factor->field_thismonth_accu_counter = NULL;
-	$factor->field_ref_type_of_call_mul = NULL;
-	$factor->field_custdvcd4prod['und'][0]['tid'] = $product->field_custdvcd4prod['und'][0]['tid'];
-	$factor->field_counter_unit_type['und'][0]['tid'] = 696; // Money type fixed
-	node_save($factor);
+	$customer_type_term = taxonomy_term_load($product->field_custdvcd4prod['und'][0]['tid']);
 	
-	// field_deposit_amount_collection
+	$loop_count = 1;
 	
-	// Create and save field collection for node
-	$field_collection_item = entity_create('field_collection_item', array('field_name' => 'field_deposit_amount_collection'));
-	$field_collection_item->setHostEntity('node', $factor);
-	$field_collection_item->field_deposit_amount[LANGUAGE_NONE][]['value'] = $depositAmount;
-	$field_collection_item->field_threshold_amount[LANGUAGE_NONE][]['value'] = $thresholdLimit;
-	$field_collection_item->field_threshold_amount_max[LANGUAGE_NONE][]['value'] = $thresholdLimit;
-	$field_collection_item->save();
+	if($customer_type_term->name == 'Group_and_Personal'){
+		$loop_count = 2;
+		$personal_tid = current(taxonomy_get_term_by_name('Personal', 'custdvcd4prod'))->tid;
+		$group_tid = current(taxonomy_get_term_by_name('Group', 'custdvcd4prod'))->tid;
+		$customer_type_array = array( 0 => $personal_tid, 1 => $group_tid);
+	}else{
+		$customer_type_array = array( 0 => $product->field_custdvcd4prod['und'][0]['tid']);
+	}
+	
+	for($i=0;$i<$loop_count;$i++){
+		$factor = new stdClass();
+		$factor->type = 'depositschemefactors';
+		node_object_prepare($factor);
+		$factor->title = 'depositschemefactors_tmp';
+		$factor->language = LANGUAGE_NONE;
+		$factor->status = 1;
+		$factor->sticky = 1;
+		$factor->uid = $user->uid;
+		$factor->field_ref_depositscheme['und'][0]['nid'] = $scheme->nid;
+		$factor->field_ref_thres_counter_acc['und'][0]['nid'] = $treeNodeCounter->field_ref_counter['und'][0]['nid'];
+		$factor->field_ref_thres_counter_limit['und'][0]['nid'] = $treeNodeCounter->field_ref_counter['und'][0]['nid'];
+		$factor->field_is_default_factor['und'][0]['value'] = 0;
+		$factor->field_ref_thresholdscheme['und'][0]['nid'] = $thresholdScheme->nid;
+		$factor->field_deposit_group_code['und'][0]['tid'] = $depositGroupCodeTid;
+		$factor->field_thismonth_accu_counter = NULL;
+		$factor->field_ref_type_of_call_mul = NULL;
+		$factor->field_counter_unit_type['und'][0]['tid'] = 696; // Money type fixed
+		$factor->field_custdvcd4prod['und'][0]['tid'] = $customer_type_array[$i];
+		node_save($factor);
+		// field_deposit_amount_collection
+	
+		// Create and save field collection for node
+		$field_collection_item = entity_create('field_collection_item', array('field_name' => 'field_deposit_amount_collection'));
+		$field_collection_item->setHostEntity('node', $factor);
+		$field_collection_item->field_deposit_amount[LANGUAGE_NONE][]['value'] = $depositAmount;
+		$field_collection_item->field_threshold_amount[LANGUAGE_NONE][]['value'] = $thresholdLimit;
+		$field_collection_item->field_threshold_amount_max[LANGUAGE_NONE][]['value'] = $thresholdLimit;
+		$field_collection_item->save();
+	}
 	
 	return $scheme;
 }
