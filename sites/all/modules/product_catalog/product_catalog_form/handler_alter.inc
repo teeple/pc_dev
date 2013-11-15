@@ -1853,6 +1853,9 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 				unset($form['field_ref_type_of_call_mul']);
 			}
 
+			$term = current(taxonomy_get_term_by_name('Group_and_Personal', 'custdvcd4prod'));
+			unset($form['field_custdvcd4prod']['und']['#options'][$term->tid]);
+
 			_unset_menu_items($form, $form_id);
 			$form['field_ref_depositscheme']['#type'] = 'hidden';
 			$form['field_is_default_factor']['#type'] = 'hidden';
