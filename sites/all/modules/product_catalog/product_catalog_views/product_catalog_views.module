@@ -180,11 +180,12 @@ function depositschemefactor_thresholdscheme_detail($depositschemefactor_nid){
 	
 	$factor = node_load($depositschemefactor_nid);
 	//dsm($factor,'factor');
-	$threshold_scheme_nid = $factor->field_ref_thresholdscheme['und'][0]['nid'];
+	$threshold_scheme_nid = !empty($factor->field_ref_thresholdscheme)? $factor->field_ref_thresholdscheme['und'][0]['nid']: NULL;
+	$rows = array();
+
 	if(isset($threshold_scheme_nid)){
 		$threshold_scheme_node = node_load($threshold_scheme_nid);
 		$output = $threshold_scheme_node->title;
-		$rows = array();
 	  $row_data = array();
 		
 	  foreach($factor->field_deposit_amount_collection['und'] as $item){
