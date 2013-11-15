@@ -123,9 +123,6 @@ function _get_product_relationship($nid){
 					}
         }
         
-        //exclusiveness others
-        dsm($record->field_field_exclusiveness_others, 'exclusiveness others');
-        
         foreach($record->field_field_exclusiveness_others as $item){
       		if(isset($item['raw']['node'])){
       			$exclusive_product_other_ids[] = $item['raw']['node']->field_product_id['und'][0]['safe_value'];
@@ -314,6 +311,7 @@ function _create_deposit_scheme($treeNodeCounter, $depositAmount, $thresholdLimi
 	$factor->field_deposit_group_code['und'][0]['tid'] = $depositGroupCodeTid;
 	$factor->field_thismonth_accu_counter = NULL;
 	$factor->field_ref_type_of_call_mul = NULL;
+	$factor->field_custdvcd4prod['und'][0]['tid'] = $product->field_custdvcd4prod['und'][0]['tid'];
 	$factor->field_counter_unit_type['und'][0]['tid'] = 696; // Money type fixed
 	node_save($factor);
 	
@@ -1078,21 +1076,36 @@ function _get_attribute_exceptions($product) {
 		$prdAttributeDepositCondition = node_load($temp->nid);
 		
 		$conditionLists = array();
-		$depositGroupCodeTerm = taxonomy_term_load($prdAttributeDepositCondition->field_deposit_group_code['und'][0]['tid']);
-		$minimumDeposit = $prdAttributeDepositCondition->field_minimum_deposit['und'][0]['value'];
-		$conditionLists['default']['deposit_group_code'] = _get_common_code($depositGroupCodeTerm);
-		$conditionLists['default']['minimum_deposit'] = $minimumDeposit;
+
+		if(!empty($prdAttributeDepositCondition->field_deposit_group_code)) {
+			$depositGroupCodeTerm = taxonomy_term_load($prdAttributeDepositCondition->field_deposit_group_code['und'][0]['tid']);
+			if(!empty($prdAttributeDepositCondition->field_minimum_deposit)) {
+				$minimumDeposit = $prdAttributeDepositCondition->field_minimum_deposit['und'][0]['value'];
+			} else {
+				$minimumDeposit = NULL;
+			}
+			$conditionLists['default']['deposit_group_code'] = _get_common_code($depositGroupCodeTerm);
+			$conditionLists['default']['minimum_deposit'] = $minimumDeposit;
+		} else {
+			$conditionLists['default'] = NULL;
+		}
 		
 		$preRequisiteConditions = array();
 		
 		$viewResult = views_get_view_result('list_actiondepositcondition', 'panel_pane_2', $prdAttributeDepositCondition->nid);
+
 		foreach($viewResult as $item) {
 			$depositCondition = array();
-			$productId = $item->field_field_product_id[0]['raw']['value'];
+			$productIds = array();
+			foreach($item->field_field_ref_product_for_deposit as $refProduct) {
+				$productIds[] = $refProduct['raw']['node']->field_product_id['und'][0]['value'];
+			}
+
 			$groupCode = _get_common_code($item->field_field_deposit_group_code[0]['raw']['taxonomy_term']);
 			$minimumDeposit = $item->field_field_minimum_deposit[0]['raw']['value'];
 
-			$preRequisiteConditions[]= array($productId => array('deposit_group_code' => $groupCode, 'minimum_deposit' => $minimumDeposit));
+			$preRequisiteConditions[]= array('product_ids' => $productIds,
+										'deposit_group_code' => $groupCode, 'minimum_deposit' => $minimumDeposit);
 		}
 		$conditionLists['custom'] = $preRequisiteConditions;
 		$retArray['prerequisite_deposit_condition'] = $conditionLists;

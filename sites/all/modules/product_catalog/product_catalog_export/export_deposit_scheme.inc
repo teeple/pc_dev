@@ -42,6 +42,7 @@ function _array_deposit_scheme($exportItemNids=NULL){
                 //toc
                 if(!empty($item->field_field_ref_type_of_call_mul)){
                     foreach($item->field_field_ref_type_of_call_mul as $toc){
+
 					$tempArray = array($toc);
 					$factor['type_of_call'][] = _add_commoncode($tempArray);
                     }   
@@ -49,6 +50,14 @@ function _array_deposit_scheme($exportItemNids=NULL){
                     $factor['type_of_call'] = NULL;
                 }
                 
+                // customer type
+                if(!empty($item->field_field_custdvcd4prod)){
+                    $factor['customer_type'] = _get_common_code($item->field_field_custdvcd4prod[0]['raw']['taxonomy_term']);
+
+                }else{
+                    $factor['customer_type'] = NULL;
+                }
+
                 //amount
                 if(!empty($factorNode->field_deposit_amount_collection['und'])){
                     foreach($factorNode->field_deposit_amount_collection['und'] as $collectionItem){
