@@ -311,6 +311,7 @@ function _create_deposit_scheme($treeNodeCounter, $depositAmount, $thresholdLimi
 	$factor->field_deposit_group_code['und'][0]['tid'] = $depositGroupCodeTid;
 	$factor->field_thismonth_accu_counter = NULL;
 	$factor->field_ref_type_of_call_mul = NULL;
+	$factor->field_custdvcd4prod['und'][0]['tid'] = $product->field_custdvcd4prod['und'][0]['tid'];
 	$factor->field_counter_unit_type['und'][0]['tid'] = 696; // Money type fixed
 	node_save($factor);
 	
