@@ -18,7 +18,6 @@ function _unset_menu_items(&$form, $formId) {
 		case 'packetdynamicl4_node_form' :
 		case 'packetdynamicchargingrule_node_form' :
 		case 'packetpredefinedchargingrule_node_form' :
-		case 'roaming_country_node_form' :
 		case 'roaming_carrier_node_form' :
 		case 'roaming_plan_node_form' :
 		case 'counter_node_form' :
