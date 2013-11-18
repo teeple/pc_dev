@@ -6,7 +6,7 @@ function product_priority_form_submit($form, &$form_state) {
 	foreach($values['products'] as $product){
 		$result = db_select("field_data_field_weight_for_ratingpriority","r")->fields("r",array("entity_id"))->condition("entity_id",$product['id'],"=")->execute()->fetchAssoc();
 						 
-    if(!($result) > 0){
+    if(!empty($result)){
     	//db_query("UPDATE {field_data_field_weight_for_ratingpriority} SET field_weight_for_ratingpriority_value = :weight  WHERE entity_id = :id"
     	//, array(':weight' => $product['weight'], ':id' =>$product['id']));
     	db_update('field_data_field_weight_for_ratingpriority')
