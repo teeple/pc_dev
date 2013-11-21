@@ -1257,3 +1257,52 @@ function batch_import_roaming_tariff_finished($success, $results, $operations)
 		drupal_goto($_SESSION['redirect_after_batch']);
 	}
 }
+
+function ocs_roaming_delete_country_confirm($form, &$form_state, $nid)
+{
+	$node = node_load( $nid);
+	$form['#nid'] = $nid;
+	$form['#name'] = $node->title;
+
+	$caption = t('<strong>Warning:</strong> Roaming Country <em>"@name"</em> will be deleted.<br>' .
+			'It also shall be removed from following roaming zone.<br><br>',
+			array('@name' => $node->title));
+
+	$zone_nids = ocs_get_nids_by_cond( 'roaming_zone', array(
+				array('field_roaming_countries', 'nid', array( $nid), 'IN')));
+	$zone_list = '';
+	foreach( $zone_nids as $znid) {
+		$zone = node_load( $znid);
+		$zone_list .= t( '<li>@name</li>', array( '@name' => $zone->title));
+	}
+
+	$caption .= '<ul>' . $zone_list . '</ul>';
+
+	return confirm_form($form, t('Are you sure to delete the message ?'), 'common/roaming/country/'.$nid, $caption, t('Delete'));
+}
+
+function ocs_roaming_delete_country_confirm_submit($form, &$form_state)
+{
+	$nid = $form['#nid'];
+	node_delete($nid);
+
+	$zone_nids = ocs_get_nids_by_cond( 'roaming_zone', array(
+				array('field_roaming_countries', 'nid', array( $nid), 'IN')));
+
+	foreach( $zone_nids as $znid) {
+		$zone = node_load( $znid);
+		foreach( $zone->field_roaming_countries['und'] as $idx => $item) {
+			if ( $item['nid'] == $nid) {
+				unset( $zone->field_roaming_countries['udn'][$idx]);
+				break;
+			}
+		}
+		node_save( $zone);
+	}
+
+
+	drupal_set_message(t('Roaming country <em>"@name"</em> has been delete.', array('@name' => $form['#name'])));
+    $form_state['redirect'] = 'common/roaming/country/list';
+}
+
+

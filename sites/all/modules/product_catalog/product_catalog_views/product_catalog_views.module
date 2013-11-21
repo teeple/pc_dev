@@ -201,11 +201,13 @@ function depositschemefactor_thresholdscheme_detail($depositschemefactor_nid){
 				$level = isset($threshold_factor->field_limittothreshold['und'][0]['value'])?$threshold_factor->field_limittothreshold['und'][0]['value']:NULL;
 				if($level != NULL){
 					$actions = array();
-					foreach($threshold_factor->field_threshold_action_set['und'] as $action_item){
-						$action_collection_info = field_collection_item_load($action_item['value']);
-						$action_term = taxonomy_term_load($action_collection_info->field_action_type['und'][0]['tid']);
-						$actions[] = $action_term->name;
-						//$actions[] = $action_collection_info->field_action_type['und'][0]['taxonomy_term']->name;
+					if(isset($threshold_factor->field_threshold_action_set['und'])){
+						foreach($threshold_factor->field_threshold_action_set['und'] as $action_item){
+							$action_collection_info = field_collection_item_load($action_item['value']);
+							$action_term = taxonomy_term_load($action_collection_info->field_action_type['und'][0]['tid']);
+							$actions[] = $action_term->name;
+							//$actions[] = $action_collection_info->field_action_type['und'][0]['taxonomy_term']->name;
+						}
 					}
 					$actions = join('<br/>',$actions);
 					$row_data[$level]['action'] = $actions;

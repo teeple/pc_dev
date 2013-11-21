@@ -568,7 +568,6 @@
     //Drupal.behaviors.bef_live_filter.attach(document);
 	
     Drupal.behaviors.CToolsCollapsible.attach(document);
-   	Drupal.behaviors.collapse.attach(document, settings);
     Drupal.behaviors.jQueryUIMultiselect.attach(document,settings);
     //Drupal.behaviors.jquery_ui_multiselect_widget.attach(document,settings);
     //Drupal.behaviors.qt_accordion.attach($('#tree_content_div'),settings);

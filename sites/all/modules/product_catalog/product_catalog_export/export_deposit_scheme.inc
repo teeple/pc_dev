@@ -7,6 +7,16 @@ function _array_deposit_scheme($exportItemNids=NULL){
     	$exportItemNids = join('+', $exportItemNids);
     }
 
+    /* get vocabulary name */
+    /*
+    $vid = taxonomy_vocabulary_machine_name_load( 'custdvcd4prod');
+    $query = new EntityFieldQuery;
+    $result = $query->entityCondition('entity_type', 'taxonomy_term')
+        ->propertyCondition('vid', $vid->vid)
+        ->execute();
+    $terms = taxonomy_term_load_multiple( array_keys( $result['taxonomy_term']));
+    */
+
     //fetch data    
     $viewResult = views_get_view_result('list_depositscheme', 'panel_pane_5', $exportItemNids);
     
@@ -51,25 +61,35 @@ function _array_deposit_scheme($exportItemNids=NULL){
                 }
                 
                 // customer type
+                /*
                 if(!empty($item->field_field_custdvcd4prod)){
                     $factor['customer_type'] = _get_common_code($item->field_field_custdvcd4prod[0]['raw']['taxonomy_term']);
 
                 }else{
                     $factor['customer_type'] = NULL;
                 }
+                */
 
                 //amount
                 if(!empty($factorNode->field_deposit_amount_collection['und'])){
+                    $amount = array();
                     foreach($factorNode->field_deposit_amount_collection['und'] as $collectionItem){
                         $collectionInfo = field_collection_item_load($collectionItem['value']);
-                        $factor['amount'][] = array(
+                        $customer_type = $collectionInfo->field_custdvcd4prod['und'][0]['taxonomy_term'];
+                        if ( !isset($amount[$customer_type->name]['customer_type'])) {
+                            $amount[$customer_type->name]['customer_type'] = _get_common_code( $customer_type);
+                        }
+                        $amount[$customer_type->name]['amount'][] = array(
                             'deposit_amount' => $collectionInfo->field_deposit_amount['und'][0]['value'],
                             'threshold_amount' => $collectionInfo->field_threshold_amount['und'][0]['value'],
                             'threshold_amount_max' => $collectionInfo->field_threshold_amount_max['und'][0]['value'],
                         );
                     }
-                  }else{
-                    $factor['amount'] = NULL;
+                    foreach( $amount as $amt) {
+                        $factor['deposit_amount'][] = $amt;
+                    }
+                }else{
+                    $factor['deposit_amount'] = NULL;
                 }
                 
                 //accumulated counter

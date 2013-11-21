@@ -4,10 +4,22 @@ function product_priority_form_submit($form, &$form_state) {
   $values = $form_state['values']; //All form values
   
 	foreach($values['products'] as $product){
-		db_query("UPDATE {field_data_field_weight_for_ratingpriority} SET field_weight_for_ratingpriority_value = :weight  WHERE entity_id = :id"
-						, array(':weight' => $product['weight'], ':id' =>$product['id']));
+		$result = db_select("field_data_field_weight_for_ratingpriority","r")->fields("r",array("entity_id"))->condition("entity_id",$product['id'],"=")->execute()->fetchAssoc();
+						 
+    if(!empty($result)){
+    	//db_query("UPDATE {field_data_field_weight_for_ratingpriority} SET field_weight_for_ratingpriority_value = :weight  WHERE entity_id = :id"
+    	//, array(':weight' => $product['weight'], ':id' =>$product['id']));
+    	db_update('field_data_field_weight_for_ratingpriority')
+	    ->expression('field_weight_for_ratingpriority_value', ':weight', array(':weight' => $product['weight']))
+	    ->condition('entity_id', $product['id'])
+	    ->execute();
+    }else{
+    	$node = node_load($product['id']);
+  	  $node->field_weight_for_ratingpriority['und'][0]['value'] = $product['weight'];
+      node_save($node);
+    }
 	}
-   
+	 
 	drupal_goto(current_path(), array('fragment' => 'quickset-relation_manager=4'));
 }
 
