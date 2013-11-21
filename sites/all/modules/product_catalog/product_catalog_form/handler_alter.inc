@@ -220,12 +220,12 @@ function _add_ajax_submit_callback($form_id, &$form) {
 			break;
 		case 'vouchercardtype_node_form' :
 		case 'unittransfer_node_form' :
-		case 'number_special_node_form' :
 			if (isset($form['nid']['#value'])) {// edit
 				$change = TRUE;
 			}
 			break;
 		case 'simpleproductoffering_node_form' :
+		case 'number_special_node_form' :
 			unset($form['field_is_cloned']);
 			if (isset($form['nid']['#value'])) {// edit
 				$change = TRUE;
@@ -233,7 +233,7 @@ function _add_ajax_submit_callback($form_id, &$form) {
 					'#type' => 'submit',
 	    		'#value' => t('Clone'),
 	    		'#weight' => 1000,
-	    		'#submit' => array('_clone_product_handler')
+	    		'#submit' => array('_clone_object_handler')
 				);
 			}
 			//$paths = explode('/', current_path());

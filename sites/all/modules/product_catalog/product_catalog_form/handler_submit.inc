@@ -23,8 +23,8 @@ function product_priority_form_submit($form, &$form_state) {
 	drupal_goto(current_path(), array('fragment' => 'quickset-relation_manager=4'));
 }
 
-function _clone_product_handler($form){
-	product_catalog_ajax_clone_product($form['#node']->nid);
+function _clone_object_handler($form){
+	product_catalog_ajax_clone_object($form['#node']->nid);
 }
 
 function node_save_handler_to_touch_product($node) {

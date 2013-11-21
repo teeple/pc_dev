@@ -161,13 +161,6 @@ function product_catalog_ajax_menu() {
       'access callback' => TRUE,
       'type' => MENU_CALLBACK,
   );
-  $items['product_catalog_ajax/clone_product/%'] = array(
-      'title' => 'Paste',
-      'page callback' => 'product_catalog_ajax_clone_product',
-      'page arguments' => array(2),
-      'access callback' => TRUE,
-      'type' => MENU_CALLBACK,
-  );
   $items['product_catalog_ajax/remove_field_collection_item/%'] = array(
       'title' => 'Remove',
       'page callback' => 'product_catalog_ajax_remove_field_collection_item',
@@ -224,7 +217,7 @@ function product_catalog_ajax_check_rollover_type($counterId) {
 	exit;
 }
 
-function product_catalog_ajax_clone_product($targetProductId){
+function product_catalog_ajax_clone_object($targetNodeNid){
     ctools_include('node.pages', 'node', '');
     global $user;
 		$maxFieldLength = 60;
@@ -232,54 +225,83 @@ function product_catalog_ajax_clone_product($targetProductId){
 		$_SESSION['http_request_count'] = 0; // reset counter for debug information.
 		$operations = array();
    
-		$targetProductNode = node_load($targetProductId);
+		$targetNode = node_load($targetNodeNid);
     
-    $clonedTime = time();
-    $productNode = clone $targetProductNode;
-    $productNode->uid = $user->uid;
-    $productNode->title = substr($productNode->title.'_'.$clonedTime,0,$maxFieldLength);
-    $productNode->field_product_id['und'][0]['value'] = substr($productNode->field_product_id['und'][0]['value'].'_'.$clonedTime,0,$maxFieldLength);
-    $productNode->field_product_id['und'][0]['safe_value'] = substr($productNode->field_product_id['und'][0]['safe_value'].'_'.$clonedTime,0,$maxFieldLength);
-    $productNode->field_is_cloned['und'][0]['value'] = TRUE;
-		$short_code = substr($clonedTime,-10);
-		$productNode->field_short_code['und'][0]['value'] = $short_code;
-		$productNode->field_short_code['und'][0]['safe_value'] = $short_code;
-		_unset_unused_field_of_cloned_node($productNode);
-    unset($productNode->field_weight_for_ratingpriority);
-    unset($productNode->field_weight_for_hierarchy);
-		node_save($productNode);   
-    if(isset($targetProductNode->field_parameterized)){
-        _clone_field_collection('node',$targetProductNode,$productNode,'field_parameterized');
-    }
-		
-		//$_SESSION['redirect_after_batch'] = '';
-		$_SESSION['rid_history'] = array();
-		$view = views_get_view('list_product_child_node');
-    $view->set_display('panel_pane_3');
-    $view->set_arguments(array('0' => $targetProductNode->nid));
-    $view->execute(); 
-    
-    foreach($view->result as $record){
-        $targetChildNode = node_load($record->nid);
-        $operations[] = array('batch_clone_product_child', array($targetChildNode,$productNode));
-		 }
-    
-		$redirectURL =  _get_redirect_url_in_view_n_delete('view', $productNode);
-		$_SESSION['redirect_after_batch'] = $redirectURL['path'];
-		
-    $batch = array(
-			'operations' => $operations,
-			'finished' => 'batch_clone_product_finished',
-			'title' => t('Cloning Product @product_name', array( '@product_name' => $targetProductNode->title)),
-			'init_message' => t('Starting ... '),
-			'progress_message' => t('Processed @current out of @total.'),
-			'error_message' => t('Cloning procedure has encountered an error.'),
-		);
-		batch_set($batch);
+		$batch_title = "";
+		if(isset($targetNode)){
+			$clonedTime = time();
+			$clonedNode = clone $targetNode;
+			$clonedNode->uid = $user->uid;
+			$clonedNode->title = substr($targetNode->title.'_'.$clonedTime,0,$maxFieldLength);
+			switch($targetNode->type){
+				case "simpleproductoffering":
+			    $clonedNode->field_product_id['und'][0]['value'] = substr($clonedNode->field_product_id['und'][0]['value'].'_'.$clonedTime,0,$maxFieldLength);
+			    $clonedNode->field_product_id['und'][0]['safe_value'] = substr($clonedNode->field_product_id['und'][0]['safe_value'].'_'.$clonedTime,0,$maxFieldLength);
+			    $clonedNode->field_is_cloned['und'][0]['value'] = TRUE;
+					$short_code = substr($clonedTime,-10);
+					$clonedNode->field_short_code['und'][0]['value'] = $short_code;
+					$clonedNode->field_short_code['und'][0]['safe_value'] = $short_code;
+					_unset_unused_field_of_cloned_node($clonedNode);
+			    unset($clonedNode->field_weight_for_ratingpriority);
+			    unset($clonedNode->field_weight_for_hierarchy);
+					node_save($clonedNode);   
+			    if(isset($targetNode->field_parameterized)){
+			        _clone_field_collection('node',$targetNode,$clonedNode,'field_parameterized');
+			    }
+					
+					//$_SESSION['redirect_after_batch'] = '';
+					$_SESSION['rid_history'] = array();
+					$view = views_get_view('list_product_child_node');
+			    $view->set_display('panel_pane_3');
+			    $view->set_arguments(array('0' => $targetNode->nid));
+			    $view->execute(); 
+			    
+			    foreach($view->result as $record){
+		        $targetChildNode = node_load($record->nid);
+		        $operations[] = array('batch_clone_object_child', array($targetChildNode,$clonedNode));
+				  }
+					$batch_title =  t('Cloning Product @object_name', array( '@object_name' => $targetNode->title));
+			    break;
+			case "number_special":
+					_unset_unused_field_of_cloned_node($clonedNode);
+					node_save($clonedNode);   
+					$_SESSION['numberspeicalfactors_map'] = array();
+					
+					//find numberspecialrate
+					$viewResult = views_get_view_result('list_numberspecial_child_node', 'panel_pane_2', $targetNode->nid);
+					 foreach($viewResult as $record){
+		        $targetChildNode = node_load($record->nid);
+		        $operations[] = array('batch_clone_object_child', array($targetChildNode,$clonedNode));
+				  }
+			    
+					//find numberspecialfactors
+					$viewResult = views_get_view_result('list_numberspecial_child_node', 'panel_pane_9', $targetNode->nid);
+					foreach($viewResult as $record){
+					  $targetChildNode = node_load($record->nid);
+		        $operations[] = array('batch_clone_object_child', array($targetChildNode,$clonedNode));
+				  }    
+					$batch_title =  t('Cloning Special Number @object_name', array( '@object_name' => $targetNode->title));
+					break;
+			}
+	    
+			$redirectURL =  _get_redirect_url_in_view_n_delete('view', $clonedNode);
+			$_SESSION['redirect_after_batch'] = $redirectURL['path'];
+			
+	    $batch = array(
+				'operations' => $operations,
+				'finished' => 'batch_clone_object_finished',
+				'title' => $batch_title,
+				'init_message' => t('Starting ... '),
+				'progress_message' => t('Processed @current out of @total.'),
+				'error_message' => t('Cloning procedure has encountered an error.'),
+			);
+			batch_set($batch);
+		}else{
+			drupal_set_error("There is no item to clone");
+		}
 }
 
-function batch_clone_product_finished($success, $results, $operations) 
-{
+function batch_clone_object_finished($success, $results, $operations){
 	if ($success) {
 		// Here we could do something meaningful with the results.
 		// We just display the number of nodes we processed...
@@ -293,28 +315,64 @@ function batch_clone_product_finished($success, $results, $operations)
 			array('@operation' => $error_operation[0], '@args' => print_r($error_operation[0], TRUE))));
 	}
 	
-	unset($_SESSION['rid_history']);
+	if(isset($_SESSION['rid_history']))	unset($_SESSION['rid_history']);
+	if(isset($_SESSION['numberspeicalfactors_map']))	unset($_SESSION['numberspeicalfactors_map']);
 	
 	if (isset($_SESSION['redirect_after_batch'])) {
 		drupal_goto($_SESSION['redirect_after_batch']);
 	}
 }
 
-function batch_clone_product_child($targetNode,$productNode, &$context) 
-{
+function batch_clone_object_child($targetNode,$clonedNode, &$context){
+	switch($clonedNode->type){
+		case "simpleproductoffering":
+			_clone_product_children($targetNode,$clonedNode);
+			break;
+		case "number_special":
+			_clone_number_special_children($targetNode,$clonedNode);
+			break;
+	}
+	
+	_batch_update_http_requests();
+}
+
+function _clone_number_special_children($targetNode,$clonedNode){
 	ctools_include('node.pages', 'node', '');
 	global $user;
 	
-	$maxFieldLength = 60;
+  $childNode = clone $targetNode;
+  $childNode->uid = $user->uid;
+  $childNode->field_ref_numberspecial['und'][0]['nid'] = $clonedNode->nid;
+	_unset_unused_field_of_cloned_node($childNode);
+	switch($targetNode->type){
+		case 'numberspecialrate':
+			node_save($childNode);
+			$_SESSION['numberspeicalfactors_map'][$targetNode->nid] = $childNode->nid;
+			break;
+		case 'numberspecialfactors':
+			$childNode->field_ref_numberspecialrate['und'][0]['nid'] = $_SESSION['numberspeicalfactors_map'][$targetNode->field_ref_numberspecialrate['und'][0]['nid']];
+			node_save($childNode);
+			break;
+	}
+	
+  if(isset($targetNode->field_charge_collection)){
+	  _clone_field_collection('node',$targetNode,$childNode,'field_charge_collection');
+  }
+   
+}
+
+function _clone_product_children($targetNode,$clonedNode){
+	ctools_include('node.pages', 'node', '');
+	global $user;
 	
 	switch($targetNode->type){
 		case 'tariffplan':
-      _paste_tariffplan($targetNode,$productNode->nid,$targetNode->field_ref_tree_tid['und'][0]['value'],$targetNode->field_weight['und'][0]['value']);
+      _paste_tariffplan($targetNode,$clonedNode->nid,$targetNode->field_ref_tree_tid['und'][0]['value'],$targetNode->field_weight['und'][0]['value']);
       break;
-  default:
+  	default:
       $childNode = clone $targetNode;
       $childNode->uid = $user->uid;
-      $childNode->field_ref_product['und'][0]['nid'] = $productNode->nid;
+      $childNode->field_ref_product['und'][0]['nid'] = $clonedNode->nid;
 			if($childNode->type == 'actionpricechargerecurring' || $childNode->type == 'actionpricechargerecurringdefaul'){
 				$now = time();
 				if(in_array($now,$SESSION['rid_history'])){
@@ -322,7 +380,7 @@ function batch_clone_product_child($targetNode,$productNode, &$context)
 				}
 				$SESSION['rid_history'][] = $now;
 				
-				$recurring_charge_id = $productNode -> field_product_id['und'][0]['value'] . '_' . $now;
+				$recurring_charge_id = $clonedNode -> field_product_id['und'][0]['value'] . '_' . $now;
 				$childNode->field_recurring_charge_id['und'][0]['value'] = $recurring_charge_id;
 				$childNode->field_recurring_charge_id['und'][0]['safe_value'] = $recurring_charge_id;
 				//$cloneNode->title = 'temp';
@@ -373,7 +431,6 @@ function batch_clone_product_child($targetNode,$productNode, &$context)
       }
       break;
 	}
-	_batch_update_http_requests();
 }
 
 function _paste_tariffplan($targetNode,$productNid,$baseTid,$weight){
