@@ -3445,3 +3445,14 @@ function _handler_get_terms( $voca)
 
 	return $options;
 }
+
+function product_catalog_form_field_widget_form_alter(&$element, &$form_state, $context) {
+	if( !empty($element['#entity_type'])) {
+	    if( ($element['#entity_type'] == 'field_collection_item')
+	            && ($element['#bundle'] == 'field_deposit_amount_collection')
+	            && ($element['#field_name'] == 'field_custdvcd4prod') ) {
+	        $tempTerm = current(taxonomy_get_term_by_name('Group_and_Personal', 'custdvcd4prod'));
+	        unset($element['#options'][$tempTerm->tid]);
+	    }
+	}
+}
