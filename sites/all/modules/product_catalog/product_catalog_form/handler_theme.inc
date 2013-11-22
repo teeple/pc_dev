@@ -15,8 +15,8 @@ function product_catalog_form_theme($existing, $type, $theme, $path)
 
 function theme_product_catalog_form_product_priority($vars) {
 	$element = $vars['element'];
-  drupal_add_tabledrag('product_priority_form', 'order', 'sibling', 'rank-weight'); // needed for table dragging
-  
+  //drupal_add_tabledrag('product_priority_form', 'order', 'sibling', 'rank-weight'); // needed for table dragging
+  drupal_add_tabledrag('product_priority_form', 'order', 'sibling', 'rank-weight', NULL, NULL, FALSE);
   $header = array(
     'name' => t('Name'), 
     'product_type' => t('Product Type'),

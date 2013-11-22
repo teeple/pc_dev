@@ -13,34 +13,71 @@ function product_priority_form($form,$form_state) {
 	
 	$view_result = views_get_view_result('list_relation_product_priority', 'panel_pane_1', $service_domain_name);
 	
+	$undefined_weight_product = array();
+	
+	$weight_index = 0;
+	//for product which has weight value
 	foreach ($view_result as $key => $product) {
-		$markup = '<a href="/node/'.$product->nid.'">'.$product->node_title.'</a>';
-		
-		$form['products'][$key]['id'] = array(
-      '#type' => 'hidden',
-      '#value' => $product->nid,
-    );
-    $form['products'][$key]['name'] = array(
-      '#type' => 'markup',
-      '#markup' => $markup,
-    );
-		$form['products'][$key]['product_type'] = array(
-      '#type' => 'markup',
-      '#markup' => $product->field_field_product_type[0]['rendered']['#markup'],
-    );
-		$form['products'][$key]['billing_type'] = array(
-      '#type' => 'markup',
-      '#markup' => $product->field_field_billing_type[0]['rendered']['#markup'],
-    );
-    $form['products'][$key]['weight'] = array(
-      '#type' => 'weight',
-      '#default_value' => $product->field_data_field_weight_for_ratingpriority_field_weight_for_,
-      '#size' => 5,
-      '#delta' => 10000000,
-      '#attributes' => array('class' => array('rank-weight')), // needed for table dragging
-    );
+		if(isset($product->field_field_weight_for_ratingpriority[0]['raw']['value'])){
+			$markup = '<a href="/node/'.$product->nid.'">'.$product->node_title.'</a>';
+			$form['products'][$key]['id'] = array(
+	      '#type' => 'hidden',
+	      '#value' => $product->nid,
+	    );
+	    $form['products'][$key]['name'] = array(
+	      '#type' => 'markup',
+	      '#markup' => $markup,
+	    );
+			$form['products'][$key]['product_type'] = array(
+	      '#type' => 'markup',
+	      '#markup' => $product->field_field_product_type[0]['rendered']['#markup'],
+	    );
+			$form['products'][$key]['billing_type'] = array(
+	      '#type' => 'markup',
+	      '#markup' => $product->field_field_billing_type[0]['rendered']['#markup'],
+	    );
+			
+	    $form['products'][$key]['weight'] = array(
+	      '#type' => 'weight',
+	      '#default_value' => $product->field_data_field_weight_for_ratingpriority_field_weight_for_,
+	      '#size' => 5,
+	      '#delta' => 10000000,
+	      '#attributes' => array('class' => array('rank-weight')), // needed for table dragging
+	    );
+			$weight_index = $product->field_field_weight_for_ratingpriority[0]['raw']['value'];
+		}else{
+			$undefined_weight_product[$key] = $product;
+		}
+	}
+	
+	//for new product which does not have weight value  
+	foreach ($undefined_weight_product as $key => $product) {
+			$markup = '<a href="/node/'.$product->nid.'">'.$product->node_title.'</a>';
+			$form['products'][$key]['id'] = array(
+	      '#type' => 'hidden',
+	      '#value' => $product->nid,
+	    );
+	    $form['products'][$key]['name'] = array(
+	      '#type' => 'markup',
+	      '#markup' => $markup,
+	    );
+			$form['products'][$key]['product_type'] = array(
+	      '#type' => 'markup',
+	      '#markup' => $product->field_field_product_type[0]['rendered']['#markup'],
+	    );
+			$form['products'][$key]['billing_type'] = array(
+	      '#type' => 'markup',
+	      '#markup' => $product->field_field_billing_type[0]['rendered']['#markup'],
+	    );
+			
+			$form['products'][$key]['weight'] = array(
+	      '#type' => 'weight',
+	      '#default_value' => ++$weight_index,
+	      '#size' => 5,
+	      '#delta' => 10000000,
+	      '#attributes' => array('class' => array('rank-weight')), // needed for table dragging
+	    );
   }
-	  
   $form['submit'] = array(
       '#type' => 'submit',
       '#value' => t('Save configuration'),      

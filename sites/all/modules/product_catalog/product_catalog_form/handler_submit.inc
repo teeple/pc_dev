@@ -3,23 +3,51 @@
 function product_priority_form_submit($form, &$form_state) {
   $values = $form_state['values']; //All form values
   
+  $weight_values = array();
+	
 	foreach($values['products'] as $product){
-		$result = db_select("field_data_field_weight_for_ratingpriority","r")->fields("r",array("entity_id"))->condition("entity_id",$product['id'],"=")->execute()->fetchAssoc();
+		$weight_values[$product['weight']][] = $product['id'];
+	}
+	ksort($weight_values);
+	
+	$weight = 0;
+	foreach($weight_values as $same_weight_products){
+		foreach($same_weight_products as $product_id){
+			$result = db_select("field_data_field_weight_for_ratingpriority","r")->fields("r",array("entity_id"))->condition("entity_id",$product_id,"=")->execute()->fetchAssoc();
+							 
+	    if(!empty($result)){
+	    	//db_query("UPDATE {field_data_field_weight_for_ratingpriority} SET field_weight_for_ratingpriority_value = :weight  WHERE entity_id = :id"
+	    	//, array(':weight' => $product['weight'], ':id' =>$product['id']));
+	    	db_update('field_data_field_weight_for_ratingpriority')
+		    ->expression('field_weight_for_ratingpriority_value', ':weight', array(':weight' => $weight))
+		    ->condition('entity_id', $product_id)
+		    ->execute();
+	    }else{
+	    	$node = node_load($product_id);
+	  	  $node->field_weight_for_ratingpriority['und'][0]['value'] = $weight;
+	      node_save($node);
+	    }
+			$weight++;
+		}
+	}
+	/*
+	foreach($weight_values as $weight => $nid){
+		$result = db_select("field_data_field_weight_for_ratingpriority","r")->fields("r",array("entity_id"))->condition("entity_id",$nid,"=")->execute()->fetchAssoc();
 						 
     if(!empty($result)){
     	//db_query("UPDATE {field_data_field_weight_for_ratingpriority} SET field_weight_for_ratingpriority_value = :weight  WHERE entity_id = :id"
     	//, array(':weight' => $product['weight'], ':id' =>$product['id']));
     	db_update('field_data_field_weight_for_ratingpriority')
-	    ->expression('field_weight_for_ratingpriority_value', ':weight', array(':weight' => $product['weight']))
-	    ->condition('entity_id', $product['id'])
+	    ->expression('field_weight_for_ratingpriority_value', ':weight', array(':weight' => $weight))
+	    ->condition('entity_id', $nid)
 	    ->execute();
     }else{
-    	$node = node_load($product['id']);
-  	  $node->field_weight_for_ratingpriority['und'][0]['value'] = $product['weight'];
+    	$node = node_load($nid);
+  	  $node->field_weight_for_ratingpriority['und'][0]['value'] = $weight;
       node_save($node);
     }
 	}
-	 
+	*/
 	drupal_goto(current_path(), array('fragment' => 'quickset-relation_manager=4'));
 }
 
