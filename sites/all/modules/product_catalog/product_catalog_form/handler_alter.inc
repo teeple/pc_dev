@@ -2499,18 +2499,24 @@ function product_catalog_form_form_alter(&$form, &$form_state, $form_id) {
 			$form['field_weight']['#type'] = 'hidden';
 			$form['field_parent_node']['#type'] = 'hidden';
 
-			$options = array();
-			$options['_none'] = '- None -';
-			$view = views_get_view('list_counter');
-			$view -> set_display('panel_pane_15');
-			$view -> set_arguments(array('0' => $form['field_counter_group']['und']['#default_value'][0]));
-			$view -> execute();
-			foreach ($view->result as $item) {
-				$options[$item -> nid] = $item -> node_title;
+			//target counter
+			$service_domains = array('Mobile' => 'field_mobile_target_counter'
+															,'IPTV' => 'field_iptv_target_counter'
+															,'Broadband' => 'field_broadband_target_counter'
+															,'VoIP' => 'field_voip_target_counter'
+															,'Satellite' => 'field_satellite_target_counter'
+												);
+			
+			foreach($service_domains as $key => $value){
+				$options = array();
+				$options['_none'] = '- None -';
+				$view_result = views_get_view_result('list_counter', 'panel_pane_15', $form['field_counter_group']['und']['#default_value'][0],$key);
+				foreach ($view_result as $item) {
+					$options[$item -> nid] = $item -> node_title;
+				}
+				$form[$value]['und']['#options'] = $options;
 			}
-
-			$form['field_target_counter_for_ut']['und']['#options'] = $options;
-
+			
 			$form['field_enddate_option1']['#type'] = 'hidden';
 			$form['field_startdate_option1']['#type'] = 'hidden';
 			$form['field_enddate_option4']['#type'] = 'hidden';
