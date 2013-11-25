@@ -15,11 +15,11 @@ function _validate_prdcounterlist($node,$node_unchanged){
 	$changedCounters = array_diff($oldCounterNids, $newCounterNids);
 	//$changedCounters = join('+',$changedCounters);
 	foreach($changedCounters as $item){
-		$view_result = views_get_view_result('list_counter_refereces', 'panel_pane_3', $item,$node->field_ref_product['und'][0]['nid']);
 		$view = views_get_view('list_counter_refereces');
 		$view -> set_display('panel_pane_3');
 		$view -> set_arguments(array('0' => $item, '1' => $node->field_ref_product['und'][0]['nid']));
 		$view -> execute();
+		
 		if(!empty($view->result)){
 			$view_render = $view->render();
 			$counter_node = node_load($item);
