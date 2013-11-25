@@ -573,3 +573,6 @@ $conf['cache_default_class'] = 'MemCacheDrupal';
 $conf['memcache_key_prefix'] = 'pc_dev';
 */
 
+$conf['user_failed_login_user_limit'] = 10;
+$conf['user_failed_login_user_window'] = 1800;
+
